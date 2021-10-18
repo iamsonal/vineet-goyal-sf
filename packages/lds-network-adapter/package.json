@@ -15,7 +15,7 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
-        "@luvio/engine": "0.53.1",
+        "@luvio/engine": "0.55.0",
         "@salesforce/lds-adapters-uiapi": "1.29.0"
     }
 }

@@ -7,9 +7,9 @@ describe('input config validation', () => {
         );
     });
 
-    it('calls storeLookup on valid input', async () => {
+    it('calls applyCachePolicy on valid input', async () => {
         const mockLds = {
-            storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
+            applyCachePolicy: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(true),
         };
         await listContent(mockLds as any)({
@@ -22,6 +22,6 @@ describe('input config validation', () => {
             showAbsoluteUrl: false,
             topics: ['Topic 1'],
         });
-        expect(mockLds.storeLookup.mock.calls.length).toBe(1);
+        expect(mockLds.applyCachePolicy.mock.calls.length).toBe(1);
     });
 });

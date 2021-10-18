@@ -49,6 +49,7 @@ describe('validation', () => {
         const mockLds = {
             dispatchResourceRequest: jest.fn().mockReturnValue({ then: () => {} }),
             storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: mockData }),
+            applyCachePolicy: jest.fn().mockReturnValue({ state: 'Fulfilled', data: mockData }),
             storeIngest: jest.fn(),
             storeBroadcast: jest.fn(),
         };

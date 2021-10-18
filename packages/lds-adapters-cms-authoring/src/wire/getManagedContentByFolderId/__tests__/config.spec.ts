@@ -7,14 +7,14 @@ describe('input config validation', () => {
         );
     });
 
-    it('calls storeLookup on valid input', async () => {
+    it('calls applyCachePolicy on valid input', async () => {
         const mockLds = {
-            storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
+            applyCachePolicy: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(true),
         };
         await getManagedContentByFolderId(mockLds as any)({
             folderId: '9PuRM00000003B60AI',
         });
-        expect(mockLds.storeLookup.mock.calls.length).toBe(1);
+        expect(mockLds.applyCachePolicy.mock.calls.length).toBe(1);
     });
 });

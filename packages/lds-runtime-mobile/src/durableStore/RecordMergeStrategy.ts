@@ -8,7 +8,7 @@ import {
     DraftResolutionInput,
     DraftAction,
 } from '@salesforce/lds-drafts';
-import { ObjectAssign, ObjectKeys } from '../utils/language';
+import { ArrayIsArray, ObjectAssign, ObjectKeys } from '../utils/language';
 import {
     GetRecordConfig,
     ObjectInfoRepresentation,
@@ -100,7 +100,16 @@ export class RecordMergeStrategy implements MergeStrategy {
                 const { data: existingData, metadata: existingMetadata } = existingEntry;
                 const { data: incomingData, metadata: incomingMetadata } = incomingEntry;
 
-                const data = ObjectAssign({}, existingData, incomingData);
+                let data;
+                if (ArrayIsArray(existingData) && ArrayIsArray(incomingData)) {
+                    // TODO [W-9921803]: for now if we get to a GQL edges array we just
+                    // trust the incoming and don't worry about merging.  This entire
+                    // durable merge file is going away so this temporary workaround
+                    // is palatable
+                    data = incomingData;
+                } else {
+                    data = ObjectAssign({}, existingData, incomingData);
+                }
 
                 let metadata: DurableStoreEntry['metadata'] | undefined;
                 if (existingMetadata !== undefined || incomingMetadata !== undefined) {

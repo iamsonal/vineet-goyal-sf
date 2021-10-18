@@ -1,10 +1,12 @@
 import { HttpStatusCode } from '@luvio/engine';
+import { MockDurableStore } from '@luvio/adapter-test-library';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import { DRAFT_ERROR_CODE } from '../../DraftFetchResponse';
 import { getRecordKeyForId } from '../../utils/records';
 import {
+    flushPromises,
     createPostRequest,
     DEFAULT_API_NAME,
     DEFAULT_NAME_FIELD_VALUE,
@@ -12,9 +14,28 @@ import {
     RECORD_ID,
     setupDraftEnvironment,
 } from './test-utils';
+import { DefaultDurableSegment } from '@luvio/environments';
 
 const CREATE_DRAFT_RECORD_ID = '001x000001XL1tAAG';
 const STORE_KEY_DRAFT_RECORD = `UiApi::RecordRepresentation:${CREATE_DRAFT_RECORD_ID}`;
+const DRAFT_RECORD_DATA = {
+    apiName: DEFAULT_API_NAME,
+    childRelationships: {},
+    eTag: '',
+    fields: {
+        Name: {
+            displayValue: null,
+            value: RECORD_ID,
+        },
+    },
+    id: CREATE_DRAFT_RECORD_ID,
+    lastModifiedById: null,
+    lastModifiedDate: null,
+    recordTypeId: null,
+    recordTypeInfo: null,
+    systemModstamp: null,
+    weakEtag: -1,
+};
 
 describe('draft environment tests', () => {
     describe('createRecord', () => {
@@ -227,24 +248,11 @@ describe('draft environment tests', () => {
                     prefixForApiName: (_apiName: string) => Promise.resolve('001'),
                 });
 
-            await populateDurableStoreWithRecord(durableStore, STORE_KEY_DRAFT_RECORD, {
-                apiName: DEFAULT_API_NAME,
-                childRelationships: {},
-                eTag: '',
-                fields: {
-                    Name: {
-                        displayValue: null,
-                        value: RECORD_ID,
-                    },
-                },
-                id: CREATE_DRAFT_RECORD_ID,
-                lastModifiedById: null,
-                lastModifiedDate: null,
-                recordTypeId: null,
-                recordTypeInfo: null,
-                systemModstamp: null,
-                weakEtag: -1,
-            });
+            await populateDurableStoreWithRecord(
+                durableStore,
+                STORE_KEY_DRAFT_RECORD,
+                DRAFT_RECORD_DATA
+            );
 
             store.redirect(draftReferenceKey, canonicalReferenceKey);
 
@@ -350,8 +358,11 @@ describe('draft environment tests', () => {
         });
 
         it('created record never expires', async () => {
-            const { draftEnvironment } = await setupDraftEnvironment({ isDraftId: () => true });
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
+                isDraftId: () => true,
+            });
 
+            draftEnvironment.storePublish(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_DATA);
             draftEnvironment.publishStoreMetadata(STORE_KEY_DRAFT_RECORD, {
                 expirationTimestamp: 1,
                 staleTimestamp: 1,
@@ -359,12 +370,22 @@ describe('draft environment tests', () => {
                 representationName: 'RecordRepresentation',
                 ingestionTimestamp: 1,
             });
-            expect(
-                draftEnvironment.store.metadata[STORE_KEY_DRAFT_RECORD].expirationTimestamp
-            ).toBe(Number.MAX_SAFE_INTEGER);
-            expect(draftEnvironment.store.metadata[STORE_KEY_DRAFT_RECORD].staleTimestamp).toBe(
-                Number.MAX_SAFE_INTEGER
+
+            // broadcast so staging store flushes to L2
+            draftEnvironment.storeBroadcast(
+                draftEnvironment.rebuildSnapshot,
+                draftEnvironment.snapshotAvailable
             );
+
+            // wait for flush to finish before reading L2 values
+            await flushPromises();
+
+            const record = (durableStore as unknown as MockDurableStore).segments[
+                DefaultDurableSegment
+            ][STORE_KEY_DRAFT_RECORD];
+            const metadata = record.metadata;
+            expect(metadata.expirationTimestamp).toBe(Number.MAX_SAFE_INTEGER);
+            expect(metadata.staleTimestamp).toBe(Number.MAX_SAFE_INTEGER);
         });
     });
 });

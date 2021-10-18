@@ -169,6 +169,12 @@ export function ldsActionHandler(
             // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error('Cannot replace with a non-pending action');
         }
+        //reject if the action to replace is a POST action
+        const pendingAction = actionToReplace as PendingDraftAction<unknown, ResourceRequest>;
+        if (isLDSDraftAction<Response>(actionToReplace) && pendingAction.data.method === 'post') {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
+            throw new Error('Cannot replace a POST action');
+        }
 
         if (
             isLDSDraftAction<Response>(actionToReplace) &&

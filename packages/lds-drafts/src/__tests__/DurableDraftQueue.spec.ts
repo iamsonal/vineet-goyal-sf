@@ -1706,6 +1706,43 @@ describe('DurableDraftQueue', () => {
             await expect(result).rejects.toThrowError('Cannot replace with a non-pending action');
         });
 
+        it('rejects when trying to replace a POST action', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftStore = new DurableDraftStore(durableStore);
+            const firstId = '0';
+            const secondId = '1';
+            const pendingAction: PendingDraftAction<unknown, unknown> = {
+                id: firstId,
+                targetId: firstId,
+                status: DraftActionStatus.Pending,
+                data: createPostRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+                metadata: {},
+                handler: LDS_ACTION_HANDLER_ID,
+            };
+
+            const nonPendingAction: PendingDraftAction<unknown, unknown> = {
+                id: secondId,
+                targetId: secondId,
+                status: DraftActionStatus.Pending,
+                data: createPatchRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+                metadata: {},
+                handler: LDS_ACTION_HANDLER_ID,
+            };
+            await draftStore.writeAction(pendingAction);
+            await draftStore.writeAction(nonPendingAction);
+
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            let result = draftQueue.replaceAction(actions[0].id, actions[1].id);
+            await expect(result).rejects.toThrowError('Cannot replace a POST action');
+        });
+
         it('sets a replaced item to pending', async () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();

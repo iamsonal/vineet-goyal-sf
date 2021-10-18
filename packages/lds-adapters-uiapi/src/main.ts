@@ -80,3 +80,6 @@ export {
     CachePolicyStaleWhileRevalidate,
     CachePolicyValidAt,
 } from '@luvio/engine';
+
+// Expose imperative adapter types
+export { DataCallbackTuple, ImperativeAdapter } from '@salesforce/lds-bindings';

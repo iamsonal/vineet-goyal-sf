@@ -1,3 +1,4 @@
+import { removeDuplicatePredicates } from './comparison';
 import { FieldInfo, ObjectInfo, RelationshipInfo } from './info-types';
 import {
     BooleanLiteral,
@@ -9,7 +10,9 @@ import {
     IntLiteral,
     isComparisonPredicate,
     isCompoundPredicate,
+    isNotPredicate,
     isNullComparisonPredicate,
+    JsonExtract,
     Predicate,
     PredicateType,
     StringLiteral,
@@ -63,7 +66,7 @@ export function booleanLiteral(value: Boolean): BooleanLiteral {
 }
 
 export function comparison(
-    left: Expression,
+    left: JsonExtract,
     operator: ComparisonOperator,
     right: Expression
 ): ComparisonPredicate {
@@ -84,6 +87,7 @@ export function isEmptyPredicate(predicate: Predicate): Boolean {
 
 /**
  * Flattens the contents of child predicates of the same type as the new parent compound predicate.
+ * Removes duplicate predicates found within the same compound predicate.
  *
  * @param predicates
  * @param operator
@@ -102,12 +106,13 @@ export function combinePredicates(predicates: Predicate[], operator: CompoundOpe
         .reduce(flatten, []);
 
     const compares = predicates.filter(
-        (pred) => isComparisonPredicate(pred) || isNullComparisonPredicate(pred)
+        (pred) =>
+            isComparisonPredicate(pred) || isNullComparisonPredicate(pred) || isNotPredicate(pred)
     );
 
     const children = [...compares, ...flattened, ...otherCompoundPredicates];
-
-    return compoundOrSelf(children, operator);
+    const uniques = removeDuplicatePredicates(children);
+    return compoundOrSelf(uniques, operator);
 }
 
 export function referencePredicate(

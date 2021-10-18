@@ -15,6 +15,8 @@ import {
     isComparisonPredicate,
     NullComparisonPredicate,
     NullComparisonOperator,
+    isNullComparisonPredicate,
+    NotPredicate,
 } from './Predicate';
 
 export interface SqlMappingInput {
@@ -89,7 +91,11 @@ function predicateToSql(predicate: Predicate): string {
         return comparisonPredicateToSql(predicate);
     }
 
-    return nullComparisonPredicateToSql(predicate);
+    if (isNullComparisonPredicate(predicate)) {
+        return nullComparisonPredicateToSql(predicate);
+    }
+
+    return notPredicateToSql(predicate);
 }
 
 function compoundPredicateToSql(predicate: CompoundPredicate): string {
@@ -107,6 +113,12 @@ function comparisonPredicateToSql(predicate: ComparisonPredicate): string {
     return `${left} ${operator} ${right}`;
 }
 
+function notPredicateToSql(predicate: NotPredicate): string {
+    const innerSql = predicateToSql(predicate.child);
+
+    return `NOT (${innerSql})`;
+}
+
 function nullComparisonPredicateToSql(predicate: NullComparisonPredicate): string {
     const operator = predicate.operator === NullComparisonOperator.is ? 'IS' : 'IS NOT';
     const left = expressionToSql(predicate.left);
@@ -122,8 +134,6 @@ function expressionToSql(expression: Expression): string {
         case ValueType.DoubleLiteral:
         case ValueType.IntLiteral:
             return String(expression.value);
-        case ValueType.Identifier:
-            return expression.value;
         case ValueType.StringArray:
             return `(${expression.value.map((e) => `'${e}'`).join(', ')})`;
         case ValueType.NumberArray:

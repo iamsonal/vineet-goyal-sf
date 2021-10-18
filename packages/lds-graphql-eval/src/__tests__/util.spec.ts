@@ -14,6 +14,7 @@ import {
     CompoundOperator,
     CompoundPredicate,
     PredicateType,
+    ValueType,
 } from '../Predicate';
 
 const objectInfoMap = infoJson as ObjectInfoMap;
@@ -75,27 +76,27 @@ describe('utils', () => {
     describe('combinePredicates', () => {
         it('flattens compound predicates that match the given operator', () => {
             const predicate1 = comparison(
-                stringLiteral('1'),
+                { type: ValueType.Extract, jsonAlias: '1', path: '1' },
                 ComparisonOperator.ne,
                 stringLiteral('one')
             );
             const predicate2 = comparison(
-                stringLiteral('2'),
+                { type: ValueType.Extract, jsonAlias: '2', path: '2' },
                 ComparisonOperator.ne,
                 stringLiteral('dos')
             );
             const predicate3 = comparison(
-                stringLiteral('3'),
+                { type: ValueType.Extract, jsonAlias: '3', path: '3' },
                 ComparisonOperator.ne,
                 stringLiteral('tre')
             );
             const predicate4 = comparison(
-                stringLiteral('4'),
+                { type: ValueType.Extract, jsonAlias: '4', path: '4' },
                 ComparisonOperator.ne,
                 stringLiteral('quatro')
             );
             const predicate5 = comparison(
-                stringLiteral('5'),
+                { type: ValueType.Extract, jsonAlias: '5', path: '5' },
                 ComparisonOperator.ne,
                 stringLiteral('cinque')
             );
@@ -124,17 +125,17 @@ describe('utils', () => {
 
         it('does not flatten compound predicates that do not match the given operator', () => {
             const predicate1 = comparison(
-                stringLiteral('1'),
+                { type: ValueType.Extract, jsonAlias: '1', path: '1' },
                 ComparisonOperator.ne,
                 stringLiteral('one')
             );
             const predicate2 = comparison(
-                stringLiteral('2'),
+                { type: ValueType.Extract, jsonAlias: '2', path: '2' },
                 ComparisonOperator.ne,
                 stringLiteral('dos')
             );
             const predicate3 = comparison(
-                stringLiteral('3'),
+                { type: ValueType.Extract, jsonAlias: '3', path: '3' },
                 ComparisonOperator.ne,
                 stringLiteral('tre')
             );
@@ -155,7 +156,7 @@ describe('utils', () => {
             const expected: CompoundPredicate = {
                 type: PredicateType.compound,
                 operator: CompoundOperator.and,
-                children: [predicate1, or, or2],
+                children: [predicate1, or2],
             };
 
             expect(actual).toEqual(expected);
@@ -163,17 +164,17 @@ describe('utils', () => {
 
         it('includes comparison operators in resulting compound predicate', () => {
             const predicate1 = comparison(
-                stringLiteral('1'),
+                { type: ValueType.Extract, jsonAlias: '1', path: '1' },
                 ComparisonOperator.ne,
                 stringLiteral('one')
             );
             const predicate2 = comparison(
-                stringLiteral('2'),
+                { type: ValueType.Extract, jsonAlias: '2', path: '2' },
                 ComparisonOperator.ne,
                 stringLiteral('dos')
             );
             const predicate3 = comparison(
-                stringLiteral('3'),
+                { type: ValueType.Extract, jsonAlias: '3', path: '3' },
                 ComparisonOperator.ne,
                 stringLiteral('tre')
             );
@@ -193,7 +194,7 @@ describe('utils', () => {
 
         it('returns a single comparison predicate if it is the only value included', () => {
             const predicate = comparison(
-                stringLiteral('Adrian'),
+                { type: ValueType.Extract, jsonAlias: 'Adrian', path: 'Adrian' },
                 ComparisonOperator.ne,
                 stringLiteral('Adrian')
             );

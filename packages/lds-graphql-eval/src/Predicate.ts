@@ -1,6 +1,7 @@
 export enum PredicateType {
     compound = 'compound',
     comparison = 'comparison',
+    not = 'not',
     nullComparison = 'nullComparison',
 }
 
@@ -95,14 +96,18 @@ export type DateTimeArray = Value<ValueType.DateTimeArray, DateTimeInput[]>;
 export interface ComparisonPredicate {
     type: PredicateType.comparison;
     operator: ComparisonOperator;
-    left: Expression;
+    left: JsonExtract;
     right: Expression;
 }
 
+export interface NotPredicate {
+    type: PredicateType.not;
+    child: Predicate;
+}
 export interface NullComparisonPredicate {
     type: PredicateType.nullComparison;
     operator: NullComparisonOperator;
-    left: Expression;
+    left: JsonExtract;
 }
 
 export interface CompoundPredicate {
@@ -121,11 +126,6 @@ export interface JsonExtract {
     type: ValueType.Extract;
     jsonAlias: string;
     path: string;
-}
-
-export interface Identifier {
-    type: ValueType.Identifier;
-    value: string;
 }
 export interface ScalarField {
     type: FieldType.Scalar;
@@ -155,8 +155,12 @@ export interface RecordQuery {
 }
 
 export type RecordQueryField = ChildField | ScalarField;
-export type Expression = Identifier | LiteralValue | JsonExtract;
-export type Predicate = CompoundPredicate | ComparisonPredicate | NullComparisonPredicate;
+export type Expression = LiteralValue | JsonExtract;
+export type Predicate =
+    | CompoundPredicate
+    | ComparisonPredicate
+    | NotPredicate
+    | NullComparisonPredicate;
 
 export function isCompoundPredicate(predicate: Predicate): predicate is CompoundPredicate {
     return predicate.type === PredicateType.compound;
@@ -170,4 +174,8 @@ export function isNullComparisonPredicate(
     predicate: Predicate
 ): predicate is NullComparisonPredicate {
     return predicate.type === PredicateType.nullComparison;
+}
+
+export function isNotPredicate(predicate: Predicate): predicate is NotPredicate {
+    return predicate.type === PredicateType.not;
 }

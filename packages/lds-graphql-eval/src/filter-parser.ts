@@ -27,6 +27,7 @@ import {
     DoubleLiteral,
     IntLiteral,
     JsonExtract,
+    NotPredicate,
     NullComparisonOperator,
     NullComparisonPredicate,
     NullValue,
@@ -67,6 +68,7 @@ import {
 } from './util';
 import { flatMap, flatten } from './util/flatten';
 
+const NotOperator = 'not';
 const { eq, ne, gt, gte, lt, lte, nin, like } = ComparisonOperator;
 const inOp = ComparisonOperator.in;
 
@@ -139,6 +141,13 @@ function filter<T extends LuvioValueNode>(
         }
 
         return compoundPredicate(name, value, tableAlias, apiName, input);
+    }
+
+    if (name === NotOperator) {
+        return fieldsToFilters([value], tableAlias, apiName, input).map((result) => {
+            const predicate: NotPredicate = { type: PredicateType.not, child: result.predicate };
+            return { ...result, predicate };
+        });
     }
 
     if (!isObjectValueNode(value)) {

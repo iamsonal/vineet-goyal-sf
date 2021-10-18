@@ -21,6 +21,7 @@ import {
     PredicateType,
     ValueType,
 } from '../Predicate';
+import { makeGraphQL } from './util';
 
 const { eq, ne, gt, gte, lt, lte, nin } = ComparisonOperator;
 const inOp = ComparisonOperator.in;
@@ -31,37 +32,6 @@ function findWhereArg(document: LuvioDocumentNode): LuvioArgumentNode | undefine
         return args.filter((node) => node.name === 'where');
     })[0];
 }
-
-function makeGraphQL(where: string): string {
-    return /* GraphQL */ `
-    query {
-        uiapi {
-            query {
-                TimeSheet(where: ${where})
-                    @connection {
-                    edges {
-                        node @resource(type: "Record") {
-                            Id
-                        }
-                    }
-                }
-            }
-        }
-    }
-`;
-}
-
-// * date values work with operators
-// * date literals work with operators
-// * date null value works with operators
-// * date disallows invalid input
-// * date set works with literals and values
-
-// * datetime values work with operators
-// * datetime literals work with operators
-// * datetime null value works with operators
-// * datetime disallows invalid input
-// * datetime set works with literals and value
 
 function testOperatorResult(
     source: string,

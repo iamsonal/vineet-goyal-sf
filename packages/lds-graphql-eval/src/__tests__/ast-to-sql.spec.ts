@@ -4,6 +4,7 @@ import infoJson from './mockData/objectInfos.json';
 import { unwrappedValue } from '../Result';
 import { ObjectInfoMap } from '../info-types';
 import { sql } from '../ast-to-sql';
+import { makeGraphQL } from './util';
 
 const objectInfoMap = infoJson as ObjectInfoMap;
 const sqlMappingInput = {
@@ -335,6 +336,79 @@ describe('ast-parser', () => {
             `)) ) as json`;
 
         const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+    });
+
+    const grandParentNot = /* GraphQL */ ` { 
+        CreatedBy: { 
+            CreatedBy: {
+                not: { 
+                    Email: { eq: "xyz" } 
+                }
+                Email: { eq: "abc" }
+            } 
+        }
+    }`;
+
+    const parentNot = /* GraphQL */ ` { 
+        CreatedBy: { 
+            not: { 
+                CreatedBy: {
+                        Email: { eq: "xyz" } 
+                }
+            }
+            CreatedBy: {
+                Email: { eq: "abc" } 
+            } 
+        }
+    }`;
+
+    const rootNot = /* GraphQL */ ` { 
+        not: { 
+            CreatedBy: { 
+                CreatedBy: {
+                        Email: { eq: "xyz" } 
+                }
+            }
+        }
+        CreatedBy: { 
+            CreatedBy: {
+                    Email: { eq: "abc" } 
+            }
+        }
+    }`;
+
+    it.each([
+        ['grand parent', grandParentNot],
+        ['parent', parentNot],
+        ['root', rootNot],
+    ])('not at %s level produces correct NOT sql', (_, source) => {
+        const expected =
+            `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
+            `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')) )) ` +
+            `FROM (SELECT ` +
+            `'TimeSheet.CreatedBy.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.CreatedBy.JSON', ` +
+            `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
+            `'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
+            `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet' ` +
+            `join TABLE_1 as 'TimeSheet.CreatedBy.CreatedBy' ` +
+            `join TABLE_1 as 'TimeSheet.CreatedBy' ` +
+            `WHERE ( ` +
+            `json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.id') AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
+            `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.JSON", '$.data.id') AND ` +
+            `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
+            `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' AND ` +
+            `NOT (json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = 'xyz') AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = 'abc' ) ` +
+            `)) ) as json`;
+
+        const graphqlSource = makeGraphQL(source, 'TimeSheetNumber {value}');
+        const result = transform(parser.default(graphqlSource), {
+            userId: 'MyId',
+            objectInfoMap,
+        });
+
         expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
     });
 });

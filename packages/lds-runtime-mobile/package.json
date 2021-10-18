@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-runtime-mobile",
-    "version": "1.29.0",
+    "version": "1.30.0",
     "description": "LDS engine instance for mobile/hybrid runtimes.",
     "license": "MIT",
     "main": "dist/ldsEngineRuntimeMobile.js",
@@ -20,13 +20,13 @@
     "dependencies": {
         "@luvio/engine": "0.55.0",
         "@luvio/environments": "0.55.0",
-        "@salesforce/lds-bindings": "1.29.0",
-        "@salesforce/lds-network-adapter": "1.29.0"
+        "@salesforce/lds-bindings": "1.30.0",
+        "@salesforce/lds-network-adapter": "1.30.0"
     },
     "devDependencies": {
-        "@mobileplatform/nimbus-plugin-lds": "1.29.0",
-        "@salesforce/lds-adapters-uiapi": "1.29.0",
-        "@salesforce/lds-drafts": "1.29.0",
+        "@mobileplatform/nimbus-plugin-lds": "1.30.0",
+        "@salesforce/lds-adapters-uiapi": "1.30.0",
+        "@salesforce/lds-drafts": "1.30.0",
         "@salesforce/user": "0.0.12"
     }
 }

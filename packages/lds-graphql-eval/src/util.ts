@@ -8,6 +8,7 @@ import {
     DoubleLiteral,
     Expression,
     IntLiteral,
+    isBetweenPredicate,
     isComparisonPredicate,
     isCompoundPredicate,
     isNotPredicate,
@@ -107,7 +108,10 @@ export function combinePredicates(predicates: Predicate[], operator: CompoundOpe
 
     const compares = predicates.filter(
         (pred) =>
-            isComparisonPredicate(pred) || isNullComparisonPredicate(pred) || isNotPredicate(pred)
+            isComparisonPredicate(pred) ||
+            isNullComparisonPredicate(pred) ||
+            isBetweenPredicate(pred) ||
+            isNotPredicate(pred)
     );
 
     const children = [...compares, ...flattened, ...otherCompoundPredicates];

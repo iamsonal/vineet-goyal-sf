@@ -1,6 +1,7 @@
 export enum PredicateType {
     compound = 'compound',
     comparison = 'comparison',
+    between = 'between',
     not = 'not',
     nullComparison = 'nullComparison',
 }
@@ -32,6 +33,11 @@ export enum DateEnumType {
     tomorrow,
 }
 
+export enum DateRangeEnumType {
+    last_n_months,
+    last_n_days,
+}
+
 export enum FieldType {
     Child = 'ChildField',
     Scalar = 'ScalarField',
@@ -50,9 +56,12 @@ export enum ValueType {
     DateEnum = 'DateEnum',
     DateValue = 'DateValue',
     DateArray = 'DateArray',
+    DateRange = 'DateRange',
     DateTimeEnum = 'DateTimeEnum',
     DateTimeValue = 'DateTimeValue',
     DateTimeArray = 'DateTimeArray',
+    DateTimeRange = 'DateTimeRange',
+    RelativeDate = 'RelativeDate',
     NullValue = 'NullValue',
 }
 
@@ -67,6 +76,7 @@ export type LiteralValue =
     | DateTimeInput
     | DateArray
     | DateTimeArray
+    | RelativeDate
     | NullValue;
 
 interface Value<Type, ValueType> {
@@ -76,6 +86,26 @@ interface Value<Type, ValueType> {
 
 export interface NullValue {
     type: ValueType.NullValue;
+}
+
+export interface DateRange {
+    type: ValueType.DateRange;
+    start: RelativeDate;
+    end: RelativeDate;
+}
+
+export interface DateTimeRange {
+    type: ValueType.DateTimeRange;
+    start: RelativeDate;
+    end: RelativeDate;
+}
+
+export interface RelativeDate {
+    type: ValueType.RelativeDate;
+    unit: 'month' | 'day';
+    amount: number;
+    offset: 'start' | 'end' | undefined;
+    hasTime: boolean;
 }
 
 export type StringLiteral = Value<ValueType.StringLiteral, string>;
@@ -88,8 +118,8 @@ export type DateEnum = Value<ValueType.DateEnum, DateEnumType>;
 export type DateValue = Value<ValueType.DateValue, string>;
 export type DateTimeEnum = Value<ValueType.DateTimeEnum, DateEnumType>;
 export type DateTimeValue = Value<ValueType.DateTimeValue, string>;
-export type DateInput = DateValue | DateEnum | NullValue;
-export type DateTimeInput = DateTimeValue | DateTimeEnum | NullValue;
+export type DateInput = DateValue | DateEnum | DateRange | NullValue;
+export type DateTimeInput = DateTimeValue | DateTimeEnum | DateTimeRange | NullValue;
 export type DateArray = Value<ValueType.DateArray, DateInput[]>;
 export type DateTimeArray = Value<ValueType.DateTimeArray, DateTimeInput[]>;
 
@@ -98,6 +128,13 @@ export interface ComparisonPredicate {
     operator: ComparisonOperator;
     left: JsonExtract;
     right: Expression;
+}
+
+export interface BetweenPredicate {
+    type: PredicateType.between;
+    compareDate: JsonExtract;
+    start: RelativeDate;
+    end: RelativeDate;
 }
 
 export interface NotPredicate {
@@ -159,6 +196,7 @@ export type Expression = LiteralValue | JsonExtract;
 export type Predicate =
     | CompoundPredicate
     | ComparisonPredicate
+    | BetweenPredicate
     | NotPredicate
     | NullComparisonPredicate;
 
@@ -168,6 +206,10 @@ export function isCompoundPredicate(predicate: Predicate): predicate is Compound
 
 export function isComparisonPredicate(predicate: Predicate): predicate is ComparisonPredicate {
     return predicate.type === PredicateType.comparison;
+}
+
+export function isBetweenPredicate(predicate: Predicate): predicate is BetweenPredicate {
+    return predicate.type === PredicateType.between;
 }
 
 export function isNullComparisonPredicate(

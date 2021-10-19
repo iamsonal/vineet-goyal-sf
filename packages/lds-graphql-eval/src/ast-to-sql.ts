@@ -15,8 +15,11 @@ import {
     isComparisonPredicate,
     NullComparisonPredicate,
     NullComparisonOperator,
+    isBetweenPredicate,
+    BetweenPredicate,
     isNullComparisonPredicate,
     NotPredicate,
+    RelativeDate,
 } from './Predicate';
 
 export interface SqlMappingInput {
@@ -91,6 +94,10 @@ function predicateToSql(predicate: Predicate): string {
         return comparisonPredicateToSql(predicate);
     }
 
+    if (isBetweenPredicate(predicate)) {
+        return betweenPredicateToSql(predicate);
+    }
+
     if (isNullComparisonPredicate(predicate)) {
         return nullComparisonPredicateToSql(predicate);
     }
@@ -111,6 +118,14 @@ function comparisonPredicateToSql(predicate: ComparisonPredicate): string {
     const right = expressionToSql(predicate.right);
 
     return `${left} ${operator} ${right}`;
+}
+
+function betweenPredicateToSql(predicate: BetweenPredicate): string {
+    const start = expressionToSql(predicate.start);
+    const end = expressionToSql(predicate.end);
+    const compareDate = expressionToSql(predicate.compareDate);
+
+    return `${compareDate} BETWEEN ${start} AND ${end}`;
 }
 
 function notPredicateToSql(predicate: NotPredicate): string {
@@ -150,11 +165,30 @@ function expressionToSql(expression: Expression): string {
             return `(${expression.value.map((e) => expressionToSql(e)).join(', ')})`;
         case ValueType.DateArray:
             return `(${expression.value.map((e) => expressionToSql(e)).join(', ')})`;
-
+        case ValueType.DateRange:
+        case ValueType.DateTimeRange:
+            return ``;
+        case ValueType.RelativeDate:
+            return relativeDateToSql(expression);
         case ValueType.DateValue:
         case ValueType.DateTimeValue:
         case ValueType.StringLiteral:
             return `'${expression.value}'`;
+    }
+}
+
+function relativeDateToSql(expression: RelativeDate): string {
+    const funcName = expression.hasTime ? 'datetime' : 'date';
+    switch (expression.unit) {
+        case 'month':
+            if (expression.offset === 'end') {
+                return `${funcName}('now', 'start of month', '${
+                    expression.amount + 1
+                } months', '-1 day')`;
+            }
+            return `${funcName}('now', 'start of month', '${expression.amount} months')`;
+        case 'day':
+            return `${funcName}('now', '${expression.amount} days')`;
     }
 }
 

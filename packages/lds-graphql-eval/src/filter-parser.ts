@@ -17,23 +17,25 @@ import { DataType, ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './inf
 import {
     BooleanLiteral,
     ComparisonOperator,
-    ComparisonPredicate,
     CompoundOperator,
     DateArray,
     DateEnumType,
     DateInput,
+    DateRange,
     DateTimeArray,
     DateTimeInput,
+    DateTimeRange,
     DoubleLiteral,
     IntLiteral,
     JsonExtract,
     NotPredicate,
     NullComparisonOperator,
-    NullComparisonPredicate,
     NullValue,
     NumberArray,
+    Predicate,
     PredicateContainer,
     PredicateType,
+    RelativeDate,
     StringArray,
     StringLiteral,
     ValueType,
@@ -197,7 +199,6 @@ function spanningFilter(
     });
 }
 
-//{fieldName: {op: ....}}
 function fieldFilter(
     fieldName: string,
     fieldNode: LuvioObjectValueNode,
@@ -223,20 +224,28 @@ function fieldFilter(
         return failure(operators.error);
     }
 
-    const comparisons = operators.value.map((op: ScalarOperators | SetOperators | NullOperator):
-        | ComparisonPredicate
-        | NullComparisonPredicate => {
-        const left: JsonExtract = {
-            type: ValueType.Extract,
-            jsonAlias: alias,
-            path: extractPath(fieldName),
-        };
-        if (op.type === 'NullOperator') {
-            return { type: PredicateType.nullComparison, left, operator: op.operator };
-        }
+    const comparisons = operators.value.map(
+        (op: ScalarOperators | SetOperators | NullOperator): Predicate => {
+            const extract: JsonExtract = {
+                type: ValueType.Extract,
+                jsonAlias: alias,
+                path: extractPath(fieldName),
+            };
+            if (op.type === 'NullOperator') {
+                return { type: PredicateType.nullComparison, left: extract, operator: op.operator };
+            }
 
-        return comparison(left, op.operator, op.value);
-    });
+            if (op.type === 'DateOperator' && op.value.type === ValueType.DateRange) {
+                return dateRangeComparison(op.value, op.operator, extract);
+            }
+
+            if (op.type === 'DateTimeOperator' && op.value.type === ValueType.DateTimeRange) {
+                return dateRangeComparison(op.value, op.operator, extract);
+            }
+
+            return comparison(extract, op.operator, op.value);
+        }
+    );
 
     const container = {
         predicate: combinePredicates(comparisons, CompoundOperator.and),
@@ -244,6 +253,40 @@ function fieldFilter(
         joinPredicates: [],
     };
     return success(container);
+}
+
+export function dateRangeComparison(
+    dateRange: DateRange | DateTimeRange,
+    operator: ScalarOperatorType,
+    compareDate: JsonExtract
+): Predicate {
+    switch (operator) {
+        case eq:
+            return {
+                type: PredicateType.between,
+                compareDate,
+                start: dateRange.start,
+                end: dateRange.end,
+            };
+        case ne:
+            return {
+                type: PredicateType.not,
+                child: {
+                    type: PredicateType.between,
+                    compareDate,
+                    start: dateRange.start,
+                    end: dateRange.end,
+                },
+            };
+        case lt:
+            return comparison(compareDate, lt, dateRange.start);
+        case lte:
+            return comparison(compareDate, lte, dateRange.end);
+        case gt:
+            return comparison(compareDate, gt, dateRange.end);
+        case gte:
+            return comparison(compareDate, gte, dateRange.start);
+    }
 }
 
 type ScalarOperatorType =
@@ -533,31 +576,33 @@ function operatorWithValue(
 }
 
 function dateInput(node: LuvioValueNode): Result<DateInput, PredicateError> {
-    return parseDateNode(node, dateRegEx, 'Date', 'YYYY-MM-DD').map((result) => {
+    return parseDateNode(node, dateRegEx, false, 'YYYY-MM-DD').map((result) => {
         switch (result.type) {
             case ValueType.NullValue:
                 return result;
             case ValueType.StringLiteral:
                 return { type: ValueType.DateValue, value: result.value };
-            default:
+            case 'range':
+                return { type: ValueType.DateRange, start: result.start, end: result.end };
+            case 'enum':
                 return { type: ValueType.DateEnum, value: result.value };
         }
     });
 }
 
 function dateTimeInput(node: LuvioValueNode): Result<DateTimeInput, PredicateError> {
-    return parseDateNode(node, dateTimeRegEx, 'DateTime', 'YYYY-MM-DDTHH:MM:SS.SSSZ').map(
-        (result) => {
-            switch (result.type) {
-                case ValueType.NullValue:
-                    return result;
-                case ValueType.StringLiteral:
-                    return { type: ValueType.DateTimeValue, value: result.value };
-                default:
-                    return { type: ValueType.DateTimeEnum, value: result.value };
-            }
+    return parseDateNode(node, dateTimeRegEx, true, 'YYYY-MM-DDTHH:MM:SS.SSSZ').map((result) => {
+        switch (result.type) {
+            case ValueType.NullValue:
+                return result;
+            case ValueType.StringLiteral:
+                return { type: ValueType.DateTimeValue, value: result.value };
+            case 'range':
+                return { type: ValueType.DateTimeRange, start: result.start, end: result.end };
+            case 'enum':
+                return { type: ValueType.DateTimeEnum, value: result.value };
         }
-    );
+    });
 }
 
 function parseNullValue(op: string): Result<NullOperator, string> {
@@ -569,14 +614,19 @@ function parseNullValue(op: string): Result<NullOperator, string> {
     return failure(`Null can not be compared with ${op}`);
 }
 
-type DateNodeResult = StringLiteral | NullValue | { type: 'enum'; value: DateEnumType };
+type DateNodeResult =
+    | StringLiteral
+    | NullValue
+    | { type: 'enum'; value: DateEnumType }
+    | { type: 'range'; start: RelativeDate; end: RelativeDate };
 
 function parseDateNode(
     node: LuvioValueNode,
     regex: RegExp,
-    typeName: string,
+    hasTime: boolean,
     dateFormat: string
 ): Result<DateNodeResult, PredicateError> {
+    const typeName = hasTime ? 'DateTime' : 'Date';
     if (!isObjectValueNode(node)) {
         return failure(`Comparison value must be a ${typeName} input.`);
     }
@@ -612,6 +662,99 @@ function parseDateNode(
         }
 
         return failure(`${typeName} input literal field must be an enum.`);
+    }
+
+    const rangeField = node.fields['range'];
+    if (rangeField !== undefined) {
+        if (is<LuvioObjectValueNode>(rangeField, 'ObjectValue')) {
+            const fieldsField = rangeField.fields;
+            const last_n_months = fieldsField['last_n_months'];
+            if (last_n_months !== undefined) {
+                if (is<IntValueNode>(last_n_months, 'IntValue')) {
+                    const amount = -parseInt(last_n_months.value);
+                    const start: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'month',
+                        amount,
+                        offset: 'start',
+                        hasTime,
+                    };
+                    const end: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'month',
+                        amount: -1,
+                        offset: 'end',
+                        hasTime,
+                    };
+                    return success({ type: 'range', start, end });
+                }
+            }
+            const next_n_months = fieldsField['next_n_months'];
+            if (next_n_months !== undefined) {
+                if (is<IntValueNode>(next_n_months, 'IntValue')) {
+                    const amount = parseInt(next_n_months.value);
+                    const start: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'month',
+                        amount: 1,
+                        offset: 'start',
+                        hasTime,
+                    };
+                    const end: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'month',
+                        amount,
+                        offset: 'end',
+                        hasTime,
+                    };
+                    return success({ type: 'range', start, end });
+                }
+            }
+            const last_n_days = fieldsField['last_n_days'];
+            if (last_n_days !== undefined) {
+                if (is<IntValueNode>(last_n_days, 'IntValue')) {
+                    const amount = -parseInt(last_n_days.value);
+                    const start: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'day',
+                        amount,
+                        offset: undefined,
+                        hasTime,
+                    };
+                    const end: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'day',
+                        amount: 0,
+                        offset: undefined,
+                        hasTime,
+                    };
+                    return success({ type: 'range', start, end });
+                }
+            }
+            const next_n_days = fieldsField['next_n_days'];
+            if (next_n_days !== undefined) {
+                if (is<IntValueNode>(next_n_days, 'IntValue')) {
+                    const amount = parseInt(next_n_days.value);
+                    const start: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'day',
+                        amount: 1,
+                        offset: undefined,
+                        hasTime,
+                    };
+                    const end: RelativeDate = {
+                        type: ValueType.RelativeDate,
+                        unit: 'day',
+                        amount,
+                        offset: undefined,
+                        hasTime,
+                    };
+                    return success({ type: 'range', start, end });
+                }
+            }
+            return failure(`invalid date range name`);
+        }
+        return failure(`${typeName} range must be an object.`);
     }
 
     return failure(`${typeName} input must include a value or literal field.`);

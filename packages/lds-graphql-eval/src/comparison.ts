@@ -41,6 +41,15 @@ export function isExpressionEqual(lh: Expression, rh: Expression): boolean {
         return lh.value === rh.value;
     }
 
+    if (lh.type === ValueType.RelativeDate && rh.type === ValueType.RelativeDate) {
+        return (
+            lh.amount === rh.amount &&
+            lh.hasTime === rh.hasTime &&
+            lh.offset === rh.offset &&
+            lh.unit === rh.unit
+        );
+    }
+
     if (lh.type === ValueType.NullValue && rh.type === ValueType.NullValue) {
         return true;
     }
@@ -82,7 +91,7 @@ function isArrayEqual<T>(lh: T[], rh: T[], compare: (l: T, r: T) => boolean): bo
 }
 
 function isPredicateEqual(lh: Predicate, rh: Predicate): boolean {
-    const { nullComparison, not, comparison, compound } = PredicateType;
+    const { nullComparison, not, comparison, compound, between } = PredicateType;
 
     if (rh.type === nullComparison && lh.type === nullComparison) {
         return rh.operator === lh.operator && isExpressionEqual(rh.left, lh.left);
@@ -97,6 +106,14 @@ function isPredicateEqual(lh: Predicate, rh: Predicate): boolean {
             rh.operator === lh.operator &&
             isExpressionEqual(rh.left, lh.left) &&
             isExpressionEqual(rh.right, lh.right)
+        );
+    }
+
+    if (rh.type === between && lh.type === between) {
+        return (
+            isExpressionEqual(rh.compareDate, lh.compareDate) &&
+            isExpressionEqual(rh.start, lh.start) &&
+            isExpressionEqual(rh.end, lh.end)
         );
     }
 

@@ -1,5 +1,5 @@
 const { isArray } = Array;
-const { keys, freeze } = Object;
+const { keys, freeze, create } = Object;
 const { hasOwnProperty } = Object.prototype;
 const { stringify } = JSON;
 
@@ -9,6 +9,7 @@ export {
     // Object
     keys as ObjectKeys,
     freeze as ObjectFreeze,
+    create as ObjectCreate,
     // Object.prototype
     hasOwnProperty as ObjectPrototypeHasOwnProperty,
     // JSON

@@ -1,5 +1,6 @@
 import {
     AdapterFactory,
+    CacheKeySet,
     FetchResponse,
     Luvio,
     Reader,
@@ -11,6 +12,7 @@ import {
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
 import { deepFreeze, namespace, representationName, untrustedIsObject } from './util/adapter';
+import { ObjectKeys, ObjectCreate } from './util/language';
 import {
     GraphQL,
     createIngest,
@@ -82,7 +84,7 @@ function onResourceResponseSuccess(
     }
 
     const ingest = createIngest(query, variables);
-    luvio.storeIngest(GRAPHQL_ROOT_KEY, ingest, response.body.data);
+    luvio.storeIngest(GRAPHQL_ROOT_KEY, ingest, body.data);
 
     const snapshot = luvio.storeLookup(
         {
@@ -96,6 +98,54 @@ function onResourceResponseSuccess(
     luvio.storeBroadcast();
 
     return snapshot;
+}
+
+function getResponseCacheKeys(
+    luvio: Luvio,
+    config: GraphQLConfig,
+    response: FetchResponse<GraphQL>,
+    fragment: ReaderFragment
+): CacheKeySet {
+    // TODO [W-10055997]: make this more efficient
+
+    // for now we will get the cache keys by actually ingesting then looking at
+    // the store records
+    const { query, variables } = config;
+    const { body } = response;
+    if (body.errors.length > 0) {
+        return {};
+    }
+
+    const ingest = createIngest(query, variables);
+
+    // ingest mutates the response so we have to make a copy
+    const dataCopy = JSON.parse(JSON.stringify(body.data));
+    luvio.storeIngest(GRAPHQL_ROOT_KEY, ingest, dataCopy);
+    const snapshot = luvio.storeLookup(
+        {
+            recordId: GRAPHQL_ROOT_KEY,
+            node: fragment,
+            variables: {},
+        },
+        buildSnapshotRefresh(luvio, config, fragment)
+    );
+
+    if (snapshot.state === 'Error') {
+        return {};
+    }
+
+    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
+    const keySet: CacheKeySet = ObjectCreate(null);
+    for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const namespace = key.split('::')[0];
+        const representationName = key.split('::')[1].split(':')[0];
+        keySet[key] = {
+            namespace,
+            representationName,
+        };
+    }
+    return keySet;
 }
 
 function buildNetworkSnapshot(
@@ -121,7 +171,10 @@ function buildNetworkSnapshot(
     // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO - handle network error response
     return luvio.dispatchResourceRequest<any>(request).then((resp) => {
-        return onResourceResponseSuccess(luvio, config, resp, fragment);
+        return luvio.handleSuccessResponse(
+            () => onResourceResponseSuccess(luvio, config, resp, fragment),
+            () => getResponseCacheKeys(luvio, config, resp, fragment)
+        );
     });
 }
 

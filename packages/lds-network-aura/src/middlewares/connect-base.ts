@@ -10,3 +10,4 @@ export const BILLING_BASE_URI = `${BASE_URI}/billing`;
 export const INTERACTION_BASE_URI = `${CONNECT_BASE_URI}/interaction`;
 export const EXPLAINABILITY_BASE_URI = `${CONNECT_BASE_URI}/explainability-service`;
 export const SITES_BASE_URI = `${BASE_URI}/sites`;
+export const CIB_BASE_URI = `${CONNECT_BASE_URI}/financialservices`;

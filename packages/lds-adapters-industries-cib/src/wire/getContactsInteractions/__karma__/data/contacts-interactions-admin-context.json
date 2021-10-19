@@ -1,0 +1,49 @@
+{
+    "data": [
+        {
+            "contactId": "003R000000T3K4EIAV",
+            "name": "Jenetter Petrova",
+            "title": "CEO",
+            "interactions": [
+                {
+                    "id": "8bvD2000001VFYCIA4",
+                    "icon": "standard:user",
+                    "name": "Meeting with the CEO",
+                    "startDate": "2021-06-04",
+                    "isPrivate": false,
+                    "attendeesCount": 10,
+                    "users": [
+                        {
+                            "id": "8bvD2000001VFYCIA4",
+                            "name": "Pamela Hannett",
+                            "photoUrl": "/profilephoto/729D200000002H8/M",
+                            "title": "Associate"
+                        }
+                    ]
+                },
+                {
+                    "id": "",
+                    "icon": "",
+                    "name": "",
+                    "startDate": "",
+                    "isPrivate": true,
+                    "attendeesCount": 2,
+                    "users": [
+                        {
+                            "id": "8bvD2000001VFYCIA4",
+                            "name": "Roger Wallace",
+                            "photoUrl": "/profilephoto/729D200000002H8/M",
+                            "title": "Analyst"
+                        },
+                        {
+                            "id": "8bvD2000001VFYCIC3",
+                            "name": "Sandra Anik",
+                            "photoUrl": "/profilephoto/729D200000002H8/M",
+                            "title": "Analyst"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "partyId": "001D2000001VFYCIA4",
+            "name": "BNC Capital Fund",
+            "partyRoles": ["Competitor", "Partner"],
+            "contactIds": ["003D2000001VFYCIA4", "003D2000001VFYCIA4"]
+        },
+        {
+            "partyId": "001D2000001VFYCIA5",
+            "name": "Rupert Law Firm",
+            "partyRoles": ["Competitor"],
+            "contactIds": ["003D2000001VFYCIA4", "003D2000001VFYCIA4"]
+        }
+    ]
+}

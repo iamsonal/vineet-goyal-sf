@@ -1,0 +1,231 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v54.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  CompanyDealPartyListRepresentation:
+    description: List of Company deal parties
+    type: object
+    properties:
+      data:
+        description: The list of company deal parties
+        type: array
+        items:
+          type: CompanyDealPartyRepresentation
+  CompanyDealPartyRepresentation:
+    description: Output representation of a Company Deal Party
+    type: object
+    properties:
+      contactIds:
+        description: The list of contacts added with the party as FinancialDealParty
+          records
+        type: array
+        items:
+          type: string
+      name:
+        description: The name of the Party in a FinancialDealParty record
+        type: string
+      partyId:
+        description: The partyId in a FinancialDealParty record
+        type: string
+      partyRoles:
+        description: The roles of the Party in a FinancialDealParty record
+        type: array
+        items:
+          type: string
+  ContactInteractionsListRepresentation:
+    description: List of contacts along with the related interactions
+    type: object
+    properties:
+      data:
+        description: List of Contacts with the related Interactions
+        type: array
+        items:
+          type: ContactInteractionsRepresentation
+  ContactInteractionsRepresentation:
+    description: Shows the contact info along with the Interactions
+    type: object
+    properties:
+      contactId:
+        description: The recordId of the Contact
+        type: string
+      interactions:
+        description: List of interactions for the given contact
+        type: array
+        items:
+          type: InteractionRepresentation
+      name:
+        description: The name of the Contact
+        type: string
+      title:
+        description: The title of the Contact
+        type: string
+  ContactRepresentation:
+    description: Contact record
+    type: object
+    properties:
+      id:
+        description: The record Id of the Contact
+        type: string
+      interactionsCount:
+        description: The interaction count for the Contact
+        type: integer
+      name:
+        description: The name of the Contact
+        type: string
+      title:
+        description: The title of the Contact
+        type: string
+  ContactsRepresentation:
+    description: List of contacts
+    type: object
+    properties:
+      contacts:
+        description: List of Contacts
+        type: array
+        items:
+          type: ContactRepresentation
+      isDirectContacts:
+        description: Boolean that determines if we are querying direct contacts
+        type: boolean
+      nextOffset:
+        description: The next offset for querying contacts
+        type: integer
+  InteractionRepresentation:
+    description: Output representation of an Interaction
+    type: object
+    properties:
+      attendeesCount:
+        description: The total number of attendees added on the interaction
+        type: integer
+      icon:
+        description: The icon of the Interaction. This could be either SLDS icon or
+          a file url
+        type: string
+      id:
+        description: The recordId of the Interaction
+        type: string
+      isPrivate:
+        description: Flag to check if Interaction is visible to current user or not
+        type: boolean
+      name:
+        description: The name of the Interaction
+        type: string
+      startDate:
+        description: The start date of the Interaction
+        type: string
+      users:
+        description: List of users added as Attendee on the interaction
+        type: array
+        items:
+          type: UserRepresentation
+  UserRepresentation:
+    description: Output representation for a user
+    type: object
+    properties:
+      id:
+        description: The recordId of the User
+        type: string
+      name:
+        description: The name of the User
+        type: string
+      photoUrl:
+        description: The profile photo url of the User
+        type: string
+      title:
+        description: The title of the user
+        type: string
+/connect/financialservices:
+  /contacts-interactions:
+    get:
+      description: Get a list of interactions and connections for given contacts
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ContactInteractionsListRepresentation
+      queryParameters:
+        contactIds:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        relatedRecordId:
+          type: string
+          required: false
+        systemContext:
+          type: boolean
+          required: false
+  /deal-parties/{financialDealId}:
+    get:
+      description: Get list of company deal parties
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: CompanyDealPartyListRepresentation
+      queryParameters:
+        partyRoles:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      financialDealId:
+        type: string
+        required: true
+  /interaction-insights/{accountId}:
+    get:
+      description: Get list of contacts
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ContactsRepresentation
+      queryParameters:
+        isDirectContacts:
+          type: boolean
+          required: false
+        limit:
+          type: integer
+          required: false
+        offset:
+          type: integer
+          required: false
+        showACR:
+          type: boolean
+          required: false
+        systemContext:
+          type: boolean
+          required: false
+    uriParameters:
+      accountId:
+        type: string
+        required: true

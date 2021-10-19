@@ -1,0 +1,18 @@
+{
+    "isDirectContacts": false,
+    "nextOffset": 11,
+    "contacts": [
+        {
+            "id": "0030000003Kee",
+            "interactionsCount": 20,
+            "name": "Test Contact",
+            "title": "Analyst"
+        },
+        {
+            "id": "0030000003Kee",
+            "interactionsCount": 2,
+            "name": "Pamela Hannet",
+            "title": "Data Analyst"
+        }
+    ]
+}

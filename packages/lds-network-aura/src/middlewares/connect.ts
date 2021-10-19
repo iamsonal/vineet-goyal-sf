@@ -11,6 +11,7 @@ import {
     BILLING_BASE_URI,
     EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
+    CIB_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_MICROBATCHING_PATH = new RegExp(
@@ -284,6 +285,21 @@ const LOYALTY_PROGRAM_PROCESS_RULE = new RegExp(
     'i'
 );
 
+const CIB_GET_CONTACTS_INTERACTIONS_PATH = new RegExp(
+    `${CIB_BASE_URI}/contacts-interactions$`,
+    'i'
+);
+
+const CIB_GET_INTERACTION_INSIGHTS_PATH = new RegExp(
+    `${CIB_BASE_URI}/interaction-insights/([A-Z0-9]){15,18}$`,
+    'i'
+);
+
+const CIB_GET_DEAL_PARTIES_PATH = new RegExp(
+    `${CIB_BASE_URI}/deal-parties/([A-Z0-9]){15,18}$`,
+    'i'
+);
+
 const connect: ApiFamily = {
     ingestRecord: {
         method: 'post',
@@ -534,6 +550,29 @@ const connect: ApiFamily = {
             path.startsWith(EXPLAINABILITY_BASE_URI) && EXPLAINABILITY_ACTION_LOG_PATH.test(path),
         transport: {
             controller: 'ExplainabilityServiceController.postExplainabilityActionLog',
+        },
+    },
+    getContactsInteractions: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(CIB_BASE_URI) && CIB_GET_CONTACTS_INTERACTIONS_PATH.test(path),
+        transport: {
+            controller: 'CibController.getContactsInteractions',
+        },
+    },
+    getInteractionInsights: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(CIB_BASE_URI) && CIB_GET_INTERACTION_INSIGHTS_PATH.test(path),
+        transport: {
+            controller: 'CibController.getInteractionInsights',
+        },
+    },
+    getDealParties: {
+        method: 'get',
+        predicate: (path) => path.startsWith(CIB_BASE_URI) && CIB_GET_DEAL_PARTIES_PATH.test(path),
+        transport: {
+            controller: 'CibController.getDealParties',
         },
     },
 };

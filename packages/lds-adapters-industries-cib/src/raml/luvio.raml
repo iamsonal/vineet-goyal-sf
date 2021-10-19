@@ -1,0 +1,33 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'cib'
+(luvio.ttl): 360000
+
+types:
+  ContactsRepresentation:
+    (luvio.ttl): 60000
+    (luvio.opaque): true
+  ContactInteractionsListRepresentation:
+    (luvio.ttl): 60000
+    (luvio.opaque): true
+  CompanyDealPartyListRepresentation:
+    (luvio.ttl): 60000
+    (luvio.opaque): true
+
+/connect/financialservices:
+  /interaction-insights/{accountId}:
+    get:
+      (luvio.adapter):
+        name: getInteractionInsights
+  /contacts-interactions:
+    get:
+      (luvio.adapter):
+        name: getContactsInteractions
+  /deal-parties/{financialDealId}:
+    get:
+      (luvio.adapter):
+        name: getDealParties

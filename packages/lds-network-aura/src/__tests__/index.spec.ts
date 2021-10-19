@@ -15,6 +15,7 @@ import {
     SCALECENTER_BASE_URI,
     EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
+    CIB_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -7059,6 +7060,123 @@ describe('routes', () => {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
                 basePath: `/communities/1234567890ABCDE/microbatching`,
+            },
+            {}
+        );
+    });
+
+    describe('get /contacts-interactions', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CIB_BASE_URI,
+                basePath: `/contacts-interactions`,
+                queryParams: {
+                    systemContext: false,
+                    contactIds: ['003R000000T3K4EIAV', '003R000000T3K49IAF'],
+                    relatedRecordId: '0lsR00000000014IAA',
+                },
+            },
+            [
+                'CibController.getContactsInteractions',
+                {
+                    systemContext: false,
+                    contactIds: ['003R000000T3K4EIAV', '003R000000T3K49IAF'],
+                    relatedRecordId: '0lsR00000000014IAA',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CIB_BASE_URI,
+            basePath: `/contacts-interactions`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CIB_BASE_URI,
+                basePath: `/contacts-interactions`,
+            },
+            {}
+        );
+    });
+
+    describe('get /interaction-insights/{accountId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CIB_BASE_URI,
+                basePath: `/interaction-insights/001D2000001VFYCIA4`,
+                queryParams: {
+                    systemConext: false,
+                    showACR: false,
+                    limit: 10,
+                    offset: 0,
+                    isDirectContacts: false,
+                },
+            },
+            [
+                'CibController.getInteractionInsights',
+                {
+                    systemConext: false,
+                    showACR: false,
+                    limit: 10,
+                    offset: 0,
+                    isDirectContacts: false,
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CIB_BASE_URI,
+            basePath: `/interaction-insights/001D2000001VFYCIA4`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CIB_BASE_URI,
+                basePath: `/interaction-insights/001D2000001VFYCIA4`,
+            },
+            {}
+        );
+    });
+
+    describe('get /deal-parties/{financialDealId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CIB_BASE_URI,
+                basePath: `/deal-parties/0lsR00000000014IAA`,
+                queryParams: {
+                    partyRoles: ['Competitor', 'Partner'],
+                },
+            },
+            [
+                'CibController.getDealParties',
+                {
+                    partyRoles: ['Competitor', 'Partner'],
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CIB_BASE_URI,
+            basePath: `/deal-parties/0lsR00000000014IAA`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CIB_BASE_URI,
+                basePath: `/deal-parties/0lsR00000000014IAA`,
             },
             {}
         );

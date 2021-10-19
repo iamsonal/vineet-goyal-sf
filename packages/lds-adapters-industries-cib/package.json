@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-cib",
-    "version": "1.29.0",
+    "version": "1.30.0",
     "description": "APIs for Corporate and Investment Banking use-cases",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-cib.js",
@@ -27,13 +27,13 @@
         "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.29.0"
+        "@salesforce/lds-bindings": "1.30.0"
     },
     "devDependencies": {
-        "@luvio/cli": "^0.53.1",
-        "@luvio/compiler": "^0.53.1",
-        "@luvio/engine": "^0.53.1",
-        "@luvio/lwc-luvio": "^0.53.1",
-        "@salesforce/lds-karma": "1.29.0"
+        "@luvio/cli": "0.55.0",
+        "@luvio/compiler": "0.55.0",
+        "@luvio/engine": "0.55.0",
+        "@luvio/lwc-luvio": "0.55.0",
+        "@salesforce/lds-karma": "1.30.0"
     }
 }

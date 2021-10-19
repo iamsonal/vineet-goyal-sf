@@ -1,0 +1,28 @@
+{
+    "channelInfo": {
+        "name": "testCollections1",
+        "resourceUrl": "/services/data/v54.0/connect/cms/delivery/channels/0apT300000000HLIAY"
+    },
+    "collectionKey": "MC3XKWIYJC2JHUDDJB3LKZHG4ICM",
+    "collectionMetadata": {
+        "description": "Sample Manual Collection",
+        "collection": {
+            "type": "news",
+            "items": [
+                {
+                    "contentKey": "MCFDEPDDO6LVCZNHLGRNK3OOMVAU",
+                    "_id": "MCFDEPDDO6LVCZNHLGRNK3OOMVAU"
+                }
+            ]
+        }
+    },
+    "collectionType": {
+        "fullyQualifiedName": "sfdc_cms__cmsManualCollection"
+    },
+    "id": "20YT300000000w7MAA",
+    "language": "en_US",
+    "publishedDate": "2021-10-05T07:32:22.000Z",
+    "schema": {},
+    "title": "My manual collection with one item",
+    "urlName": "my-manual-collection"
+}

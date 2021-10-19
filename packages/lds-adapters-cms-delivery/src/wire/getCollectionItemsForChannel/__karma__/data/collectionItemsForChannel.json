@@ -1,0 +1,33 @@
+{
+    "channelInfo": {
+        "name": "testCollections1",
+        "resourceUrl": "/services/data/v54.0/connect/cms/delivery/channels/0apT300000000HLIAY"
+    },
+    "collectionKey": "MC3XKWIYJC2JHUDDJB3LKZHG4ICM",
+    "collectionType": {
+        "fullyQualifiedName": "sfdc_cms__cmsManualCollection"
+    },
+    "id": "20YT300000000w7MAA",
+    "items": [
+        {
+            "body": {
+                "contentKey": "MCFDEPDDO6LVCZNHLGRNK3OOMVAU",
+                "publishedDate": "Oct 7, 2021 5:39:59 AM",
+                "urlName": "news-content",
+                "contentBody": {
+                    "title": "news content",
+                    "body": "&lt;html&gt;&lt;body&gt;news content&lt;/body&gt;&lt;/html&gt;",
+                    "excerpt": "news content"
+                }
+            },
+            "contentType": "news",
+            "id": "20YT300000000JkMAI",
+            "name": "news content"
+        }
+    ],
+    "language": "en_US",
+    "publishedDate": "2021-10-05T07:32:22.000Z",
+    "title": "My manual collection with one item",
+    "total": 1,
+    "urlName": "my-manual-collection"
+}

@@ -14,6 +14,12 @@ types:
   ManagedContentVersionCollectionRepresentation:
     (luvio.ttl): 3600000
     (luvio.opaque): true
+  ManagedContentCollectionItemsRepresentation:
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
+  ManagedContentCollectionMetadataRepresentation:
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
 
 /connect/communities/{communityId}/managed-content/delivery/contents:
   get:
@@ -23,3 +29,19 @@ types:
   get:
     (luvio.adapter):
       name: listContent
+/connect/sites/{siteId}/cms/delivery/collections/{collectionKeyOrId}:
+  get:
+    (luvio.adapter):
+      name: getCollectionItemsForSite
+/connect/sites/{siteId}/cms/delivery/collections/{collectionKeyOrId}/metadata:
+  get:
+    (luvio.adapter):
+      name: getCollectionMetadataForSite
+/connect/cms/delivery/channels/{channelId}/collections/{collectionKeyOrId}:
+  get:
+    (luvio.adapter):
+      name: getCollectionItemsForChannel
+/connect/cms/delivery/channels/{channelId}/collections/{collectionKeyOrId}/metadata:
+  get:
+    (luvio.adapter):
+      name: getCollectionMetadataForChannel

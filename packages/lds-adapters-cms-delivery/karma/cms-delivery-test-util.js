@@ -60,6 +60,110 @@ function getListContentMatcher(config) {
     });
 }
 
+function mockCollectionItemsForSiteMatcher(config, mockData) {
+    const paramMatch = getCollectionItemsForSiteMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCollectionItemsForSiteMatcherErrorOnce(config, mockData) {
+    const paramMatch = getCollectionItemsForSiteMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getCollectionItemsForSiteMatcher(config) {
+    let { siteId, collectionKeyOrId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/sites/${siteId}/cms/delivery/collections/${collectionKeyOrId}`,
+        queryParams: {},
+    });
+}
+
+function mockCollectionsMetadataForSiteMatcher(config, mockData) {
+    const paramMatch = getCollectionsMetadataForSiteMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCollectionsMetadataForSiteMatcherErrorOnce(config, mockData) {
+    const paramMatch = getCollectionsMetadataForSiteMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getCollectionsMetadataForSiteMatcher(config) {
+    let { siteId, collectionKeyOrId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/sites/${siteId}/cms/delivery/collections/${collectionKeyOrId}/metadata`,
+        queryParams: {},
+    });
+}
+
+function mockCollectionItemsForChannelMatcher(config, mockData) {
+    const paramMatch = getCollectionItemsMatcherForChannel(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCollectionItemsForChannelMatcherErrorOnce(config, mockData) {
+    const paramMatch = getCollectionItemsMatcherForChannel(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getCollectionItemsMatcherForChannel(config) {
+    let { channelId, collectionKeyOrId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/delivery/channels/${channelId}/collections/${collectionKeyOrId}`,
+        queryParams: {},
+    });
+}
+
+function mockCollectionMetadtaForChannelMatcher(config, mockData) {
+    const paramMatch = getCollectionMetadataMatcherForChannel(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCollectionMetadataForChannelMatcherErrorOnce(config, mockData) {
+    const paramMatch = getCollectionMetadataMatcherForChannel(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getCollectionMetadataMatcherForChannel(config) {
+    let { channelId, collectionKeyOrId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/delivery/channels/${channelId}/collections/${collectionKeyOrId}/metadata`,
+        queryParams: {},
+    });
+}
+
 function clearContentListCache() {
     clearCache();
 }
@@ -77,6 +181,14 @@ export {
     mockListContentInternalErrorOnce,
     mockListContent,
     mockListContentErrorOnce,
+    mockCollectionItemsForSiteMatcher,
+    mockCollectionItemsForSiteMatcherErrorOnce,
+    mockCollectionsMetadataForSiteMatcher,
+    mockCollectionsMetadataForSiteMatcherErrorOnce,
+    mockCollectionItemsForChannelMatcher,
+    mockCollectionItemsForChannelMatcherErrorOnce,
+    mockCollectionMetadtaForChannelMatcher,
+    mockCollectionMetadataForChannelMatcherErrorOnce,
     expireContentList,
     clearContentListCache,
 };

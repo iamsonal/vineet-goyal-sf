@@ -177,6 +177,26 @@ const LIST_CONTENT_PATH = new RegExp(
     'i'
 );
 
+const GET_COLLECTION_ITEMS_FOR_SITE = new RegExp(
+    `${CONNECT_BASE_URI}/sites/([A-Z0-9]){15,18}/cms/delivery/collections/([A-Z0-9]){1,28}$`,
+    'i'
+);
+
+const GET_COLLECTION_METADATA_FOR_SITE = new RegExp(
+    `${CONNECT_BASE_URI}/sites/([A-Z0-9]){15,18}/cms/delivery/collections/([A-Z0-9]){1,28}/metadata$`,
+    'i'
+);
+
+const GET_COLLECTION_ITEMS_FOR_CHANNEL = new RegExp(
+    `${CONNECT_BASE_URI}/cms/delivery/channels/([A-Z0-9]){15,18}/collections/([A-Z0-9]){1,28}$`,
+    'i'
+);
+
+const GET_COLLECTION_METADATA_FOR_CHANNEL = new RegExp(
+    `${CONNECT_BASE_URI}/cms/delivery/channels/([A-Z0-9]){15,18}/collections/([A-Z0-9]){1,28}/metadata$`,
+    'i'
+);
+
 const CREATE_DEPLOYMENT_PATH = new RegExp(`${CMS_NON_CONNECT_BASE_URI}/deployments`, 'i');
 
 const CREATE_MANAGED_CONTENT_PATH = new RegExp(`${CMS_BASE_URI}/contents`, 'i');
@@ -364,6 +384,38 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && LIST_CONTENT_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.getManagedContentByTopicsAndContentKeys',
+        },
+    },
+    getCollectionItemsForSite: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_COLLECTION_ITEMS_FOR_SITE.test(path),
+        transport: {
+            controller: 'ManagedContentDeliveryController.getCollectionItemsForSite',
+        },
+    },
+    getCollectionMetadataForSite: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_COLLECTION_METADATA_FOR_SITE.test(path),
+        transport: {
+            controller: 'ManagedContentDeliveryController.getCollectionMetadataForSite',
+        },
+    },
+    getCollectionItemsForChannel: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_COLLECTION_ITEMS_FOR_CHANNEL.test(path),
+        transport: {
+            controller: 'ManagedContentDeliveryController.getCollectionItemsForChannel',
+        },
+    },
+    getCollectionMetadataForChannel: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_COLLECTION_METADATA_FOR_CHANNEL.test(path),
+        transport: {
+            controller: 'ManagedContentDeliveryController.getCollectionMetadataForChannel',
         },
     },
     createDeployment: {

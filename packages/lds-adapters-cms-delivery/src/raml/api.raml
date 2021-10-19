@@ -155,6 +155,134 @@ types:
       isDomainLocked:
         description: If the channel domain is editable.
         type: boolean
+  ManagedContentChannelSummaryRepresentation:
+    description: Contextual Information of the channel in managed content delivery
+      api
+    type: object
+    properties:
+      name:
+        description: Name of the managed content channel
+        type: string
+      resourceUrl:
+        description: Resource Url to fetch complete information of the channel
+        type: string
+      targetSummary:
+        description: Information of the Target Entity associated with this channel
+        type: ManagedContentChannelTargetSummaryRepresentation
+        required: false # TODO W-8891123 Hand rolled
+  ManagedContentChannelTargetSummaryRepresentation:
+    description: Contextual Information of the channel in managed content delivery
+      api
+    type: object
+    properties:
+      id:
+        description: Id of the target entity associated with the channel
+        type: string
+  ManagedContentCollectionItemRepresentation:
+    description: Compact information about a content.
+    type: object
+    properties:
+      body:
+        description: Get the content body of collection item
+        type: object
+        properties:
+          //:
+            type: any # TODO W-8863405 Hand Rolled
+      contentType:
+        description: The type of the collection item.
+        type: string
+      id:
+        description: The unique identifier of collection item.
+        type: string
+      name:
+        description: The name or title for collection item
+        type: string
+  ManagedContentCollectionItemsRepresentation:
+    description: Information about collection Items.
+    type: object
+    properties:
+      channelInfo:
+        description: The contextual information of the managed content channel
+        type: ManagedContentChannelSummaryRepresentation
+      collectionKey:
+        description: The collection key
+        type: string
+      collectionType:
+        description: Type of the collection.
+        type: ManagedContentTypeSummaryRepresentation
+      id:
+        description: The id of the collection
+        type: string
+      items:
+        description: Collection Items for this page.
+        type: array
+        items:
+          type: ManagedContentCollectionItemRepresentation
+      language:
+        description: language of the collection.
+        type: string
+      publishedDate:
+        description: Published Date of the collection.
+        type: string
+      title:
+        description: Title of the collection.
+        type: string
+      total:
+        description: Total number of items in current collection detail page.
+        type: integer
+      urlName:
+        description: URL Name of the collection.
+        type: string
+  ManagedContentCollectionMetadataRepresentation:
+    description: Collection Metadata.
+    type: object
+    properties:
+      channelInfo:
+        description: The contextual information of the channel
+        type: ManagedContentChannelSummaryRepresentation
+      collectionKey:
+        description: Globally unique identifier of a collection and doesn't change
+          when collection is moved between production and sandbox environments.
+        type: string
+      collectionMetadata:
+        description: The basic metadata of the collection
+        type: object
+        properties:
+          //:
+            type: any # TODO W-8863405 Hand Rolled
+      collectionType:
+        description: The type of collection.
+        type: ManagedContentTypeSummaryRepresentation
+      id:
+        description: Id of the collection.
+        type: string
+      language:
+        description: The language of the collection.
+        type: string
+      publishedDate:
+        description: The last time the collection has been published.
+        type: string
+      schema:
+        description: The expanded type metadata of the collection
+        type: object
+        properties:
+          //:
+            type: any # TODO W-8863405 Hand Rolled
+      title:
+        description: The title of the collection.
+        type: string
+      urlName:
+        description: The content url name of the collection.
+        type: string
+  ManagedContentCollectionRepresentation:
+    description: The output representation of a list of contents
+    type: object
+    properties:
+      contents:
+        description: List of contents
+        type: array
+        items:
+          type: ManagedContentRepresentation
   ManagedContentDateAndTimeNodeValueRepresentation:
     description: Information about a managed content node of datetime type.
     discriminatorValue: Date # TODO: hand rolled
@@ -862,6 +990,13 @@ types:
       urlName:
         description: Indicates the url name of a variation
         type: string
+  ManagedContentTypeSummaryRepresentation:
+    description: Information about a managed content type.
+    type: object
+    properties:
+      fullyQualifiedName:
+        description: fully qualified name of a managed content type.
+        type: string
   ManagedContentVariantRepresentation:
     description: Information about a managed content variant
     type: object
@@ -1404,6 +1539,42 @@ types:
               type: integer
               required: false
       /channels/{channelId}:
+        /collections/{collectionKeyOrId}:
+          get:
+            description: Get collection Items.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: ManagedContentCollectionItemsRepresentation
+          uriParameters:
+            channelId:
+              type: string
+              required: true
+            collectionKeyOrId:
+              type: string
+              required: true
+        /collections/{collectionKeyOrId}/metadata:
+          get:
+            description: Get collection metadata.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: ManagedContentCollectionMetadataRepresentation
+            queryParameters:
+              expandMetadata:
+                type: boolean
+                required: false
+          uriParameters:
+            channelId:
+              type: string
+              required: true
+            collectionKeyOrId:
+              type: string
+              required: true
         /contents:
           /query:
             get:
@@ -2002,3 +2173,39 @@ types:
           application/json:
             type: ManagedContentTranslationRequestInputRep
             (oas-body-name): translationRequest
+  /sites/{siteId}/cms/delivery/collections/{collectionKeyOrId}:
+    get:
+      description: Get collection Items.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentCollectionItemsRepresentation
+    uriParameters:
+      collectionKeyOrId:
+        type: string
+        required: true
+      siteId:
+        type: string
+        required: true
+  /sites/{siteId}/cms/delivery/collections/{collectionKeyOrId}/metadata:
+    get:
+      description: Get collection metadata.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentCollectionMetadataRepresentation
+      queryParameters:
+        expandMetadata:
+          type: boolean
+          required: false
+    uriParameters:
+      collectionKeyOrId:
+        type: string
+        required: true
+      siteId:
+        type: string
+        required: true

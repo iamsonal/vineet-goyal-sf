@@ -6044,6 +6044,114 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/sites/{siteId}/cms/delivery/collections/{collectionKeyOrId}/metadata', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sites/0DMT300000000idOAA/cms/delivery/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM/metadata`,
+            },
+            [
+                'ManagedContentDeliveryController.getCollectionMetadataForSite',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/sites/0DMT300000000idOAA/cms/delivery/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM/metadata`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sites/0DMT300000000idOAA/cms/delivery/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM/metadata`,
+            },
+            {}
+        );
+    });
+
+    describe('get /connect/sites/{siteId}/cms/delivery/collections/{collectionKeyOrId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sites/0DMT300000000idOAA/cms/delivery/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM`,
+            },
+            [
+                'ManagedContentDeliveryController.getCollectionItemsForSite',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/sites/0DMT300000000idOAA/cms/delivery/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sites/0DMT300000000idOAA/cms/delivery/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM`,
+            },
+            {}
+        );
+    });
+
+    describe('get /connect/cms/delivery/channels/{channelId}/collections/{collectionKeyOrId}/metadata', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/delivery/channels/0apT300000000HLIAY/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM/metadata`,
+            },
+            [
+                'ManagedContentDeliveryController.getCollectionMetadataForChannel',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/cms/delivery/channels/0apT300000000HLIAY/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM/metadata`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/delivery/channels/0apT300000000HLIAY/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM/metadata`,
+            },
+            {}
+        );
+    });
+
+    describe('get /connect/cms/delivery/channels/{channelId}/collections/{collectionKeyOrId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/delivery/channels/0apT300000000HLIAY/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM`,
+            },
+            [
+                'ManagedContentDeliveryController.getCollectionItemsForChannel',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/cms/delivery/channels/0apT300000000HLIAY/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/delivery/channels/0apT300000000HLIAY/collections/MC3XKWIYJC2JHUDDJB3LKZHG4ICM`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/communities/{communityId}/seo/properties/{recordId}', () => {
         testControllerInput(
             {

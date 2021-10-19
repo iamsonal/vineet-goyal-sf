@@ -6,6 +6,9 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
+    DispatchResourceRequest,
+    AdapterRequestContext,
+    StoreLookup,
 } from '@luvio/engine';
 import {
     AdapterValidationConfig,
@@ -136,6 +139,44 @@ export function buildInMemorySnapshot(luvio: Luvio, config: GetLayoutConfigWithD
     );
 }
 
+type BuildSnapshotContext = {
+    luvio: Luvio;
+    config: GetLayoutConfigWithDefaults;
+};
+
+export function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
+    _dispatchResourceRequest: DispatchResourceRequest<RecordLayoutRepresentation>
+): Promise<Snapshot<RecordLayoutRepresentation, any>> {
+    const { luvio, config } = context;
+    return buildNetworkSnapshot(luvio, config);
+}
+
+export function buildInMemorySnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordLayoutRepresentation>
+): Snapshot<RecordLayoutRepresentation, any> {
+    const { luvio, config } = context;
+
+    const { recordTypeId, layoutType, mode } = config;
+    const key = recordLayoutRepresentationKeyBuilder({
+        objectApiName: config.objectApiName,
+        recordTypeId,
+        layoutType,
+        mode,
+    });
+
+    return storeLookup(
+        {
+            recordId: key,
+            node: layoutSelections,
+            variables: {},
+        },
+        buildSnapshotRefresh(luvio, config)
+    );
+}
+
 function coerceConfigWithDefaults(untrusted: unknown): GetLayoutConfigWithDefaults | null {
     const config = validateAdapterConfig(untrusted, getLayout_ConfigPropertyNames);
     if (config === null) {
@@ -165,18 +206,16 @@ function coerceConfigWithDefaults(untrusted: unknown): GetLayoutConfigWithDefaul
 export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation> = (
     luvio: Luvio
 ) =>
-    function getLayout(untrusted: unknown) {
+    function getLayout(untrusted: unknown, requestContext?: AdapterRequestContext) {
         const config = coerceConfigWithDefaults(untrusted);
         if (config === null) {
             return null;
         }
 
-        const snapshot = buildInMemorySnapshot(luvio, config);
-
-        // Cache hit
-        if (luvio.snapshotAvailable(snapshot)) {
-            return snapshot;
-        }
-
-        return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, config));
+        return luvio.applyCachePolicy<BuildSnapshotContext, RecordLayoutRepresentation>(
+            requestContext === undefined ? undefined : requestContext.cachePolicy,
+            { config, luvio }, // Adapter Context
+            buildInMemorySnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
     };

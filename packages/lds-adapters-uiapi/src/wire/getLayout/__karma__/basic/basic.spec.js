@@ -1,4 +1,5 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getLayout_imperative } from 'lds-adapters-uiapi';
+import { flushPromises, getMock as globalGetMock, setupElement, stripEtags } from 'test-util';
 import { expireLayout, mockGetLayoutNetwork } from 'uiapi-test-util';
 
 import GetLayout from '../lwc/get-layout';
@@ -272,5 +273,45 @@ describe('getLayout', () => {
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshed);
+    });
+});
+
+describe('getLayout_imperative', () => {
+    // TODO [W-9803760]: enable when cache-and-network policy is available
+    xit('uses caller-supplied cache policy', async () => {
+        const recordMock = getMock('record-Opportunity');
+        const mock1 = getMock('layout-Opportunity-Compact-Edit');
+        const mock2 = getMock('layout-Opportunity-Compact-Edit');
+        mock2.eTag = 'updated-etag';
+        mock2.id = 'updated-id';
+
+        const config = {
+            objectApiName: 'Opportunity',
+            layoutType: 'Compact',
+            mode: 'Edit',
+            recordTypeId: recordMock.recordTypeId,
+        };
+
+        mockGetLayoutNetwork(config, [mock1, mock2]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mock1
+        getLayout_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getLayout_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([{ data: stripEtags(mock1), error: undefined }]);
+        expect(callback.calls.argsFor(1)).toEqual([{ data: stripEtags(mock2), error: undefined }]);
     });
 });

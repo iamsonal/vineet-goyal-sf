@@ -11,7 +11,7 @@ import { adapterName, graphQLAdapterFactory } from './main';
 import { namespace } from './util/adapter';
 
 let graphQL: any;
-let graphQL_imperative: any;
+let unstable_graphQL_imperative: any;
 // TODO [W-9992865]: remove this export when lds-worker-api usage has been updated
 let graphQLImperative: any;
 
@@ -28,8 +28,8 @@ withDefaultLuvio((luvio: Luvio) => {
         createInstrumentedAdapter(ldsAdapter, adapterMetadata),
         adapterMetadata
     );
-    graphQL_imperative = createImperativeAdapter(luvio, ldsAdapter, adapterMetadata);
+    unstable_graphQL_imperative = createImperativeAdapter(luvio, ldsAdapter, adapterMetadata);
     graphQLImperative = ldsAdapter;
 });
 
-export { graphQL, graphQL_imperative, graphQLImperative };
+export { graphQL, unstable_graphQL_imperative, graphQLImperative };

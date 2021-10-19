@@ -14,7 +14,7 @@
         "test:unit": "jest",
         "test:size": "bundlesize",
         "clean": "rm -rf dist",
-        "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-mobile"
+        "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-worker-api"
     },
     "devDependencies": {
         "@luvio/adapter-test-library": "0.55.0",

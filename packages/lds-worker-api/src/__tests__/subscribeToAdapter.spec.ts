@@ -1,8 +1,11 @@
 import { stripProperties } from '@luvio/adapter-test-library';
 import { subscribeToAdapter, OnSnapshot } from '../executeAdapter';
 import { addMockNetworkResponse } from './mocks/mockNimbusNetwork';
+import { objectInfoAccountPath, recordEndpointPath } from './urlPaths';
+import { flushPromises } from './utils';
+
 import objectInfo_Account from './mockData/objectInfo-Account.json';
-import { objectInfoAccountPath } from './urlPaths';
+import recordRep_Account from './mockData/RecordRepresentation-Account.json';
 
 describe('subscribeToAdapter', () => {
     it('to not throw on expected adapters', () => {
@@ -41,7 +44,7 @@ describe('subscribeToAdapter', () => {
         );
     });
 
-    it('calls getObjectInfo wire adapter', (done) => {
+    it('calls getObjectInfo wire adapter', async (done) => {
         // setup mock response
         addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
@@ -62,11 +65,47 @@ describe('subscribeToAdapter', () => {
             JSON.stringify({ objectApiName: 'Account' }),
             onSnapshot
         );
-
+        await flushPromises();
         unsubscribe();
     });
 
-    it('calls error callback on non-2xx response', (done) => {
+    it('calls getRecord wire adapter', async (done) => {
+        // setup mock response
+        addMockNetworkResponse('GET', recordEndpointPath(recordRep_Account.id), {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(recordRep_Account),
+        });
+
+        const onSnapshot: OnSnapshot = (value) => {
+            const { data, error } = value;
+
+            expect(data).toEqual(stripProperties(recordRep_Account, ['eTag', 'weakEtag']));
+            expect(error).toBeUndefined();
+            done();
+        };
+
+        const unsubscribe = subscribeToAdapter(
+            'getRecord',
+            JSON.stringify({
+                recordId: recordRep_Account.id,
+                fields: [
+                    'Account.CreatedBy.Id',
+                    'Account.CreatedBy.Name',
+                    'Account.LastModifiedBy.Id',
+                    'Account.LastModifiedBy.Name',
+                    'Account.Owner.Id',
+                    'Account.Owner.Name',
+                    'Account.Name',
+                ],
+            }),
+            onSnapshot
+        );
+        await flushPromises();
+        unsubscribe();
+    });
+
+    it('calls error callback on non-2xx response', async (done) => {
         // setup mock response
         addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
@@ -94,6 +133,7 @@ describe('subscribeToAdapter', () => {
             onSnapshot
         );
 
+        await flushPromises();
         unsubscribe();
     });
 });

@@ -10,6 +10,7 @@ import objectInfo_Account from './mockData/objectInfo-Account.json';
 import recordRep_Account from './mockData/RecordRepresentation-Account.json';
 import recordRep_Account_Edited from './mockData/RecordRepresentation-Account-Edited.json';
 import { objectInfoAccountPath } from './urlPaths';
+import { flushPromises } from './utils';
 
 // W-9173084 - executeAdapter is deprecated. All of these tests have been duplicated
 // and moved to subscribeToAdapter.spec.ts and this entire file can be removed
@@ -51,7 +52,7 @@ describe('executeAdapter', () => {
         );
     });
 
-    it('calls getObjectInfo wire adapter', (done) => {
+    it('calls getObjectInfo wire adapter', async (done) => {
         // setup mock response
         addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
@@ -73,10 +74,13 @@ describe('executeAdapter', () => {
             onSnapshot
         );
 
+        // wait for the network response to fulfill
+        // the callback won't be invoked if we unsubscribe before it
+        await flushPromises();
         unsubscribe();
     });
 
-    it('calls error callback on non-2xx response', (done) => {
+    it('calls error callback on non-2xx response', async (done) => {
         // setup mock response
         addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
@@ -104,6 +108,9 @@ describe('executeAdapter', () => {
             onSnapshot
         );
 
+        // wait for the network response to fulfill
+        // the callback won't be invoked if we unsubscribe before it
+        await flushPromises();
         unsubscribe();
     });
 });

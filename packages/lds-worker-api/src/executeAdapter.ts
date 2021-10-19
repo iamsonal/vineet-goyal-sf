@@ -1,11 +1,15 @@
-import { FetchResponse } from '@luvio/engine';
+import { AdapterRequestContext, FetchResponse } from '@luvio/engine';
 import gqlParse from '@salesforce/lds-graphql-parser';
 import * as gqlApi from 'force/ldsAdaptersGraphql';
 import { getInstrumentation } from 'o11y/client';
 
-import { JSONParse } from './language';
-import { isNotAFunctionError } from './error';
-import { adapterMap } from './lightningAdapterApi';
+import { JSONParse, ObjectKeys } from './language';
+import {
+    imperativeAdapterMap,
+    dmlAdapterMap,
+    UNSTABLE_ADAPTER_PREFIX,
+    IMPERATIVE_ADAPTER_SUFFIX,
+} from './lightningAdapterApi';
 import { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
 import { draftManager } from './draftQueueImplementation';
 import {
@@ -29,6 +33,18 @@ export type OnResponse = (value: CallbackValue) => void;
 export type Unsubscribe = () => void;
 
 /**
+ *
+ * @param adapterId
+ * @returns imperative adapter key
+ */
+function imperativeAdapterKeyBuilder(adapterId: string): string {
+    if (adapterId.startsWith(UNSTABLE_ADAPTER_PREFIX)) {
+        return `${adapterId}${IMPERATIVE_ADAPTER_SUFFIX}`;
+    }
+
+    return `${UNSTABLE_ADAPTER_PREFIX}${adapterId}${IMPERATIVE_ADAPTER_SUFFIX}`;
+}
+/**
  * Executes the adapter with the given adapterId and config.  Will call onSnapshot
  * callback with data or error.  Returns an unsubscribe function that should
  * be called to stop receiving updated snapshots.
@@ -39,67 +55,57 @@ export type Unsubscribe = () => void;
 export function subscribeToAdapter(
     adapterId: string,
     config: string,
-    onSnapshot: OnSnapshot
+    onSnapshot: OnSnapshot,
+    requestContext?: AdapterRequestContext
 ): Unsubscribe {
-    const wireConstructor = adapterMap[adapterId];
+    const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
+    const imperativeAdapter = imperativeAdapterMap[imperativeAdapterIdentifier];
 
-    if (wireConstructor === undefined) {
-        throw Error(`adapter ${adapterId} not recognized`);
-    }
-
-    let wire: any;
-
-    try {
-        wire = new wireConstructor((value: CallbackValue) => {
-            // lwc-luvio wire adapters always emit an initial payload with
-            // data and error as undefined.  This is a quirk of LWC and native
-            // UI does not need to know about this, so we only emit payloads
-            // that actually have defined data or error
-            const { data, error } = value;
-            if (data !== undefined || error !== undefined) {
-                onSnapshot({ data, error });
-            }
-        });
-    } catch (constructorError) {
-        if (isNotAFunctionError(constructorError)) {
-            throw Error(`${adapterId} is not a GET wire adapter.`);
+    if (imperativeAdapter === undefined) {
+        // This check is here for legacy purpose
+        // So the consumers still get the same errors
+        if (dmlAdapterMap[adapterId] === undefined) {
+            throw Error(`adapter ${adapterId} not recognized`);
         }
-
-        throw constructorError;
+        throw Error(`${adapterId} is not a GET wire adapter.`);
     }
-
-    wire.connect();
 
     const configObject = JSONParse(config);
-    // iterate the things exported by GQL and parse the query if the adapter name matches
-    const gqlKeys = Object.keys(gqlApi);
-    for (let i = 0, len = gqlKeys.length; i < len; i++) {
-        const key = gqlKeys[i];
-        if (key === adapterId) {
-            try {
-                // gql config needs gql query string turned into AST object
-                configObject.query = gqlParse(configObject.query);
-            } catch (parseError) {
-                // call the callback with error
-                instr.error(parseError as Error, 'gql-parse-error');
-                onSnapshot({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
-                return () => {
-                    if (wire !== undefined) {
-                        wire.disconnect();
-                    }
-                };
-            }
-            break;
+
+    // Check if it's graphQl adapter
+    // Parse the query in that case
+    const gqlKeys = ObjectKeys(gqlApi);
+    if (gqlKeys.indexOf(imperativeAdapterIdentifier) > -1) {
+        try {
+            // gql config needs gql query string turned into AST object
+            configObject.query = gqlParse(configObject.query);
+        } catch (parseError) {
+            // call the callback with error
+            instr.error(parseError as Error, 'gql-parse-error');
+            onSnapshot({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
+            return () => {};
         }
     }
 
-    wire.update(configObject);
+    return imperativeAdapter.subscribe(configObject, requestContext, onSnapshot);
+}
 
-    return () => {
-        if (wire !== undefined) {
-            wire.disconnect();
+/**
+ *  Executes a DML adapter and calls the onResponse callback upon receiving a response.
+ *
+ * @param adapter : DML Adapter
+ * @param configObject : parsed config
+ * @param onResponse : OnResponse
+ */
+function invokeDmlAdapter(adapter: any, configObject: any, onResponse: OnResponse) {
+    adapter(configObject).then(
+        (data: any) => {
+            onResponse({ data, error: undefined });
+        },
+        (error: FetchResponse<unknown>) => {
+            onResponse({ data: undefined, error });
         }
-    };
+    );
 }
 
 /**
@@ -126,39 +132,38 @@ export function invokeAdapterWithDraftToReplace(
             });
             return;
         }
-        const wireConstructor = adapterMap[adapterId];
-        if (wireConstructor === undefined) {
+
+        const adapter = dmlAdapterMap[adapterId];
+        if (adapter === undefined) {
+            // This check is here for legacy purpose
+            // So the consumers still get the same errors
+            if (imperativeAdapterMap[imperativeAdapterKeyBuilder(adapterId)] !== undefined) {
+                onResponse({
+                    data: undefined,
+                    error: createNativeErrorResponse(NON_MUTATING_ADAPTER_MESSAGE),
+                });
+                return;
+            }
             throw Error(`adapter ${adapterId} not recognized`);
         }
 
-        try {
-            new wireConstructor(() => {});
-            onResponse({
-                data: undefined,
-                error: createNativeErrorResponse(NON_MUTATING_ADAPTER_MESSAGE),
-            });
-        } catch (constructorError) {
-            if (isNotAFunctionError(constructorError)) {
-                // We only want to call this adapter if it's a mutating adapter
-                invokeAdapter(adapterId, config, (responseValue) => {
-                    const draftIds = draftIdsForResponseValue(responseValue);
-                    if (
-                        responseValue.error === undefined &&
-                        draftIds !== undefined &&
-                        draftIds.length > 0
-                    ) {
-                        const draftId = draftIds[draftIds.length - 1];
-                        draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
-                            onResponse(responseValue);
-                        });
-                    } else {
-                        let response: CallbackValue = responseValue;
-                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                        onResponse(response);
-                    }
+        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
+            const draftIds = draftIdsForResponseValue(responseValue);
+            if (
+                responseValue.error === undefined &&
+                draftIds !== undefined &&
+                draftIds.length > 0
+            ) {
+                const draftId = draftIds[draftIds.length - 1];
+                draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
+                    onResponse(responseValue);
                 });
+            } else {
+                let response: CallbackValue = responseValue;
+                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                onResponse(response);
             }
-        }
+        });
     });
 }
 
@@ -177,39 +182,33 @@ export function invokeAdapterWithMetadata(
     metadata: DraftQueueItemMetadata,
     onResponse: OnResponse
 ) {
-    const wireConstructor = adapterMap[adapterId];
-    if (wireConstructor === undefined) {
+    const adapter = dmlAdapterMap[adapterId];
+    if (adapter === undefined) {
+        // This check is here for legacy purpose
+        // So the consumers still get the same errors
+        if (imperativeAdapterMap[imperativeAdapterKeyBuilder(adapterId)] !== undefined) {
+            onResponse({
+                data: undefined,
+                error: createNativeErrorResponse(NON_MUTATING_ADAPTER_MESSAGE),
+            });
+            return;
+        }
         throw Error(`adapter ${adapterId} not recognized`);
     }
 
-    try {
-        new wireConstructor(() => {});
-        onResponse({
-            data: undefined,
-            error: createNativeErrorResponse(NON_MUTATING_ADAPTER_MESSAGE),
-        });
-    } catch (constructorError) {
-        if (isNotAFunctionError(constructorError)) {
-            // We only want to call this adapter if it's a mutating adapter
-            invokeAdapter(adapterId, config, (responseValue) => {
-                const draftIds = draftIdsForResponseValue(responseValue);
-                if (
-                    responseValue.error === undefined &&
-                    draftIds !== undefined &&
-                    draftIds.length > 0
-                ) {
-                    const draftId = draftIds[draftIds.length - 1];
-                    draftManager.setMetadata(draftId, metadata).then(() => {
-                        onResponse(responseValue);
-                    });
-                } else {
-                    let response: CallbackValue = responseValue;
-                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                    onResponse(response);
-                }
+    invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
+        const draftIds = draftIdsForResponseValue(responseValue);
+        if (responseValue.error === undefined && draftIds !== undefined && draftIds.length > 0) {
+            const draftId = draftIds[draftIds.length - 1];
+            draftManager.setMetadata(draftId, metadata).then(() => {
+                onResponse(responseValue);
             });
+        } else {
+            let response: CallbackValue = responseValue;
+            response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+            onResponse(response);
         }
-    }
+    });
 }
 
 function draftIdsForResponseValue(response: CallbackValue): string[] | undefined {
@@ -225,24 +224,27 @@ function draftIdsForResponseValue(response: CallbackValue): string[] | undefined
 
 /**
  * Executes the specified adapter with the given adapterId and config.  Will call
- * onResult callback once with data or error.
+ * onResponse callback once with data or error.
  *
  * This function throws an error if the given adapterId cannot be found or if it
  * fails to parse the given config string.
  */
-export function invokeAdapter(adapterId: string, config: string, onResponse: OnResponse) {
-    const adapter = adapterMap[adapterId];
-
-    if (adapter === undefined) {
-        throw Error(`adapter ${adapterId} not recognized`);
-    }
-
+export function invokeAdapter(
+    adapterId: string,
+    config: string,
+    onResponse: OnResponse,
+    requestContext?: AdapterRequestContext
+) {
+    const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
+    const imperativeAdapter = imperativeAdapterMap[imperativeAdapterIdentifier];
     const configObject = JSONParse(config);
-    // iterate the things exported by GQL and parse the query if the adapter name matches
-    const gqlKeys = Object.keys(gqlApi);
-    for (let i = 0, len = gqlKeys.length; i < len; i++) {
-        const key = gqlKeys[i];
-        if (key === adapterId) {
+
+    // currently all uiapi GET adapters have a corresponding imperative adapter
+    if (imperativeAdapter !== undefined) {
+        // Check if it's graphQl adapter
+        // Parse the query in that case
+        const gqlKeys = ObjectKeys(gqlApi);
+        if (gqlKeys.indexOf(imperativeAdapterIdentifier) > -1) {
             try {
                 // gql config needs gql query string turned into AST object
                 configObject.query = gqlParse(configObject.query);
@@ -252,40 +254,18 @@ export function invokeAdapter(adapterId: string, config: string, onResponse: OnR
                 onResponse({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
                 return;
             }
-            break;
         }
+        imperativeAdapter.invoke(configObject, requestContext, onResponse);
+        return;
     }
 
-    let wire: any;
-    try {
-        wire = new adapter((value: CallbackValue) => {
-            // lwc-luvio wire adapters always emit an initial payload with
-            // data and error as undefined.  This is a quirk of LWC and native
-            // UI does not need to know about this, so we only emit payloads
-            // that actually have defined data or error
-            const { data, error } = value;
-            if (data !== undefined || error !== undefined) {
-                onResponse({ data, error });
-                wire.disconnect();
-            }
-        });
-        wire.connect();
-        wire.update(configObject);
-    } catch (constructorError) {
-        if (isNotAFunctionError(constructorError)) {
-            // if we get this error, this is a DML adapter
-            adapter(configObject).then(
-                (data: any) => {
-                    onResponse({ data, error: undefined });
-                },
-                (error: FetchResponse<unknown>) => {
-                    onResponse({ data: undefined, error });
-                }
-            );
-        } else {
-            throw constructorError;
-        }
+    const adapter = dmlAdapterMap[adapterId];
+
+    if (adapter === undefined) {
+        throw Error(`adapter ${adapterId} not recognized`);
     }
+
+    invokeDmlAdapter(adapter, configObject, onResponse);
 }
 
 /**

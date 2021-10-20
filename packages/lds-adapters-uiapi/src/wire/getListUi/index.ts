@@ -10,6 +10,8 @@ import {
     ResourceResponse,
     AdapterContext,
     UnAvailableSnapshot,
+    CacheKeySet,
+    FulfilledSnapshot,
 } from '@luvio/engine';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
@@ -63,6 +65,7 @@ import {
 import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
 import { isFulfilledSnapshot } from '../../util/snapshot';
+import { ObjectKeys } from '../../util/language';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
@@ -258,6 +261,101 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
     return request;
 }
 
+function getResponseCacheKeys_getListUi(
+    luvio: Luvio,
+    response: FetchResponse<ListUiRepresentation>
+): CacheKeySet {
+    // TODO [W-10055997]: make this more efficient
+
+    // for now we will get the cache keys by actually ingesting then looking at
+    // the store records
+
+    // ingest mutates the response so we have to make a copy
+    const responseCopy = JSON.parse(JSON.stringify(response));
+    const { body } = responseCopy,
+        listInfo = body.info,
+        { listReference } = listInfo;
+
+    // response might have records.sortBy in csv format
+    const sortBy = body.records.sortBy;
+    if (sortBy && typeof sortBy === 'string') {
+        body.records.sortBy = (sortBy as unknown as string).split(',');
+    }
+
+    const listUiKey = listUiRepresentation_keyBuilder({
+        ...listReference,
+        sortBy: body.records.sortBy,
+    });
+
+    luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
+
+    const visited = ObjectKeys((luvio as any).environment.store.visitedIds);
+
+    const keys: CacheKeySet = {};
+    for (let i = 0, len = visited.length; i < len; i++) {
+        const key = visited[i];
+        const namespace = key.split('::')[0];
+        const representationName = key.split('::')[1].split(':')[0];
+        keys[key] = {
+            namespace,
+            representationName,
+        };
+    }
+
+    return keys;
+}
+
+function getResponseCacheKeys_getListRecords(
+    luvio: Luvio,
+    listInfo: ListInfoRepresentation,
+    response: ResourceResponse<ListRecordCollectionRepresentation>
+) {
+    // TODO [W-10055997]: make this more efficient
+
+    // for now we will get the cache keys by actually ingesting then looking at
+    // the store records
+
+    // ingest mutates the response so we have to make a copy
+    const responseCopy = JSON.parse(JSON.stringify(response));
+    const { body } = responseCopy;
+    const { listInfoETag } = body;
+
+    // bail early if list view has changed
+    if (listInfoETag !== listInfo.eTag) {
+        return {};
+    }
+
+    // response might have records.sortBy in csv format
+    const { sortBy } = body;
+    if (sortBy && typeof sortBy === 'string') {
+        body.sortBy = (sortBy as unknown as string).split(',');
+    }
+
+    luvio.storeIngest(
+        ListRecordCollectionRepresentation_keyBuilder({
+            listViewId: listInfoETag,
+            sortBy: body.sortBy,
+        }),
+        types_ListRecordCollectionRepresentation_ingest,
+        body
+    );
+
+    const visited = ObjectKeys((luvio as any).environment.store.visitedIds);
+
+    const keys: CacheKeySet = {};
+    for (let i = 0, len = visited.length; i < len; i++) {
+        const key = visited[i];
+        const namespace = key.split('::')[0];
+        const representationName = key.split('::')[1].split(':')[0];
+        keys[key] = {
+            namespace,
+            representationName,
+        };
+    }
+
+    return keys;
+}
+
 function onResourceSuccess_getListUi(
     luvio: Luvio,
     context: AdapterContext,
@@ -333,7 +431,10 @@ function buildNetworkSnapshot_getListUi(
 
     return luvio.dispatchResourceRequest<ListUiRepresentation>(request).then(
         (response) => {
-            return onResourceSuccess_getListUi(luvio, context, config, response);
+            return luvio.handleSuccessResponse(
+                () => onResourceSuccess_getListUi(luvio, context, config, response),
+                () => getResponseCacheKeys_getListUi(luvio, response)
+            );
         },
         (err: FetchResponse<unknown>) => {
             return onResourceError_getListUi(luvio, context, config, err);
@@ -470,7 +571,17 @@ function buildNetworkSnapshot_getListRecords(
 
     return luvio.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         (response) => {
-            return onResourceSuccess_getListRecords(luvio, context, config, listInfo, response);
+            return luvio.handleSuccessResponse(
+                () =>
+                    onResourceSuccess_getListRecords(
+                        luvio,
+                        context,
+                        config,
+                        listInfo,
+                        response
+                    ) as FulfilledSnapshot<ListUiRepresentation, unknown>,
+                () => getResponseCacheKeys_getListRecords(luvio, listInfo, response)
+            );
         },
         (err: FetchResponse<unknown>) => {
             return onResourceError_getListRecords(luvio, context, config, listInfo, err);

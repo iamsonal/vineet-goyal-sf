@@ -1,0 +1,433 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v54.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  InterestTagAssignmentInputRepresentation:
+    description: Input representation for interest tag entity assignment
+    type: object
+    properties:
+      recordsForTag:
+        description: Entity records to be assigned to a tag
+        type: object
+      tagsForRecord:
+        description: tags to be assigned to an entity
+        type: object
+  InterestTagAssignmentOutputRepresentation:
+    description: Interest tag entity assignment output representation.
+    type: object
+    properties:
+      errors:
+        description: Error messages occurred for the interest tag entity assignments
+        type: array
+        items:
+          type: string
+      isCreated:
+        description: Created flag whether the Interest Tag Entity assignment was successfully
+          created or not
+        type: boolean
+      isSuccess:
+        description: Success flag for Create of Interest Tag Entity assignment
+        type: boolean
+  InterestTagCreateCollectionOutputRepresentation:
+    description: A Collection of interest tag output representation- InterestTagCreateResult.
+    type: object
+    properties:
+      results:
+        description: List of Interest Tag Records created
+        type: array
+        items:
+          type: InterestTagCreateResult
+  InterestTagCreateInputListRepresentation:
+    description: Interest Tags create input list
+    type: object
+    properties:
+      interestTagList:
+        description: List of Interest tags to be created
+        type: array
+        items:
+          type: object
+  InterestTagCreateInputRepresentation:
+    description: Input representation for creating interest tags
+    type: object
+    properties:
+      categoryId:
+        description: CategoryId of the Interest Tag
+        type: string
+      recordId:
+        description: Id of the reecord to which Interest Tag needs to be associated
+          to
+        type: string
+      tagDescription:
+        description: Description of the Interest Tag
+        type: string
+      tagName:
+        description: Name of the Interest Tag
+        type: string
+  InterestTagCreateResult:
+    description: Create interest tag results representation
+    type: object
+    properties:
+      error:
+        description: Error message of the Interest Tag that could be created
+        type: string
+      isCreated:
+        description: Created flag whether the Interest Tag was successfully created
+          or not
+        type: boolean
+      isSuccess:
+        description: Success flag for Create of Interest Tags
+        type: boolean
+      tagId:
+        description: Interest Tag Id that got created.
+        type: string
+  InterestTagListRepresentation:
+    description: A list of interest tags.
+    type: object
+    properties:
+      tags:
+        description: interest tag list
+        type: array
+        items:
+          type: InterestTagRepresentation
+  InterestTagRepresentation:
+    description: The response for an interest tag.
+    type: object
+    properties:
+      categories:
+        description: The categories associated to the tag
+        type: array
+        items:
+          type: TagCategoryRepresentation
+      name:
+        description: The tag name
+        type: string
+      tagId:
+        description: The tag Id
+        type: string
+  InterestTagUpdateInputRepresentation:
+    description: Interest Tags update input request
+    type: object
+    properties:
+      addCategoryIds:
+        description: The categories to be assigned on this tag
+        type: array
+        items:
+          type: string
+      removeCategoryIds:
+        description: The categories to be removed on this tag
+        type: array
+        items:
+          type: string
+      tagDescription:
+        description: The new tag description to be set on this tag
+        type: string
+      tagName:
+        description: The new tag name to be set on this tag
+        type: string
+  InterestTagUpdateOutputRepresentation:
+    description: The response for interest tag update call.
+    type: object
+    properties:
+      errors:
+        description: The errors happened during the call
+        type: array
+        items:
+          type: string
+      isSuccess:
+        description: indicate whether the call is succeeded
+        type: boolean
+      isUpdated:
+        description: indicate whether the tag is updated
+        type: boolean
+  RecordsForTag:
+    description: Input representation for records for tag
+    type: object
+    properties:
+      recordIds:
+        description: Entity Record Ids
+        type: array
+        items:
+          type: string
+      tagId:
+        description: Interest Tag Id
+        type: string
+  TagCategoryRepresentation:
+    description: The response for a category.
+    type: object
+    properties:
+      categoryId:
+        description: The category Id
+        type: string
+      name:
+        description: The category name
+        type: string
+  TagRecordAssignment:
+    description: Tag record assignment representation
+    type: object
+    properties:
+      objectName:
+        description: Object Name for the Record.
+        type: string
+      recordId:
+        description: Record ID.
+        type: string
+      recordName:
+        description: Record Name.
+        type: string
+  TagRecordAssignmentCollectionRepresentation:
+    description: A Collection of record assignments for a tag.
+    type: object
+    properties:
+      assignments:
+        description: List of record assignments for a tag.
+        type: array
+        items:
+          type: TagRecordAssignment
+  TagsForRecord:
+    description: Input representation for tags for record
+    type: object
+    properties:
+      recordId:
+        description: Entity Record Id
+        type: string
+      tagIds:
+        description: Interest Tag Ids
+        type: array
+        items:
+          type: string
+/connect/interest-tags:
+  /assignments:
+    get:
+      description: API to get record assignments for a tag.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TagRecordAssignmentCollectionRepresentation
+      queryParameters:
+        limit:
+          type: integer
+          required: false
+        offset:
+          type: integer
+          required: false
+        orderBy:
+          type: string
+          required: false
+        sort:
+          type: string
+          required: false
+    post:
+      description: API to create tag record assignment.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: InterestTagAssignmentOutputRepresentation
+      body:
+        application/json:
+          type: InterestTagAssignmentInputRepresentation
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): createInterestTagEntityAssignmentData
+    /entity/{recordId}:
+      get:
+        description: Get a list of tags assigned to the given record.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: InterestTagListRepresentation
+        queryParameters:
+          limit:
+            type: integer
+            required: false
+          offset:
+            type: integer
+            required: false
+          orderBy:
+            type: string
+            required: false
+          sort:
+            type: string
+            required: false
+      uriParameters:
+        recordId:
+          type: string
+          required: true
+    /tag/{tagId}:
+      get:
+        description: API to get record assignments for a tag.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TagRecordAssignmentCollectionRepresentation
+        queryParameters:
+          limit:
+            type: integer
+            required: false
+          offset:
+            type: integer
+            required: false
+          orderBy:
+            type: string
+            required: false
+          sort:
+            type: string
+            required: false
+      post:
+        description: API to create tag record assignment.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: InterestTagAssignmentOutputRepresentation
+        body:
+          application/json:
+            type: InterestTagAssignmentInputRepresentation
+            # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+            #required: false
+            (oas-body-name): createInterestTagEntityAssignmentData
+      uriParameters:
+        tagId:
+          type: string
+          required: true
+  /tags:
+    get:
+      description: Get a list of tags assigned to the given category.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: InterestTagListRepresentation
+      queryParameters:
+        categoryId:
+          type: string
+          required: false
+        limit:
+          type: integer
+          required: false
+        offset:
+          type: integer
+          required: false
+        orderBy:
+          type: string
+          required: false
+        sort:
+          type: string
+          required: false
+    patch:
+      description: API to update an interest tag.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: InterestTagUpdateOutputRepresentation
+      body:
+        application/json:
+          type: InterestTagUpdateInputRepresentation
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): updateInterestTagData
+    post:
+      description: API to create interest tag.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: InterestTagCreateCollectionOutputRepresentation
+      body:
+        application/json:
+          type: InterestTagCreateInputListRepresentation
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): createInterestTagData
+  /tags/{tagId}:
+    get:
+      description: Get a list of tags assigned to the given category.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: InterestTagListRepresentation
+      queryParameters:
+        categoryId:
+          type: string
+          required: false
+        limit:
+          type: integer
+          required: false
+        offset:
+          type: integer
+          required: false
+        orderBy:
+          type: string
+          required: false
+        sort:
+          type: string
+          required: false
+    patch:
+      description: API to update an interest tag.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: InterestTagUpdateOutputRepresentation
+      body:
+        application/json:
+          type: InterestTagUpdateInputRepresentation
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): updateInterestTagData
+    post:
+      description: API to create interest tag.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: InterestTagCreateCollectionOutputRepresentation
+      body:
+        application/json:
+          type: InterestTagCreateInputListRepresentation
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): createInterestTagData
+    uriParameters:
+      tagId:
+        type: string
+        required: true

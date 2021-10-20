@@ -300,6 +300,11 @@ const JOIN_CHIME_MEETING_PATH = new RegExp(
     'i'
 );
 
+const GET_TAGS_BY_RECORD_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/interest-tags/assignments/entity/([A-Z0-9_]){1,80}$`,
+    'i'
+);
+
 const LOYALTY_PROGRAM_PROCESS_RULE = new RegExp(
     `${CONNECT_BASE_URI}/loyalty/programs/([A-Z0-9_]){1,80}/processes/([A-Z0-9_]){1,80}/rule/([A-Z0-9_]){1,80}$`,
     'i'
@@ -1106,6 +1111,17 @@ const videovisits: ApiFamily = {
     },
 };
 
+const interesttagging: ApiFamily = {
+    getTagsByRecordId: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_TAGS_BY_RECORD_PATH.test(path),
+        transport: {
+            controller: 'InterestTaggingFamilyController.getTagsByRecordId',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
@@ -1115,3 +1131,4 @@ registerApiFamilyRoutes(flow);
 registerApiFamilyRoutes(billing);
 registerApiFamilyRoutes(marketingIntegration);
 registerApiFamilyRoutes(videovisits);
+registerApiFamilyRoutes(interesttagging);

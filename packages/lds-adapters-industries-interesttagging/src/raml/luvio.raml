@@ -1,0 +1,20 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'interesttagging'
+(luvio.ttl): 360000
+
+types:
+  InterestTagListRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 10000
+
+/connect/interest-tags:
+  /assignments:
+    /entity/{recordId}:
+      get:
+        (luvio.adapter):
+          name: getTagsByRecordId

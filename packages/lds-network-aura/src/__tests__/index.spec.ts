@@ -7143,6 +7143,29 @@ describe('routes', () => {
         );
     });
 
+    describe('get /interest-tags/assignments/entity/${recordId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/assignments/entity/Record1`,
+            },
+            [
+                'InterestTaggingFamilyController.getTagsByRecordId',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/assignments/entity/Record1`,
+            },
+            {}
+        );
+    });
+
     describe('post /connect/communities/{communityId}/microbatching', () => {
         testControllerInput(
             {

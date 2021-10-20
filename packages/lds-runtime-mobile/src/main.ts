@@ -1,4 +1,4 @@
-import { Luvio, Store, Environment } from '@luvio/engine';
+import { Luvio, Store, Environment, CacheKeySet } from '@luvio/engine';
 import { makeOffline, makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
@@ -6,6 +6,7 @@ import {
     RecordRepresentation,
     ingestRecord,
     keyBuilderRecord,
+    buildSelectionFromRecord,
 } from '@salesforce/lds-adapters-uiapi';
 import {
     makeDurableStoreDraftAware,
@@ -31,15 +32,78 @@ import { makeDurableStoreWithMergeStrategy } from './durableStore/makeDurableSto
 import { RecordMergeStrategy } from './durableStore/RecordMergeStrategy';
 
 import { setupInstrumentation } from './instrumentation';
+import { JSONParse, JSONStringify, ObjectCreate, ObjectKeys } from './utils/language';
 
 let luvio: Luvio;
 
-// TODO [W-8291468]: have ingest get called a different way somehow
-const recordIngestFunc = (record: RecordRepresentation) => {
-    if (luvio !== undefined) {
-        const key = keyBuilderRecord({ recordId: record.id });
-        luvio.storeIngest(key, ingestRecord, record);
+function onResponseSuccess(record: RecordRepresentation) {
+    const selections = buildSelectionFromRecord(record);
+    const key = keyBuilderRecord({
+        recordId: record.id,
+    });
+
+    luvio.storeIngest(key, ingestRecord, record);
+    const snapshot = luvio.storeLookup<RecordRepresentation>({
+        recordId: key,
+        node: {
+            kind: 'Fragment',
+            private: [],
+            selections,
+        },
+        variables: {},
+    });
+
+    return snapshot;
+}
+
+// TODO [W-10054341]: this is done manually right now but can be removed when the compiler generates these functsino
+function getRecordResponseKeys(originalRecord: RecordRepresentation) {
+    const record = JSONParse(JSONStringify(originalRecord));
+    const selections = buildSelectionFromRecord(record);
+    const key = keyBuilderRecord({
+        recordId: record.id,
+    });
+
+    luvio.storeIngest(key, ingestRecord, record);
+    const snapshot = luvio.storeLookup<RecordRepresentation>({
+        recordId: key,
+        node: {
+            kind: 'Fragment',
+            private: [],
+            selections,
+        },
+        variables: {},
+    });
+
+    if (snapshot.state === 'Error') {
+        return {};
     }
+
+    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
+    const keySet: CacheKeySet = ObjectCreate(null);
+    for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const namespace = key.split('::')[0];
+        const representationName = key.split('::')[1].split(':')[0];
+        keySet[key] = {
+            namespace,
+            representationName,
+        };
+    }
+    return keySet;
+}
+
+// TODO [W-8291468]: have ingest get called a different way somehow
+const recordIngestFunc = (record: RecordRepresentation): Promise<void> => {
+    return Promise.resolve(
+        luvio.handleSuccessResponse(
+            () => onResponseSuccess(record),
+            () => getRecordResponseKeys(record)
+        )
+    ).then(() => {
+        // the signature requires a Promise<void> result so drop the Snapshot from the result
+        return;
+    });
 };
 
 const registerDraftIdMapping = (draftId: string, canonicalId: string) => {

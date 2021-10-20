@@ -79,7 +79,8 @@ const baseDurableStore = makeDurableStoreWithMergeStrategy(new NimbusDurableStor
 const internalAdapterStore = new Store();
 const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(
     baseDurableStore,
-    internalAdapterStore
+    () => internalAdapterStore.records,
+    () => internalAdapterStore.metadata
 );
 const { getObjectInfo, getRecord } = buildInternalAdapters(
     internalAdapterStore,
@@ -111,7 +112,11 @@ const pluginEnabledDurableStore = makePluginEnabledDurableStore(baseDurableStore
 pluginEnabledDurableStore.registerPlugins([objectInfoPlugin]);
 
 // creates a durable store that denormalizes scalar fields for records
-const recordDenormingStore = makeRecordDenormalizingDurableStore(pluginEnabledDurableStore, store);
+const recordDenormingStore = makeRecordDenormalizingDurableStore(
+    pluginEnabledDurableStore,
+    () => store.records,
+    () => store.metadata
+);
 
 const baseEnv = new Environment(store, networkAdapter);
 const offlineEnv = makeOffline(baseEnv);

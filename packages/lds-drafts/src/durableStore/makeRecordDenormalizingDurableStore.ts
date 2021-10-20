@@ -142,7 +142,8 @@ export interface RecordDenormalizingDurableStore extends DurableStore {
 
 export function makeRecordDenormalizingDurableStore(
     durableStore: DurableStore,
-    store: Store
+    getStoreRecords: () => RecordSource,
+    getStoreMetadata: () => Store['metadata']
 ): RecordDenormalizingDurableStore {
     const getEntries: typeof durableStore['getEntries'] = function <T>(
         entries: string[],
@@ -214,7 +215,8 @@ export function makeRecordDenormalizingDurableStore(
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);
         const putRecords: { [key: string]: boolean } = {};
-        const { records: storeRecords, metadata: storeMetadata } = store;
+        const storeRecords = getStoreRecords !== undefined ? getStoreRecords() : {};
+        const storeMetadata = getStoreMetadata !== undefined ? getStoreMetadata() : {};
 
         for (let i = 0, len = keys.length; i < len; i++) {
             const key = keys[i];

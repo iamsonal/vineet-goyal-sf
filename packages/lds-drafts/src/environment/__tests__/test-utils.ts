@@ -66,7 +66,11 @@ export async function setupDraftEnvironment(
         () => Promise.resolve({}),
         'testUserId'
     );
-    durableStore = makeRecordDenormalizingDurableStore(durableStore, store);
+    durableStore = makeRecordDenormalizingDurableStore(
+        durableStore,
+        () => store.records,
+        () => store.metadata
+    );
 
     const baseEnvironment = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,

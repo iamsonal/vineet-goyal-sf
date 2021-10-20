@@ -25,7 +25,11 @@ function setupRecordStore(storeRecords: any = {}) {
     const store = new Store();
     store.records = storeRecords;
 
-    const durableStore = makeRecordDenormalizingDurableStore(baseDurableStore, store);
+    const durableStore = makeRecordDenormalizingDurableStore(
+        baseDurableStore,
+        () => store.records,
+        () => store.metadata
+    );
 
     return { durableStore, baseDurableStore };
 }

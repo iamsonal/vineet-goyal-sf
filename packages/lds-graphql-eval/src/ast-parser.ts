@@ -8,6 +8,7 @@ import {
 
 import { recordFilter } from './filter-parser';
 import { RelationshipInfo, ReferenceFieldInfo, ObjectInfoMap, ReferenceToInfo } from './info-types';
+import { parseOrderBy } from './orderby-parser';
 
 import {
     RecordQuery,
@@ -80,7 +81,7 @@ function named<T extends { name: string }>(name: string): (node: T) => boolean {
 
 interface QueryContainer {
     fields: RecordQueryField[];
-    predicates: ComparisonPredicate[];
+    predicates: Predicate[];
     joinNames: string[];
 }
 
@@ -90,7 +91,7 @@ interface SpanningQuery {
     alias: string;
     apiName: string;
     joinNames: string[];
-    predicates: ComparisonPredicate[];
+    predicates: Predicate[];
 }
 
 interface SpanningField {
@@ -256,8 +257,8 @@ function queryContainer<T extends RecordQuery>(
     };
     const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName));
     const spanningFields = inputFields.value.filter(isSpanningField);
-    const predicates: ComparisonPredicate[] = spanningFields
-        .map((field) => field.spanning.predicates)
+    const predicates: Predicate[] = spanningFields
+        .map((field): Predicate[] => field.spanning.predicates)
         .reduce(flatten, [])
         .concat(typePredicate)
         .concat(additionalPredicates);
@@ -368,13 +369,20 @@ function recordQuery(
     const args = selection.arguments || [];
     const whereArg = args.filter(named('where'))[0];
     const scopeArg = args.filter(named('scope'))[0];
+    const orderByArg = args.filter(named('orderBy'))[0];
 
     const first: number | undefined = undefined;
+    const orderByResult = parseOrderBy(orderByArg, alias, apiName, input.objectInfoMap);
     const whereResult = recordFilter(whereArg, alias, apiName, input.objectInfoMap);
     const scopeResult = scopeFilter(scopeArg, alias, apiName, input);
 
     let additionalPredicates: Predicate[] = [];
     let filterJoins: string[] = [];
+    let orderByJoins: string[] = [];
+
+    if (orderByResult.isSuccess === false) {
+        return failure([orderByResult.error]);
+    }
 
     if (whereResult.isSuccess === false) {
         return failure(whereResult.error);
@@ -395,6 +403,13 @@ function recordQuery(
         filterJoins = joinNames;
     }
 
+    if (orderByResult.value !== undefined) {
+        const { joinPredicates, joinNames } = orderByResult.value;
+
+        additionalPredicates.push(...joinPredicates);
+        orderByJoins = joinNames;
+    }
+
     //make our way down to the field-containing ast node
     const node = [selection]
         .reduce(flatMap(luvioSelections), [])
@@ -412,18 +427,21 @@ function recordQuery(
         alias,
         input
     );
+
     return queryContainer(internalFields, alias, apiName, predicates).map((result) => {
         const { fields } = result;
         //combine the joins and remove duplicates
-        const joinNames = [...new Set(result.joinNames.concat(filterJoins))];
+        const joinSet = new Set([...result.joinNames, ...filterJoins, ...orderByJoins]);
+        const joinNames = Array.from(joinSet);
 
         const predicate = combinePredicates(
             [...additionalPredicates, ...result.predicates].filter(isDefined),
             CompoundOperator.and
         );
         const type = 'connection';
+        const orderBy = orderByResult.value === undefined ? undefined : orderByResult.value.orderBy;
 
-        return { joinNames, fields, first, type, apiName, alias, predicate };
+        return { joinNames, fields, first, orderBy, type, apiName, alias, predicate };
     });
 }
 

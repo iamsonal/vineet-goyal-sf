@@ -66,10 +66,11 @@ describe('date filter to sql parser', () => {
             const source = `{ EndDate: { ${opEnum}: { value: "2017-09-20" } } }`;
 
             const expected =
+                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${opString} '2017-09-20' ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -83,10 +84,11 @@ describe('date filter to sql parser', () => {
             const source = `{ EndDate: { ${opEnum}: { value: null } } }`;
 
             const expected =
+                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${opString} NULL ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -104,10 +106,11 @@ describe('date filter to sql parser', () => {
             const source = `{ EndDate: { ${opEnum}: { literal: TODAY } } }`;
 
             const expected =
+                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${opString} date('now') ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -127,10 +130,11 @@ describe('date filter to sql parser', () => {
                 const source = `{ EndDate: { ${opEnum}: { literal: TOMORROW } } }`;
 
                 const expected =
+                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                    `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                    `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${opString} date('now', '+1 day') ` +
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -149,10 +153,11 @@ describe('date filter to sql parser', () => {
                 const source = `{ EndDate: { ${opEnum}: [{ value: "2017-09-20" }, { literal: TODAY }, { literal: TOMORROW }, {value: null}] } }`;
 
                 const expected =
+                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                    `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                    `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${opString} ('2017-09-20', date('now'), date('now', '+1 day'), null) ` +
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -173,10 +178,11 @@ describe('date filter to sql parser', () => {
             const source = `{ CreatedDate: { ${opEnum}: { value: "2021-09-17T17:57:01.000Z" } } }`;
 
             const expected =
+                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${opString} '2021-09-17T17:57:01.000Z' ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -190,10 +196,11 @@ describe('date filter to sql parser', () => {
             const source = `{ CreatedDate: { ${opEnum}: { value: null } } }`;
 
             const expected =
+                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${opString} NULL ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -211,10 +218,11 @@ describe('date filter to sql parser', () => {
             const source = `{ CreatedDate: { ${opEnum}: { literal: TODAY } } }`;
 
             const expected =
+                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${opString} datetime('now') ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -234,10 +242,11 @@ describe('date filter to sql parser', () => {
                 const source = `{ CreatedDate: { ${opEnum}: { literal: TOMORROW } } }`;
 
                 const expected =
+                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                    `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                    `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${opString} datetime('now', '+1 day') ` +
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
@@ -256,10 +265,11 @@ describe('date filter to sql parser', () => {
                 const source = `{ CreatedDate: { ${opEnum}: [{ value: "2013-10-07T08:23:19.120Z" }, { literal: TODAY }, { literal: TOMORROW }, {value: null}] } }`;
 
                 const expected =
+                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                    `FROM (select * from TABLE_1 where TABLE_1_0 like 'UiApi%3A%3ARecordRepresentation%') as 'TimeSheet'  ` +
+                    `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${opString} ('2013-10-07T08:23:19.120Z', datetime('now'), datetime('now', '+1 day'), null) ` +
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 

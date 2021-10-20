@@ -4,6 +4,7 @@ export enum PredicateType {
     between = 'between',
     not = 'not',
     nullComparison = 'nullComparison',
+    recordRepresentation = 'recordRepresentation',
 }
 
 export enum CompoundOperator {
@@ -159,6 +160,12 @@ export interface PredicateContainer {
     joinPredicates: ComparisonPredicate[];
 }
 
+export interface OrderByContainer {
+    orderBy: OrderBy;
+    joinNames: string[];
+    joinPredicates: ComparisonPredicate[];
+}
+
 export interface JsonExtract {
     type: ValueType.Extract;
     jsonAlias: string;
@@ -170,6 +177,11 @@ export interface ScalarField {
     extract: JsonExtract;
 }
 
+export interface OrderBy {
+    extract: JsonExtract;
+    asc: boolean;
+    nullsFirst: boolean;
+}
 export interface ChildField {
     type: FieldType.Child;
     path: string;
@@ -188,6 +200,7 @@ export interface RecordQuery {
     alias: string;
     apiName: string;
     first: number | undefined;
+    orderBy: OrderBy | undefined;
     joinNames: string[];
 }
 

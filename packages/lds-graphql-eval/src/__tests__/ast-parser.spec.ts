@@ -44,6 +44,7 @@ describe('ast-parser', () => {
                         apiName: 'TimeSheet',
                         type: 'connection',
                         first: undefined,
+                        orderBy: undefined,
                         joinNames: [],
 
                         fields: [
@@ -197,6 +198,7 @@ describe('ast-parser', () => {
                         apiName: 'TimeSheet',
                         type: 'connection',
                         first: undefined,
+                        orderBy: undefined,
                         joinNames: [],
 
                         fields: [
@@ -260,6 +262,7 @@ describe('ast-parser', () => {
                     apiName: 'TimeSheet',
                     type: 'connection',
                     first: undefined,
+                    orderBy: undefined,
                     joinNames: [],
 
                     fields: [
@@ -340,6 +343,7 @@ describe('ast-parser', () => {
                     apiName: 'TimeSheet',
                     type: 'connection',
                     first: undefined,
+                    orderBy: undefined,
                     joinNames: [],
 
                     fields: [
@@ -440,6 +444,7 @@ describe('ast-parser', () => {
                     apiName: 'TimeSheet',
                     type: 'connection',
                     first: undefined,
+                    orderBy: undefined,
                     joinNames: ['TimeSheet.CreatedBy'],
 
                     fields: [
@@ -559,6 +564,8 @@ describe('ast-parser', () => {
                     apiName: 'TimeSheet',
                     type: 'connection',
                     first: undefined,
+                    orderBy: undefined,
+
                     joinNames: ['TimeSheet.CreatedBy'],
 
                     fields: [
@@ -633,6 +640,8 @@ describe('ast-parser', () => {
                     apiName: 'User',
                     type: 'connection',
                     first: undefined,
+                    orderBy: undefined,
+
                     joinNames: ['User.CreatedBy'],
 
                     fields: [
@@ -740,6 +749,8 @@ describe('ast-parser', () => {
                     apiName: 'TimeSheet',
                     type: 'connection',
                     first: undefined,
+                    orderBy: undefined,
+
                     joinNames: [],
                     fields: [
                         {
@@ -750,6 +761,8 @@ describe('ast-parser', () => {
                                 apiName: 'TimeSheetEntry',
                                 type: 'connection',
                                 first: undefined,
+                                orderBy: undefined,
+
                                 joinNames: [],
                                 fields: [
                                     {
@@ -847,6 +860,8 @@ describe('ast-parser', () => {
                     apiName: 'TimeSheet',
                     type: 'connection',
                     first: undefined,
+                    orderBy: undefined,
+
                     joinNames: ['TimeSheet.CreatedBy.CreatedBy', 'TimeSheet.CreatedBy'],
 
                     fields: [

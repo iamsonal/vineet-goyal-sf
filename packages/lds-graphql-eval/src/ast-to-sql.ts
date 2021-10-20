@@ -15,10 +15,11 @@ import {
     isComparisonPredicate,
     NullComparisonPredicate,
     NullComparisonOperator,
-    isBetweenPredicate,
-    BetweenPredicate,
     isNullComparisonPredicate,
     NotPredicate,
+    OrderBy,
+    isBetweenPredicate,
+    BetweenPredicate,
     RelativeDate,
 } from './Predicate';
 
@@ -32,6 +33,13 @@ const recordPrefix = '$.data.uiapi.query';
 const recordSuffix = 'edges';
 const pathPrefix = '$';
 
+function cteSql(mappingInput: SqlMappingInput): string {
+    return (
+        `WITH recordsCTE AS ` +
+        `(select ${mappingInput.jsonColumn} from ${mappingInput.jsonTable} where ${mappingInput.keyColumn} like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\')`
+    );
+}
+
 export function sql(rootQuery: RootQuery, mappingInput: SqlMappingInput): string {
     const fields = rootQuery.connections
         .map(
@@ -43,7 +51,7 @@ export function sql(rootQuery: RootQuery, mappingInput: SqlMappingInput): string
         )
         .join(', ');
 
-    return `SELECT json_set('{}', ${fields} ) as json`;
+    return `${cteSql(mappingInput)} SELECT json_set('{}', ${fields} ) as json`;
 }
 
 function fieldToSql(field: RecordQueryField, mappingInput: SqlMappingInput): string {
@@ -57,10 +65,12 @@ function fieldToSql(field: RecordQueryField, mappingInput: SqlMappingInput): str
 }
 
 function recordQueryToSql(recordQuery: RecordQuery, mappingInput: SqlMappingInput): string {
-    const { predicate, first, fields: recordFields, joinNames, alias: name } = recordQuery;
+    const { predicate, first, orderBy, fields: recordFields, joinNames, alias: name } = recordQuery;
 
-    const predicateString = predicate !== undefined ? `WHERE ${predicateToSql(predicate)}` : '';
+    const predicateString =
+        predicate !== undefined ? `WHERE ${predicateToSql(predicate, mappingInput)}` : '';
     const limitString = first !== undefined ? `LIMIT ${first}` : '';
+    const orderByString = orderBy !== undefined ? orderbyToSql(orderBy) : '';
 
     const fieldsSql = recordFields.map((f) => fieldToSql(f, mappingInput)).join(', ');
     const joinString = joinNamesToSql(joinNames, mappingInput);
@@ -68,9 +78,19 @@ function recordQueryToSql(recordQuery: RecordQuery, mappingInput: SqlMappingInpu
 
     return (
         `SELECT json_group_array(json_set('{}', ${fieldsSql} )) ` +
-        `FROM (SELECT ${columns} FROM (select * from ${mappingInput.jsonTable} ` +
-        `where ${mappingInput.keyColumn} like 'UiApi%3A%3ARecordRepresentation%') as '${name}' ${joinString} ${predicateString} ${limitString})`
+        `FROM (SELECT ${columns} FROM recordsCTE as '${name}' ` +
+        `${joinString} ${predicateString} ${orderByString}${limitString})`
     );
+}
+
+function orderbyToSql(orderBy: OrderBy): string {
+    const extract = expressionToSql(orderBy.extract);
+    const order = orderBy.asc ? 'ASC' : 'DESC';
+    const nullsOrder = orderBy.nullsFirst ? 'DESC' : 'ASC';
+
+    //As of fall 2021 most devices don't have NULLS FIRST|LAST support which was added to sqlite in 2019,
+    //so we use a CASE expression and sort by an "is null" column and then by the actual column order.
+    return `ORDER BY CASE WHEN ${extract} IS NULL THEN 1 ELSE 0 END ${nullsOrder}, ${extract} ${order} `;
 }
 
 function columnsSql(names: string[], mappingInput: SqlMappingInput) {
@@ -85,9 +105,9 @@ function joinToSql(name: string, mappingInput: SqlMappingInput) {
     return `join ${mappingInput.jsonTable} as '${name}'`;
 }
 
-function predicateToSql(predicate: Predicate): string {
+function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): string {
     if (isCompoundPredicate(predicate)) {
-        return compoundPredicateToSql(predicate);
+        return compoundPredicateToSql(predicate, mappingInput);
     }
 
     if (isComparisonPredicate(predicate)) {
@@ -102,12 +122,17 @@ function predicateToSql(predicate: Predicate): string {
         return nullComparisonPredicateToSql(predicate);
     }
 
-    return notPredicateToSql(predicate);
+    return notPredicateToSql(predicate, mappingInput);
 }
 
-function compoundPredicateToSql(predicate: CompoundPredicate): string {
+function compoundPredicateToSql(
+    predicate: CompoundPredicate,
+    mappingInput: SqlMappingInput
+): string {
     const operatorString = compoundOperatorToSql(predicate.operator);
-    const compoundStatement = predicate.children.map(predicateToSql).join(` ${operatorString} `);
+    const compoundStatement = predicate.children
+        .map((child) => predicateToSql(child, mappingInput))
+        .join(` ${operatorString} `);
 
     return `( ${compoundStatement} )`;
 }
@@ -128,8 +153,8 @@ function betweenPredicateToSql(predicate: BetweenPredicate): string {
     return `${compareDate} BETWEEN ${start} AND ${end}`;
 }
 
-function notPredicateToSql(predicate: NotPredicate): string {
-    const innerSql = predicateToSql(predicate.child);
+function notPredicateToSql(predicate: NotPredicate, mappingInput: SqlMappingInput): string {
+    const innerSql = predicateToSql(predicate.child, mappingInput);
 
     return `NOT (${innerSql})`;
 }

@@ -22,6 +22,7 @@ import {
     ValueType,
 } from '../Predicate';
 import { makeGraphQL } from './util';
+import { ObjectInfoMap } from '../info-types';
 
 const { eq, ne, gt, gte, lt, lte, nin } = ComparisonOperator;
 const inOp = ComparisonOperator.in;

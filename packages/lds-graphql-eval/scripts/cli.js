@@ -32,9 +32,9 @@ function parse() {
     }
 
     const evalSql = sql(result.value, {
-        soupColumn: 'TABLE_1_1',
+        jsonColumn: 'TABLE_1_1',
         keyColumn: 'TABLE_1_0',
-        soupTable: 'TABLE_1',
+        jsonTable: 'TABLE_1',
     });
 
     console.log(evalSql);

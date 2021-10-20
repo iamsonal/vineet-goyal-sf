@@ -12,7 +12,7 @@ import {
     ValueType,
 } from '../Predicate';
 
-const objectInfoMap = infoJson as ObjectInfoMap;
+const objectInfoMap = infoJson as unknown as ObjectInfoMap;
 const Extract = ValueType.Extract;
 
 describe('ast-parser', () => {
@@ -1051,6 +1051,177 @@ describe('ast-parser', () => {
 
             const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedValue(result)).toEqual(expected);
+        });
+    });
+
+    describe('ASSIGNEDTOME scope', () => {
+        it('results in correct predicate', () => {
+            const source = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceAppointment(scope: ASSIGNEDTOME) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+
+            const expected: RootQuery = {
+                type: 'root',
+                connections: [
+                    {
+                        alias: 'ServiceAppointment',
+                        apiName: 'ServiceAppointment',
+                        type: 'connection',
+                        first: undefined,
+                        orderBy: undefined,
+                        joinNames: [],
+
+                        fields: [
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node.Id',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'ServiceAppointment',
+                                    path: 'data.id',
+                                },
+                            },
+                        ],
+                        predicate: {
+                            type: PredicateType.compound,
+                            operator: CompoundOperator.and,
+                            children: [
+                                {
+                                    type: PredicateType.exists,
+                                    alias: 'AssignedResource',
+                                    joinNames: ['ServiceResource'],
+                                    predicate: {
+                                        children: [
+                                            {
+                                                left: {
+                                                    jsonAlias: 'AssignedResource',
+                                                    path: 'data.fields.ServiceResourceId.value',
+                                                    type: ValueType.Extract,
+                                                },
+                                                operator: ComparisonOperator.eq,
+                                                right: {
+                                                    jsonAlias: 'ServiceResource',
+                                                    path: 'data.id',
+                                                    type: ValueType.Extract,
+                                                },
+                                                type: PredicateType.comparison,
+                                            },
+                                            {
+                                                left: {
+                                                    jsonAlias: 'AssignedResource',
+                                                    path: 'data.fields.ServiceAppointmentId.value',
+                                                    type: ValueType.Extract,
+                                                },
+                                                operator: ComparisonOperator.eq,
+                                                right: {
+                                                    jsonAlias: 'ServiceAppointment',
+                                                    path: 'data.id',
+                                                    type: ValueType.Extract,
+                                                },
+                                                type: PredicateType.comparison,
+                                            },
+                                            {
+                                                left: {
+                                                    jsonAlias: 'ServiceResource',
+                                                    path: 'data.fields.RelatedRecordId.value',
+                                                    type: ValueType.Extract,
+                                                },
+                                                operator: ComparisonOperator.eq,
+                                                right: {
+                                                    type: ValueType.StringLiteral,
+                                                    value: 'MyId',
+                                                },
+                                                type: PredicateType.comparison,
+                                            },
+                                            {
+                                                left: {
+                                                    jsonAlias: 'AssignedResource',
+                                                    path: 'data.apiName',
+                                                    type: ValueType.Extract,
+                                                },
+                                                operator: ComparisonOperator.eq,
+                                                right: {
+                                                    type: ValueType.StringLiteral,
+                                                    value: 'AssignedResource',
+                                                },
+                                                type: PredicateType.comparison,
+                                            },
+                                            {
+                                                left: {
+                                                    jsonAlias: 'ServiceResource',
+                                                    path: 'data.apiName',
+                                                    type: ValueType.Extract,
+                                                },
+                                                operator: ComparisonOperator.eq,
+                                                right: {
+                                                    type: ValueType.StringLiteral,
+                                                    value: 'ServiceResource',
+                                                },
+                                                type: PredicateType.comparison,
+                                            },
+                                        ],
+                                        operator: CompoundOperator.and,
+                                        type: PredicateType.compound,
+                                    },
+                                },
+                                {
+                                    type: PredicateType.comparison,
+                                    operator: ComparisonOperator.eq,
+                                    left: {
+                                        type: Extract,
+                                        jsonAlias: 'ServiceAppointment',
+                                        path: 'data.apiName',
+                                    },
+                                    right: {
+                                        type: ValueType.StringLiteral,
+                                        value: 'ServiceAppointment',
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            };
+
+            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedValue(result)).toEqual(expected);
+        });
+
+        it('results in an error if Record type is not ServiceAppointment', () => {
+            const source = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            TimeSheetEntry(scope: ASSIGNEDTOME) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        TimeSheetNumber {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+
+            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedError(result)).toEqual([
+                'ASSIGNEDTOME can only be used with ServiceAppointment',
+            ]);
         });
     });
 });

@@ -20,7 +20,6 @@ import {
     JsonExtract,
     Predicate,
     FieldType,
-    PredicateType,
     CompoundOperator,
     ComparisonOperator,
     ValueType,
@@ -35,6 +34,7 @@ import {
     success,
     values,
 } from './Result';
+import { scopeFilter } from './scope-parser';
 
 import {
     isCustomFieldNode,
@@ -61,8 +61,8 @@ import { flatMap, flatten } from './util/flatten';
 const REFERENCE_NAME_KEY = 'Reference';
 const API_NAME_KEY = 'ApiName';
 
-const { Extract, StringLiteral } = ValueType;
-interface ParserInput {
+const { Extract } = ValueType;
+export interface ParserInput {
     objectInfoMap: ObjectInfoMap;
     userId: string;
 }
@@ -332,47 +332,6 @@ function parseFirst(arg: LuvioArgumentNode | undefined): Result<number | undefin
     return success(parseInt(value.value));
 }
 
-function scopeFilter(
-    scopeArg: LuvioArgumentNode | undefined,
-    jsonAlias: string,
-    apiName: string,
-    input: ParserInput
-): Result<Predicate | undefined, string[]> {
-    if (scopeArg === undefined) {
-        return success(undefined);
-    }
-
-    const value = scopeArg.value;
-    if (value.kind !== 'EnumValue') {
-        return failure(['Scope type should be an EnumValueNode.']);
-    }
-
-    const fieldInfo = getFieldInfo(apiName, 'OwnerId', input.objectInfoMap);
-    const scope = value.value;
-
-    if (scope === 'MINE') {
-        if (fieldInfo === undefined) {
-            return failure(['Scope MINE requires the entity type to have an OwnerId field.']);
-        }
-
-        return success({
-            type: PredicateType.comparison,
-            left: {
-                type: Extract,
-                jsonAlias,
-                path: extractPath(fieldInfo.apiName),
-            },
-            operator: ComparisonOperator.eq,
-            right: {
-                type: StringLiteral,
-                value: input.userId,
-            },
-        });
-    }
-
-    return failure([`Scope '${scope} is not supported.`]);
-}
-
 function recordQuery(
     selection: LuvioSelectionCustomFieldNode,
     apiName: string,
@@ -404,7 +363,7 @@ function recordQuery(
     }
 
     if (scopeResult.isSuccess === false) {
-        return failure(scopeResult.error);
+        return failure([scopeResult.error]);
     }
 
     if (firstResult.isSuccess === false) {

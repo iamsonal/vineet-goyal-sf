@@ -109,6 +109,44 @@ describe('ast-parser', () => {
         expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
     });
 
+    it('includes assignedtome predicate', () => {
+        const source = /* GraphQL */ `
+            query {
+                uiapi {
+                    query {
+                        ServiceAppointment(scope: ASSIGNEDTOME) @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    Id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const expected =
+            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `SELECT json_set('{}', '$.data.uiapi.query.ServiceAppointment.edges', ` +
+            `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("ServiceAppointment.JSON", '$.data.id')) )) ` +
+            `FROM (SELECT 'ServiceAppointment'.TABLE_1_1 as 'ServiceAppointment.JSON' FROM recordsCTE as 'ServiceAppointment' ` +
+            ` WHERE ( ` +
+            `EXISTS (` +
+            `SELECT 'ServiceResource'.TABLE_1_1 as 'ServiceResource.JSON', ` +
+            `'AssignedResource'.TABLE_1_1 as 'AssignedResource.JSON' FROM recordsCTE as 'AssignedResource' ` +
+            `join recordsCTE as 'ServiceResource' WHERE ` +
+            `( json_extract("AssignedResource.JSON", '$.data.fields.ServiceResourceId.value') = json_extract("ServiceResource.JSON", '$.data.id') AND ` +
+            `json_extract("AssignedResource.JSON", '$.data.fields.ServiceAppointmentId.value') = json_extract("ServiceAppointment.JSON", '$.data.id') AND ` +
+            `json_extract("ServiceResource.JSON", '$.data.fields.RelatedRecordId.value') = 'MyId' AND ` +
+            `json_extract("AssignedResource.JSON", '$.data.apiName') = 'AssignedResource' AND ` +
+            `json_extract("ServiceResource.JSON", '$.data.apiName') = 'ServiceResource' ) ) AND ` +
+            `json_extract("ServiceAppointment.JSON", '$.data.apiName') = 'ServiceAppointment' ) )) ) as json`;
+
+        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+    });
+
     it('transforms GraphQL operation into a custom AST', () => {
         const source = /* GraphQL */ `
             query {
@@ -218,7 +256,7 @@ describe('ast-parser', () => {
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
             `'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet' ` +
-            `join TABLE_1 as 'TimeSheet.CreatedBy' ` +
+            `join recordsCTE as 'TimeSheet.CreatedBy' ` +
             `WHERE ( ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.JSON", '$.data.id') AND ` +
@@ -274,7 +312,7 @@ describe('ast-parser', () => {
             `FROM (SELECT ` +
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
             `'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-            `FROM recordsCTE as 'TimeSheet' join TABLE_1 as 'TimeSheet.CreatedBy' WHERE ( ` +
+            `FROM recordsCTE as 'TimeSheet' join recordsCTE as 'TimeSheet.CreatedBy' WHERE ( ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.JSON", '$.data.id') AND ` +
             `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )), ` +
@@ -285,7 +323,7 @@ describe('ast-parser', () => {
             `FROM (SELECT ` +
             `'User.CreatedBy'.TABLE_1_1 as 'User.CreatedBy.JSON', ` +
             `'User'.TABLE_1_1 as 'User.JSON' ` +
-            `FROM recordsCTE as 'User' join TABLE_1 as 'User.CreatedBy' WHERE ( ` +
+            `FROM recordsCTE as 'User' join recordsCTE as 'User.CreatedBy' WHERE ( ` +
             `json_extract("User.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("User.JSON", '$.data.fields.CreatedById.value') = json_extract("User.CreatedBy.JSON", '$.data.id') AND json_extract("User.JSON", '$.data.apiName') = 'User' ) )) ` +
             `) as json`;
@@ -361,8 +399,8 @@ describe('ast-parser', () => {
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
             `'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet' ` +
-            `join TABLE_1 as 'TimeSheet.CreatedBy.CreatedBy' ` +
-            `join TABLE_1 as 'TimeSheet.CreatedBy' ` +
+            `join recordsCTE as 'TimeSheet.CreatedBy.CreatedBy' ` +
+            `join recordsCTE as 'TimeSheet.CreatedBy' ` +
             `WHERE ( ` +
             `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = 'xyz' AND ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.id') AND ` +
@@ -430,8 +468,8 @@ describe('ast-parser', () => {
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
             `'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet' ` +
-            `join TABLE_1 as 'TimeSheet.CreatedBy.CreatedBy' ` +
-            `join TABLE_1 as 'TimeSheet.CreatedBy' ` +
+            `join recordsCTE as 'TimeSheet.CreatedBy.CreatedBy' ` +
+            `join recordsCTE as 'TimeSheet.CreatedBy' ` +
             `WHERE ( ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.id') AND ` +
             `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +

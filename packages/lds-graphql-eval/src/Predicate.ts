@@ -1,10 +1,11 @@
 export enum PredicateType {
     compound = 'compound',
     comparison = 'comparison',
-    between = 'between',
     not = 'not',
     nullComparison = 'nullComparison',
     recordRepresentation = 'recordRepresentation',
+    exists = 'exists',
+    between = 'between',
 }
 
 export enum CompoundOperator {
@@ -154,6 +155,12 @@ export interface CompoundPredicate {
     children: Predicate[];
 }
 
+export interface ExistsPredicate {
+    type: PredicateType.exists;
+    predicate: Predicate;
+    joinNames: string[];
+    alias: string;
+}
 export interface PredicateContainer {
     predicate: Predicate;
     joinNames: string[];
@@ -209,6 +216,7 @@ export type Expression = LiteralValue | JsonExtract;
 export type Predicate =
     | CompoundPredicate
     | ComparisonPredicate
+    | ExistsPredicate
     | BetweenPredicate
     | NotPredicate
     | NullComparisonPredicate;
@@ -233,4 +241,8 @@ export function isNullComparisonPredicate(
 
 export function isNotPredicate(predicate: Predicate): predicate is NotPredicate {
     return predicate.type === PredicateType.not;
+}
+
+export function isExistsPredicate(predicate: Predicate): predicate is ExistsPredicate {
+    return predicate.type === PredicateType.exists;
 }

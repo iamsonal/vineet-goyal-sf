@@ -18,6 +18,8 @@ import {
     isNullComparisonPredicate,
     NotPredicate,
     OrderBy,
+    isExistsPredicate,
+    ExistsPredicate,
     isBetweenPredicate,
     BetweenPredicate,
     RelativeDate,
@@ -32,10 +34,11 @@ export interface SqlMappingInput {
 const recordPrefix = '$.data.uiapi.query';
 const recordSuffix = 'edges';
 const pathPrefix = '$';
+const recordsCTE = 'recordsCTE';
 
 function cteSql(mappingInput: SqlMappingInput): string {
     return (
-        `WITH recordsCTE AS ` +
+        `WITH ${recordsCTE} AS ` +
         `(select ${mappingInput.jsonColumn} from ${mappingInput.jsonTable} where ${mappingInput.keyColumn} like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\')`
     );
 }
@@ -64,21 +67,32 @@ function fieldToSql(field: RecordQueryField, mappingInput: SqlMappingInput): str
     return `'${pathPrefix}.${path}', (${expressionToSql(field.extract)})`;
 }
 
-function recordQueryToSql(recordQuery: RecordQuery, mappingInput: SqlMappingInput): string {
+function recordQueryToSql(recordQuery: RecordQuery, input: SqlMappingInput): string {
     const { predicate, first, orderBy, fields: recordFields, joinNames, alias: name } = recordQuery;
 
+    const fieldsSql = recordFields.map((f) => fieldToSql(f, input)).join(', ');
+    const select = selectSql(predicate, name, first, orderBy, joinNames, input);
+
+    return `SELECT json_group_array(json_set('{}', ${fieldsSql} )) ` + `FROM ${select}`;
+}
+
+function selectSql(
+    predicate: Predicate | undefined,
+    name: string,
+    first: number | undefined,
+    orderBy: OrderBy | undefined,
+    joinNames: string[],
+    mappingInput: SqlMappingInput
+) {
+    const joinString = joinNamesToSql(joinNames);
+    const columns = columnsSql(joinNames.concat(name), mappingInput);
     const predicateString =
         predicate !== undefined ? `WHERE ${predicateToSql(predicate, mappingInput)}` : '';
     const limitString = first !== undefined ? `LIMIT ${first}` : '';
     const orderByString = orderBy !== undefined ? orderbyToSql(orderBy) : '';
 
-    const fieldsSql = recordFields.map((f) => fieldToSql(f, mappingInput)).join(', ');
-    const joinString = joinNamesToSql(joinNames, mappingInput);
-    const columns = columnsSql(joinNames.concat(name), mappingInput);
-
     return (
-        `SELECT json_group_array(json_set('{}', ${fieldsSql} )) ` +
-        `FROM (SELECT ${columns} FROM recordsCTE as '${name}' ` +
+        `(SELECT ${columns} FROM ${recordsCTE} as '${name}' ` +
         `${joinString} ${predicateString} ${orderByString}${limitString})`
     );
 }
@@ -97,12 +111,12 @@ function columnsSql(names: string[], mappingInput: SqlMappingInput) {
     return names.map((name) => `'${name}'.${mappingInput.jsonColumn} as '${name}.JSON'`).join(', ');
 }
 
-function joinNamesToSql(names: string[], mappingInput: SqlMappingInput): string {
-    return names.map((name) => joinToSql(name, mappingInput)).join(' ');
+function joinNamesToSql(names: string[]): string {
+    return names.map(joinToSql).join(' ');
 }
 
-function joinToSql(name: string, mappingInput: SqlMappingInput) {
-    return `join ${mappingInput.jsonTable} as '${name}'`;
+function joinToSql(name: string) {
+    return `join ${recordsCTE} as '${name}'`;
 }
 
 function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): string {
@@ -114,12 +128,16 @@ function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): st
         return comparisonPredicateToSql(predicate);
     }
 
-    if (isBetweenPredicate(predicate)) {
-        return betweenPredicateToSql(predicate);
-    }
-
     if (isNullComparisonPredicate(predicate)) {
         return nullComparisonPredicateToSql(predicate);
+    }
+
+    if (isExistsPredicate(predicate)) {
+        return existsPredicateToSql(predicate, mappingInput);
+    }
+
+    if (isBetweenPredicate(predicate)) {
+        return betweenPredicateToSql(predicate);
     }
 
     return notPredicateToSql(predicate, mappingInput);
@@ -135,6 +153,12 @@ function compoundPredicateToSql(
         .join(` ${operatorString} `);
 
     return `( ${compoundStatement} )`;
+}
+
+function existsPredicateToSql(exists: ExistsPredicate, mappingInput: SqlMappingInput): string {
+    const { predicate, joinNames, alias } = exists;
+    const select = selectSql(predicate, alias, undefined, undefined, joinNames, mappingInput);
+    return `EXISTS ${select}`;
 }
 
 function comparisonPredicateToSql(predicate: ComparisonPredicate): string {

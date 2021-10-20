@@ -15,7 +15,8 @@ import {
 } from './connect-base';
 
 const COMMUNITIES_MICROBATCHING_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/microbatching`
+    `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/microbatching`,
+    'i'
 );
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(

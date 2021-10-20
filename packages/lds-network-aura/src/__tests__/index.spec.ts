@@ -9,6 +9,7 @@ import {
     CONNECT_BASE_URI,
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
+    ADATS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     CMS_BASE_URI,
     BILLING_BASE_URI,
@@ -7302,7 +7303,6 @@ describe('routes', () => {
                 { background: false, hotspot: true, longRunning: false },
             ]
         );
-
         testRejectFetchResponse({
             method: 'get',
             baseUri: CIB_BASE_URI,
@@ -7349,6 +7349,102 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: CIB_BASE_URI,
                 basePath: `/deal-parties/0lsR00000000014IAA`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connectors', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connectors`,
+            },
+            [
+                'AdatsController.getConnectors',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connectors`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connections', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections`,
+            },
+            [
+                'AdatsController.getConnections',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connectors`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connectors/{id}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connectors/SALESFORCE_ADS`,
+            },
+            [
+                'AdatsController.getConnector',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connectors/SALESFORCE_ADS`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connections/{id}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812`,
+            },
+            [
+                'AdatsController.getConnection',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812`,
             },
             {}
         );

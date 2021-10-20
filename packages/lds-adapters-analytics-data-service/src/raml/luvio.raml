@@ -1,0 +1,44 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'ADATS'
+(luvio.ttl): 2592000000
+
+types:
+  ConnectorCollectionRepresentation:
+    (luvio.ttl): 300
+  ConnectorRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      id: id
+  ConnectionCollectionRepresentation:
+    (luvio.ttl): 300
+  ConnectionRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      id: id
+
+/analytics/data-service/sync:
+  /connectors:
+    get:
+      (luvio.adapter):
+        name: getConnectors
+  /connectors/{id}:
+    get:
+      (luvio.adapter):
+        name: getConnector
+      (luvio.key):
+        id: urlParams.id
+  /connections:
+    get:
+      (luvio.adapter):
+        name: getConnections
+  /connections/{id}:
+    get:
+      (luvio.adapter):
+        name: getConnection
+      (luvio.key):
+        id: urlParams.id

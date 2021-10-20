@@ -4,6 +4,7 @@ import {
     COMMERCE_BASE_URI,
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
+    ADATS_BASE_URI,
     CMS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     SCALECENTER_BASE_URI,
@@ -66,6 +67,14 @@ const GET_GUIDANCE_SCENARIOS_PATH = new RegExp(
 
 const GET_GUIDANCE_STEP_PATH = new RegExp(
     `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/step/([A-Z0-9_]){2,32}$`,
+    'i'
+);
+
+const ADATS_CONNECTORS_PATH = new RegExp(`${ADATS_BASE_URI}/connectors$`, 'i');
+const ADATS_CONNECTOR_PATH = new RegExp(`${ADATS_BASE_URI}/connectors/[A-Z0-9_-]`, 'i');
+const ADATS_CONNECTIONS_PATH = new RegExp(`${ADATS_BASE_URI}/connections$`, 'i');
+const ADATS_CONNECTION_PATH = new RegExp(
+    `${ADATS_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`,
     'i'
 );
 
@@ -1046,6 +1055,41 @@ const analytics: ApiFamily = {
         },
     },
 };
+const adats: ApiFamily = {
+    getConnectors: {
+        method: 'get',
+        predicate: (path: string) => {
+            return path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTORS_PATH.test(path);
+        },
+        transport: {
+            controller: 'AdatsController.getConnectors',
+        },
+    },
+    getConnector: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTOR_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getConnector',
+        },
+    },
+    getConnections: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTIONS_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getConnections',
+        },
+    },
+    getConnection: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTION_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getConnection',
+        },
+    },
+};
 
 const flow: ApiFamily = {
     startFlow: {
@@ -1140,6 +1184,7 @@ registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
 registerApiFamilyRoutes(analytics);
+registerApiFamilyRoutes(adats);
 registerApiFamilyRoutes(scalecenter);
 registerApiFamilyRoutes(flow);
 registerApiFamilyRoutes(billing);

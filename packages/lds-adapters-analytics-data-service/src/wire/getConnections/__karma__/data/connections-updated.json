@@ -1,0 +1,26 @@
+{
+    "connections": [
+        {
+            "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c4",
+            "label": "Salesforce ADS",
+            "name": "Salesforce ADS",
+            "schema": {
+                "name": "salesforce.schema",
+                "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
+            },
+            "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
+        },
+        {
+            "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c5",
+            "label": "Salesforce ADS2",
+            "name": "Salesforce ADS2",
+            "schema": {
+                "name": "salesforce.schema",
+                "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
+            },
+            "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c5"
+        }
+    ],
+    "totalSize": 2,
+    "url": "/services/data/v54.0/analytics/data-service/sync/connections"
+}

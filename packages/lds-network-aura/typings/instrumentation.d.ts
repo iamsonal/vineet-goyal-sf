@@ -3,4 +3,5 @@ declare module 'instrumentation/service' {
         logHits(count?: number): void;
         logMisses(count?: number): void;
     }
+    export function registerCacheStats(name: string): CacheStatsLogger;
 }

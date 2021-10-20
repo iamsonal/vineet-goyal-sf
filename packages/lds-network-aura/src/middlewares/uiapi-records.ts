@@ -1,6 +1,5 @@
 import { ResourceRequest } from '@luvio/engine';
 
-import { registerLdsCacheStats } from '@salesforce/lds-instrumentation';
 import { createStorage } from '@salesforce/lds-aura-storage';
 
 import { actionConfig, UI_API_BASE_URI } from './uiapi-base';
@@ -12,6 +11,7 @@ import {
     InstrumentationRejectConfig,
     InstrumentationResolveConfig,
     auraResponseIsQueryTooComplicated,
+    registerLdsCacheStats,
 } from './utils';
 import {
     buildGetRecordByFieldsCompositeRequest,

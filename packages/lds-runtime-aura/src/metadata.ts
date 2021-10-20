@@ -1,6 +1,6 @@
 import { Luvio } from '@luvio/engine';
 
-import { mark } from '@salesforce/lds-instrumentation';
+import { mark } from './aura-instrumentation/main';
 import { clearStorages } from '@salesforce/lds-aura-storage';
 
 const OBJECT_INFO_PREFIX = 'UiApi::ObjectInfoRepresentation:';

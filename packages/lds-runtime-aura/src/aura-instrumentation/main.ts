@@ -13,6 +13,8 @@ import {
     registerCacheStats,
     registerPeriodicLogger,
     PercentileHistogram,
+    timer,
+    Timer,
 } from 'instrumentation/service';
 import { LRUCache } from '@salesforce/lds-instrumentation';
 
@@ -32,7 +34,7 @@ interface AdapterUnfulfilledErrorCounters {
     [apiName: string]: Counter;
 }
 
-interface AdapterUnfulfilledError {
+export interface AdapterUnfulfilledError {
     [ADAPTER_UNFULFILLED_ERROR]: boolean;
     adapterName: string;
     missingPaths: UnfulfilledSnapshot<any, any>['missingPaths'];
@@ -503,6 +505,28 @@ export function updatePercentileHistogramMetric(name: string, value: number) {
         percentileHistogramMetricTracker[name] = metric;
     }
     metric.update(value);
+}
+
+const timerMetricTracker: Record<string, Timer> = ObjectCreate(null);
+/**
+ * Calls instrumentation/service telemetry timer
+ * @param name Name of the metric
+ * @param duration number to update backing percentile histogram, negative numbers ignored
+ */
+export function updateTimerMetric(name: string, duration: number): void {
+    let metric = timerMetricTracker[name];
+    if (metric === undefined) {
+        metric = timer(createMetricsKey(NAMESPACE, name));
+        timerMetricTracker[name] = metric;
+    }
+    timerMetricAddDuration(metric, duration);
+}
+
+export function timerMetricAddDuration(timer: Timer, duration: number) {
+    // Guard against negative values since it causes error to be thrown by MetricsService
+    if (duration >= 0) {
+        timer.addDuration(duration);
+    }
 }
 
 /**

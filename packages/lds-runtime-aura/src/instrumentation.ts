@@ -8,10 +8,13 @@ import {
     incrementGetRecordNotifyChangeDropCount,
     incrementNetworkRateLimitExceededCount,
     instrumentation as ldsInstrumentation,
-    logCRUDLightningInteraction,
     setAggregateUiChunkCountMetric,
-    updateTimerMetric,
 } from '@salesforce/lds-instrumentation';
+import {
+    logCRUDLightningInteraction,
+    updateTimerMetric,
+    instrumentation as auraInstrumentation,
+} from './aura-instrumentation/main';
 import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
 import { instrument as networkAuraInstrument } from '@salesforce/lds-network-aura';
 import { instrument as lwcBindingsInstrument } from '@salesforce/lds-bindings';
@@ -29,7 +32,7 @@ export function setInstrumentationHooks() {
         getRecordNotifyChangeDropped: incrementGetRecordNotifyChangeDropCount,
         recordApiNameChanged:
             ldsInstrumentation.incrementRecordApiNameChangeCount.bind(ldsInstrumentation),
-        weakEtagZero: ldsInstrumentation.aggregateWeakETagEvents.bind(ldsInstrumentation),
+        weakEtagZero: auraInstrumentation.aggregateWeakETagEvents.bind(auraInstrumentation),
         getRecordNotifyChangeNetworkResult:
             ldsInstrumentation.notifyChangeNetwork.bind(ldsInstrumentation),
     });
@@ -42,8 +45,8 @@ export function setInstrumentationHooks() {
         networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
     });
     lwcBindingsInstrument({
-        refreshCalled: ldsInstrumentation.handleRefreshApiCall.bind(ldsInstrumentation),
-        instrumentAdapter: ldsInstrumentation.instrumentAdapter.bind(ldsInstrumentation),
+        refreshCalled: auraInstrumentation.handleRefreshApiCall.bind(auraInstrumentation),
+        instrumentAdapter: auraInstrumentation.instrumentAdapter.bind(auraInstrumentation),
     });
     adsBridgeInstrument({
         timerMetricAddDuration: updateTimerMetric,

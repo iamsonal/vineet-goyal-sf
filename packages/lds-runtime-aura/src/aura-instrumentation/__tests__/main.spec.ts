@@ -9,6 +9,7 @@ import {
     incrementCounterMetric,
     updatePercentileHistogramMetric,
     log,
+    AdapterUnfulfilledError,
     Instrumentation,
     LightningInteractionSchema,
     NORMALIZED_APEX_ADAPTER_NAME,
@@ -17,7 +18,7 @@ import {
     SUPPORTED_KEY,
     UNSUPPORTED_KEY,
 } from '../main';
-import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
+import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
 
 import { LRUCache } from '@salesforce/lds-instrumentation';
@@ -73,6 +74,10 @@ const instrumentationSpies = {
     logAdapterCacheMissOutOfTtlDuration: jest.spyOn(
         instrumentation,
         'logAdapterCacheMissOutOfTtlDuration'
+    ),
+    incrementAdapterRequestErrorCount: jest.spyOn(
+        instrumentation,
+        'incrementAdapterRequestErrorCount'
     ),
 };
 
@@ -519,6 +524,16 @@ describe('instrumentation', () => {
     });
 
     describe('Observability metrics', () => {
+        it('incrementAdapterRequestErrorCount called through instrumentLuvio function', () => {
+            const context: AdapterUnfulfilledError = {
+                [ADAPTER_UNFULFILLED_ERROR]: true,
+                adapterName: 'fooAdapter',
+                missingPaths: undefined,
+                missingLinks: undefined,
+            };
+            instrumentation.instrumentLuvio(context);
+            expect(instrumentationSpies.incrementAdapterRequestErrorCount).toBeCalled();
+        });
         it('should instrument error when UnfulfilledSnapshot is returned to the adapter', () => {
             const mockGetRecordAdapter = () => {
                 return new Promise((resolve) => {

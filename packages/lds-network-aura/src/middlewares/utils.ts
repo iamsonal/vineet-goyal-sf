@@ -1,6 +1,6 @@
 import { executeGlobalController, ActionConfig } from 'aura';
 import { AuraStorage } from 'aura-storage';
-import { CacheStatsLogger } from 'instrumentation/service';
+import { registerCacheStats, CacheStatsLogger } from 'instrumentation/service';
 
 import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { AuraFetchResponse } from '../AuraFetchResponse';
@@ -19,6 +19,16 @@ interface CacheConfig {
     key: string;
     statsLogger: CacheStatsLogger;
     forceRefresh?: boolean;
+}
+
+/**
+ * Create a new instrumentation cache stats and return it.
+ *
+ * @param name The cache logger name.
+ */
+const NAMESPACE = 'lds';
+export function registerLdsCacheStats(name: string): CacheStatsLogger {
+    return registerCacheStats(`${NAMESPACE}:${name}`);
 }
 
 export interface DispatchActionConfig {

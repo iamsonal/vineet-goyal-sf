@@ -12,34 +12,6 @@ types:
     (luvio.ttl): 5000
     (luvio.key):
       id: id
-  SaqlQueryResultsRepresentation:
-    (luvio.opaque): true
-  ScheduleRepresentation:
-    (luvio.key):
-      id: assetId
-  ReplicatedDatasetRepresentation:
-    (luvio.ttl): 5000
-    (luvio.key):
-      id: uuid
-  ReplicatedFieldCollectionRepresentation:
-    (luvio.ttl): 300
-    (luvio.key):
-      id: replicatedDataset.id
-  RestoreDatasetVersionRepresentation:
-    (luvio.key):
-      # This representation is only used in the response of an RPC like endpoint
-      # Use url as key since we won't look up this data
-      id: url
-  SourceObjectRepresentation:
-    (luvio.ttl): 5000
-    (luvio.key):
-      connectorIdOrApiName: dataConnector.id # Only support id for now
-      SourceObjectName: name
-  SourceFieldCollectionRepresentation:
-    (luvio.ttl): 300
-    (luvio.key):
-      connectorIdOrApiName: dataConnector.id # Only support id for now
-      SourceObjectName: sourceObjectName
   DataflowJobCollectionRepresentation:
     (luvio.ttl): 300
   DataflowCollectionRepresentation:
@@ -56,8 +28,40 @@ types:
     (luvio.ttl): 300
   RecipeCollectionRepresentation:
     (luvio.ttl): 300
+  RecipeNotificationRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      id: recipe.id
   ReplicatedDatasetCollectionRepresentation:
     (luvio.ttl): 300
+  ReplicatedDatasetRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      id: uuid
+  ReplicatedFieldCollectionRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      id: replicatedDataset.id
+  RestoreDatasetVersionRepresentation:
+    (luvio.key):
+      # This representation is only used in the response of an RPC like endpoint
+      # Use url as key since we won't look up this data
+      id: url
+  SaqlQueryResultsRepresentation:
+    (luvio.opaque): true
+  ScheduleRepresentation:
+    (luvio.key):
+      id: assetId
+  SourceObjectRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      connectorIdOrApiName: dataConnector.id # Only support id for now
+      SourceObjectName: name
+  SourceFieldCollectionRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      connectorIdOrApiName: dataConnector.id # Only support id for now
+      SourceObjectName: sourceObjectName
   SourceObjectCollectionRepresentation:
     (luvio.ttl): 300
   WaveAnalyticsLimitCollectionRepresentation:
@@ -201,6 +205,12 @@ types:
     patch:
       (luvio.adapter):
         name: updateRecipe
+    /notification:
+      get:
+        (luvio.adapter):
+          name: getRecipeNotification
+        (luvio.key):
+          id: urlParams.id
   /replicatedDatasets:
     get:
       (luvio.adapter):

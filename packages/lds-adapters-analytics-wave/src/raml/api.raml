@@ -1626,6 +1626,25 @@ types:
         type: array
         items:
           type: string
+  RecipeNotificationRepresentation:
+    description: Notification conditions on a recipe for the current user.
+    type: object
+    properties:
+      longRunningAlertInMins:
+        description: Number of minutes that a recipe can run before sending an alert.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      notificationLevel:
+        description: Notification level for emails.
+        type: string
+        enum:
+          - Always
+          - Failures
+          - Never
+          - Warnings
+      recipe:
+        description: A reference to the Recipe that the notification belongs to.
+        type: AssetReferenceRepresentation
   RecipeRepresentation:
     description: A Data Prep recipe.
     discriminatorValue: recipe
@@ -4011,6 +4030,20 @@ types:
       id:
         type: string
         required: true
+    /notification:
+      get:
+        description: Retrieve notification condition on a recipe for the current
+          user.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecipeNotificationRepresentation
+      uriParameters:
+        id:
+          type: string
+          required: true
   /replicatedDatasets:
     get:
       description: Get a list of all Replicated Datasets.

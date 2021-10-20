@@ -123,6 +123,11 @@ const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
 
 const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9]){15,18}$`, 'i');
 
+const RECIPE_NOTIFICATION_PATH = new RegExp(
+    `${WAVE_BASE_URI}/recipes/([A-Z0-9]){15,18}/notification$`,
+    'i'
+);
+
 const REPLICATED_DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/replicatedDatasets$`, 'i');
 
 const REPLICATED_DATASET_PATH = new RegExp(
@@ -917,6 +922,14 @@ const analytics: ApiFamily = {
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPES_PATH.test(path),
         transport: {
             controller: 'WaveController.getRecipes',
+        },
+    },
+    getRecipeNotification: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && RECIPE_NOTIFICATION_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getRecipeNotification',
         },
     },
     getSchedule: {

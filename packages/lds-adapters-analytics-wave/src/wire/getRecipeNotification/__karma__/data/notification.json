@@ -1,0 +1,5 @@
+{
+    "longRunningAlertInMins": 60,
+    "notificationLevel": "always",
+    "recipe": { "id": "05vRM00000003rZYAQ" }
+}

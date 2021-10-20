@@ -755,6 +755,34 @@ function updateRecipeMatcher(config) {
     });
 }
 
+// Recipe Notification
+function mockGetRecipeNotificationNetworkOnce(config, mockData) {
+    const paramMatch = getRecipeNotificationMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRecipeNotificationNetworkErrorOnce(config, mockData) {
+    const paramMatch = getRecipeNotificationMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getRecipeNotificationMatcher(config) {
+    const { id } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/recipes/${id}/notification`,
+        queryParams: {},
+    });
+}
+
 // Replicated Datasets
 function mockGetReplicatedDatasetsNetworkOnce(config, mockData) {
     const paramMatch = getReplicatedDatasetsMatcher(config);
@@ -1123,6 +1151,8 @@ export {
     mockDeleteRecipeNetworkErrorOnce,
     mockUpdateRecipeNetworkOnce,
     mockUpdateRecipeNetworkErrorOnce,
+    mockGetRecipeNotificationNetworkOnce,
+    mockGetRecipeNotificationNetworkErrorOnce,
     mockGetReplicatedDatasetNetworkOnce,
     mockGetReplicatedDatasetNetworkErrorOnce,
     mockUpdateReplicatedDatasetNetworkOnce,

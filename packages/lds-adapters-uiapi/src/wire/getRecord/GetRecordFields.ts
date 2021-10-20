@@ -7,7 +7,11 @@ import {
     ResourceResponse,
     ResourceRequest,
 } from '@luvio/engine';
-import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
+import {
+    GetRecordConfig,
+    createResourceParams,
+    naiveGetResponseCacheKeys as getResponseCacheKeys,
+} from '../../generated/adapters/getRecord';
 import {
     keyBuilder,
     ResourceRequestConfig,
@@ -164,13 +168,17 @@ export function buildNetworkSnapshot(
 
     return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
         (response) => {
-            return onResourceSuccess(
-                luvio,
-                config,
-                key,
-                allTrackedFields,
-                response,
-                serverRequestCount + 1
+            return luvio.handleSuccessResponse(
+                () =>
+                    onResourceSuccess(
+                        luvio,
+                        config,
+                        key,
+                        allTrackedFields,
+                        response,
+                        serverRequestCount + 1
+                    ),
+                () => getResponseCacheKeys(luvio, createResourceParams(config), response)
             );
         },
         (err: FetchResponse<unknown>) => {

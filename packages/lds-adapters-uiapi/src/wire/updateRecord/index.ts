@@ -1,4 +1,4 @@
-import { Luvio, Snapshot, FetchResponse } from '@luvio/engine';
+import { Luvio, Snapshot, FetchResponse, ResourceIngest } from '@luvio/engine';
 
 import { deepFreeze } from '../../util/deep-freeze';
 import { buildSelectionFromRecord } from '../../selectors/record';
@@ -13,6 +13,8 @@ import {
     UpdateRecordConfig,
     createResourceParams,
 } from '../../generated/adapters/updateRecord';
+import { naiveGetResponseCacheKeys as getResponseCacheKeys } from '../../generated/adapters/getRecord';
+import { ResourceRequestConfig } from '../../generated/resources/getUiApiRecordsByRecordId';
 import patchUiApiRecordsByRecordId from '../../generated/resources/patchUiApiRecordsByRecordId';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
@@ -35,6 +37,38 @@ function getHeaders(clientOptions: unknown) {
         }
     }
     return headers;
+}
+
+function onResponseSuccess(
+    luvio: Luvio,
+    response: FetchResponse<RecordRepresentation>,
+    recordId: string,
+    recordIngest: ResourceIngest,
+    conflictMap: RecordConflictMap
+) {
+    const { body } = response;
+
+    const sel = buildSelectionFromRecord(body);
+    const key = recordRepresentationKeyBuilder({
+        recordId,
+    });
+
+    luvio.storeIngest(key, recordIngest, body);
+    resolveConflict(luvio, conflictMap);
+
+    const snapshot = luvio.storeLookup<RecordRepresentation>({
+        recordId: key,
+        node: {
+            kind: 'Fragment',
+            private: [],
+            selections: sel,
+        },
+        variables: {},
+    });
+
+    luvio.storeBroadcast();
+
+    return snapshot;
 }
 
 export const factory = (luvio: Luvio) => {
@@ -75,29 +109,16 @@ export const factory = (luvio: Luvio) => {
 
         return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
             (response) => {
-                const { body } = response;
-
-                const sel = buildSelectionFromRecord(body);
-                const key = recordRepresentationKeyBuilder({
-                    recordId,
-                });
-
-                luvio.storeIngest(key, recordIngest, body);
-                resolveConflict(luvio, conflictMap);
-
-                const snapshot = luvio.storeLookup<RecordRepresentation>({
-                    recordId: key,
-                    node: {
-                        kind: 'Fragment',
-                        private: [],
-                        selections: sel,
-                    },
-                    variables: {},
-                });
-
-                luvio.storeBroadcast();
-
-                return snapshot;
+                return luvio.handleSuccessResponse(
+                    () => onResponseSuccess(luvio, response, recordId, recordIngest, conflictMap),
+                    // TODO [W-10055997]: use getResponseCacheKeys from type
+                    () =>
+                        getResponseCacheKeys(
+                            luvio,
+                            resourceParams as ResourceRequestConfig,
+                            response
+                        )
+                );
             },
             (err: FetchResponse<{ error: string }>) => {
                 deepFreeze(err);

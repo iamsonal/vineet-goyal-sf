@@ -109,7 +109,7 @@ function getResponseCacheKeys(
     // TODO [W-10055997]: make this more efficient
 
     // for now we will get the cache keys by actually ingesting then looking at
-    // the store records
+    // the seenRecords + recordId
     const { query, variables } = config;
     const { body } = response;
     if (body.errors.length > 0) {

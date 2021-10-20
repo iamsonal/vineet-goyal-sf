@@ -79,6 +79,36 @@ describe('ast-parser', () => {
         expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
     });
 
+    it('includes first arg in output', () => {
+        const source = /* GraphQL */ `
+            query {
+                uiapi {
+                    query {
+                        TimeSheet(first: 49) @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    Id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const expected =
+            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
+            `'$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')) )) ` +
+            `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
+            `FROM recordsCTE as 'TimeSheet'  ` +
+            `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' LIMIT 49` +
+            `)) ) as json`;
+
+        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+    });
+
     it('transforms GraphQL operation into a custom AST', () => {
         const source = /* GraphQL */ `
             query {

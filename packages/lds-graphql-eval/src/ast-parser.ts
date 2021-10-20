@@ -257,6 +257,7 @@ function queryContainer<T extends RecordQuery>(
     };
     const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName));
     const spanningFields = inputFields.value.filter(isSpanningField);
+
     const predicates: Predicate[] = spanningFields
         .map((field): Predicate[] => field.spanning.predicates)
         .reduce(flatten, [])
@@ -318,6 +319,19 @@ function childRecordQuery(
     return recordQuery(selection, apiName, alias, additionalPredicates, input);
 }
 
+function parseFirst(arg: LuvioArgumentNode | undefined): Result<number | undefined, string[]> {
+    if (arg === undefined) {
+        return success(undefined);
+    }
+
+    const value = arg.value;
+    if (value.kind !== 'IntValue') {
+        return failure(['first type should be an IntValue.']);
+    }
+
+    return success(parseInt(value.value));
+}
+
 function scopeFilter(
     scopeArg: LuvioArgumentNode | undefined,
     jsonAlias: string,
@@ -370,8 +384,9 @@ function recordQuery(
     const whereArg = args.filter(named('where'))[0];
     const scopeArg = args.filter(named('scope'))[0];
     const orderByArg = args.filter(named('orderBy'))[0];
+    const firstArg = args.filter(named('first'))[0];
 
-    const first: number | undefined = undefined;
+    const firstResult = parseFirst(firstArg);
     const orderByResult = parseOrderBy(orderByArg, alias, apiName, input.objectInfoMap);
     const whereResult = recordFilter(whereArg, alias, apiName, input.objectInfoMap);
     const scopeResult = scopeFilter(scopeArg, alias, apiName, input);
@@ -390,6 +405,10 @@ function recordQuery(
 
     if (scopeResult.isSuccess === false) {
         return failure(scopeResult.error);
+    }
+
+    if (firstResult.isSuccess === false) {
+        return failure(firstResult.error);
     }
 
     if (scopeResult.value !== undefined) {
@@ -438,6 +457,7 @@ function recordQuery(
             [...additionalPredicates, ...result.predicates].filter(isDefined),
             CompoundOperator.and
         );
+        const first = firstResult.value;
         const type = 'connection';
         const orderBy = orderByResult.value === undefined ? undefined : orderByResult.value.orderBy;
 

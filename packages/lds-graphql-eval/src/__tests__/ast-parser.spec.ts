@@ -969,4 +969,88 @@ describe('ast-parser', () => {
         const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
+
+    describe('first arg', () => {
+        it('returns an error for wrong type', () => {
+            const source = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            TimeSheet(first: true) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+
+            const expected = ['first type should be an IntValue.'];
+            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedError(result)).toEqual(expected);
+        });
+
+        it('includes first arg in connection', () => {
+            const source = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            TimeSheet(first: 43) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+
+            const expected: RootQuery = {
+                type: 'root',
+                connections: [
+                    {
+                        alias: 'TimeSheet',
+                        apiName: 'TimeSheet',
+                        type: 'connection',
+                        first: 43,
+                        orderBy: undefined,
+                        joinNames: [],
+
+                        fields: [
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node.Id',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'data.id',
+                                },
+                            },
+                        ],
+                        predicate: {
+                            type: PredicateType.comparison,
+                            operator: ComparisonOperator.eq,
+                            left: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.apiName',
+                            },
+                            right: {
+                                type: ValueType.StringLiteral,
+                                value: 'TimeSheet',
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedValue(result)).toEqual(expected);
+        });
+    });
 });

@@ -11,8 +11,8 @@
         "build": "tsc"
     },
     "devDependencies": {
-        "@luvio/adapter-test-library": "0.55.0",
-        "@luvio/engine": "0.55.0",
-        "@luvio/environments": "0.55.0"
+        "@luvio/adapter-test-library": "0.55.1",
+        "@luvio/engine": "0.55.1",
+        "@luvio/environments": "0.55.1"
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-ads-bridge",
-    "version": "1.30.0",
+    "version": "1.31.0",
     "description": "Bridge to sync data between LDS and ADS",
     "license": "MIT",
     "private": true,
@@ -20,7 +20,7 @@
         "release:corejar": "yarn build && ../core-build/scripts/core.js --name=lds-ads-bridge"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.30.0",
-        "@salesforce/lds-uiapi-record-utils": "1.30.0"
+        "@salesforce/lds-adapters-uiapi": "1.31.0",
+        "@salesforce/lds-uiapi-record-utils": "1.31.0"
     }
 }

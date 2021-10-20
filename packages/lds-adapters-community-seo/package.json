@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-community-seo",
-    "version": "1.30.0",
+    "version": "1.31.0",
     "description": "APIs for various SEO features in experiences",
     "license": "MIT",
     "main": "dist/umd/es2018/community-seo.js",
@@ -30,13 +30,13 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-community-seo"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.30.0"
+        "@salesforce/lds-bindings": "1.31.0"
     },
     "devDependencies": {
         "@luvio/cli": "0.55.1",
         "@luvio/compiler": "0.55.1",
         "@luvio/engine": "0.55.1",
         "@luvio/lwc-luvio": "0.55.1",
-        "@salesforce/lds-karma": "1.30.0"
+        "@salesforce/lds-karma": "1.31.0"
     }
 }

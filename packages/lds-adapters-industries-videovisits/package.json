@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-videovisits",
-    "version": "1.30.0",
+    "version": "1.31.0",
     "description": "API family to support booking virtual care appointments in HealthCloud",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-videovisits.js",
@@ -27,13 +27,13 @@
         "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.30.0"
+        "@salesforce/lds-bindings": "1.31.0"
     },
     "devDependencies": {
         "@luvio/cli": "0.55.1",
         "@luvio/compiler": "0.55.1",
         "@luvio/engine": "0.55.1",
         "@luvio/lwc-luvio": "0.55.1",
-        "@salesforce/lds-karma": "1.30.0"
+        "@salesforce/lds-karma": "1.31.0"
     }
 }

@@ -6,12 +6,9 @@ import {
     SnapshotRefresh,
     ResourceResponse,
     ResourceRequest,
+    CacheKeySet,
 } from '@luvio/engine';
-import {
-    GetRecordConfig,
-    createResourceParams,
-    naiveGetResponseCacheKeys as getResponseCacheKeys,
-} from '../../generated/adapters/getRecord';
+import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
 import {
     keyBuilder,
     ResourceRequestConfig,
@@ -31,6 +28,7 @@ import { difference } from '../../validation/utils';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 import { RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS } from './index';
+import { JSONParse, JSONStringify, ObjectCreate, ObjectKeys } from '../../util/language';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(
@@ -85,6 +83,46 @@ function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
     request.configOptionalFields = optionalFieldsFromConfig;
 
     return { request, key, allTrackedFields };
+}
+
+function getResponseCacheKeys(
+    luvio: Luvio,
+    config: GetRecordConfig,
+    key: string,
+    allTrackedFields: string[],
+    response: ResourceResponse<RecordRepresentation>,
+    serverRequestCount: number
+): CacheKeySet {
+    // TODO [W-10055997]: make this more efficient
+
+    // for now we will get the cache keys by actually ingesting then looking at
+    // the seenRecords + recordId
+    const responseCopy = JSONParse(JSONStringify(response));
+    const snapshot = ingestSuccess(
+        luvio,
+        config,
+        key,
+        allTrackedFields,
+        responseCopy,
+        serverRequestCount
+    );
+
+    if (snapshot.state === 'Error') {
+        return {};
+    }
+
+    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
+    const keySet: CacheKeySet = ObjectCreate(null);
+    for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const namespace = key.split('::')[0];
+        const representationName = key.split('::')[1].split(':')[0];
+        keySet[key] = {
+            namespace,
+            representationName,
+        };
+    }
+    return keySet;
 }
 
 export function ingestSuccess(
@@ -178,7 +216,15 @@ export function buildNetworkSnapshot(
                         response,
                         serverRequestCount + 1
                     ),
-                () => getResponseCacheKeys(luvio, createResourceParams(config), response)
+                () =>
+                    getResponseCacheKeys(
+                        luvio,
+                        config,
+                        key,
+                        allTrackedFields,
+                        response,
+                        serverRequestCount + 1
+                    )
             );
         },
         (err: FetchResponse<unknown>) => {

@@ -6,15 +6,16 @@ import { buildSelectionFromRecord } from '../../selectors/record';
 import {
     RecordRepresentation,
     keyBuilder as recordRepresentationKeyBuilder,
+    keyBuilderFromType,
+    RepresentationType,
 } from '../../generated/types/RecordRepresentation';
+import { keyPrefix } from '../../generated/adapters/adapter-utils';
 import {
     updateRecord_ConfigPropertyNames,
     validateAdapterConfig,
     UpdateRecordConfig,
     createResourceParams,
 } from '../../generated/adapters/updateRecord';
-import { naiveGetResponseCacheKeys as getResponseCacheKeys } from '../../generated/adapters/getRecord';
-import { ResourceRequestConfig } from '../../generated/resources/getUiApiRecordsByRecordId';
 import patchUiApiRecordsByRecordId from '../../generated/resources/patchUiApiRecordsByRecordId';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
@@ -112,12 +113,15 @@ export const factory = (luvio: Luvio) => {
                 return luvio.handleSuccessResponse(
                     () => onResponseSuccess(luvio, response, recordId, recordIngest, conflictMap),
                     // TODO [W-10055997]: use getResponseCacheKeys from type
-                    () =>
-                        getResponseCacheKeys(
-                            luvio,
-                            resourceParams as ResourceRequestConfig,
-                            response
-                        )
+                    () => {
+                        const key = keyBuilderFromType(response.body);
+                        return {
+                            [key]: {
+                                namespace: keyPrefix,
+                                representationName: RepresentationType,
+                            },
+                        };
+                    }
                 );
             },
             (err: FetchResponse<{ error: string }>) => {

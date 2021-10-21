@@ -6,4 +6,4 @@ export { createImperativeAdapter } from './imperativeAdapter';
 export { createWireAdapterConstructor } from './wireAdapter';
 
 //  Types
-export { DataCallbackTuple, ImperativeAdapter } from './imperativeAdapter';
+export { DataCallback, DataCallbackTuple, ImperativeAdapter } from './imperativeAdapter';

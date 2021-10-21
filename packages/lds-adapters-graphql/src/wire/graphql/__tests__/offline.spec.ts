@@ -1,3 +1,4 @@
+import { DefaultDurableSegment } from '@luvio/environments';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
@@ -265,8 +266,9 @@ describe('graphQL adapter offline', () => {
                 variables: {},
             };
 
-            const { luvio, store } = buildOfflineLuvio(
-                new MockDurableStore(),
+            const durableStore = new MockDurableStore();
+            const { luvio } = buildOfflineLuvio(
+                durableStore,
                 buildMockNetworkAdapter([
                     buildSuccessMockPayload(requestArgs, mockData_FieldServiceOrgSettings_Id),
                 ])
@@ -283,7 +285,9 @@ describe('graphQL adapter offline', () => {
             // populate it
             await adapter(config);
 
-            const expirationTimestamp = store.metadata[recordKey].expirationTimestamp;
+            const expirationTimestamp =
+                durableStore.segments[DefaultDurableSegment][recordKey].metadata
+                    .expirationTimestamp;
             timekeeper.travel(expirationTimestamp + 10);
             const result = await adapter(config);
 

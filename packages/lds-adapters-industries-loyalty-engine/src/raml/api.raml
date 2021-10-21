@@ -132,7 +132,7 @@ types:
         type: string
       value:
         description: rule action parameter value
-        type: string
+        type: string | nil
   ProcessRuleActionRepresentation:
     description: Loyalty Engine Rule Action Representation
     type: object
@@ -154,13 +154,13 @@ types:
           - UpdateCumulativePromotionProgress
       decisionTable:
         description: rule action's associated decision table
-        type: string
+        type: string | nil
       decisionTableDatasetLink:
         description: rule action's associated decision table dataset link
-        type: string
+        type: string | nil
       flowDefinition:
         description: rule action's associated flow definition
-        type: string
+        type: string | nil
       name:
         description: rule action name
         type: string
@@ -231,7 +231,7 @@ types:
         type: string
       value:
         description: rule condition filter criteria value
-        type: string
+        type: string | nil
       valueType:
         description: rule condition filter criteria value type
         type: string
@@ -269,10 +269,10 @@ types:
           type: ProcessRuleConditionFilterCriteriaRepresentation
       filterCondition:
         description: rule condition's filter condition
-        type: string
+        type: string | nil
       filterExpression:
         description: rule condition's filter expression
-        type: string
+        type: string | nil
       name:
         description: rule condition name
         type: string
@@ -314,7 +314,7 @@ types:
           - ProcessRuleStepMapping
       stepName:
         description: associated step name
-        type: string
+        type: string | nil
   ProcessRuleInputRepresentation:
     description: Loyalty Engine Rule Input Representation
     type: object
@@ -356,7 +356,7 @@ types:
         type: string
       ruleId:
         description: program process rule id
-        type: string
+        type: string | nil
       status:
         description: request response status
         type: string
@@ -385,7 +385,7 @@ types:
         type: string
       parentStep:
         description: parent step name
-        type: string
+        type: string | nil
       sequence:
         description: step sequence number
         type: integer

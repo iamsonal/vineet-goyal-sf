@@ -183,9 +183,6 @@ describe('mobile runtime integration tests', () => {
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
 
-            // TODO [W-9463628]: this flush can be removed when we solve the extra durable writes due to this bug
-            await flushPromises();
-
             const callbackSpy = jest.fn();
             // subscribe to getRecord snapshot
             luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
@@ -472,6 +469,15 @@ describe('mobile runtime integration tests', () => {
             });
 
             expect(snap.data.fields.Id.value).toBe(canonicalKeyId);
+        });
+
+        it('should only be written to the durable store once', async () => {
+            const spy = jest.spyOn(durableStore, 'batchOperations');
+            await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
+            await flushPromises();
+
+            // once to the draft segment and once to the default segment
+            expect(spy).toBeCalledTimes(2);
         });
     });
 });

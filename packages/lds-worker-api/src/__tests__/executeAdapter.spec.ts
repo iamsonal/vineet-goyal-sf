@@ -227,6 +227,8 @@ describe('executeMutatingAdapter', () => {
             });
         });
 
+        await flushPromises();
+
         // deleteRecord is a special adapter that does not take in a config object but rather
         // a record ID directly :grimacing:
         const deleteRecordPromise = new Promise((resolve) => {

@@ -15,12 +15,19 @@ export function buildInternalAdapters(
     networkAdapter: NetworkAdapter,
     durableStore: DurableStore
 ) {
-    const luvio = new Luvio(makeDurable(new Environment(store, networkAdapter), { durableStore }));
+    const durableEnvironment = makeDurable(new Environment(store, networkAdapter), {
+        durableStore,
+    });
+    const luvio = new Luvio(durableEnvironment);
     const getRecord = getRecordAdapterFactory(luvio);
     const getObjectInfo = getObjectInfoAdapterFactory(luvio);
 
     return {
-        getRecord,
-        getObjectInfo,
+        luvio,
+        durableEnvironment,
+        adapters: {
+            getRecord,
+            getObjectInfo,
+        },
     };
 }

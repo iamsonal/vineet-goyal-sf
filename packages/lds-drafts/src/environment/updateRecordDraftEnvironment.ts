@@ -1,4 +1,4 @@
-import { Adapter, Environment, ResourceRequest } from '@luvio/engine';
+import { Adapter, Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
 import {
     keyBuilderRecord,
@@ -110,6 +110,9 @@ export function updateRecordDraftEnvironment(
         getObjectInfo,
     }: UpdateRecordDraftEnvironmentOptions
 ): DurableEnvironment {
+    // TODO [W-8909393]: can remove this when metadata is stored separately from data
+    const synthesizedIds: Record<string, true> = {};
+
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function (
         resourceRequest: ResourceRequest
     ) {
@@ -242,13 +245,28 @@ export function updateRecordDraftEnvironment(
                         if (record === undefined) {
                             throw createDraftSynthesisErrorResponse();
                         }
+                        // TODO [W-8909393]: can remove this when metadata is stored separately from data
+                        synthesizedIds[key] = true;
                         return createOkResponse(filterRecordFields(record, fields));
                     });
             });
         });
     }
 
+    const publishStoreMetadata: typeof env['publishStoreMetadata'] = function (
+        recordKey: string,
+        storeMetadata: StoreMetadata
+    ) {
+        // TODO [W-8909393]: can remove this when metadata is stored separately from data
+        if (synthesizedIds[recordKey]) {
+            delete synthesizedIds[recordKey];
+            return;
+        }
+        return env.publishStoreMetadata(recordKey, storeMetadata);
+    };
+
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },
+        publishStoreMetadata: { value: publishStoreMetadata },
     });
 }

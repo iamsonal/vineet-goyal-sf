@@ -6,6 +6,7 @@ import recordRep_Account from './mockData/RecordRepresentation-Account.json';
 import recordRep_Account_Edited from './mockData/RecordRepresentation-Account-Edited.json';
 import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi';
 import { recordEndpointPath, objectInfoAccountPath } from './urlPaths';
+import { flushPromises } from './utils';
 
 describe('invokeAdapterWithDraftToReplace', () => {
     let invokeAdapter,
@@ -68,6 +69,8 @@ describe('invokeAdapterWithDraftToReplace', () => {
                 resolve(undefined);
             });
         });
+
+        await flushPromises();
 
         const config: UpdateRecordConfig = {
             fields: { Name: recordRep_Account_Edited.fields.Name.value },
@@ -164,6 +167,8 @@ describe('invokeAdapterWithDraftToReplace', () => {
             });
         });
 
+        await flushPromises();
+
         const config: UpdateRecordConfig = {
             fields: { Name: recordRep_Account_Edited.fields.Name.value },
             recordId: recordRep_Account.id,
@@ -218,6 +223,8 @@ describe('invokeAdapterWithDraftToReplace', () => {
                 resolve(undefined);
             });
         });
+
+        await flushPromises();
 
         const testUpdatedDate = new Date();
         timekeeper.freeze(testUpdatedDate);

@@ -5,7 +5,6 @@ import {
     FieldValueRepresentation,
     buildSelectionFromFields,
     RecordRepresentationNormalized,
-    GetRecordConfig,
     GetObjectInfoConfig,
     ObjectInfoRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
@@ -14,7 +13,6 @@ import {
     ArrayPrototypeShift,
     JSONParse,
     JSONStringify,
-    ObjectAssign,
     ObjectKeys,
 } from './language';
 import { Selector, PathSelection } from '@luvio/engine';
@@ -628,143 +626,6 @@ export function filterRecordFields(
         }
     }
     return { ...record, fields: filteredFields };
-}
-
-/**
- * Merges an existing durable store with an incoming one
- * @param existing Existing record in the durable store
- * @param incoming Incoming record being written to the durable store
- * @param drafts ordered drafts associated with the record
- * @param refreshRecordByFields function to refresh a record by fields
- * @returns
- */
-export function durableMerge(
-    existing: DurableStoreEntry<DurableRecordEntry>,
-    incoming: DurableStoreEntry<DurableRecordEntry>,
-    drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
-    objectInfo: ObjectInfoRepresentation | undefined,
-    userId: string,
-    getRecord: Adapter<GetRecordConfig, RecordRepresentation>
-): DurableStoreEntry<DurableRecordEntry> {
-    const { data: existingRecord } = existing;
-    const { data: incomingRecord } = incoming;
-
-    if (isStoreRecordError(existingRecord) || isStoreRecordError(incomingRecord)) {
-        return incoming;
-    }
-
-    const existingWithoutDrafts = removeDrafts(existingRecord);
-    const incomingWithoutDrafts = removeDrafts(incomingRecord);
-
-    // merged will be undefined if we're dealing with a draft-create
-    let merged: DurableRecordRepresentation | undefined;
-    if (existingWithoutDrafts !== undefined && incomingWithoutDrafts !== undefined) {
-        merged = merge(existingWithoutDrafts, incomingWithoutDrafts, getRecord);
-    }
-
-    const mergedWithDrafts = replayDraftsOnRecord(merged, drafts, objectInfo, userId);
-
-    return { data: mergedWithDrafts, metadata: incoming.metadata };
-}
-
-function merge(
-    existing: DurableRecordRepresentation,
-    incoming: DurableRecordRepresentation,
-    getRecord: Adapter<GetRecordConfig, RecordRepresentation>
-): DurableRecordRepresentation {
-    const incomingWeakEtag = incoming.weakEtag;
-    const existingWeakEtag = existing.weakEtag;
-
-    if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
-        return mergeRecordConflict(existing, incoming, getRecord);
-    }
-
-    const merged = {
-        ...incoming,
-        fields: { ...incoming.fields, ...existing.fields },
-        links: { ...incoming.links, ...existing.links },
-    };
-
-    return merged;
-}
-
-/**
- * Resolves a conflict of an incoming and existing record in the durable store by keeping
- * the newer version, applying drafts (if applicable) and kicking off a refresh of the unionized fields
- * between the two records
- * @param existing Existing durable store record
- * @param incoming Incoming durable store record
- * @param refreshRecordByFields Function to kick of a refresh of a record by fields
- * @returns
- */
-function mergeRecordConflict(
-    existing: DurableRecordRepresentation,
-    incoming: DurableRecordRepresentation,
-    getRecord: Adapter<GetRecordConfig, RecordRepresentation>
-): DurableRecordRepresentation {
-    const incomingWeakEtag = incoming.weakEtag;
-    const existingWeakEtag = existing.weakEtag;
-
-    const existingFields = {};
-    const incomingFields = {};
-    const unionizedFieldSet = {};
-    extractFields(existing, existingFields);
-    extractFields(incoming, incomingFields);
-    ObjectAssign(unionizedFieldSet, incomingFields, existingFields);
-    const unionizedFieldArray = ObjectKeys(unionizedFieldSet);
-
-    // incoming newer, apply drafts (if applicable) and kick of network refresh for unioned fields
-    if (existingWeakEtag < incomingWeakEtag) {
-        if (isSuperset(incomingFields, existingFields) === false) {
-            // kick off a getRecord call which will pull all unionized fields with the same version
-            getRecord({ recordId: incoming.id, optionalFields: unionizedFieldArray });
-        }
-        return { ...incoming, links: { ...incoming.links, ...missingLinks(existing) } };
-    }
-
-    // existing newer, refresh with unioned fields
-    if (isSuperset(existingFields, incomingFields) === false) {
-        // kick off a getRecord call which will pull all unionized fields with the same version
-        getRecord({ recordId: incoming.id, optionalFields: unionizedFieldArray });
-    }
-
-    return { ...existing, links: { ...existing.links, ...missingLinks(incoming) } };
-}
-
-/**
- * Returns only the missing links from the given DurableRecordRespresentation
- */
-function missingLinks(recordRepresentation: DurableRecordRepresentation): {
-    [key: string]: StoreLink;
-} {
-    let links: { [key: string]: StoreLink } = {};
-
-    const linkNames = ObjectKeys(recordRepresentation.links);
-    for (let i = 0, len = linkNames.length; i < len; i++) {
-        const linkName = linkNames[i];
-        const link = recordRepresentation.links[linkName];
-        if (link.isMissing === true) {
-            links[linkName] = link;
-        }
-    }
-    return links;
-}
-
-/**
- * Checks to see if @param {setA} is a superset of @param {setB}
- * @param setA The target superset
- * @param setB The target subset
- * @returns
- */
-function isSuperset(setA: Record<string, true>, setB: Record<string, true>) {
-    const keys = ObjectKeys(setB);
-    for (let i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        if (setA[key] !== true) {
-            return false;
-        }
-    }
-    return true;
 }
 
 /**

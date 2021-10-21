@@ -1,4 +1,4 @@
-import { Luvio, Store, Environment, CacheKeySet } from '@luvio/engine';
+import { Luvio, Store, Environment, CacheKeySet, RecordSource } from '@luvio/engine';
 import { makeOffline, makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
@@ -29,8 +29,6 @@ import { restoreDraftKeyMapping } from './utils/restoreDraftKeyMapping';
 import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
-import { makeDurableStoreWithMergeStrategy } from './durableStore/makeDurableStoreWithMergeStrategy';
-import { RecordMergeStrategy } from './durableStore/RecordMergeStrategy';
 
 import { JSONParse, JSONStringify, ObjectCreate, ObjectKeys } from './utils/language';
 
@@ -137,20 +135,31 @@ const networkAdapter = salesforceNetworkAdapter(
     makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter)
 );
 
-const baseDurableStore = makeDurableStoreWithMergeStrategy(new NimbusDurableStore());
+const baseDurableStore = new NimbusDurableStore();
 
 // specific adapters
 const internalAdapterStore = new Store();
+let getIngestRecordsForInternalAdapters: (() => RecordSource) | undefined;
+let getIngestMetadataForInternalAdapters: (() => Store['metadata']) | undefined;
 const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(
     baseDurableStore,
-    () => internalAdapterStore.records,
-    () => internalAdapterStore.metadata
+    () =>
+        getIngestRecordsForInternalAdapters !== undefined
+            ? getIngestRecordsForInternalAdapters()
+            : {},
+    () =>
+        getIngestMetadataForInternalAdapters !== undefined
+            ? getIngestMetadataForInternalAdapters()
+            : {}
 );
-const { getObjectInfo, getRecord } = buildInternalAdapters(
-    internalAdapterStore,
-    networkAdapter,
-    internalAdapterDurableStore
-);
+const {
+    adapters: { getObjectInfo, getRecord },
+    durableEnvironment: internalAdapterDurableEnvironment,
+} = buildInternalAdapters(internalAdapterStore, networkAdapter, internalAdapterDurableStore);
+getIngestRecordsForInternalAdapters =
+    internalAdapterDurableEnvironment.getIngestStagingStoreRecords;
+getIngestMetadataForInternalAdapters =
+    internalAdapterDurableEnvironment.getIngestStagingStoreRecords;
 const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = new ObjectInfoService(
     getObjectInfo,
     internalAdapterDurableStore
@@ -176,10 +185,12 @@ const pluginEnabledDurableStore = makePluginEnabledDurableStore(baseDurableStore
 pluginEnabledDurableStore.registerPlugins([objectInfoPlugin]);
 
 // creates a durable store that denormalizes scalar fields for records
+let getIngestRecords: (() => RecordSource) | undefined;
+let getIngestMetadata: (() => Store['metadata']) | undefined;
 const recordDenormingStore = makeRecordDenormalizingDurableStore(
     pluginEnabledDurableStore,
-    () => store.records,
-    () => store.metadata
+    () => (getIngestRecords !== undefined ? getIngestRecords() : {}),
+    () => (getIngestMetadata !== undefined ? getIngestMetadata() : {})
 );
 
 const baseEnv = new Environment(store, networkAdapter);
@@ -187,6 +198,8 @@ const offlineEnv = makeOffline(baseEnv);
 const durableEnv = makeDurable(offlineEnv, {
     durableStore: recordDenormingStore,
 });
+getIngestRecords = durableEnv.getIngestStagingStoreRecords;
+getIngestMetadata = durableEnv.getIngestStagingStoreMetadata;
 const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     store,
     draftQueue,
@@ -201,10 +214,6 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     userId,
     registerDraftIdMapping,
 });
-
-baseDurableStore.registerMergeStrategy(
-    new RecordMergeStrategy(baseDurableStore, getDraftActionForRecordKeys, getRecord, userId)
-);
 
 luvio = new Luvio(draftEnv);
 

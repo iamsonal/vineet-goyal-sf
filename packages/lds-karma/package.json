@@ -10,8 +10,8 @@
         "build": "rollup --config rollup.config.js"
     },
     "dependencies": {
-        "@luvio/engine": "0.55.3",
-        "@luvio/lwc-luvio": "0.55.3",
+        "@luvio/engine": "0.56.0",
+        "@luvio/lwc-luvio": "0.56.0",
         "@salesforce/lds-bindings": "1.32.0",
         "@salesforce/lds-default-luvio": "1.32.0"
     }

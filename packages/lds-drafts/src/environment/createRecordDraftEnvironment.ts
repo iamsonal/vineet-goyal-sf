@@ -74,6 +74,9 @@ export function createRecordDraftEnvironment(
         apiNameForPrefix,
     }: DraftEnvironmentOptions
 ): DurableEnvironment {
+    // TODO [W-8909393]: can remove this when metadata is stored separately from data
+    const synthesizedIds: Record<string, true> = {};
+
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
         request: ResourceRequest
     ) {
@@ -115,6 +118,11 @@ export function createRecordDraftEnvironment(
         recordKey: string,
         storeMetadata: StoreMetadata
     ) {
+        // TODO [W-8909393]: should not have to do this anymore when metadata is stored separately from data
+        if (synthesizedIds[recordKey]) {
+            delete synthesizedIds[recordKey];
+            return;
+        }
         const recordId = extractRecordIdFromStoreKey(recordKey);
         if (recordId === undefined || isDraftId(recordId) === false) {
             return env.publishStoreMetadata(recordKey, storeMetadata);
@@ -153,6 +161,8 @@ export function createRecordDraftEnvironment(
                         if (record === undefined) {
                             throw createDraftSynthesisErrorResponse();
                         }
+                        // TODO [W-8909393]: should not have to do this anymore when metadata is stored separately from data
+                        synthesizedIds[key] = true;
                         return createOkResponse(filterRecordFields(record, fields)) as any;
                     });
             });

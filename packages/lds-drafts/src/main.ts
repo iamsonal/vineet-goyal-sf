@@ -16,7 +16,6 @@ export {
 } from './DraftQueue';
 export {
     updateQueueOnPost,
-    durableMerge,
     DurableRecordEntry,
     isEntryDurableRecordRepresentation,
     getDraftResolutionInfoForRecordSet,

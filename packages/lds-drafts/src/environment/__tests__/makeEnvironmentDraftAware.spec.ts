@@ -1,16 +1,7 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
-import { HttpStatusCode } from '@luvio/engine';
-import { DraftQueueEventType } from '../../DraftQueue';
-import { DraftActionStatus } from '../../main';
-import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import { DRAFT_RECORD_ID, flushPromises, RECORD_ID } from '../../__tests__/test-utils';
-import {
-    MockDraftQueue,
-    setupDraftEnvironment,
-    STORE_KEY_DRAFT_RECORD,
-    STORE_KEY_RECORD,
-} from './test-utils';
+import { setupDraftEnvironment, STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD } from './test-utils';
 
 describe('makeEnvironmentDraftAware', () => {
     it('does not start the draft queue', async () => {
@@ -31,44 +22,6 @@ describe('makeEnvironmentDraftAware', () => {
                 headers: {},
             });
             expect(network).toBeCalledTimes(1);
-        });
-    });
-
-    describe('draft action complete', () => {
-        // TODO [W-9863485]: This unit test will fail when the work item gets fixed and then
-        // this test can go away
-        it('calls store dealloc', async () => {
-            const { draftQueue, baseEnvironment } = await setupDraftEnvironment();
-            const mockStoreDealloc = jest.fn();
-
-            baseEnvironment.storeDealloc = mockStoreDealloc;
-            const listeners = (draftQueue as MockDraftQueue).listeners;
-            expect(listeners).toBeDefined();
-            expect(listeners.size).toBeGreaterThan(0);
-            for (const listener of listeners) {
-                listener({
-                    type: DraftQueueEventType.ActionCompleting,
-                    action: {
-                        status: DraftActionStatus.Completed,
-                        id: '',
-                        targetId: '',
-                        tag: '',
-                        timestamp: 1234,
-                        metadata: {},
-                        data: {},
-                        handler: LDS_ACTION_HANDLER_ID,
-                        response: {
-                            status: HttpStatusCode.Ok,
-                            body: {},
-                            statusText: '',
-                            ok: true,
-                            headers: {},
-                        },
-                    },
-                });
-            }
-            await flushPromises();
-            expect(mockStoreDealloc).toBeCalled();
         });
     });
 

@@ -171,12 +171,15 @@ function checkCore(corePath) {
     }
 
     if (!fs.existsSync(corePath)) {
-        error(
-            `File doesn't exist at ${corePath}. Make sure that the branch you want to release into is enabled.`
-        );
-    }
-
-    if (argv['auto-checkout']) {
+        if (argv['auto-checkout']) {
+            execSync(`p4 add ${corePath}`);
+            execSync(`mkdir -p "$(dirname "${corePath}")" && touch "${corePath}"`);
+        } else {
+            error(
+                `File doesn't exist at ${corePath}. Make sure that the branch you want to release into is enabled.`
+            );
+        }
+    } else if (argv['auto-checkout']) {
         execSync(`p4 edit ${corePath}`);
     }
 

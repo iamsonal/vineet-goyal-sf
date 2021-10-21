@@ -19,7 +19,6 @@ import {
     ListViewSummaryCollectionRepresentation,
     paginationKeyBuilder,
     ingest as listViewSummaryCollectionRepresentationIngest,
-    select as listViewSummaryCollectionRepresentationSelect,
 } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import {
     createResourceRequest,
@@ -38,8 +37,12 @@ import { ResourceRequestConfig } from '../../generated/resources/getUiApiListUiB
 const DEFAULT_PAGE_SIZE = 20;
 
 const LISTVIEWSUMMARY_PATH_SELECTIONS = listViewSummaryRepresentationSelect().selections;
-const LIST_VIEW_SUMMARY_COLLECTION_PRIVATE =
-    listViewSummaryCollectionRepresentationSelect().private;
+const LIST_VIEW_SUMMARY_COLLECTION_PRIVATE = [
+    'eTag',
+    'currentPageUrl',
+    'previousPageUrl',
+    'nextPageUrl',
+];
 
 function buildListViewSummaryCollectionFragment(
     config: GetListViewSummaryCollectionConfig

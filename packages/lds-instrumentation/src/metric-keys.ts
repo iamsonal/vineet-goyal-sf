@@ -26,6 +26,13 @@ export const CACHE_HIT_COUNT = ADAPTER_CACHE_HIT_COUNT_METRIC_NAME;
 export const CACHE_MISS_COUNT = ADAPTER_CACHE_MISS_COUNT_METRIC_NAME;
 
 /**
+ * W-9949353
+ * Used to track how often we dedupe HTTP requests
+ * Invoked when an HTTP request is deduped against an already in-flight request
+ */
+export const DUPLICATE_REQUEST_COUNT = 'duplicate-request-count';
+
+/**
  * W-7667066
  * This count represents the number of times getRecord() was invoked, but not including
  * executeAggregateUi calls.  It can be represented as the sum of the Aura Action invocations

@@ -2,6 +2,7 @@ import { Luvio, Store, Adapter, Snapshot } from '@luvio/engine';
 
 import { getInstrumentation } from 'o11y/client';
 import { instrument as instrumentLwcBindings } from '@salesforce/lds-bindings';
+import { instrument as instrumentNetworkAdapter } from '@salesforce/lds-network-adapter';
 
 import {
     ADAPTER_CACHE_HIT_COUNT_METRIC_NAME,
@@ -12,6 +13,7 @@ import {
     ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
     AGGREGATE_CONNECT_ERROR_COUNT,
     AGGREGATE_UI_CHUNK_COUNT,
+    DUPLICATE_REQUEST_COUNT,
     GET_RECORD_AGGREGATE_INVOKE_COUNT,
     GET_RECORD_AGGREGATE_RETRY_COUNT,
     GET_RECORD_NORMAL_INVOKE_COUNT,
@@ -452,6 +454,15 @@ export function instrumentGraphqlAdapter<C, D>(instrumentedAdapter: Adapter<C, D
 export function setupInstrumentation(luvio: Luvio, store: Store): void {
     instrumentLwcBindings({
         instrumentAdapter: instrumentAdapter,
+    });
+    instrumentNetworkAdapter({
+        aggregateUiChunkCount: (cb) => setAggregateUiChunkCountMetric(cb()),
+        aggregateUiConnectError: incrementAggregateUiConnectErrorCount,
+        duplicateRequest: () => incrementCounterMetric(DUPLICATE_REQUEST_COUNT),
+        getRecordAggregateInvoke: incrementGetRecordAggregateInvokeCount,
+        getRecordAggregateRetry: incrementGetRecordAggregateRetryCount,
+        getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
+        networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
     });
     instrumentMethods(luvio, [
         { methodName: 'storeBroadcast', metricKey: STORE_BROADCAST_DURATION },

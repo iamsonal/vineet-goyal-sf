@@ -10,11 +10,14 @@ const footer = buildFooter(packageJson.version);
 const ldsInstrumentation = {
     input: './src/main.ts',
 
-    external: ['lwc', 'o11y/client'],
+    external: ['@salesforce/lds-bindings', 'lwc', 'o11y/client'],
 
     output: {
         file: 'dist/ldsInstrumentation.js',
         format: 'esm',
+        paths: {
+            '@salesforce/lds-bindings': 'force/ldsBindings',
+        },
         banner,
         footer,
     },

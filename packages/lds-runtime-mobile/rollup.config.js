@@ -10,7 +10,7 @@ const footer = buildFooter(packageJson.version);
 const mobile = {
     input: './src/main.ts',
 
-    external: ['@salesforce/lds-bindings', '@salesforce/user/Id', 'o11y/client'],
+    external: ['@salesforce/lds-instrumentation', '@salesforce/user/Id', 'o11y/client'],
 
     output: {
         file: 'dist/ldsEngineRuntimeMobile.js',
@@ -18,7 +18,7 @@ const mobile = {
         banner,
         footer,
         paths: {
-            '@salesforce/lds-bindings': 'force/ldsBindings',
+            '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
         },
     },
 

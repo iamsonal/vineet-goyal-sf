@@ -24,7 +24,6 @@
     },
     "devDependencies": {
         "@luvio/engine": "0.55.3",
-        "@lwc/engine-core": "~1.7.5",
-        "@salesforce/lds-instrumentation": "1.31.0"
+        "@lwc/engine-core": "~1.7.5"
     }
 }

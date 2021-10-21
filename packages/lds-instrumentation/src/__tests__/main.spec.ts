@@ -13,16 +13,7 @@ import {
     instrumentMethods,
     logAdapterCacheMissOutOfTtlDuration,
     updatePercentileHistogramMetric,
-    Instrumentation,
-    NORMALIZED_APEX_ADAPTER_NAME,
-    REFRESH_APEX_KEY,
-    REFRESH_UIAPI_KEY,
-    SUPPORTED_KEY,
-    UNSUPPORTED_KEY,
 } from '../main';
-import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
-import { stableJSONStringify } from '../utils/utils';
-import { LRUCache } from '../utils/lru-cache';
 
 jest.mock('o11y/client');
 import { instrumentation as o11yInstrumentation } from 'o11y/client';
@@ -32,21 +23,8 @@ const o11yInstrumentationSpies = {
     startActivity: jest.spyOn(o11yInstrumentation, 'startActivity'),
 };
 
-const instrumentation = new Instrumentation();
-
-const instrumentationSpies = {
-    aggregateWeakETagEvents: jest.spyOn(instrumentation, 'aggregateWeakETagEvents'),
-    aggregateRefreshAdapterEvents: jest.spyOn(instrumentation, 'aggregateRefreshAdapterEvents'),
-    incrementRecordApiNameChangeEvents: jest.spyOn(
-        instrumentation,
-        'incrementRecordApiNameChangeCount'
-    ),
-};
-
 beforeEach(() => {
     jest.clearAllMocks();
-    (instrumentation as any).adapterCacheMisses = new LRUCache(250);
-    // (instrumentation as any).resetRefreshStats();
 });
 
 afterEach(() => {
@@ -79,16 +57,27 @@ describe('instrumentMethods', () => {
         const foo = {
             bar: jest.fn(),
         };
-        instrumentMethods(foo, ['bar']);
+        const methods = [{ methodName: 'bar', metricKey: 'bar_metric' }];
+        instrumentMethods(foo, methods);
+
+        // freeze to guarantee that the second param to `trackValue` will be zero
+        const now = Date.now();
+        timekeeper.freeze(now);
+
         foo.bar();
         expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
+        expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledWith('bar_metric', 0);
     });
     it('instruments multiple methods', () => {
         const foo = {
             bar: jest.fn(),
             baz: jest.fn(),
         };
-        instrumentMethods(foo, ['bar', 'baz']);
+        const methods = [
+            { methodName: 'bar', metricKey: 'bar_metric' },
+            { methodName: 'baz', metricKey: 'baz_metric' },
+        ];
+        instrumentMethods(foo, methods);
         foo.bar();
         foo.baz();
         expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(2);
@@ -102,7 +91,8 @@ describe('instrumentMethods', () => {
         const foo = {
             bar,
         };
-        instrumentMethods(foo, ['bar']);
+        const methods = [{ methodName: 'bar', metricKey: 'bar_metric' }];
+        instrumentMethods(foo, methods);
         await foo.bar();
         expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
     });
@@ -115,7 +105,8 @@ describe('instrumentMethods', () => {
         const foo = {
             bar,
         };
-        instrumentMethods(foo, ['bar']);
+        const methods = [{ methodName: 'bar', metricKey: 'bar_metric' }];
+        instrumentMethods(foo, methods);
         try {
             await foo.bar();
         } catch {
@@ -130,7 +121,8 @@ describe('instrumentMethods', () => {
         const foo = {
             bar,
         };
-        instrumentMethods(foo, ['bar']);
+        const methods = [{ methodName: 'bar', metricKey: 'bar_metric' }];
+        instrumentMethods(foo, methods);
         try {
             foo.bar();
         } catch {
@@ -278,8 +270,6 @@ describe('instrumentation', () => {
                 recordId: '00x000000000000018',
             };
 
-            const recordKey = 'UiApi.getRecord:' + stableJSONStringify(getRecordConfig);
-
             // Cache Miss #1
             const now = Date.now();
             timekeeper.freeze(now);
@@ -287,8 +277,6 @@ describe('instrumentation', () => {
 
             expect(logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(1);
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(0);
-            expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
-            expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(now);
 
             // Fast forward out of TTL for record
             timekeeper.travel(now + 30001);
@@ -300,12 +288,6 @@ describe('instrumentation', () => {
             expect(logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(2);
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenLastCalledWith(30001);
-            const updatedTimestamp = now + 30001;
-
-            expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
-            expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(
-                updatedTimestamp
-            );
 
             // + 1 from logAdapterCacheMissOutOfTtlDuration
             expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(
@@ -363,108 +345,6 @@ describe('instrumentation', () => {
 
             // technically we bump two counters for calls to the adapter
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(0);
-        });
-    });
-
-    xdescribe('weakETagZero', () => {
-        it('should aggregate weaketagzero events and execute in beforeunload', () => {
-            instrumentation.aggregateWeakETagEvents(true, false, 'Account');
-            expect((instrumentation as any).weakEtagZeroEvents).toEqual({
-                'weaketag-0-Account': {
-                    'existing-weaketag-0': 0,
-                    'incoming-weaketag-0': 1,
-                },
-            });
-
-            // TODO [W-9782972]: need periodic logger
-            // window.dispatchEvent(new Event('beforeunload'));
-            // expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(1);
-            // expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
-        });
-    });
-
-    // TODO [W-9782972]: Still determining if we need to move this to o11y
-    xdescribe('recordApiNameChange', () => {
-        it('should increment record apiName change counter', () => {
-            instrumentation.incrementRecordApiNameChangeCount('', 'foo');
-        });
-    });
-
-    // TODO [W-9782972]: Still determining if we need to move this to o11y
-    xdescribe('refresh call events', () => {
-        const GET_RECORD_ADAPTER_NAME = 'UiApi.getRecord';
-        const uiApiAdapterRefreshEvent = {
-            [REFRESH_ADAPTER_EVENT]: true,
-            adapterName: GET_RECORD_ADAPTER_NAME,
-        };
-        const apexAdapterRefreshEvent = {
-            [REFRESH_ADAPTER_EVENT]: true,
-            adapterName: 'Apex.getApex__ContactController_getContactList_false',
-        };
-
-        it('should increment refreshApex call count, and set lastRefreshApiCall', () => {
-            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
-            expect((instrumentation as any).refreshApiCallEventStats[REFRESH_APEX_KEY]).toEqual(1);
-            expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_APEX_KEY);
-        });
-
-        it('should increment refreshUiApi call count, and set lastRefreshApiCall', () => {
-            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
-            expect((instrumentation as any).refreshApiCallEventStats[REFRESH_UIAPI_KEY]).toEqual(1);
-            expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_UIAPI_KEY);
-        });
-
-        it('should increment supported and per adapter counts for apex adapter', () => {
-            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
-            // comes from lwc-luvio
-            instrumentation.instrumentLuvio(apexAdapterRefreshEvent);
-            expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
-            expect(
-                (instrumentation as any).refreshAdapterEvents[NORMALIZED_APEX_ADAPTER_NAME]
-            ).toEqual(1);
-            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(1);
-            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(0);
-        });
-
-        it('should increment unsupported and per adapter counts for non-apex adapter', () => {
-            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
-            // comes from lwc-luvio
-            instrumentation.instrumentLuvio(uiApiAdapterRefreshEvent);
-            expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
-            expect((instrumentation as any).refreshAdapterEvents[GET_RECORD_ADAPTER_NAME]).toEqual(
-                1
-            );
-            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
-            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(1);
-        });
-
-        it('should increment unsupported and per adapter counts for non-apex adapter when refreshUiApi is called', () => {
-            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
-            instrumentation.instrumentLuvio(uiApiAdapterRefreshEvent);
-            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
-            instrumentation.instrumentLuvio(apexAdapterRefreshEvent);
-            expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(2);
-            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
-            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(2);
-        });
-
-        it('should reset stat trackers after call to logRefreshStats', () => {
-            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
-            instrumentation.instrumentLuvio(apexAdapterRefreshEvent);
-            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
-            instrumentation.instrumentLuvio(uiApiAdapterRefreshEvent);
-            expect(
-                (instrumentation as any).refreshAdapterEvents[NORMALIZED_APEX_ADAPTER_NAME]
-            ).toEqual(1);
-            expect((instrumentation as any).refreshAdapterEvents[GET_RECORD_ADAPTER_NAME]).toEqual(
-                1
-            );
-            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(1);
-            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(1);
-            (instrumentation as any).logRefreshStats();
-            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
-            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(0);
-            expect((instrumentation as any).refreshAdapterEvents).toEqual({});
         });
     });
 
@@ -674,30 +554,31 @@ describe('instrumentation', () => {
 });
 
 describe('setupInstrumentation', () => {
-    xdescribe('sets up luvio store methods', () => {
-        // TODO [W-9782972]: does not use Activity any more, update
+    describe('sets up luvio store methods', () => {
         it('instruments luvio store methods with o11y', () => {
             // Setup
             const mockLuvio: any = {
                 storeBroadcast: jest.fn,
                 storeIngest: jest.fn,
                 storeLookup: jest.fn,
+                storeSetTTLOverride: jest.fn,
+                storeSetDefaultTTLOverride: jest.fn,
             };
-            // jest.spyOn(o11yInstrumentation, 'startActivity');
-            // jest.spyOn(o11yActivity, 'stop');
+            const store = new Store();
 
             // Exercise
-            setupInstrumentation(mockLuvio, undefined);
+            setupInstrumentation(mockLuvio, store);
             mockLuvio.storeBroadcast();
             mockLuvio.storeIngest();
             mockLuvio.storeLookup();
+            mockLuvio.storeSetDefaultTTLOverride();
+            mockLuvio.storeSetTTLOverride();
 
             // Verify
-            // expect(o11yInstrumentationSpies.startActivity).toHaveBeenCalledTimes(3);
-            // expect(o11yActivity.stop).toHaveBeenCalledTimes(3);
+            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(5);
         });
     });
-    xdescribe('sets store scheduler', () => {
+    describe('sets store scheduler', () => {
         it('adds instrumentation with default scheduler', async () => {
             const luvio = {} as any;
             const store = new Store();
@@ -707,10 +588,6 @@ describe('setupInstrumentation', () => {
             await store.scheduler(() => 5);
 
             expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(1);
-            // expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledWith('store-trim-task');
-            // expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledWith('store-trim-task', {
-            //     'store-trimmed-count': 5,
-            // });
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalled();
         });
 
@@ -727,10 +604,6 @@ describe('setupInstrumentation', () => {
             store.scheduler(() => 5);
 
             expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(1);
-            // expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledWith('store-trim-task');
-            // expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledWith('store-trim-task', {
-            //     'store-trimmed-count': 5,
-            // });
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalled();
         });
 
@@ -743,8 +616,6 @@ describe('setupInstrumentation', () => {
             store.scheduler(() => 5);
 
             expect(o11yInstrumentationSpies.incrementCounter).not.toHaveBeenCalled();
-            // expect(instrumentationServiceSpies.perfStart).not.toHaveBeenCalled();
-            // expect(instrumentationServiceSpies.perfEnd).not.toHaveBeenCalled();
             expect(o11yInstrumentationSpies.trackValue).not.toHaveBeenCalled();
         });
     });

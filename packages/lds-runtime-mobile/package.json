@@ -20,7 +20,7 @@
     "dependencies": {
         "@luvio/engine": "0.55.3",
         "@luvio/environments": "0.55.3",
-        "@salesforce/lds-bindings": "1.31.0",
+        "@salesforce/lds-instrumentation": "1.31.0",
         "@salesforce/lds-network-adapter": "1.31.0"
     },
     "devDependencies": {

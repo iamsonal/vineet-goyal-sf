@@ -90,6 +90,11 @@ interface AdapterMetadata {
     ttl?: number;
 }
 
+const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
+interface RecordApiNameChangeCounters {
+    [apiName: string]: Counter;
+}
+
 export interface LightningInteractionSchema {
     target: string;
     scope: string;
@@ -117,6 +122,7 @@ const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
 
 export class Instrumentation {
     private adapterUnfulfilledErrorCounters: AdapterUnfulfilledErrorCounters = {};
+    private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
     private refreshAdapterEvents: RefreshAdapterEvents = {};
     private refreshApiCallEventStats: RefreshApiCallEventStats = {
         [REFRESH_APEX_KEY]: 0,
@@ -396,6 +402,33 @@ export class Instrumentation {
             [UNSUPPORTED_KEY]: 0,
         };
         this.lastRefreshApiCall = null;
+    }
+
+    /**
+     * W-7801618
+     * Counter for occurrences where the incoming record to be merged has a different apiName.
+     * Dynamically generated metric, stored in an {@link RecordApiNameChangeCounters} object.
+     *
+     * @param context The transaction context.
+     *
+     * Note: Short-lived metric candidate, remove at the end of 230
+     */
+    public incrementRecordApiNameChangeCount(
+        _incomingApiName: string,
+        existingApiName: string
+    ): void {
+        let apiNameChangeCounter = this.recordApiNameChangeCounters[existingApiName];
+        if (apiNameChangeCounter === undefined) {
+            apiNameChangeCounter = counter(
+                createMetricsKey(
+                    NAMESPACE,
+                    RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME,
+                    existingApiName
+                )
+            );
+            this.recordApiNameChangeCounters[existingApiName] = apiNameChangeCounter;
+        }
+        apiNameChangeCounter.increment(1);
     }
 
     /**

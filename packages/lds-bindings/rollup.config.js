@@ -10,16 +10,13 @@ const footer = buildFooter(packageJson.version);
 export default {
     input: './src/main.ts',
 
-    external: ['lwc', '@salesforce/lds-instrumentation'],
+    external: ['lwc'],
 
     output: {
         file: 'dist/ldsBindings.js',
         format: 'esm',
         banner,
         footer,
-        paths: {
-            '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
-        },
     },
 
     plugins: [

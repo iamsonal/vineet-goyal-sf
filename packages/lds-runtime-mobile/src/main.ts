@@ -14,6 +14,7 @@ import {
     makeEnvironmentDraftAware,
     DraftManager,
 } from '@salesforce/lds-drafts';
+import { setupInstrumentation } from '@salesforce/lds-instrumentation';
 import salesforceNetworkAdapter from '@salesforce/lds-network-adapter';
 
 import userId from '@salesforce/user/Id';
@@ -31,7 +32,6 @@ import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledD
 import { makeDurableStoreWithMergeStrategy } from './durableStore/makeDurableStoreWithMergeStrategy';
 import { RecordMergeStrategy } from './durableStore/RecordMergeStrategy';
 
-import { setupInstrumentation } from './instrumentation';
 import { JSONParse, JSONStringify, ObjectCreate, ObjectKeys } from './utils/language';
 
 let luvio: Luvio;

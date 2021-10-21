@@ -7,7 +7,6 @@ import {
     incrementGetRecordNotifyChangeAllowCount,
     incrementGetRecordNotifyChangeDropCount,
     incrementNetworkRateLimitExceededCount,
-    instrumentation as ldsInstrumentation,
     setAggregateUiChunkCountMetric,
 } from '@salesforce/lds-instrumentation';
 import {
@@ -31,10 +30,10 @@ export function setInstrumentationHooks() {
         getRecordNotifyChangeAllowed: incrementGetRecordNotifyChangeAllowCount,
         getRecordNotifyChangeDropped: incrementGetRecordNotifyChangeDropCount,
         recordApiNameChanged:
-            ldsInstrumentation.incrementRecordApiNameChangeCount.bind(ldsInstrumentation),
+            auraInstrumentation.incrementRecordApiNameChangeCount.bind(auraInstrumentation),
         weakEtagZero: auraInstrumentation.aggregateWeakETagEvents.bind(auraInstrumentation),
         getRecordNotifyChangeNetworkResult:
-            ldsInstrumentation.notifyChangeNetwork.bind(ldsInstrumentation),
+            auraInstrumentation.notifyChangeNetwork.bind(auraInstrumentation),
     });
     networkAuraInstrument({
         getRecordAggregateInvoke: incrementGetRecordAggregateInvokeCount,

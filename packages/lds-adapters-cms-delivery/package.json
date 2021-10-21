@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-cms-delivery",
-    "version": "1.31.1",
+    "version": "1.32.0",
     "description": "Wire adapters for CMS endpoints",
     "license": "MIT",
     "main": "dist/umd/es2018/cms-delivery.js",
@@ -28,9 +28,9 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-cms-delivery"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.31.1"
+        "@salesforce/lds-bindings": "1.32.0"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.31.1"
+        "@salesforce/lds-karma": "1.32.0"
     }
 }

@@ -11,6 +11,7 @@ import {
     isBetweenPredicate,
     isComparisonPredicate,
     isCompoundPredicate,
+    isDateFunctionPredicate,
     isExistsPredicate,
     isNotPredicate,
     isNullComparisonPredicate,
@@ -112,6 +113,7 @@ export function combinePredicates(predicates: Predicate[], operator: CompoundOpe
             isComparisonPredicate(pred) ||
             isNullComparisonPredicate(pred) ||
             isExistsPredicate(pred) ||
+            isDateFunctionPredicate(pred) ||
             isBetweenPredicate(pred) ||
             isNotPredicate(pred)
     );

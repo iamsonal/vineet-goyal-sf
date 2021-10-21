@@ -20,6 +20,8 @@ import {
     CompoundOperator,
     DateArray,
     DateEnumType,
+    DateFunction,
+    DateFunctionPredicate,
     DateInput,
     DateRange,
     DateTimeArray,
@@ -216,9 +218,20 @@ function fieldFilter(
         return spanningFilter(fieldInfo, fieldNode, alias, input);
     }
 
+    const extract: JsonExtract = {
+        type: ValueType.Extract,
+        jsonAlias: alias,
+        path: extractPath(fieldName),
+    };
+    const dateFunction = dateFunctions(fieldNode, extract, fieldInfo.dataType);
+
     //It's possible for a field to have more than one comparison operator which
     //should combine into compound predicate with 'and'
     const operators = fieldOperators(fieldNode, fieldInfo.dataType);
+
+    if (dateFunction.isSuccess === false) {
+        return failure(dateFunction.error);
+    }
 
     if (operators.isSuccess === false) {
         return failure(operators.error);
@@ -226,11 +239,6 @@ function fieldFilter(
 
     const comparisons = operators.value.map(
         (op: ScalarOperators | SetOperators | NullOperator): Predicate => {
-            const extract: JsonExtract = {
-                type: ValueType.Extract,
-                jsonAlias: alias,
-                path: extractPath(fieldName),
-            };
             if (op.type === 'NullOperator') {
                 return { type: PredicateType.nullComparison, left: extract, operator: op.operator };
             }
@@ -247,8 +255,13 @@ function fieldFilter(
         }
     );
 
+    const combined = combinePredicates(
+        comparisons.concat(...dateFunction.value),
+        CompoundOperator.and
+    );
+
     const container = {
-        predicate: combinePredicates(comparisons, CompoundOperator.and),
+        predicate: combined,
         joinNames: [],
         joinPredicates: [],
     };
@@ -346,13 +359,67 @@ const dateRegEx = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
 const dateTimeRegEx =
     /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))T(2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]\.[0-9]{3}Z$/;
 
+function dateFunctions(
+    operatorNode: LuvioObjectValueNode,
+    extract: JsonExtract,
+    dataType: DataType
+): Result<DateFunctionPredicate[], PredicateError[]> {
+    if (dataType !== 'Date' && dataType !== 'DateTime') {
+        return success([]);
+    }
+
+    const results = Object.entries(operatorNode.fields).map(([key, valueNode]): Result<
+        DateFunctionPredicate[],
+        PredicateError[]
+    > => {
+        if (isFilterFunction(key) === false) {
+            return success([]);
+        }
+        if (!isObjectValueNode(valueNode)) {
+            return failure(['Date function expects an object node.']);
+        }
+
+        const [opKey, opValue] = Object.entries(valueNode.fields)[0];
+        const result = operatorWithValue(opKey, opValue, 'Int')
+            .flatMap((op): Result<DateFunctionPredicate, PredicateError[]> => {
+                if (op.type !== 'IntOperator') {
+                    return failure(['Date function expects Int values']);
+                }
+
+                const predicate: DateFunctionPredicate = {
+                    type: PredicateType.dateFunction,
+                    operator: op.operator,
+                    function: DateFunction.dayOfMonth,
+                    value: op.value.value,
+                    extract,
+                };
+                return success(predicate);
+            })
+            .map((r) => [r]);
+
+        return result;
+    });
+
+    const fails = results.filter(isFailure).reduce(flatMap(errors), []);
+    if (fails.length > 0) {
+        return failure(fails);
+    }
+    const vals = results.filter(isSuccess).reduce(flatMap(values), []);
+
+    return success(vals);
+}
+
+function isFilterFunction(name: string): boolean {
+    return name === 'DAY_OF_MONTH';
+}
+
 function fieldOperators(
     operatorNode: LuvioObjectValueNode,
     dataType: DataType
 ): Result<(ScalarOperators | SetOperators | NullOperator)[], PredicateError[]> {
-    const results = Object.entries(operatorNode.fields).map(([key, value]) =>
-        operatorWithValue(key, value, dataType)
-    );
+    const results = Object.entries(operatorNode.fields)
+        .filter(([key, _]) => isFilterFunction(key) === false)
+        .map(([key, value]) => operatorWithValue(key, value, dataType));
 
     const _values = results.filter(isSuccess).map(values);
     const fails = results.filter(isFailure).reduce(flatMap(errors), []);

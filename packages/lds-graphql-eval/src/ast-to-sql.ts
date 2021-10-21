@@ -20,6 +20,9 @@ import {
     OrderBy,
     isExistsPredicate,
     ExistsPredicate,
+    isDateFunctionPredicate,
+    DateFunctionPredicate,
+    DateFunction,
     isBetweenPredicate,
     BetweenPredicate,
     RelativeDate,
@@ -136,6 +139,10 @@ function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): st
         return existsPredicateToSql(predicate, mappingInput);
     }
 
+    if (isDateFunctionPredicate(predicate)) {
+        return dateFunctionPredicateToSql(predicate);
+    }
+
     if (isBetweenPredicate(predicate)) {
         return betweenPredicateToSql(predicate);
     }
@@ -153,6 +160,17 @@ function compoundPredicateToSql(
         .join(` ${operatorString} `);
 
     return `( ${compoundStatement} )`;
+}
+
+function dateFunctionPredicateToSql(predicate: DateFunctionPredicate): string {
+    const operator = comparisonOperatorToSql(predicate.operator);
+    const extract = expressionToSql(predicate.extract);
+    switch (predicate.function) {
+        case DateFunction.dayOfMonth: {
+            const day = String(predicate.value).padStart(2, '0');
+            return `strftime('%d', ${extract}) ${operator} '${day}'`;
+        }
+    }
 }
 
 function existsPredicateToSql(exists: ExistsPredicate, mappingInput: SqlMappingInput): string {

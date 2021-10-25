@@ -57,7 +57,8 @@ describe('Nimbus durable store tests', () => {
             expect(result[recordId]).toEqual(recordData);
         });
 
-        it('should call getEntriesInSegmentWithCallback if both getEntriesInSegment and getEntriesInSegmentWithCallback exist', async () => {
+        // TODO [W-10080780]: re-enable
+        xit('should call getEntriesInSegmentWithCallback if both getEntriesInSegment and getEntriesInSegmentWithCallback exist', async () => {
             const resultEntries = {
                 entries: { foo: JSONStringify(recordData) },
             };
@@ -80,7 +81,8 @@ describe('Nimbus durable store tests', () => {
             expect(result[recordId]).toEqual(recordData);
         });
 
-        it('should call getAllEntriesInSegmentWithCallback if both getAllEntriesInSegment and getAllEntriesInSegmentWithCallback exist', async () => {
+        // TODO [W-10080780]: re-enable
+        xit('should call getAllEntriesInSegmentWithCallback if both getAllEntriesInSegment and getAllEntriesInSegmentWithCallback exist', async () => {
             const resultEntries = {
                 entries: { foo: JSONStringify(recordData) },
             };
@@ -115,7 +117,8 @@ describe('Nimbus durable store tests', () => {
             expect(evictEntriesSpy.mock.calls[0][1]).toEqual(testSegment);
         });
 
-        it('should handle errors if getEntriesInSegmentWithCallback fails in the synchronous code path', async () => {
+        // TODO [W-10080780]: re-enable
+        xit('should handle errors if getEntriesInSegmentWithCallback fails in the synchronous code path', async () => {
             let expectedError = new Error('it failed');
             const getEntriesInSegmentWithCallback = jest.fn().mockImplementation(() => {
                 return Promise.reject(expectedError);
@@ -131,7 +134,8 @@ describe('Nimbus durable store tests', () => {
             ).rejects.toEqual(expectedError);
         });
 
-        it('should handle errors if getAllEntriesInSegmentWithCallback fails in the synchronous code path', async () => {
+        // TODO [W-10080780]: re-enable
+        xit('should handle errors if getAllEntriesInSegmentWithCallback fails in the synchronous code path', async () => {
             let expectedError = new Error('it failed');
             const getAllEntriesInSegmentWithCallback = jest.fn().mockImplementation(() => {
                 return Promise.reject(expectedError);

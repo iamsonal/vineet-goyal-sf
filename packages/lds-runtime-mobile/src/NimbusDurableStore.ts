@@ -133,21 +133,6 @@ export class NimbusDurableStore implements DurableStore {
         }
 
         tasker.add();
-        // call getEntriesInSegmentWithCallback if available
-        if (__nimbus.plugins.LdsDurableStore.getEntriesInSegmentWithCallback !== undefined) {
-            return new Promise<DurableStoreEntries<T>>((resolve, reject) => {
-                __nimbus.plugins.LdsDurableStore.getEntriesInSegmentWithCallback(
-                    entryIds,
-                    segment,
-                    (result) => {
-                        resolve(this.convertToEntryList(result));
-                    },
-                    (error) => {
-                        reject(error);
-                    }
-                ).catch((error) => reject(error));
-            }).finally(() => tasker.done());
-        }
 
         // TODO [W-9930552]: Remove this once getEntriesInSegment is no longer supported
         return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment)
@@ -159,21 +144,6 @@ export class NimbusDurableStore implements DurableStore {
 
     getAllEntries<T>(segment: string): Promise<DurableStoreEntries<T> | undefined> {
         tasker.add();
-
-        // call getAllEntriesInSegmentWithCallback if available
-        if (__nimbus.plugins.LdsDurableStore.getAllEntriesInSegmentWithCallback !== undefined) {
-            return new Promise<DurableStoreEntries<T>>((resolve, reject) => {
-                __nimbus.plugins.LdsDurableStore.getAllEntriesInSegmentWithCallback(
-                    segment,
-                    (result) => {
-                        resolve(this.convertToEntryList(result));
-                    },
-                    (error) => {
-                        reject(error);
-                    }
-                ).catch((error) => reject(error));
-            }).finally(() => tasker.done());
-        }
 
         // TODO [W-9930552]: Remove this getAllEntriesInSegment is no longer supported
         return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment)

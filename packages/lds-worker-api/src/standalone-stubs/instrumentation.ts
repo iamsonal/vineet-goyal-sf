@@ -12,5 +12,6 @@ export function instrumentGraphqlAdapter(createFunction: Function, _metadata: an
     return createFunction;
 }
 export function setupInstrumentation(_luvio: any, _store: any) {}
+export function instrumentLuvio(_context: unknown) {}
 
 export const REFRESH_UIAPI_KEY = 'refreshUiApi';

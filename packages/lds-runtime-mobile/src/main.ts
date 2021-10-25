@@ -14,7 +14,7 @@ import {
     makeEnvironmentDraftAware,
     DraftManager,
 } from '@salesforce/lds-drafts';
-import { setupInstrumentation } from '@salesforce/lds-instrumentation';
+import { setupInstrumentation, instrumentLuvio } from '@salesforce/lds-instrumentation';
 import salesforceNetworkAdapter from '@salesforce/lds-network-adapter';
 
 import userId from '@salesforce/user/Id';
@@ -215,7 +215,9 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     registerDraftIdMapping,
 });
 
-luvio = new Luvio(draftEnv);
+luvio = new Luvio(draftEnv, {
+    instrument: instrumentLuvio,
+});
 
 // Draft mapping entries exists only in the Durable store.
 // Populate Luvio L1 cache with the entries from the Durable store.

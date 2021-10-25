@@ -1,4 +1,5 @@
-import { Luvio, Store, Adapter, Snapshot } from '@luvio/engine';
+import { Luvio, Store, Adapter, Snapshot, UnfulfilledSnapshot } from '@luvio/engine';
+import { ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 
 import { getInstrumentation } from 'o11y/client';
 import { instrument as instrumentLwcBindings } from '@salesforce/lds-bindings';
@@ -33,6 +34,8 @@ import {
 import {
     OBSERVABILITY_NAMESPACE,
     ADAPTER_INVOCATION_COUNT_METRIC_NAME,
+    ADAPTER_ERROR_COUNT_METRIC_NAME,
+    TOTAL_ADAPTER_ERROR_COUNT,
     TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT,
 } from './utils/observability';
 
@@ -45,6 +48,13 @@ interface AdapterMetadata {
     apiFamily: string;
     name: string;
     ttl?: number;
+}
+
+interface AdapterUnfulfilledError {
+    [ADAPTER_UNFULFILLED_ERROR]: boolean;
+    adapterName: string;
+    missingPaths: UnfulfilledSnapshot<any, any>['missingPaths'];
+    missingLinks: UnfulfilledSnapshot<any, any>['missingLinks'];
 }
 
 const NAMESPACE = 'lds';
@@ -64,6 +74,42 @@ export class Instrumentation {
     public instrumentLuvio(_context: unknown): void {
         // TODO [W-9783151]: refactor luvio.instrument to not require this class
     }
+}
+
+/**
+ * Provide this method for the instrument option for a Luvio instance.
+ * @param context The transaction context.
+ */
+export function instrumentLuvio(context: unknown) {
+    if (isAdapterUnfulfilledError(context)) {
+        incrementAdapterRequestErrorCount(context);
+    }
+}
+
+/**
+ * Returns whether or not this is an AdapterUnfulfilledError.
+ * @param context The transaction context.
+ * @returns Whether or not this is an AdapterUnfulfilledError.
+ */
+function isAdapterUnfulfilledError(context: unknown): context is AdapterUnfulfilledError {
+    return (context as AdapterUnfulfilledError)[ADAPTER_UNFULFILLED_ERROR] === true;
+}
+
+/**
+ * W-8620679
+ * Increment the counter for an UnfulfilledSnapshotError coming from luvio
+ *
+ * @param context The transaction context.
+ */
+function incrementAdapterRequestErrorCount(context: AdapterUnfulfilledError): void {
+    // We are consolidating all apex adapter instrumentation calls under a single key
+    const adapterName = normalizeAdapterName(context.adapterName);
+    const adapterRequestErrorCounter = createMetricsKey(
+        ADAPTER_ERROR_COUNT_METRIC_NAME,
+        adapterName
+    );
+    observabilityInstrumentation.incrementCounter(adapterRequestErrorCounter);
+    observabilityInstrumentation.incrementCounter(TOTAL_ADAPTER_ERROR_COUNT);
 }
 
 /**

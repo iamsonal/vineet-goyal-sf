@@ -44,12 +44,23 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
-    it('gets datasets by dataset types', async () => {
+    it('gets datasets by dataset types: Default and Trended', async () => {
         const mock = getMock('datasets');
         const config = { datasetTypes: ['Default', 'Trended'] };
         mockGetDatasetsNetworkOnce(config, mock);
 
         const setupConfig = { types: ['Default', 'Trended'] };
+        const el = await setupElement(setupConfig, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets datasets by dataset types: StagedData', async () => {
+        const mock = getMock('datasets-by-stagedData');
+        const config = { datasetTypes: ['StagedData'] };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const setupConfig = { types: ['StagedData'] };
         const el = await setupElement(setupConfig, GetDatasets);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);

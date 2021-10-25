@@ -1,0 +1,91 @@
+{
+    "conversionDetails": [],
+    "createdBy": {
+        "id": "005xx000001X7fNAAS",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "createdDate": "2021-03-04T00:14:24.000Z",
+    "dataflowLastUpdate": "2021-10-19T23:32:44.000Z",
+    "fileUrl": "/services/data/v54.0/wave/recipes/05vxx0000004EiiAAE/file",
+    "format": "R3",
+    "historiesUrl": "/services/data/v54.0/wave/recipes/05vxx0000004EiiAAE/histories",
+    "id": "05vxx0000004EiiAAE",
+    "label": "recipe 1_4",
+    "lastModifiedBy": {
+        "id": "005xx000001X7fNAAS",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "lastModifiedDate": "2021-10-19T23:32:44.000Z",
+    "licenseAttributes": {
+        "type": "sonic"
+    },
+    "name": "recipe_1",
+    "publishingTarget": "Dataset",
+    "recipeDefinition": {
+        "nodes": {
+            "LOAD_DATASET0": {
+                "action": "load",
+                "parameters": {
+                    "dataset": {
+                        "label": "SIC_Descriptions",
+                        "name": "SIC_Descriptions",
+                        "type": "analyticsDataset"
+                    },
+                    "fields": ["SIC_Description", "Last_Updated", "SIC_Code"]
+                },
+                "sources": []
+            },
+            "OUTPUT0": {
+                "action": "save",
+                "parameters": {
+                    "dataset": {
+                        "label": "test exchange",
+                        "name": "test_exchange",
+                        "type": "analyticsDataset"
+                    },
+                    "fields": []
+                },
+                "sources": ["LOAD_DATASET0"]
+            }
+        },
+        "ui": {
+            "nodes": {
+                "LOAD_DATASET0": {
+                    "label": "SIC_Descriptions",
+                    "type": "LOAD_DATASET",
+                    "top": 112,
+                    "left": 112,
+                    "parameters": {
+                        "sampleSize": 2000
+                    }
+                },
+                "OUTPUT0": {
+                    "label": "Output",
+                    "type": "OUTPUT",
+                    "top": 112,
+                    "left": 252
+                }
+            },
+            "connectors": [
+                {
+                    "source": "LOAD_DATASET0",
+                    "target": "OUTPUT0"
+                }
+            ],
+            "hiddenColumns": []
+        },
+        "version": "54.0"
+    },
+    "scheduleAttributes": {
+        "assetId": "05vxx0000004EiiAAE",
+        "frequency": "none"
+    },
+    "sourceRecipe": "05vxx0000004R3EAAU",
+    "status": "New",
+    "targetDataflowId": "02Kxx0000004JR9EAM",
+    "type": "recipe",
+    "url": "/services/data/v54.0/wave/recipes/05vxx0000004EiiAAE?format=R3",
+    "validationDetails": []
+}

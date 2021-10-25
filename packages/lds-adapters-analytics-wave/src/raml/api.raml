@@ -1106,6 +1106,7 @@ types:
         enum:
           - Default
           - Live
+          - StagedData
           - Trended
       folder:
         description: A reference to the folder in which this dataset is stored.
@@ -1726,6 +1727,17 @@ types:
         description: Recipe from which the current recipe was upconverted to or was
           reverted from.
         type: string
+        required: false # TODO Hand-rolled W-8253396
+      status:
+        description: The status of recipe.
+        type: string
+        enum:
+          - Failure
+          - New
+          - Queued
+          - Running
+          - Success
+          - Warning
         required: false # TODO Hand-rolled W-8253396
       targetDataflowId:
         description: Target Dataflow ID.
@@ -3752,6 +3764,7 @@ types:
             enum:
               - Default
               - Live
+              - StagedData
               - Trended
             (oas-collectionFormat): csv
         folderId:

@@ -33,6 +33,16 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets r3 recipe with status', async () => {
+        const mock = getMock('recipe-r3-status');
+        const config = { id: mock.id, format: 'R3' };
+        mockGetRecipeNetworkOnce(config, mock);
+
+        const el = await setupElement({ id: mock.id, format: 'R3' }, GetRecipe);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('does not fetch a second time', async () => {
         const mock = getMock('recipe');
         const config = { id: mock.id };

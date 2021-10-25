@@ -1,0 +1,44 @@
+{
+    "data": {
+        "__typename": "Query",
+        "uiapi": {
+            "__typename": "UIAPI",
+            "query": {
+                "__typename": "RecordQuery",
+                "ServiceResource": {
+                    "__typename": "ServiceResourceConnection",
+                    "edges": [
+                        {
+                            "__typename": "ServiceResourceEdge",
+                            "node": {
+                                "Id": "0Hnx00000000Th9CAE",
+                                "RelatedRecordId": {
+                                    "__typename": "IDValue",
+                                    "value": "005x0000001D4zgAAC",
+                                    "displayValue": null
+                                },
+                                "__typename": "ServiceResource",
+                                "ApiName": "ServiceResource",
+                                "WeakEtag": 1613083013000,
+                                "DisplayValue": "Perf Large Scale",
+                                "SystemModstamp": {
+                                    "value": "2021-02-11T22:36:53.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005x0000000xNhqAAE"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-02-11T22:36:53.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

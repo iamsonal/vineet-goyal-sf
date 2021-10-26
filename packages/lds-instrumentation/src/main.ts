@@ -12,11 +12,9 @@ import {
     ADAPTER_CACHE_MISS_DURATION_METRIC_NAME,
     ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME,
     ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
-    AGGREGATE_CONNECT_ERROR_COUNT,
     AGGREGATE_UI_CHUNK_COUNT,
     DUPLICATE_REQUEST_COUNT,
     GET_RECORD_AGGREGATE_INVOKE_COUNT,
-    GET_RECORD_AGGREGATE_RETRY_COUNT,
     GET_RECORD_NORMAL_INVOKE_COUNT,
     GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT,
     GET_RECORD_NOTIFY_CHANGE_DROP_COUNT,
@@ -433,14 +431,6 @@ export function incrementGetRecordAggregateInvokeCount(): void {
     incrementCounterMetric(GET_RECORD_AGGREGATE_INVOKE_COUNT);
 }
 
-export function incrementAggregateUiConnectErrorCount(): void {
-    incrementCounterMetric(AGGREGATE_CONNECT_ERROR_COUNT);
-}
-
-export function incrementGetRecordAggregateRetryCount(): void {
-    incrementCounterMetric(GET_RECORD_AGGREGATE_RETRY_COUNT);
-}
-
 export function incrementGetRecordNotifyChangeAllowCount(): void {
     incrementCounterMetric(GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT);
 }
@@ -538,10 +528,8 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
     });
     instrumentNetworkAdapter({
         aggregateUiChunkCount: (cb) => setAggregateUiChunkCountMetric(cb()),
-        aggregateUiConnectError: incrementAggregateUiConnectErrorCount,
         duplicateRequest: () => incrementCounterMetric(DUPLICATE_REQUEST_COUNT),
         getRecordAggregateInvoke: incrementGetRecordAggregateInvokeCount,
-        getRecordAggregateRetry: incrementGetRecordAggregateRetryCount,
         getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
         networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
     });

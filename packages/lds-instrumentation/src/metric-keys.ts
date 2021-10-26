@@ -48,18 +48,6 @@ export const GET_RECORD_NORMAL_INVOKE_COUNT = 'get-record-normal-invoke-count';
 export const GET_RECORD_AGGREGATE_INVOKE_COUNT = 'get-record-aggregate-invoke-count';
 
 /**
- * W-9105403
- * Counter increments when a getRecord fails and we retry with aggregateUi
- */
-export const GET_RECORD_AGGREGATE_RETRY_COUNT = 'get-record-aggregate-retry-count';
-
-/**
- * W-9105403
- * Counter increments when aggregateUi fails with a Connect exception
- */
-export const AGGREGATE_CONNECT_ERROR_COUNT = 'aggregate-connect-error-count';
-
-/**
  * W-7301684
  * Counter for when getRecordNotifyChange api calls are allowed through.
  */

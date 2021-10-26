@@ -16,7 +16,9 @@ jest.mock('@salesforce/lds-environment-settings', () => {
 
 jest.mock('@salesforce/lds-instrumentation', () => {
     return {
-        incrementAggregateUiConnectErrorCount: () => {},
+        setAggregateUiChunkCountMetric: () => {},
+        incrementGetRecordAggregateInvokeCount: () => {},
+        incrementGetRecordNormalInvokeCount: () => {},
         registerLdsCacheStats: () => {},
     };
 });

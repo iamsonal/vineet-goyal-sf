@@ -10,7 +10,6 @@ import {
     shouldForceRefresh,
     InstrumentationRejectConfig,
     InstrumentationResolveConfig,
-    auraResponseIsQueryTooComplicated,
     registerLdsCacheStats,
 } from './utils';
 import {
@@ -159,55 +158,6 @@ const layoutUserStateStorage = createStorage({
 });
 const layoutUserStateStorageStatsLogger = registerLdsCacheStats('getLayoutUserState:storage');
 
-interface ResourceRequestWithConfig {
-    configOptionalFields?: string[];
-}
-
-/*
- * Takes a ResourceRequest, builds the aggregateUi payload, and dispatches via aggregateUi action
- */
-function buildAndDispatchGetRecordAggregateUi(
-    recordId: string,
-    resourceRequest: ResourceRequest & ResourceRequestWithConfig,
-    fieldsArray: Array<string>,
-    optionalFieldsArray: Array<string>,
-    fieldsString: string,
-    optionalFieldsString: string
-): Promise<any> {
-    instrumentation.getRecordAggregateInvoke();
-
-    const compositeRequest = buildGetRecordByFieldsCompositeRequest(recordId, resourceRequest, {
-        fieldsArray,
-        optionalFieldsArray,
-        fieldsLength: fieldsString.length,
-        optionalFieldsLength: optionalFieldsString.length,
-    });
-
-    const aggregateUiParams = {
-        input: {
-            compositeRequest,
-        },
-    };
-
-    const instrumentationCallbacks =
-        crudInstrumentationCallbacks !== null
-            ? {
-                  rejectFn: crudInstrumentationCallbacks.getRecordAggregateRejectFunction,
-                  resolveFn: crudInstrumentationCallbacks.getRecordAggregateResolveFunction,
-              }
-            : {};
-
-    instrumentation.aggregateUiChunkCount(compositeRequest.length);
-
-    return dispatchSplitRecordAggregateUiAction(
-        UiApiRecordController.ExecuteAggregateUi,
-        aggregateUiParams,
-        actionConfig,
-        recordId,
-        instrumentationCallbacks
-    );
-}
-
 function getObjectInfo(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
     const params = buildUiApiParams(
         {
@@ -252,7 +202,7 @@ function getObjectInfos(resourceRequest: ResourceRequest, cacheKey: string): Pro
     return dispatchAction(UiApiRecordController.GetObjectInfos, params, config);
 }
 
-function getRecord(resourceRequest: ResourceRequest & ResourceRequestWithConfig): Promise<any> {
+function getRecord(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
     const { recordId } = urlParams;
     const { fields, layoutTypes, modes, optionalFields } = queryParams;
@@ -275,13 +225,41 @@ function getRecord(resourceRequest: ResourceRequest & ResourceRequestWithConfig)
     );
 
     if (useAggregateUi) {
-        return buildAndDispatchGetRecordAggregateUi(
+        instrumentation.getRecordAggregateInvoke();
+
+        const compositeRequest = buildGetRecordByFieldsCompositeRequest(
             recordId as string,
             resourceRequest,
-            fieldsArray,
-            optionalFieldsArray,
-            fieldsString,
-            optionalFieldsString
+            {
+                fieldsArray,
+                optionalFieldsArray,
+                fieldsLength: fieldsString.length,
+                optionalFieldsLength: optionalFieldsString.length,
+            }
+        );
+
+        const aggregateUiParams = {
+            input: {
+                compositeRequest,
+            },
+        };
+
+        const instrumentationCallbacks =
+            crudInstrumentationCallbacks !== null
+                ? {
+                      rejectFn: crudInstrumentationCallbacks.getRecordAggregateRejectFunction,
+                      resolveFn: crudInstrumentationCallbacks.getRecordAggregateResolveFunction,
+                  }
+                : {};
+
+        instrumentation.aggregateUiChunkCount(compositeRequest.length);
+
+        return dispatchSplitRecordAggregateUiAction(
+            UiApiRecordController.ExecuteAggregateUi,
+            aggregateUiParams,
+            actionConfig,
+            recordId as string,
+            instrumentationCallbacks
         );
     }
 
@@ -315,25 +293,7 @@ function getRecord(resourceRequest: ResourceRequest & ResourceRequestWithConfig)
                   resolveFn: crudInstrumentationCallbacks.getRecordResolveFunction,
               }
             : {};
-    return dispatchAction(controller, params, actionConfig, instrumentationCallbacks).catch(
-        (err) => {
-            if (auraResponseIsQueryTooComplicated(err)) {
-                instrumentation.getRecordAggregateRetry();
-
-                // Retry with aggregateUi to see if we can avoid Query Too Complicated
-                return buildAndDispatchGetRecordAggregateUi(
-                    recordId as string,
-                    resourceRequest,
-                    fieldsArray,
-                    optionalFieldsArray,
-                    fieldsString,
-                    optionalFieldsString
-                );
-            } else {
-                throw err;
-            }
-        }
-    );
+    return dispatchAction(controller, params, actionConfig, instrumentationCallbacks);
 }
 
 function getRecords(resourceRequest: ResourceRequest): Promise<any> {

@@ -2,7 +2,6 @@ import {
     updatePercentileHistogramMetric,
     incrementCounterMetric,
     incrementGetRecordAggregateInvokeCount,
-    incrementGetRecordAggregateRetryCount,
     incrementGetRecordNormalInvokeCount,
     incrementGetRecordNotifyChangeAllowCount,
     incrementGetRecordNotifyChangeDropCount,
@@ -44,7 +43,6 @@ export function setInstrumentationHooks() {
     });
     networkAuraInstrument({
         getRecordAggregateInvoke: incrementGetRecordAggregateInvokeCount,
-        getRecordAggregateRetry: incrementGetRecordAggregateRetryCount,
         getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
         aggregateUiChunkCount: setAggregateUiChunkCountMetric,
         logCrud: logCRUDLightningInteraction,

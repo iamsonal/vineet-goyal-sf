@@ -1,0 +1,18 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'sustainability-reference-data'
+types:
+  SCReferenceDataOutputRepresentation:
+    (luvio.ttl): 300
+    (luvio.opaque): true
+    (luvio.key):
+      message: message
+
+/connect/sustainability/reference-data/{category}/upload:
+  post:
+    (luvio.adapter):
+      name: uploadReferenceData

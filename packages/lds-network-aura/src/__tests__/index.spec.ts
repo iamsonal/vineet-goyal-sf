@@ -2895,6 +2895,42 @@ describe('routes', () => {
         );
     });
 
+    describe('post /reference-data/{category}/upload', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/reference-data/ABCDE/upload`,
+                urlParams: {
+                    category: 'ABCDE',
+                },
+                queryParams: {
+                    recordTypeId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.uploadReferenceData',
+                {
+                    category: 'ABCDE',
+                    recordTypeId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/reference-data/ABCDE/upload`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

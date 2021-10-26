@@ -1,0 +1,39 @@
+{
+    "name": "@salesforce/lds-adapters-industries-sustainability-reference-data",
+    "version": "1.31.0",
+    "description": "Sustainability Reference Data",
+    "license": "MIT",
+    "main": "dist/umd/es2018/industries-sustainability-reference-data.js",
+    "module": "dist/es/es2018/industries-sustainability-reference-data.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
+    "contributors": [
+        "ritu.singla@salesforce.com"
+    ],
+    "scripts": {
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+        "build:services": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-industries-sustainability-reference-data",
+        "release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter=lds-adapters-industries-sustainability-reference-data",
+        "start": "karma start",
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "1.31.0"
+    },
+    "devDependencies": {
+        "@luvio/cli": "0.55.3",
+        "@luvio/compiler": "0.55.3",
+        "@luvio/engine": "0.55.3",
+        "@luvio/lwc-luvio": "0.55.3",
+        "@salesforce/lds-karma": "1.31.0"
+    }
+}

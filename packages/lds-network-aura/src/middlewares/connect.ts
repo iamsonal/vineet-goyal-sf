@@ -339,6 +339,11 @@ const CIB_GET_DEAL_PARTIES_PATH = new RegExp(
     'i'
 );
 
+const UPLOAD_REFERENCE_DATA_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/sustainability/reference-data/([A-Z]){2,40}/upload$`,
+    'i'
+);
+
 const connect: ApiFamily = {
     ingestRecord: {
         method: 'post',
@@ -644,6 +649,14 @@ const connect: ApiFamily = {
         predicate: (path) => path.startsWith(CIB_BASE_URI) && CIB_GET_DEAL_PARTIES_PATH.test(path),
         transport: {
             controller: 'CibController.getDealParties',
+        },
+    },
+    uploadReferenceData: {
+        method: 'post',
+        predicate: (path) =>
+            path.startsWith(CONNECT_BASE_URI) && UPLOAD_REFERENCE_DATA_PATH.test(path),
+        transport: {
+            controller: 'SustainabilityFamilyController.uploadReferenceData',
         },
     },
 };

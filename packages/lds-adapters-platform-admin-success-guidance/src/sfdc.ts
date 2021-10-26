@@ -9,5 +9,6 @@
 export * from './generated/artifacts/sfdc';
 export {
     getQuestionnaires as getActiveQuestionnaires,
-    getScenarios as getActiveScenarios,
+    getAssistantList as getActiveScenarios,
+    saveAssistantList as updateScenarios,
 } from './generated/artifacts/sfdc';

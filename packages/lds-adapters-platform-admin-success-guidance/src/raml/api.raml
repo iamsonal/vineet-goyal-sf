@@ -58,17 +58,18 @@ types:
     description: An question choice within a Lightning Assistant questionnaire
     type: object
     properties:
-      id:
-        description: The id of this choice
+      description:
+        description: The localized description for this choice
         type: string
-      labels:
-        description: The localized labels for this choice
-        type: object
-        properties:
-          //:
-            type: string
+        required: false # TODO Hand-rolled W-8253396
+      developerName:
+        description: The developerName of this choice
+        type: string
       next:
         description: The id of the follow up question to be displayed
+        type: string
+      title:
+        description: The localized title for this choice
         type: string
   LightningAssistantCustomActionRepresentation:
     description: A Custom Action Representation
@@ -87,8 +88,24 @@ types:
       iconName:
         description: The name of the icon displayed for the custom action
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
+  LightningAssistantInitializationRepresentation:
+    description: Indicates if Guidance Center initialization was successful
+    type: object
+    properties:
+      assistantTarget:
+        description: The Lightning Assistant target
+        type: string
+      isInitialized:
+        description: Indicates whether LEAP's async initialization has been kick-started
+        type: boolean
+  LightningAssistantInputRepresentation:
+    description: An Input Representation for a Lightning Assistant.
+    type: object
+    properties:
+      isArchived:
+        description: Input current archive value when interacting with an assistant.
+        type: boolean
   LightningAssistantItemInputRepresentation:
     description: An Input Representation for the Lightning Assistant Item or Step
       Updates.
@@ -107,49 +124,40 @@ types:
       whenSeen:
         description: Input date of when the item or step was seen.
         type: string
-  LightningAssistantItemRepresentation:
+  LightningAssistantLayoutNodeRepresentation:
     description: An item for use in the Lightning Assistant
     type: object
     properties:
-      action:
-        description: The action that will occur when an item is selected
-        type: AbstractLightningAssistantActionRepresentation
-      figureComponent:
-        description: The id of the component used to display this item's figure
+      children:
+        description: The list of children for this node
+        type: array
+        items:
+          type: any
+      description:
+        description: The localized description for this node
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
-      id:
-        description: The Id of the Lightning Assistant
-        type: string
-      itemComponent:
-        description: The id of the component used to to display this item
-        type: string
-        # TODO Hand-rolled W-8253396
-        required: false
-      labels:
-        description: The localized labels for this item
-        type: object
-        properties:
-          //:
-            type: string
+        required: false # TODO Hand-rolled W-8253396
       progress:
-        description: The completion progress for this item
+        description: The completion progress for this Node
         type: string
         enum:
           - Completed
           - InProgress
           - NotStarted
-      steps:
+      step:
         description: The list of substeps for an item
-        type: array
-        items:
-          type: LightningAssistantStepRepresentation
+        type: LightningAssistantStepRepresentation
       tags:
-        description: Tags associated with this item
+        description: Tags associated with this node
         type: array
         items:
           type: string
+      title:
+        description: The localized title for this node
+        type: string
+      type:
+        description: The type for this node
+        type: string
   LightningAssistantLinkActionRepresentation:
     description: A Link Action representation
     discriminatorValue: Link
@@ -158,13 +166,11 @@ types:
       iconName:
         description: The icon name for the link action
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
       label:
         description: The localized link label
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
       url:
         description: The localized link url
         type: string
@@ -177,6 +183,35 @@ types:
         type: string
       url:
         description: The localized link url
+        type: string
+  LightningAssistantListInputRepresentation:
+    description: An Input Representation for a Lightning Assistant List.
+    type: object
+    properties:
+      assistantList:
+        description: Input List for Lightning Assistant List
+        type: object
+        properties:
+          //:
+            type: object
+  AssistantData: # TODO Hand Rolled 'AssistantData' W-9311618 and W-9311623
+    description: A Wrapper around the LightningAssistantListInputRepresentation
+    type: object
+    properties:
+      assistantData:
+        description: The Oas Body Name for Assistant Data.
+        type: LightningAssistantListInputRepresentation
+  LightningAssistantListRepresentation:
+    description: List of Assistants for the Lightning Assistant
+    type: object
+    properties:
+      assistantList:
+        description: List of assistants
+        type: array
+        items:
+          type: LightningAssistantRepresentation
+      assistantTarget:
+        description: The Lightning Assistant target
         type: string
   LightningAssistantNoActionRepresentation:
     description: A NoAction Representation
@@ -192,20 +227,20 @@ types:
         type: array
         items:
           type: LightningAssistantChoiceRepresentation
-      id:
-        description: The id of this option
+      description:
+        description: The localized description for this question
         type: string
-      labels:
-        description: The localized labels to describe this question
-        type: object
-        properties:
-          //:
-            type: string
+        required: false # TODO Hand-rolled W-8253396
+      developerName:
+        description: The developer name of this question
+        type: string
       link:
         description: A localized help link for this question
         type: LightningAssistantLinkRepresentation | nil
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
+      title:
+        description: The localized title for this question
+        type: string
   LightningAssistantQuestionnaireInputRepresentation:
     description: An Input Representation for an answer to question from a Lightning
       Assistant questionnaire.
@@ -217,6 +252,7 @@ types:
         enum:
           - Completed
           - InProgress
+          - Invisible
           - NotStarted
           - Skipped
       questionToAnswer:
@@ -225,8 +261,7 @@ types:
         properties:
           //:
             type: object
-  # TODO W-8253396: Hand Rolled 'QuestionnaireData'
-  QuestionnaireData:
+  QuestionnaireData: # TODO W-8253396: Hand Rolled 'QuestionnaireData'
     description: A Wrapper around the LightningAssistantQuestionnaireInputRepresentation
     type: object
     properties:
@@ -237,36 +272,35 @@ types:
     description: List of Questionnaires for the Lightning Assistant
     type: object
     properties:
-      questionnaireIds:
-        description: List of questionnaire ids
+      assistantName:
+        description: The Lightning Assistant name for this questionnaire list
+        type: string
+      questionnaireNames:
+        description: List of questionnaire names
         type: array
         items:
           type: string
-      scenario:
-        description: The Lightning Scenario Id for this questionnaire list
-        type: string
   LightningAssistantQuestionnaireRepresentation:
     description: A Lightning Assistant Questionnaire
     type: object
     properties:
-      assistantGroup:
-        description: The Lightning Assistant group this questionnaire belongs in
+      assistantTarget:
+        description: The Lightning Assistant target this questionnaire belongs in
         type: string
-      id:
-        description: The name of a questionnaire that can be displayed
+      description:
+        description: The localized description for this questionnaire
         type: string
-      labels:
-        description: The localized labels for this questionnaire
-        type: object
-        properties:
-          //:
-            type: string
+        required: false # TODO Hand-rolled W-8253396
+      developerName:
+        description: The developer name of a questionnaire that can be displayed
+        type: string
       progress:
         description: The completion progress for the questionnaire
         type: string
         enum:
           - Completed
           - InProgress
+          - Invisible
           - NotStarted
           - Skipped
       questions:
@@ -274,119 +308,67 @@ types:
         type: array
         items:
           type: LightningAssistantQuestionRepresentation
+      title:
+        description: The localized title for this questionnaire
+        type: string
   LightningAssistantRepresentation:
     description: Lightning Assistant
     type: object
     properties:
-      assistantGroup:
+      assistantTarget:
         description: The Lightning Assistant group this Assistant belongs in
+        type: string
+      category:
+        description: The category of the assistant
+        type: string
+      completionDate:
+        description: The completion date for the assistant
         type: string
       debugModeEnabled:
         description: Is the guidance center in debug mode
         type: boolean
-      id:
-        description: The Lightning Assistant id
+      description:
+        description: The localized description for the assistant
         type: string
-      itemSetRule:
-        description: The itemset (and questionnaire) that created this guidance set
+        required: false # TODO Hand-rolled W-8253396
+      developerName:
+        description: The Lightning Assistant developer name
         type: string
-      items:
-        description: Lightning Assistant Items
-        type: array
-        items:
-          type: LightningAssistantItemRepresentation
-      scenario:
-        description: The Lightning Assistant Scenario Id
-        type: string
-  LightningAssistantScenarioInputRepresentation:
-    description: An Input Representation for a Lightning Assistant scenario.
-    type: object
-    properties:
-      isArchived:
-        description: Input current archive value when interacting with a scenario.
-        type: boolean
-  LightningAssistantScenarioListInputRepresentation:
-    description: An Input Representation for a Lightning Assistant Scenario List.
-    type: object
-    properties:
-      scenarios:
-        description: Input List for Lightning Assistant Scenarios
-        type: object
-        properties:
-          //:
-            type: object
-  # TODO Hand Rolled 'ScenarioData' W-9311618 and W-9311623
-  ScenarioData:
-    description: A Wrapper around the LightningAssistantScenarioListInputRepresentation
-    type: object
-    properties:
-      scenarioData:
-        description: The Oas Body Name for Questionnaire Data.
-        type: LightningAssistantScenarioListInputRepresentation
-  LightningAssistantScenarioListRepresentation:
-    description: List of Scenarios for the Lightning Assistant
-    type: object
-    properties:
-      assistantGroup:
-        description: The Lightning Assistant group this Assistant belongs in
-        type: string
-      scenarios:
-        description: List of scenarios
-        type: array
-        items:
-          type: LightningAssistantScenarioRepresentation
-  LightningAssistantScenarioRepresentation:
-    description: A Lightning Assistant Scenario
-    type: object
-    properties:
-      assistantGroup:
-        description: The Lightning Assistant group this scenario belongs in
-        type: string
-      completionDate:
-        description: The completion date for the scenario
-        type: string
-        # TODO Hand-rolled W-8253396
-        required: false
       icon:
-        description: The URL for the icon for the scenario
-        type: string
-      id:
-        description: The id of this scenario
+        description: The URL for the icon for the assistant
         type: string
       isArchived:
-        description: Whether the scenario is archived or not
-        type: boolean
-      isDeactivated:
-        description: Whether the scenario is deactivated or not
+        description: Whether the assistant is archived or not
         type: boolean
       isPreview:
-        description: Whether the scenario is being previewed or not
+        description: Whether the assistant is being previewed or not
         type: boolean
-      labels:
-        description: The localized labels for this scenario
-        type: object
-        properties:
-          //:
-            type: string
+      layout:
+        description: Lightning Assistant Layout
+        type: LightningAssistantLayoutNodeRepresentation
       numberOfSteps:
-        description: Number of steps in the scenario
+        description: Number of steps in the assistant
         type: integer
       progress:
-        description: The % of steps completed for the scenario
+        description: The % of steps completed for the assistant
         format: double
         type: number
       questionnaireIds:
-        description: The list of questionnaire Ids for this scenario
+        description: The list of questionnaire Ids for this assistant
         type: array
         items:
           type: string
       status:
-        description: The completion status for the scenario
+        description: The completion status for the assistant
         type: string
         enum:
           - Completed
           - InProgress
+          - Invisible
           - NotStarted
+      title:
+        description: The localized title for the assistant
+        type: string
   LightningAssistantStepRepresentation:
     description: Lightning Assistant Item Step
     type: object
@@ -394,23 +376,20 @@ types:
       action:
         description: The action that will occur when an step is selected
         type: AbstractLightningAssistantActionRepresentation
+      description:
+        description: The localized description for this step
+        type: string
+        required: false # TODO Hand-rolled W-8253396
       figureComponent:
         description: The id of the component used to display this step's figure
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
       id:
         description: The id of the item
         type: string
       isManaged:
         description: Whether this step has a completedWhen or not
         type: boolean
-      labels:
-        description: The localized labels for this step
-        type: object
-        properties:
-          //:
-            type: string
       progress:
         description: The completion progress for this step
         type: string
@@ -421,13 +400,21 @@ types:
       stepComponent:
         description: The id of the component used to display this step
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
       tags:
         description: Tags associated with this item
         type: array
         items:
           type: string
+      title:
+        description: The localized title for this step
+        type: string
+      updateStrategy:
+        description: When isManaged is true, use this value to determine how to update the progress
+        type: string
+        enum:
+          - None
+          - Periodic
   LightningAssistantTrailheadActionRepresentation:
     description: A Trailhead Action Representation
     discriminatorValue: TlxModule
@@ -436,8 +423,7 @@ types:
       iconName:
         description: The icon name for the Trailhead action
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
       moduleId:
         description: The module id for the Trailhead in LEX module
         type: string | nil
@@ -454,8 +440,7 @@ types:
         properties:
           //:
             type: object
-  # TODO: W-8253396 Hand Rolled 'assistantData'
-  AssistantData:
+  UpdateAssistantData: # TODO: W-8253396 Hand Rolled 'assistantData'
     description: The LightningAssistantUpdateInputRepresentation wrapper
     type: object
     properties:
@@ -470,8 +455,7 @@ types:
       iconName:
         description: The icon name for the video action
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
       url:
         description: The video action url
         type: string
@@ -483,119 +467,37 @@ types:
       iconName:
         description: The icon name for the walkthrough action
         type: string
-        # TODO Hand-rolled W-8253396
-        required: false
+        required: false # TODO Hand-rolled W-8253396
       promptId:
         description: The prompt id for the walkthrough action
         type: string
-/guidance/assistant:
-  /{assistantGroup}:
+/assistant-platform:
+  /questionnaire/{questionnaireName}:
     get:
-      description: Get Guidance Center Assistant
+      description: Get the Guidance Center Questionnaire and progress
       responses:
         '200':
           description: Success
           body:
             application/json:
-              type: LightningAssistantRepresentation
-      queryParameters:
-        scenarioId:
-          type: string
+              type: LightningAssistantQuestionnaireRepresentation
     patch:
-      description: Save the Guidance Center Assistant
+      description: Save the Guidance Center Questionnaire answers and progress
       responses:
         '200':
           description: Success
           body:
             application/json:
-              type: LightningAssistantRepresentation
-      queryParameters:
-        scenarioId:
-          type: string
+              type: LightningAssistantQuestionnaireRepresentation
       body:
         application/json:
-          # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
-          type: AssistantData
-          # TODO W-8253396: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-          (oas-body-name): assistantData
+          type: QuestionnaireData # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          (oas-body-name): questionnaireData
     uriParameters:
-      assistantGroup:
+      questionnaireName:
         type: string
         required: true
-    /questionnaire/{questionnaireId}:
-      get:
-        description: Get the Guidance Center Questionnaire and progress
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: LightningAssistantQuestionnaireRepresentation
-      patch:
-        description: Save the Guidance Center Questionnaire answers and progress
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: LightningAssistantQuestionnaireRepresentation
-        body:
-          application/json:
-            # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
-            type: QuestionnaireData
-            # TODO W-8253396: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-            (oas-body-name): questionnaireData
-      uriParameters:
-        assistantGroup:
-          type: string
-          required: true
-        questionnaireId:
-          type: string
-          required: true
-    /questionnaires:
-      get:
-        description: Get Guidance Center Active Questionnaires
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: LightningAssistantQuestionnaireListRepresentation
-        queryParameters:
-          scenarioId:
-            type: string
-      uriParameters:
-        assistantGroup:
-          type: string
-          required: true
-    /scenarios:
-      get:
-        description: Get Guidance Center Active Scenarios
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: LightningAssistantScenarioListRepresentation
-      patch:
-        description: Save the Guidance Center Scenarios
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: LightningAssistantScenarioListRepresentation
-        body:
-          application/json:
-            # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
-            type: ScenarioData
-            # TODO W-8253396: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-            (oas-body-name): scenarioData
-      uriParameters:
-        assistantGroup:
-          type: string
-          required: true
-  /{assistantTarget}/step/{stepId}:
+  /step/{stepName}:
     patch:
       description: Save Lightning Assistant Step Resource
       responses:
@@ -605,9 +507,83 @@ types:
             application/json:
               type: LightningAssistantStepRepresentation
     uriParameters:
-      assistantTarget:
+      stepName:
         type: string
         required: true
-      stepId:
+  /{assistantName}:
+    get:
+      description: Get Guidance Center Assistant
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantRepresentation
+    patch:
+      description: Save the Guidance Center Assistant
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantRepresentation
+      body:
+        application/json:
+          type: UpdateAssistantData # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          (oas-body-name): assistantData
+    uriParameters:
+      assistantName:
         type: string
         required: true
+  /{assistantName}/questionnaires:
+    get:
+      description: Get Guidance Center Active Questionnaires
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantQuestionnaireListRepresentation
+    uriParameters:
+      assistantName:
+        type: string
+        required: true
+  /{assistantTarget}:
+    /initialize:
+      put:
+        description: Initiate Asynchronous Initialization
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantInitializationRepresentation
+      uriParameters:
+        assistantTarget:
+          type: string
+          required: true
+    /list:
+      get:
+        description: Get Guidance Center Active Assistants
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantListRepresentation
+      patch:
+        description: Save the Guidance Center Assistants
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantListRepresentation
+        body:
+          application/json:
+            type: AssistantData # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+            (oas-body-name): assistantData
+      uriParameters:
+        assistantTarget:
+          type: string
+          required: true

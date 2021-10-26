@@ -45,28 +45,27 @@ const GET_PRODUCT_PRICE_PATH = new RegExp(
     'i'
 );
 
-const GET_GUIDANCE_ASSISTANT_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}$`,
+const GET_GUIDANCE_ASSISTANT_PATH = new RegExp(`${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}$`, 'i');
+
+const GET_GUIDANCE_ASSISTANT_LIST_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}/list$`,
     'i'
 );
 
 const GET_GUIDANCE_QUESTIONNAIRE_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/questionnaire/([A-Z0-9_]){2,32}$`,
+    `${GUIDANCE_BASE_URI}/questionnaire/([A-Z0-9_]){2,80}$`,
     'i'
 );
 
 const GET_GUIDANCE_QUESTIONNAIRES_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/questionnaires$`,
+    `${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}/questionnaires$`,
     'i'
 );
 
-const GET_GUIDANCE_SCENARIOS_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/scenarios$`,
-    'i'
-);
+const GET_GUIDANCE_STEP_PATH = new RegExp(`${GUIDANCE_BASE_URI}/step/([A-Z0-9_]){2,80}$`, 'i');
 
-const GET_GUIDANCE_STEP_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/step/([A-Z0-9_]){2,32}$`,
+const GET_GUIDANCE_INITIALIZE_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}/initialize$`,
     'i'
 );
 
@@ -695,6 +694,22 @@ const scalecenter: ApiFamily = {
 };
 
 const guidance: ApiFamily = {
+    getGuidanceAssistantList: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_ASSISTANT_LIST_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.getAssistantList',
+        },
+    },
+    saveGuidanceAssistantList: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_ASSISTANT_LIST_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.saveAssistantList',
+        },
+    },
     getGuidanceAssistant: {
         method: 'get',
         predicate: (path: string) =>
@@ -735,30 +750,20 @@ const guidance: ApiFamily = {
             controller: 'LightningExperienceAssistantPlatformController.saveQuestionnaire',
         },
     },
-    getGuidanceScenarios: {
-        method: 'get',
-        predicate: (path: string) =>
-            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_SCENARIOS_PATH.test(path),
-        transport: {
-            controller: 'LightningExperienceAssistantPlatformController.getActiveScenarios',
-        },
-    },
-
-    updateGuidanceScenarios: {
-        method: 'patch',
-        predicate: (path: string) =>
-            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_SCENARIOS_PATH.test(path),
-        transport: {
-            controller: 'LightningExperienceAssistantPlatformController.saveScenarios',
-        },
-    },
-
     evaluateStep: {
         method: 'patch',
         predicate: (path: string) =>
             path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_STEP_PATH.test(path),
         transport: {
             controller: 'LightningExperienceAssistantPlatformController.evaluateStep',
+        },
+    },
+    initialize: {
+        method: 'put',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_INITIALIZE_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.initialize',
         },
     },
 };

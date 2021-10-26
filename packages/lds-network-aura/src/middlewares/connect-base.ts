@@ -1,7 +1,7 @@
 const BASE_URI = '/services/data/v54.0';
 export const CONNECT_BASE_URI = `${BASE_URI}/connect`;
 export const COMMERCE_BASE_URI = `${BASE_URI}/commerce`;
-export const GUIDANCE_BASE_URI = `${BASE_URI}/guidance`;
+export const GUIDANCE_BASE_URI = `${BASE_URI}/assistant-platform`;
 export const WAVE_BASE_URI = `${BASE_URI}/wave`;
 export const ADATS_BASE_URI = `${BASE_URI}/analytics/data-service/sync`;
 export const CMS_BASE_URI = `${CONNECT_BASE_URI}/cms`;

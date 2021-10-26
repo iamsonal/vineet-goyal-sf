@@ -4,12 +4,10 @@ import { getAssistant } from 'lds-adapters-platform-admin-success-guidance';
 export default class GetAssistant extends LightningElement {
     wirePushCount = -1;
 
-    @api assistantGroup;
-    @api scenarioId;
+    @api assistantName;
 
     @wire(getAssistant, {
-        assistantGroup: '$assistantGroup',
-        scenarioId: '$scenarioId',
+        assistantName: '$assistantName',
     })
     onGetAssistant({ data, error }) {
         this.assistant = data;

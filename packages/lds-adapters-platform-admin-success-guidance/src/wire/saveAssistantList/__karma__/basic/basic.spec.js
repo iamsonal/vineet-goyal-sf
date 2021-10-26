@@ -1,25 +1,25 @@
-import GetScenarios from '../../../getScenarios/__karma__/lwc/get-scenarios';
-import { updateScenarios } from 'lds-adapters-platform-admin-success-guidance';
+import GetAssistantList from '../../../getAssistantList/__karma__/lwc/get-assistant-list';
+import { saveAssistantList } from 'lds-adapters-platform-admin-success-guidance';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     clone,
-    mockUpdateScenariosNetworkOnce,
-    mockUpdateScenariosNetworkErrorOnce,
+    mockSaveAssistantListNetworkOnce,
+    mockSaveAssistantListNetworkErrorOnce,
 } from 'platform-admin-success-guidance-test-util';
 
-const MOCK_PREFIX = 'wire/updateScenarios/__karma__/data/';
+const MOCK_PREFIX = 'wire/saveAssistantList/__karma__/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
 describe('basic', () => {
-    it('basic update scenarios invocation', async () => {
-        const mock = getMock('update-scenarios');
+    it('basic save assistant list invocation', async () => {
+        const mock = getMock('save-assistant-list');
         const config = {
-            assistantGroup: 'sfdc_internal_test',
-            scenarioData: {
-                scenarios: {
+            assistantTarget: mock.assistantTarget,
+            assistantData: {
+                assistantList: {
                     sfdc_internal_test_started: {
                         isArchived: true,
                     },
@@ -29,17 +29,17 @@ describe('basic', () => {
                 },
             },
         };
-        mockUpdateScenariosNetworkOnce(config, mock);
+        mockSaveAssistantListNetworkOnce(config, mock);
 
-        const response = await updateScenarios(config);
+        const response = await saveAssistantList(config);
 
         expect(response).toEqual(mock);
     });
     it('displays error when network request 404s', async () => {
         const config = {
-            assistantGroup: 'sfdc_internal_test',
-            scenarioData: {
-                scenarios: {
+            assistantTarget: getMock('save-assistant-list').assistantTarget,
+            assistantData: {
+                assistantList: {
                     sfdc_internal_test_started: {
                         isArchived: true,
                     },
@@ -60,23 +60,23 @@ describe('basic', () => {
                 },
             ],
         };
-        mockUpdateScenariosNetworkErrorOnce(config, mock);
+        mockSaveAssistantListNetworkErrorOnce(config, mock);
 
         try {
-            await updateScenarios(config);
+            await saveAssistantList(config);
             // make sure we are hitting the catch
-            fail('updateScenarios did not throw');
+            fail('saveAssistantList did not throw');
         } catch (e) {
             expect(e).toEqual(mock);
         }
     });
 
-    it('getScenarios after updateScenarios does not fetch', async () => {
-        const mock = getMock('update-scenarios');
+    it('getAssistantList after saveAssistantList does not fetch', async () => {
+        const mock = getMock('save-assistant-list');
         const config = {
-            assistantGroup: 'sfdc_internal_test',
-            scenarioData: {
-                scenarios: {
+            assistantTarget: mock.assistantTarget,
+            assistantData: {
+                assistantList: {
                     sfdc_internal_test_started: {
                         isArchived: true,
                     },
@@ -86,12 +86,12 @@ describe('basic', () => {
                 },
             },
         };
-        mockUpdateScenariosNetworkOnce(config, mock);
+        mockSaveAssistantListNetworkOnce(config, mock);
 
-        await updateScenarios(config);
+        await saveAssistantList(config);
 
-        const element = await setupElement(config, GetScenarios);
+        const element = await setupElement(config, GetAssistantList);
         expect(element.pushCount()).toBe(1);
-        expect(clone(element.getWiredScenarios())).toEqual(mock);
+        expect(clone(element.getWiredAssistantList())).toEqual(mock);
     });
 });

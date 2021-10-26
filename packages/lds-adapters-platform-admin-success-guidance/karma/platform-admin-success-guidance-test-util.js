@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 const API_VERSION = 'v54.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
-const URL_BASE = `/guidance`;
+const URL_BASE = `/assistant-platform`;
 
 export function clone(obj) {
     // this is needed for compat tests, because the toEqual matcher can't
@@ -63,23 +63,23 @@ export function mockSaveQuestionnaireNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockGetScenariosNetworkOnce(config, mockData) {
-    const paramMatch = getScenariosMatcher(config);
+export function mockGetAssistantListNetworkOnce(config, mockData) {
+    const paramMatch = getAssistantListMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockGetScenariosNetworkErrorOnce(config, mockData) {
-    const paramMatch = getScenariosMatcher(config);
+export function mockGetAssistantListNetworkErrorOnce(config, mockData) {
+    const paramMatch = getAssistantListMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockUpdateScenariosNetworkOnce(config, mockData) {
-    const paramMatch = getUpdateScenariosMatcher(config);
+export function mockSaveAssistantListNetworkOnce(config, mockData) {
+    const paramMatch = getSaveAssistantListMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockUpdateScenariosNetworkErrorOnce(config, mockData) {
-    const paramMatch = getUpdateScenariosMatcher(config);
+export function mockSaveAssistantListNetworkErrorOnce(config, mockData) {
+    const paramMatch = getSaveAssistantListMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -93,112 +93,129 @@ export function mockEvaluateStepNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+export function mockInitializeNetworkOnce(config, mockData) {
+    const paramMatch = getInitializeMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockInitializeNetworkErrorOnce(config, mockData) {
+    const paramMatch = getInitializeMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function getQuestionnaireMatcher(config) {
-    let { assistantGroup, questionnaireId } = config;
+    let { questionnaireName } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantGroup}/questionnaire/${questionnaireId}`,
+        basePath: `${URL_BASE}/questionnaire/${questionnaireName}`,
         queryParams: {},
     });
 }
 
 function getQuestionnairesMatcher(config) {
-    let { assistantGroup, scenarioId } = config;
+    let { assistantName } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantGroup}/questionnaires`,
-        queryParams: {
-            scenarioId,
-        },
+        basePath: `${URL_BASE}/${assistantName}/questionnaires`,
+        queryParams: {},
     });
 }
 
 function getAssistantMatcher(config) {
-    let { assistantGroup, scenarioId } = config;
+    let { assistantName } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantGroup}`,
-        queryParams: {
-            scenarioId,
-        },
+        basePath: `${URL_BASE}/${assistantName}`,
+        queryParams: {},
     });
 }
 
 function getSaveAssistantMatcher(config) {
-    let { assistantGroup, assistantData, scenarioId } = config;
+    let { assistantName, assistantData } = config;
 
     return sinon.match({
         body: { assistantData },
         headers: {},
         method: 'patch',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantGroup}`,
-        queryParams: {
-            scenarioId,
-        },
+        basePath: `${URL_BASE}/${assistantName}`,
+        queryParams: {},
     });
 }
 
 function getSaveQuestionnaireMatcher(config) {
-    let { assistantGroup, questionnaireId, questionnaireData } = config;
+    let { questionnaireName, questionnaireData } = config;
 
     return sinon.match({
         body: { questionnaireData },
         headers: {},
         method: 'patch',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantGroup}/questionnaire/${questionnaireId}`,
+        basePath: `${URL_BASE}/questionnaire/${questionnaireName}`,
         queryParams: {},
     });
 }
 
-function getScenariosMatcher(config) {
-    let { assistantGroup } = config;
+function getAssistantListMatcher(config) {
+    let { assistantTarget } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantGroup}/scenarios`,
+        basePath: `${URL_BASE}/${assistantTarget}/list`,
         queryParams: {},
     });
 }
 
-function getUpdateScenariosMatcher(config) {
-    let { assistantGroup, scenarioData } = config;
+function getSaveAssistantListMatcher(config) {
+    let { assistantTarget, assistantData } = config;
 
     return sinon.match({
-        body: { scenarioData },
+        body: { assistantData },
         headers: {},
         method: 'patch',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantGroup}/scenarios`,
+        basePath: `${URL_BASE}/${assistantTarget}/list`,
         queryParams: {},
     });
 }
 
 function getEvaluateStepMatcher(config) {
-    let { assistantTarget, stepId } = config;
+    let { stepName } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'patch',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/assistant/${assistantTarget}/step/${stepId}`,
+        basePath: `${URL_BASE}/step/${stepName}`,
+        queryParams: {},
+    });
+}
+
+function getInitializeMatcher(config) {
+    let { assistantTarget } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'put',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/${assistantTarget}/initialize`,
         queryParams: {},
     });
 }

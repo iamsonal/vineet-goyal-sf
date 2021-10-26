@@ -16,8 +16,7 @@ describe('basic', () => {
     it('gets basic assistant', async () => {
         const mock = getMock('assistant');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            scenarioId: 'test_scenario_id',
+            assistantName: mock.developerName,
         };
         mockGetAssistantNetworkOnce(config, mock);
 
@@ -29,8 +28,7 @@ describe('basic', () => {
     it('does not fetch assistant a second time', async () => {
         const mock = getMock('assistant');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            scenarioId: 'test_scenario_id',
+            assistantName: mock.developerName,
         };
         mockGetAssistantNetworkOnce(config, mock);
 
@@ -47,8 +45,7 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            scenarioId: 'test_scenario_id',
+            assistantName: getMock('assistant').developerName,
         };
         const mock = {
             ok: false,

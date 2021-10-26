@@ -1,4 +1,4 @@
 {
-    "questionnaireIds": ["test_csg_questions"],
-    "scenario": "scenarioName"
+    "assistantName": "test_assistant_name",
+    "questionnaireNames": ["test_csg_questions"]
 }

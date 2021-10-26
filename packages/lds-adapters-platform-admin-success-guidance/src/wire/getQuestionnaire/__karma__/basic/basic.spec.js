@@ -16,8 +16,7 @@ describe('basic', () => {
     it('gets basic active questionnaire list', async () => {
         const mock = getMock('getQuestionnaire');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            questionnaireId: 'test_questionnaire',
+            questionnaireName: mock.developerName,
         };
         mockGetQuestionnaireNetworkOnce(config, mock);
 
@@ -29,8 +28,7 @@ describe('basic', () => {
     it('does not fetch a second time', async () => {
         const mock = getMock('getQuestionnaire');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            questionnaireId: 'test_questionnaire',
+            questionnaireName: mock.developerName,
         };
         mockGetQuestionnaireNetworkOnce(config, mock);
 
@@ -47,8 +45,7 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            questionnaireId: 'test_questionnaire',
+            questionnaireName: getMock('getQuestionnaire').developerName,
         };
         const mock = {
             ok: false,

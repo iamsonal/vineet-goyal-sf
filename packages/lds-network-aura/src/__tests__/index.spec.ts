@@ -4330,11 +4330,11 @@ describe('routes', () => {
         );
     });
 
-    describe('get /assistant/{id}', () => {
+    describe('get /{assistantName}', () => {
         testControllerInput(
             {
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
             },
             [
                 'LightningExperienceAssistantPlatformController.getAssistant',
@@ -4346,18 +4346,18 @@ describe('routes', () => {
         testResolveResponse(
             {
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}', () => {
+    describe('patch /{assistantName}', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
                 body: { assistantData: { data: 'data' } },
             },
             [
@@ -4373,18 +4373,18 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
             },
             {}
         );
     });
 
-    describe('get /assistant/{id}/questionnaires', () => {
+    describe('get /{assistantName}/questionnaires', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaires`,
+                basePath: `/1234567890ABCDE/questionnaires`,
             },
             [
                 'LightningExperienceAssistantPlatformController.getActiveQuestionnaires',
@@ -4397,18 +4397,18 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaires`,
+                basePath: `/1234567890ABCDE/questionnaires`,
             },
             {}
         );
     });
 
-    describe('get /assistant/{id}/questionnaire/{id}', () => {
+    describe('get /questionnaire/{questionnaireName}', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
             },
             [
                 'LightningExperienceAssistantPlatformController.getQuestionnaire',
@@ -4421,18 +4421,18 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}/questionnaire/{id}', () => {
+    describe('patch /questionnaire/{questionnaireName}', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
                 body: {
                     questionnaireData: {
                         data: 'data',
@@ -4454,7 +4454,7 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
                 body: {
                     questionnaireData: {
                         data: 'data',
@@ -4469,15 +4469,15 @@ describe('routes', () => {
         );
     });
 
-    describe('get /assistant/{id}/scenarios', () => {
+    describe('get /{assistantTarget}/list', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/list`,
             },
             [
-                'LightningExperienceAssistantPlatformController.getActiveScenarios',
+                'LightningExperienceAssistantPlatformController.getAssistantList',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -4487,22 +4487,22 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/list`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}/scenarios', () => {
+    describe('patch /{assistantTarget}/list', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/list`,
                 body: { scenarioData: { data: 'data' } },
             },
             [
-                'LightningExperienceAssistantPlatformController.saveScenarios',
+                'LightningExperienceAssistantPlatformController.saveAssistantList',
                 {
                     scenarioData: { data: 'data' },
                 },
@@ -4514,18 +4514,18 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/list`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}/step/{id}', () => {
+    describe('patch /step/{stepName}', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/step/1234567890ABCDE`,
+                basePath: `/step/1234567890ABCDE`,
                 body: {},
             },
             [
@@ -4539,7 +4539,33 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/step/1234567890ABCDE`,
+                basePath: `/step/1234567890ABCDE`,
+                body: {},
+            },
+            {}
+        );
+    });
+
+    describe('put /{assistantTarget}/initialize', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/initialize`,
+                body: {},
+            },
+            [
+                'LightningExperienceAssistantPlatformController.initialize',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/initialize`,
                 body: {},
             },
             {}

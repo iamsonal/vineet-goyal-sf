@@ -1,121 +1,86 @@
 {
-    "assistantGroup": "test_assistant_group_id",
-    "id": "test_assistant_id",
-    "scenario": "test_scenario_id",
-    "itemSetRule": "best_item_set",
+    "assistantTarget": "test_assistant_target",
+    "category": "test_category",
+    "completionDate": "3921-07-01T00:00:00.000Z",
     "debugModeEnabled": false,
-    "items": [
-        {
-            "action": {
-                "iconName": "linkIcon",
-                "label": "ModuleBestPractices.linkText",
-                "actionType": "Link",
-                "url": "http://www.salesforce.com"
-            },
-            "id": "best_practice",
-            "labels": {
-                "title": "Learn about Our Rollout Recommendations",
-                "description": "Follow our recommendations for rolling out Salesforce to customers."
-            },
-            "progress": "Completed",
-            "steps": [
-                {
-                    "id": "subheading_test",
-                    "isManaged": false,
-                    "labels": {
-                        "title": "Learn about Our Rollout Recommendations"
-                    },
-                    "progress": "NotStarted",
-                    "action": {
-                        "actionType": "NoAction"
-                    },
-                    "tags": ["premier"]
-                },
-                {
+    "description": "This is a test assistant fetched with saveAssistant(...)",
+    "developerName": "test_assistant_name",
+    "icon": "/projRes/ui-admin-success-components/img/tempicon.png",
+    "isArchived": false,
+    "isPreview": false,
+    "layout": {
+        "children": [
+            {
+                "children": [],
+                "description": "Follow our recommendations for rolling out Salesforce to customers.",
+                "progress": "NotStarted",
+                "step": {
                     "action": {
                         "iconName": "linkIcon",
                         "label": "ModuleAdvancedConfig.linkText",
                         "actionType": "Link",
                         "url": "http://help.salesforce.com"
                     },
+                    "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
                     "id": "learn_about_salesforce",
                     "isManaged": false,
-                    "labels": {
-                        "title": "Explore Salesforce Setup"
+                    "progress": "NotStarted",
+                    "tags": [],
+                    "title": "Explore Salesforce Setup",
+                    "updateStrategy": "None"
+                },
+                "tags": ["premier"],
+                "title": "Learn about Our Rollout Recommendations",
+                "type": ""
+            },
+            {
+                "children": [],
+                "description": "Follow our recommendations for rolling out Salesforce to customers.",
+                "progress": "NotStarted",
+                "step": {
+                    "action": {
+                        "iconName": "linkIcon",
+                        "label": "ModuleAdvancedConfig.linkText",
+                        "actionType": "Link",
+                        "url": "http://help.salesforce.com"
                     },
-                    "progress": "Completed",
-                    "tags": []
-                }
-            ],
-            "tags": []
-        },
-        {
+                    "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
+                    "id": "learn_about_salesforce",
+                    "isManaged": false,
+                    "progress": "NotStarted",
+                    "tags": [],
+                    "title": "Explore Salesforce Setup",
+                    "updateStrategy": "None"
+                },
+                "tags": ["premier"],
+                "title": "Learn about Our Rollout Recommendations",
+                "type": ""
+            }
+        ],
+        "description": "Follow our recommendations for rolling out Salesforce to customers.",
+        "progress": "NotStarted",
+        "step": {
             "action": {
-                "iconName": "utilityBarIcon",
-                "actionType": "Custom",
-                "actionComponent": "lightning_message_service_trigger",
-                "customData": {
-                    "lmsEventTriggerName": "utilityBar"
-                }
+                "iconName": "linkIcon",
+                "label": "ModuleAdvancedConfig.linkText",
+                "actionType": "Link",
+                "url": "http://help.salesforce.com"
             },
-            "id": "trigger_lms_pub",
-            "labels": {
-                "title": "Show Utility Bar Actions",
-                "meta": "5:00 mins",
-                "description": "See how the utility bar actions can be customized."
-            },
+            "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
+            "id": "learn_about_salesforce",
+            "isManaged": false,
             "progress": "NotStarted",
-            "steps": [],
-            "tags": ["premier"]
+            "tags": [],
+            "title": "Explore Salesforce Setup",
+            "updateStrategy": "None"
         },
-        {
-            "action": {
-                "iconName": "videoIcon",
-                "actionType": "Video",
-                "url": "https://play.vidyard.com/e49wRVcYkrWuKteh5uC_Gg.html?v=3.1&amp;html5_first=1"
-            },
-            "id": "watch_welcome_video",
-            "labels": {
-                "title": "Get Started with Setup Assistant",
-                "meta": "1:25 mins",
-                "description": "Watch a video about how the setup assistant helps you get started with Salesforce."
-            },
-            "progress": "NotStarted",
-            "steps": [],
-            "tags": []
-        },
-        {
-            "action": {
-                "iconName": "walkthroughIcon",
-                "promptId": "23432-0234234-234234-234234",
-                "actionType": "Walkthrough"
-            },
-            "id": "introduction_to_salesforce_walkthrough",
-            "labels": {
-                "title": "Customize Your Sales Stages",
-                "meta": "About 10 mins",
-                "description": "Customize sales stages for your company&#39;s opportunities so your sales team can close deals faster."
-            },
-            "progress": "NotStarted",
-            "steps": [],
-            "tags": []
-        },
-        {
-            "action": {
-                "iconName": "trailheadIcon",
-                "moduleId": "789078-025788",
-                "url": null,
-                "actionType": "TlxModule"
-            },
-            "id": "introduction_to_visualforce_tlx_module",
-            "labels": {
-                "title": "Drive User Adoption",
-                "meta": "__MISSING LABEL__ PropertyFile - val description not found in section ModuleEndUserAdoption",
-                "description": "Follow our best practices to get your users engaged with Salesforce."
-            },
-            "progress": "NotStarted",
-            "steps": [],
-            "tags": []
-        }
-    ]
+        "tags": ["premier"],
+        "title": "Learn about Our Rollout Recommendations",
+        "type": ""
+    },
+    "numberOfSteps": 12,
+    "progress": 50.5,
+    "questionnaireIds": ["test_csg_questions"],
+    "status": "NotStarted",
+    "title": "Assistant 1 (LDS Wire) "
 }

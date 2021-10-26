@@ -1,34 +1,34 @@
-import EvaluateStep from '../lwc/evaluate-step';
+import Initialize from '../lwc/initialize';
 import { getMock as globalGetMock, setupElement, flushPromises } from 'test-util';
 import {
     clone,
-    mockEvaluateStepNetworkOnce,
-    mockEvaluateStepNetworkErrorOnce,
+    mockInitializeNetworkOnce,
+    mockInitializeNetworkErrorOnce,
 } from 'platform-admin-success-guidance-test-util';
 
-const MOCK_PREFIX = 'wire/evaluateStep/__karma__/data/';
+const MOCK_PREFIX = 'wire/initialize/__karma__/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
 describe('basic', () => {
-    it('basic evaluate step', async () => {
-        const mock = getMock('evaluate-step');
+    it('basic initialize', async () => {
+        const mock = getMock('initialize');
         const config = {
-            stepName: mock.id,
+            assistantTarget: mock.assistantTarget,
         };
-        mockEvaluateStepNetworkOnce(config, mock);
+        mockInitializeNetworkOnce(config, mock);
 
-        const el = await setupElement(config, EvaluateStep);
-        el.invokeEvaluateStep(config);
+        const el = await setupElement(config, Initialize);
+        el.invokeInitialize(config);
         await flushPromises();
 
-        expect(clone(el.getStepData())).toEqual(mock);
+        expect(clone(el.getPayload())).toEqual(mock);
     });
     it('displays error when network request 404s', async () => {
         const config = {
-            stepName: getMock('evaluate-step').id,
+            assistantTarget: getMock('initialize').assistantTarget,
         };
         const mock = {
             ok: false,
@@ -41,10 +41,10 @@ describe('basic', () => {
                 },
             ],
         };
-        mockEvaluateStepNetworkErrorOnce(config, mock);
+        mockInitializeNetworkErrorOnce(config, mock);
 
-        const el = await setupElement(config, EvaluateStep);
-        el.invokeEvaluateStep(config);
+        const el = await setupElement(config, Initialize);
+        el.invokeInitialize(config);
         await flushPromises();
 
         expect(clone(el.getError())).toEqual(mock);

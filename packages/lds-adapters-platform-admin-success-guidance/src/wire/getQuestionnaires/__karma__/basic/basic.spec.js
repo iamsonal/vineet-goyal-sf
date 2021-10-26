@@ -15,7 +15,9 @@ function getMock(filename) {
 describe('basic', () => {
     it('gets basic questionnaire list', async () => {
         const mock = getMock('questionnaires');
-        const config = { assistantGroup: 'assistantGroupName', scenarioId: 'scenarioName' };
+        const config = {
+            assistantName: mock.assistantName,
+        };
         mockGetQuestionnairesNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetQuestionnaires);
@@ -25,7 +27,9 @@ describe('basic', () => {
 
     it('does not fetch a second time', async () => {
         const mock = getMock('questionnaires');
-        const config = { assistantGroup: 'assistantGroupName', scenarioId: 'scenarioName' };
+        const config = {
+            assistantName: mock.assistantName,
+        };
         mockGetQuestionnairesNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetQuestionnaires);
@@ -40,7 +44,9 @@ describe('basic', () => {
     });
 
     it('displays error when network request 404s', async () => {
-        const config = { assistantGroup: 'assistantGroupName', scenarioId: 'scenarioName' };
+        const config = {
+            assistantName: getMock('questionnaires').assistantName,
+        };
         const mock = {
             ok: false,
             status: 404,

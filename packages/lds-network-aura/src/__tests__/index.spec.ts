@@ -5699,6 +5699,47 @@ describe('routes', () => {
         );
     });
 
+    describe('put /wave/recipes/{id}/notification', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ/notification`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            [
+                'WaveController.updateRecipeNotification',
+                {
+                    id: '05vRM00000003rZYAQ',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'put',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/recipes/05vRM00000003rZYAQ/notification`,
+            urlParams: {
+                id: '05vRM00000003rZYAQ',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ/notification`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/replicatedDatasets', () => {
         testControllerInput(
             {

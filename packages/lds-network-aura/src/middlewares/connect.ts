@@ -960,6 +960,14 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getRecipeNotification',
         },
     },
+    updateRecipeNotification: {
+        method: 'put',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && RECIPE_NOTIFICATION_PATH.test(path),
+        transport: {
+            controller: 'WaveController.updateRecipeNotification',
+        },
+    },
     getSchedule: {
         method: 'get',
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && SCHEDULE_PATH.test(path),

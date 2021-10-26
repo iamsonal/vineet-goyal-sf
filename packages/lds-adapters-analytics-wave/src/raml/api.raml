@@ -1627,6 +1627,30 @@ types:
         type: array
         items:
           type: string
+  RecipeNotificationInputRepresentation:
+    description: Input required to create recipe notifications that are sent to the
+      current user.
+    type: object
+    properties:
+      longRunningAlertInMins:
+        description: Number of minutes that a recipe can run before sending an alert.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      notificationLevel:
+        description: Notification level for emails.
+        type: string
+        enum:
+          - Always
+          - Failures
+          - Never
+          - Warnings
+  RecipeNotificationInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for recipe notification input representation
+    type: object
+    properties:
+      recipeNotification:
+        type: RecipeNotificationInputRepresentation
+        description: recipe notification input representation
   RecipeNotificationRepresentation:
     description: Notification conditions on a recipe for the current user.
     type: object
@@ -4053,6 +4077,19 @@ types:
             body:
               application/json:
                 type: RecipeNotificationRepresentation
+      put:
+        description: Create or update notification condition on a recipe for the
+          current user.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecipeNotificationRepresentation
+        body:
+          application/json:
+            type: RecipeNotificationInputWrapperRepresentation
+            (oas-body-name): recipeNotification
       uriParameters:
         id:
           type: string

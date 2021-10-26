@@ -27,6 +27,9 @@ import {
     STORE_LOOKUP_DURATION,
     STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION,
     STORE_SET_TTL_OVERRIDE_DURATION,
+    STORE_SIZE_COUNT,
+    STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT,
+    STORE_WATCH_SUBSCRIPTIONS_COUNT,
     STORE_TRIM_TASK_COUNT,
     STORE_TRIM_TASK_DURATION,
 } from './metric-keys';
@@ -42,7 +45,7 @@ import {
 import { ObjectKeys } from './utils/language';
 import { LRUCache } from './utils/lru-cache';
 export { LRUCache } from './utils/lru-cache';
-import { isPromise, stableJSONStringify } from './utils/utils';
+import { isPromise, stableJSONStringify, throttle } from './utils/utils';
 
 interface AdapterMetadata {
     apiFamily: string;
@@ -468,6 +471,38 @@ function setStoreScheduler(store: Store) {
     };
 }
 
+type storeStatsCallback = () => void;
+function instrumentStoreStatsCallback(store: Store) {
+    return () => {
+        const { records, snapshotSubscriptions, watchSubscriptions } = store;
+        updatePercentileHistogramMetric(STORE_SIZE_COUNT, ObjectKeys(records).length);
+        updatePercentileHistogramMetric(
+            STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT,
+            ObjectKeys(snapshotSubscriptions).length
+        );
+        updatePercentileHistogramMetric(
+            STORE_WATCH_SUBSCRIPTIONS_COUNT,
+            ObjectKeys(watchSubscriptions).length
+        );
+    };
+}
+
+/**
+ * Collects additional store statistics by tying its periodic,
+ * point-in-time data collection with a luvio method
+ * @param luvio
+ * @param store
+ */
+function setupStoreStatsCollection(luvio: Luvio, callback: storeStatsCallback) {
+    const wrapMethod = 'storeBroadcast';
+    const originalMethod = luvio[wrapMethod];
+    const throttledCallback = throttle(callback, 200);
+    luvio[wrapMethod] = () => {
+        throttledCallback();
+        originalMethod();
+    };
+}
+
 /**
  * @param instrumentedAdapter
  * @returns instrumentedGraphqlAdapter, which logs additional metrics for get graphQL adapter
@@ -520,6 +555,7 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
             metricKey: STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION,
         },
     ]);
+    setupStoreStatsCollection(luvio, instrumentStoreStatsCallback(store));
 
     setStoreScheduler(store);
 

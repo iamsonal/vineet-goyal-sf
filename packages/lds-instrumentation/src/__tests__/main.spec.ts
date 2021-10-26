@@ -575,7 +575,31 @@ describe('setupInstrumentation', () => {
             mockLuvio.storeSetTTLOverride();
 
             // Verify
-            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(5);
+            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(
+                5 /* expectedCalls */ + 3 /* unrelatedCalls */
+            );
+        });
+    });
+    describe('collects store statistics', () => {
+        it('provides the correct count for each of the store properties we instrument', () => {
+            // Setup
+            const mockLuvio: any = {
+                storeBroadcast: jest.fn,
+            };
+            const store = new Store();
+
+            // Exercise
+            setupInstrumentation(mockLuvio, store);
+            mockLuvio.storeBroadcast();
+
+            // Verify
+            const expectedMetricCalls = [
+                ['store-size-count', 0],
+                ['store-snapshot-subscriptions-count', 0],
+                ['store-watch-subscriptions-count', 0],
+                ['store-broadcast-duration', 0],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
         });
     });
     describe('sets store scheduler', () => {

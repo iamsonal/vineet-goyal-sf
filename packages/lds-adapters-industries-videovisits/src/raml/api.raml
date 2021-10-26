@@ -31,48 +31,56 @@ types:
     properties:
       attendeeId:
         description: Chime AttendeeId
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       joinToken:
         description: Chime Attendee join token
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
   ChimeMediaPlacementResultRepresentation:
     description: Output representation of Chime Media Placement Result
     type: object
     properties:
       audioFallbackUrl:
         description: ChimeMediaPlacement AudioFallbackUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       audioHostUrl:
         description: ChimeMediaPlacement AudioHostUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       eventIngestionUrl:
         description: ChimeMediaPlacement EventIngestionUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       screenDataUrl:
         description: ChimeMediaPlacement ScreenDataUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       screenSharingUrl:
         description: ChimeMediaPlacement ScreenSharingUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       screenViewingUrl:
         description: ChimeMediaPlacement ScreenViewingUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       signalingUrl:
         description: ChimeMediaPlacement SignalingUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       turnControlUrl:
         description: ChimeMediaPlacement TurnControlUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
   ChimeMeetingResultRepresentation:
     description: Output representation of Chime Meeting
     type: object
     properties:
       mediaPlacement:
         description: MediaPlacementUrls of chime meeting
-        type: ChimeMediaPlacementResultRepresentation
+        type: ChimeMediaPlacementResultRepresentation | nil # TODO [W-9807143]: Hand Rolled Change nil
       meetingId:
         description: Chime MeetingId
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change
+  # TODO [W-9807143]: Hand rolled due to due to issue in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+  JoinChimeMeetingInputWrapperRepresentation:
+    description: Wrapper Input Representation for JoinChimeMeetingInputRepresentation
+    type: object
+    properties:
+      JoinChimeMeetingInput:
+        type: JoinChimeMeetingInputRepresentation
+        description: Input representation for Join Meeting Resource
   JoinChimeMeetingInputRepresentation:
     description: Input representation for JoinChimeMeeting
     type: object
@@ -92,7 +100,7 @@ types:
         type: ChimeAttendeeResultRepresentation
       errorMessage:
         description: JoinMeeting error messages
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
       isSuccess:
         description: JoinMeeting success flag
         type: boolean
@@ -112,6 +120,6 @@ types:
                 type: JoinChimeMeetingResultRepresentation
         body:
           application/json:
-            type: JoinChimeMeetingInputRepresentation
+            type: JoinChimeMeetingInputWrapperRepresentation
             # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
             (oas-body-name): JoinChimeMeetingInput

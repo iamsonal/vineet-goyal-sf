@@ -66,7 +66,7 @@ describe('order by sql', () => {
         const expected =
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-            `(SELECT json_group_array(json_set('{}', '$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')) )) ` +
+            `(SELECT json_group_array(json_set('{}', '$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
             `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet'  ` +
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ` +

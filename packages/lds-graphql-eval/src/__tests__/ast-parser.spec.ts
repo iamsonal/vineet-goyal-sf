@@ -57,6 +57,15 @@ describe('ast-parser', () => {
                                     path: 'data.fields.TimeSheetNumber.value',
                                 },
                             },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._drafts',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'data.drafts',
+                                },
+                            },
                         ],
                         predicate: {
                             type: PredicateType.compound,
@@ -211,6 +220,15 @@ describe('ast-parser', () => {
                                     path: 'data.id',
                                 },
                             },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._drafts',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'data.drafts',
+                                },
+                            },
                         ],
                         predicate: {
                             type: PredicateType.comparison,
@@ -282,6 +300,15 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.fields.TimeSheetNumber.displayValue',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.drafts',
                             },
                         },
                     ],
@@ -392,6 +419,15 @@ describe('ast-parser', () => {
                                 path: 'data.fields.IsDeleted.value',
                             },
                         },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.drafts',
+                            },
+                        },
                     ],
                     predicate: {
                         type: PredicateType.comparison,
@@ -464,6 +500,15 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet.CreatedBy',
                                 path: 'data.fields.Email.displayValue',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.drafts',
                             },
                         },
                     ],
@@ -565,7 +610,6 @@ describe('ast-parser', () => {
                     type: 'connection',
                     first: undefined,
                     orderBy: undefined,
-
                     joinNames: ['TimeSheet.CreatedBy'],
 
                     fields: [
@@ -585,6 +629,15 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet.CreatedBy',
                                 path: 'data.fields.Email.displayValue',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.drafts',
                             },
                         },
                     ],
@@ -663,6 +716,15 @@ describe('ast-parser', () => {
                                 path: 'data.fields.Email.displayValue',
                             },
                         },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'User',
+                                path: 'data.drafts',
+                            },
+                        },
                     ],
                     predicate: {
                         type: PredicateType.compound,
@@ -709,6 +771,87 @@ describe('ast-parser', () => {
                                 },
                             },
                         ],
+                    },
+                },
+            ],
+        };
+
+        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toEqual(expected);
+    });
+
+    it('transforms GraphQL operation with draft', () => {
+        const source = /* GraphQL */ `
+            query {
+                uiapi {
+                    query {
+                        TimeSheet @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    TimeSheetNumber {
+                                        value
+                                        displayValue
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const expected: RootQuery = {
+            type: 'root',
+            connections: [
+                {
+                    alias: 'TimeSheet',
+                    apiName: 'TimeSheet',
+                    type: 'connection',
+                    first: undefined,
+                    orderBy: undefined,
+                    joinNames: [],
+
+                    fields: [
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.TimeSheetNumber.value',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.fields.TimeSheetNumber.value',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.TimeSheetNumber.displayValue',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.fields.TimeSheetNumber.displayValue',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.drafts',
+                            },
+                        },
+                    ],
+                    predicate: {
+                        type: PredicateType.comparison,
+                        operator: ComparisonOperator.eq,
+                        left: {
+                            type: Extract,
+                            jsonAlias: 'TimeSheet',
+                            path: 'data.apiName',
+                        },
+                        right: {
+                            type: ValueType.StringLiteral,
+                            value: 'TimeSheet',
+                        },
                     },
                 },
             ],
@@ -774,6 +917,15 @@ describe('ast-parser', () => {
                                             path: 'data.id',
                                         },
                                     },
+                                    {
+                                        type: FieldType.Scalar,
+                                        path: 'node._drafts',
+                                        extract: {
+                                            type: Extract,
+                                            jsonAlias: 'TimeSheet.TimeSheetEntries',
+                                            path: 'data.drafts',
+                                        },
+                                    },
                                 ],
                                 predicate: {
                                     type: PredicateType.compound,
@@ -808,6 +960,15 @@ describe('ast-parser', () => {
                                         },
                                     ],
                                 },
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.drafts',
                             },
                         },
                     ],
@@ -872,6 +1033,15 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.fields.TimeSheetNumber.value',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._drafts',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.drafts',
                             },
                         },
                     ],
@@ -1031,6 +1201,15 @@ describe('ast-parser', () => {
                                     path: 'data.id',
                                 },
                             },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._drafts',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'data.drafts',
+                                },
+                            },
                         ],
                         predicate: {
                             type: PredicateType.comparison,
@@ -1091,6 +1270,15 @@ describe('ast-parser', () => {
                                     type: Extract,
                                     jsonAlias: 'ServiceAppointment',
                                     path: 'data.id',
+                                },
+                            },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._drafts',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'ServiceAppointment',
+                                    path: 'data.drafts',
                                 },
                             },
                         ],

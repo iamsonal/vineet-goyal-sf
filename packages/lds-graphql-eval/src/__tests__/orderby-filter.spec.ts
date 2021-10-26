@@ -127,6 +127,15 @@ describe('order by filter parser', () => {
                                     type: ValueType.Extract,
                                 },
                             },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._drafts',
+                                extract: {
+                                    type: ValueType.Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'data.drafts',
+                                },
+                            },
                         ],
                         first: undefined,
                         joinNames: ['TimeSheet.CreatedBy'],

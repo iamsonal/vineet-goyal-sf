@@ -145,6 +145,8 @@ export function extractPath(fieldName: string, subfield: string | undefined = un
             return 'data.id';
         case 'ApiName':
             return 'data.apiName';
+        case 'drafts':
+            return 'data.drafts';
         default: {
             const sub = subfield !== undefined ? subfield : 'value';
             return `data.fields.${fieldName}.${sub}`;

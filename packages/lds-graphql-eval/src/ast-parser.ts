@@ -406,8 +406,14 @@ function recordQuery(
         input
     );
 
+    const path = extractPath('drafts');
+    const extract: JsonExtract = { type: ValueType.Extract, jsonAlias: alias, path };
+    const draftsField: ScalarField = { type: FieldType.Scalar, extract, path: 'node._drafts' };
+
     return queryContainer(internalFields, alias, apiName, predicates).map((result) => {
         const { fields } = result;
+        const allFields = fields.concat(draftsField);
+
         //combine the joins and remove duplicates
         const joinSet = new Set([...result.joinNames, ...filterJoins, ...orderByJoins]);
         const joinNames = Array.from(joinSet);
@@ -420,7 +426,7 @@ function recordQuery(
         const type = 'connection';
         const orderBy = orderByResult.value === undefined ? undefined : orderByResult.value.orderBy;
 
-        return { joinNames, fields, first, orderBy, type, apiName, alias, predicate };
+        return { joinNames, fields: allFields, first, orderBy, type, apiName, alias, predicate };
     });
 }
 

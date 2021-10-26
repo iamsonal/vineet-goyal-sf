@@ -11,3 +11,4 @@ export function setupInstrumentation() {}
 export function LRUCache() {
     return new Map();
 }
+export function incrementCounterMetric() {}

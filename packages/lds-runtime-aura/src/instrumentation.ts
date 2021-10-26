@@ -26,7 +26,14 @@ export function setInstrumentationHooks() {
     adaptersUiApiInstrument({
         recordConflictsResolved: (serverRequestCount: number) =>
             updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
-        nullDisplayValueConflict: () => incrementCounterMetric('merge-null-dv-count'),
+        nullDisplayValueConflict: ({ fieldType, areValuesEqual }) => {
+            const metricName = `merge-null-dv-count.${fieldType}`;
+            if (fieldType === 'scalar') {
+                incrementCounterMetric(`${metricName}.${areValuesEqual}`);
+            } else {
+                incrementCounterMetric(metricName);
+            }
+        },
         getRecordNotifyChangeAllowed: incrementGetRecordNotifyChangeAllowCount,
         getRecordNotifyChangeDropped: incrementGetRecordNotifyChangeDropCount,
         recordApiNameChanged:

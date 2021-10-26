@@ -16,7 +16,12 @@ export interface LdsUiapiInstrumentation {
      * Note: Temporary instrumentation to capture distribution and frequency, W-8990630
      * Flipped to counter metric due to W-9611107
      */
-    nullDisplayValueConflict?: (entityName: string, fieldName: string | number | null) => void;
+    nullDisplayValueConflict?: (fieldInfo: {
+        entityName: string;
+        fieldName: string;
+        fieldType: 'scalar' | 'spanning-record';
+        areValuesEqual: boolean | undefined;
+    }) => void;
 
     /**
      * SFDC Throttling
@@ -50,7 +55,12 @@ export interface LdsUiapiInstrumentation {
 // For use by callers within this module to instrument interesting things.
 export let instrumentation = {
     recordConflictsResolved: (_serverRequestCount: number) => {},
-    nullDisplayValueConflict: (_entityName: string, _fieldName: string | number | null) => {},
+    nullDisplayValueConflict: (_fieldInfo: {
+        entityName: string;
+        fieldName: string;
+        fieldType: 'scalar' | 'spanning-record';
+        areValuesEqual: boolean | undefined;
+    }) => {},
     getRecordNotifyChangeAllowed: () => {},
     getRecordNotifyChangeDropped: () => {},
     recordApiNameChanged: (_existingApiName: string, _incomingApiName: string) => {},

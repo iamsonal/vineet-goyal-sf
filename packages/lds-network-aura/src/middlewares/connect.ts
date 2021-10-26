@@ -615,12 +615,12 @@ const connect: ApiFamily = {
             controller: 'ExplainabilityServiceController.getExplainabilityActionLogs',
         },
     },
-    postExplainabilityActionLog: {
+    storeExplainabilityActionLog: {
         method: 'post',
         predicate: (path) =>
             path.startsWith(EXPLAINABILITY_BASE_URI) && EXPLAINABILITY_ACTION_LOG_PATH.test(path),
         transport: {
-            controller: 'ExplainabilityServiceController.postExplainabilityActionLog',
+            controller: 'ExplainabilityServiceController.storeExplainabilityActionLog',
         },
     },
     getContactsInteractions: {

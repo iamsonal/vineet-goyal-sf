@@ -2759,11 +2759,12 @@ describe('routes', () => {
                         actionLogDate: '2021-10-04T10:54:56.787Z',
                         name: 'ExpressionSet01',
                         specificationName: 'ExpressionSet01',
+                        actionLogOwnerId: '005T00000004MUHIA2',
                     },
                 },
             },
             [
-                'ExplainabilityServiceController.postExplainabilityActionLog',
+                'ExplainabilityServiceController.storeExplainabilityActionLog',
                 {
                     explainabilityActionLogDefinitionx: {
                         actionContextCode: '012T00000004MUHIA2',
@@ -2772,6 +2773,7 @@ describe('routes', () => {
                         actionLogDate: '2021-10-04T10:54:56.787Z',
                         name: 'ExpressionSet01',
                         specificationName: 'ExpressionSet01',
+                        actionLogOwnerId: '005T00000004MUHIA2',
                     },
                 },
                 { background: false, hotspot: true, longRunning: false },

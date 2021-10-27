@@ -495,9 +495,9 @@ export function setupStoreStatsCollection(luvio: Luvio, callback: storeStatsCall
     const wrapMethod = 'storeBroadcast';
     const originalMethod = luvio[wrapMethod];
     const throttledCallback = throttle(callback, 200);
-    luvio[wrapMethod] = () => {
+    luvio[wrapMethod] = function (...args) {
         throttledCallback();
-        originalMethod();
+        originalMethod.call(this, ...args);
     };
 }
 

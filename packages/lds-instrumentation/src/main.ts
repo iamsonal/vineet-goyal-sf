@@ -1,4 +1,11 @@
-import { Luvio, Store, Adapter, Snapshot, UnfulfilledSnapshot } from '@luvio/engine';
+import {
+    AdapterRequestContext,
+    Luvio,
+    Store,
+    Adapter,
+    Snapshot,
+    UnfulfilledSnapshot,
+} from '@luvio/engine';
 import { ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 
 import { getInstrumentation } from 'o11y/client';
@@ -212,7 +219,7 @@ export function instrumentAdapter<C, D>(
         adapterName
     );
 
-    const instrumentedAdapter = (config: C) => {
+    const instrumentedAdapter = (config: C, requestContext?: AdapterRequestContext) => {
         // increment adapter request metrics
         observabilityInstrumentation.incrementCounter(wireAdapterRequestMetric, 1);
         observabilityInstrumentation.incrementCounter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT, 1);
@@ -223,7 +230,7 @@ export function instrumentAdapter<C, D>(
 
         try {
             // execute adapter logic
-            const result = adapter(config);
+            const result = adapter(config, requestContext);
             const executionTime = Date.now() - startTime;
 
             // In the case where the adapter returns a non-Pending Snapshot it is constructed out of the store
@@ -499,8 +506,8 @@ export function setupStoreStatsCollection(luvio: Luvio, callback: storeStatsCall
  * @returns instrumentedGraphqlAdapter, which logs additional metrics for get graphQL adapter
  */
 export function instrumentGraphqlAdapter<C, D>(instrumentedAdapter: Adapter<C, D>): Adapter<C, D> {
-    const instrumentedGraphqlAdapter = (config: C) => {
-        const result = instrumentedAdapter(config);
+    const instrumentedGraphqlAdapter = (config: C, requestContext?: AdapterRequestContext) => {
+        const result = instrumentedAdapter(config, requestContext);
 
         if (result === null) {
             return result;

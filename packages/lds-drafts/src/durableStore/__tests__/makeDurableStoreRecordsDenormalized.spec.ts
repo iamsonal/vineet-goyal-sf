@@ -1,5 +1,9 @@
 import { Store } from '@luvio/engine';
-import { DefaultDurableSegment, DurableStore } from '@luvio/environments';
+import {
+    DefaultDurableSegment,
+    DurableStore,
+    DurableStoreOperationType,
+} from '@luvio/environments';
 
 import {
     buildDurableRecordRepresentation,
@@ -333,6 +337,107 @@ describe('makeRecordDenormalizingDurableStore', () => {
                 const entry = entries[STORE_KEY_RECORD];
                 expect(entry.data).toStrictEqual(record404);
             });
+        });
+    });
+
+    describe('batchOperations', () => {
+        it('denormalizes setEntries calls', () => {
+            const record = {
+                id: RECORD_ID,
+                weakEtag: 1,
+                fields: {
+                    Name: {
+                        __ref: STORE_KEY_FIELD__NAME,
+                    },
+                },
+            };
+
+            const storeRecords = {
+                [STORE_KEY_RECORD]: record,
+                [STORE_KEY_FIELD__NAME]: NAME_VALUE,
+            };
+
+            const { durableStore, baseDurableStore } = setupRecordStore(storeRecords);
+            durableStore.batchOperations<any>([
+                {
+                    type: DurableStoreOperationType.SetEntries,
+                    entries: {
+                        [STORE_KEY_RECORD]: { data: record },
+                        [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
+                    },
+                    segment: DefaultDurableSegment,
+                },
+            ]);
+
+            const operations = (baseDurableStore.batchOperations as jest.Mock).mock.calls[0][0];
+
+            // only one entry should be set since the fields should have been denormalized into the record
+            expect(operations.length).toBe(1);
+            expect(ObjectKeys(operations[0].entries).length).toBe(1);
+
+            // expect store entry to be denormalized
+            expect(operations[0].entries[STORE_KEY_RECORD].data).toEqual({
+                id: RECORD_ID,
+                weakEtag: 1,
+                fields: { Name: NAME_VALUE },
+                links: {
+                    Name: { __ref: STORE_KEY_FIELD__NAME },
+                },
+            });
+        });
+
+        it('passes evict and non-default segment operations through', () => {
+            const record = {
+                id: RECORD_ID,
+                weakEtag: 1,
+                fields: {
+                    Name: {
+                        __ref: STORE_KEY_FIELD__NAME,
+                    },
+                },
+            };
+
+            const storeRecords = {
+                [STORE_KEY_RECORD]: record,
+                [STORE_KEY_FIELD__NAME]: NAME_VALUE,
+            };
+            const nonDefaultSegment = 'not-default';
+            const evictedId = 'foo';
+
+            const { durableStore, baseDurableStore } = setupRecordStore(storeRecords);
+            durableStore.batchOperations<any>([
+                {
+                    type: DurableStoreOperationType.SetEntries,
+                    entries: {
+                        [STORE_KEY_RECORD]: { data: record },
+                        [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
+                    },
+                    segment: nonDefaultSegment,
+                },
+                {
+                    type: DurableStoreOperationType.EvictEntries,
+                    segment: DefaultDurableSegment,
+                    ids: [evictedId],
+                },
+            ]);
+
+            const operations = (baseDurableStore.batchOperations as jest.Mock).mock.calls[0][0];
+
+            expect(operations).toEqual([
+                {
+                    entries: {
+                        [STORE_KEY_RECORD]: { data: record },
+                        [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
+                    },
+                    segment: nonDefaultSegment,
+                    type: DurableStoreOperationType.SetEntries,
+                },
+                {
+                    ids: [evictedId],
+                    segment: DefaultDurableSegment,
+                    type: DurableStoreOperationType.EvictEntries,
+                },
+            ]);
         });
     });
 

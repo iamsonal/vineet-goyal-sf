@@ -4,6 +4,8 @@ import {
     DurableStore,
     DurableStoreEntries,
     DurableStoreEntry,
+    DurableStoreOperation,
+    DurableStoreOperationType,
 } from '@luvio/environments';
 import {
     FieldValueRepresentation,
@@ -204,14 +206,9 @@ export function makeRecordDenormalizingDurableStore(
         });
     };
 
-    const setEntries: typeof durableStore['setEntries'] = function <T>(
-        entries: DurableStoreEntries<T>,
-        segment: string
-    ): Promise<void> {
-        if (segment !== DefaultDurableSegment) {
-            return durableStore.setEntries(entries, segment);
-        }
-
+    const denormalizeEntries = function <T>(
+        entries: DurableStoreEntries<T>
+    ): DurableStoreEntries<T> {
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);
         const putRecords: { [key: string]: boolean } = {};
@@ -264,7 +261,44 @@ export function makeRecordDenormalizingDurableStore(
             }
         }
 
+        return putEntries;
+    };
+
+    const setEntries: typeof durableStore['setEntries'] = function <T>(
+        entries: DurableStoreEntries<T>,
+        segment: string
+    ): Promise<void> {
+        if (segment !== DefaultDurableSegment) {
+            return durableStore.setEntries(entries, segment);
+        }
+
+        const putEntries = denormalizeEntries(entries);
+
         return durableStore.setEntries(putEntries, segment);
+    };
+
+    const batchOperations: typeof durableStore['batchOperations'] = function <T>(
+        operations: DurableStoreOperation<T>[]
+    ): Promise<void> {
+        const operationsWithDenormedRecords: DurableStoreOperation<T>[] = [];
+        for (let i = 0, len = operations.length; i < len; i++) {
+            const operation = operations[i];
+
+            if (
+                operation.segment !== DefaultDurableSegment ||
+                operation.type !== DurableStoreOperationType.SetEntries
+            ) {
+                operationsWithDenormedRecords.push(operation);
+                continue;
+            }
+
+            operationsWithDenormedRecords.push({
+                ...operation,
+                entries: denormalizeEntries(operation.entries),
+            });
+        }
+
+        return durableStore.batchOperations(operationsWithDenormedRecords);
     };
 
     /**
@@ -300,10 +334,10 @@ export function makeRecordDenormalizingDurableStore(
         });
     };
 
-    // TODO [W-9103958]: record fields needs to be denormalized if included in a batch operation
     return ObjectCreate(durableStore, {
         getEntries: { value: getEntries, writable: true },
         setEntries: { value: setEntries, writable: true },
+        batchOperations: { value: batchOperations, writable: true },
         getDenormalizedRecord: { value: getDenormalizedRecord, writable: true },
     });
 }

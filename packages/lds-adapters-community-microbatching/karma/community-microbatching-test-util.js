@@ -18,14 +18,11 @@ export function mockIngestRecordInvalidCommunityIdNetworkErrorOnce(config, mockR
 }
 
 function ingestRecordMatcher(config) {
-    const { communityId, groupBy, keyPrefix, processType /* requestBody */ } = config;
+    const { communityId /*groupBy, keyPrefix, processType, requestBody*/ } = config;
 
     let req = {
         body: {
-            groupBy,
-            keyPrefix,
-            processType,
-            requestBody: {}, // Possible framework limitation on enumerating attributes on generic objects, so this is always an empty object
+            requestIngestionInput: {}, // Possible framework limitation on enumerating attributes on generic objects, so this is always an empty object
         },
         urlParams: {
             communityId: communityId,

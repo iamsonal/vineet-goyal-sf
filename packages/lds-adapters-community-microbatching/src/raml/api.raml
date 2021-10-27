@@ -25,6 +25,13 @@ annotationTypes:
     type: string
     allowedTargets: TypeDeclaration
 types:
+  MicrobatchingIngestionInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper Microbatching Ingestion Input Representation
+    type: object
+    properties:
+      requestIngestionInput:
+        description: Set parameters for ingestion.
+        type: MicrobatchingIngestionInputRepresentation
   MicrobatchingIngestionInputRepresentation:
     description: Microbatching Ingestion Input Representation
     type: object
@@ -32,9 +39,11 @@ types:
       groupBy:
         description: GroupBy
         type: string
+        required: false # TODO handrolled W-9314597
       keyPrefix:
         description: KeyPrefix
         type: string
+        required: false # TODO handrolled W-9314597
       processType:
         description: ProcessType
         type: string
@@ -72,7 +81,7 @@ types:
             type: MicrobatchingIngestionOutputRepresentation
     body:
       application/json:
-        type: MicrobatchingIngestionInputRepresentation
+        type: MicrobatchingIngestionInputWrapperRepresentation
         (oas-body-name): requestIngestionInput
   uriParameters:
     communityId:

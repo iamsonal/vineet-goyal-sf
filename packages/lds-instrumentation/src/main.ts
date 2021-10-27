@@ -2,6 +2,7 @@ import { Luvio, Store, Adapter, Snapshot, UnfulfilledSnapshot } from '@luvio/eng
 import { ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 
 import { getInstrumentation } from 'o11y/client';
+import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
 import { instrument as instrumentLwcBindings } from '@salesforce/lds-bindings';
 import { instrument as instrumentNetworkAdapter } from '@salesforce/lds-network-adapter';
 
@@ -523,6 +524,20 @@ export function instrumentGraphqlAdapter<C, D>(instrumentedAdapter: Adapter<C, D
  * @param store The Store to instrument.
  */
 export function setupInstrumentation(luvio: Luvio, store: Store): void {
+    adaptersUiApiInstrument({
+        recordConflictsResolved: (serverRequestCount: number) =>
+            updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
+        nullDisplayValueConflict: ({ fieldType, areValuesEqual }) => {
+            const metricName = `merge-null-dv-count.${fieldType}`;
+            if (fieldType === 'scalar') {
+                incrementCounterMetric(`${metricName}.${areValuesEqual}`);
+            } else {
+                incrementCounterMetric(metricName);
+            }
+        },
+        getRecordNotifyChangeAllowed: incrementGetRecordNotifyChangeAllowCount,
+        getRecordNotifyChangeDropped: incrementGetRecordNotifyChangeDropCount,
+    });
     instrumentLwcBindings({
         instrumentAdapter: instrumentAdapter,
     });

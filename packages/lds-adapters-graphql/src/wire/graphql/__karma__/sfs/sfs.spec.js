@@ -308,7 +308,13 @@ describe('sfs gql queries', () => {
                                     }
                                     ...defaultRecordFields
                                 }
+                                cursor
                             }
+                            pageInfo {
+                                hasNextPage
+                                hasPreviousPage
+                            }
+                            totalCount
                         }
                     }
                 }
@@ -738,7 +744,13 @@ describe('sfs gql queries', () => {
                                     }
                                     ...defaultRecordFields
                                 }
+                                cursor
                             }
+                            pageInfo {
+                                hasNextPage
+                                hasPreviousPage
+                            }
+                            totalCount
                         }
                     }
                 }
@@ -941,12 +953,17 @@ describe('sfs gql queries', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
                 }
-
                 fragment defaultRecordFields on Record {
                     __typename
                     ApiName
@@ -1076,12 +1093,17 @@ describe('sfs gql queries', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
                 }
-
                 fragment defaultRecordFields on Record {
                     __typename
                     ApiName
@@ -1152,7 +1174,7 @@ describe('sfs gql queries', () => {
             expect(snapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
         });
 
-        it('shuld resolve data in cache correctly', async () => {
+        it('should resolve data in cache correctly', async () => {
             const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
@@ -1204,12 +1226,17 @@ describe('sfs gql queries', () => {
                                         Id
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
                 }
-
                 fragment defaultRecordFields on Record {
                     __typename
                     ApiName
@@ -1271,7 +1298,7 @@ describe('sfs gql queries', () => {
             expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
         });
 
-        it('shuld resolve data in cache correctly if arguments are in different order', async () => {
+        it('should resolve data in cache correctly if arguments are in different order', async () => {
             const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
@@ -1349,12 +1376,17 @@ describe('sfs gql queries', () => {
                                         Id
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
                 }
-
                 fragment defaultRecordFields on Record {
                     __typename
                     ApiName
@@ -1421,7 +1453,7 @@ describe('sfs gql queries', () => {
     });
 
     describe('query with IN statement', () => {
-        it('shuld resolve data correctly', async () => {
+        it('should resolve data correctly', async () => {
             const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
@@ -1473,7 +1505,13 @@ describe('sfs gql queries', () => {
                                         Id
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1536,7 +1574,7 @@ describe('sfs gql queries', () => {
             expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
         });
 
-        it('shuld resolve data in cache correctly', async () => {
+        it('should resolve data in cache correctly', async () => {
             const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
@@ -1588,7 +1626,13 @@ describe('sfs gql queries', () => {
                                         Id
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1732,7 +1776,13 @@ describe('sfs gql queries', () => {
                                         Id
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1835,7 +1885,13 @@ describe('sfs gql queries', () => {
                                         Id
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1930,7 +1986,13 @@ describe('sfs gql queries', () => {
                                         Id
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }

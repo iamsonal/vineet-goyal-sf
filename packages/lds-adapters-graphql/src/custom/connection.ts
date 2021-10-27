@@ -8,18 +8,26 @@ import {
     StoreLink,
 } from '@luvio/engine';
 import {
+    LuvioFieldNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
 } from '@salesforce/lds-graphql-parser';
-import { getLuvioFieldNodeSelection, resolveLink, followLink } from '../type/Selection';
+import { followLink, getLuvioFieldNodeSelection, resolveLink } from '../type/Selection';
 import { GqlRecord } from './record';
 import { render as renderArguments } from '../type/Argument';
 import { GraphQLVariables } from '../type/Variable';
 import { render as renderField } from '../type/Field';
 import { namespace } from '../util/adapter';
-import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { readScalarFieldSelection } from '../type/ScalarField';
 import { createIngest as genericCreateIngest, publishIfChanged } from '../util/ingest';
+import {
+    isLuvioFieldNodeObjectFieldNode,
+    serializeArguments,
+    serializeFieldNode,
+    serializeFieldNodeName,
+    SerializeState,
+    TYPENAME_FIELD,
+} from '../util/serialize';
 
 interface GqlEdge {
     node: GqlRecord;
@@ -29,8 +37,14 @@ export type GqlConnection = {
     edges: GqlEdge[];
 };
 
-const PROPERTY_NAME_EDGES = 'edges';
 export const CUSTOM_FIELD_NODE_TYPE = 'Connection';
+
+const PAGE_INFO_REQUIRED_FIELDS = ['hasNextPage', 'hasPreviousPage'];
+const EDGE_REQUIRED_FIELDS = ['cursor'];
+
+const PROPERTY_NAME_EDGES = 'edges';
+const PROPERTY_NAME_PAGE_INFO = 'pageInfo';
+const PROPERTY_NAME_TOTAL_COUNT = 'totalCount';
 
 export function keyBuilder(ast: LuvioSelectionCustomFieldNode, variables: GraphQLVariables) {
     const { arguments: args, name } = ast;
@@ -227,3 +241,116 @@ export const createIngest: (
         };
     };
 };
+
+export function serialize(def: LuvioSelectionCustomFieldNode, state: SerializeState): string {
+    const { luvioSelections, arguments: args } = def;
+
+    if (luvioSelections === undefined) {
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('Connection field node must have selections');
+        }
+        return '';
+    }
+
+    const argsString =
+        args === undefined || args.length === 0 ? '' : `(${serializeArguments(args)})`;
+
+    const seenFields: Record<string, true> = {};
+    const serializedFields: string[] = [];
+
+    for (let i = 0; i < luvioSelections.length; i++) {
+        const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
+        const { name: fieldName } = sel;
+
+        seenFields[fieldName] = true;
+
+        if (fieldName === PROPERTY_NAME_PAGE_INFO) {
+            serializedFields.push(serializePageInfo(sel, state));
+        } else if (fieldName === PROPERTY_NAME_EDGES) {
+            serializedFields.push(serializeEdges(sel, state));
+        } else {
+            serializedFields.push(serializeFieldNode(sel, state));
+        }
+    }
+
+    appendRequiredConnectionFields(seenFields, serializedFields);
+
+    return `${serializeFieldNodeName(def)}${argsString} { ${TYPENAME_FIELD} ${serializedFields.join(
+        ' '
+    )} }`;
+}
+
+function serializeEdges(node: LuvioFieldNode, state: SerializeState): string {
+    if (!isLuvioFieldNodeObjectFieldNode(node)) {
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('PageInfo must be an ObjectFieldNode');
+        }
+        return '';
+    }
+
+    const { luvioSelections } = node;
+
+    if (luvioSelections === undefined) return '';
+
+    const seenFields: Record<string, true> = {};
+    const serializedFields: string[] = [];
+
+    for (let i = 0; i < luvioSelections.length; i++) {
+        const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
+        seenFields[sel.name] = true;
+        serializedFields.push(serializeFieldNode(sel, state));
+    }
+
+    appendRequiredFields(EDGE_REQUIRED_FIELDS, seenFields, serializedFields);
+
+    return `${serializeFieldNodeName(node)} { ${TYPENAME_FIELD} ${serializedFields.join(' ')} }`;
+}
+
+function serializePageInfo(node: LuvioFieldNode, state: SerializeState): string {
+    if (!isLuvioFieldNodeObjectFieldNode(node)) {
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('PageInfo must be an ObjectFieldNode');
+        }
+        return '';
+    }
+
+    const { luvioSelections } = node;
+
+    if (luvioSelections === undefined) return '';
+
+    const seenFields: Record<string, true> = {};
+    const serializedFields: string[] = [];
+
+    for (let i = 0; i < luvioSelections.length; i++) {
+        const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
+        seenFields[sel.name] = true;
+        serializedFields.push(serializeFieldNode(sel, state));
+    }
+
+    appendRequiredFields(PAGE_INFO_REQUIRED_FIELDS, seenFields, serializedFields);
+
+    return `${serializeFieldNodeName(node)} { ${serializedFields.join(' ')} }`;
+}
+
+function appendRequiredFields(
+    requiredFields: string[],
+    seenFields: Record<string, true>,
+    result: string[]
+) {
+    for (let i = 0; i < requiredFields.length; i++) {
+        const fieldName = requiredFields[i];
+        if (seenFields[fieldName] !== true) {
+            result.push(fieldName);
+        }
+    }
+}
+
+function appendRequiredConnectionFields(seenFields: Record<string, true>, result: string[]) {
+    if (seenFields[PROPERTY_NAME_PAGE_INFO] !== true) {
+        result.push('pageInfo { hasNextPage, hasPreviousPage }');
+    }
+
+    if (seenFields[PROPERTY_NAME_TOTAL_COUNT] !== true) {
+        result.push(PROPERTY_NAME_TOTAL_COUNT);
+    }
+}

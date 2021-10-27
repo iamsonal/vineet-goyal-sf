@@ -23,6 +23,13 @@ function getMock(filename) {
  * using jest tests instead.
  */
 
+/**
+ * TODO: W-10088909
+ * https://gus.lightning.force.com/lightning/r/a07EE00000JWW1rYAH/view
+ * Update mock data to support @connection required fields
+ * edges.cursor, pageInfo.hasNextPage, pageInfo.hasPreviousPage, totalCount
+ */
+
 describe('graphql', () => {
     describe('no cache', () => {
         it('hits network when no data is in the cache', async () => {
@@ -64,7 +71,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -171,7 +184,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -279,7 +298,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -387,7 +412,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -532,7 +563,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -577,7 +614,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -740,7 +783,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -785,7 +834,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1045,7 +1100,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1188,7 +1249,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1208,7 +1275,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1407,7 +1480,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1452,7 +1531,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1628,7 +1713,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -1655,7 +1746,7 @@ describe('graphql', () => {
             `;
 
             const expectedQueryTwo = /* GraphQL */ `
-                {
+                query {
                     __typename
                     uiapi {
                         __typename
@@ -1676,12 +1767,17 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
                 }
-
                 fragment defaultRecordFields on Record {
                     __typename
                     ApiName
@@ -1826,7 +1922,13 @@ describe('graphql', () => {
                                             }
                                             ...defaultRecordFields
                                         }
+                                        cursor
                                     }
+                                    pageInfo {
+                                        hasNextPage
+                                        hasPreviousPage
+                                    }
+                                    totalCount
                                 }
                             }
                         }
@@ -1957,12 +2059,17 @@ describe('graphql', () => {
                                             }
                                             ...defaultRecordFields
                                         }
+                                        cursor
                                     }
+                                    pageInfo {
+                                        hasNextPage
+                                        hasPreviousPage
+                                    }
+                                    totalCount
                                 }
                             }
                         }
                     }
-
                     fragment defaultRecordFields on Record {
                         __typename
                         ApiName
@@ -2087,12 +2194,17 @@ describe('graphql', () => {
                                             }
                                             ...defaultRecordFields
                                         }
+                                        cursor
                                     }
+                                    pageInfo {
+                                        hasNextPage
+                                        hasPreviousPage
+                                    }
+                                    totalCount
                                 }
                             }
                         }
                     }
-
                     fragment defaultRecordFields on Record {
                         __typename
                         ApiName
@@ -2217,12 +2329,17 @@ describe('graphql', () => {
                                             }
                                             ...defaultRecordFields
                                         }
+                                        cursor
                                     }
+                                    pageInfo {
+                                        hasNextPage
+                                        hasPreviousPage
+                                    }
+                                    totalCount
                                 }
                             }
                         }
                     }
-
                     fragment defaultRecordFields on Record {
                         __typename
                         ApiName
@@ -2345,7 +2462,7 @@ describe('graphql', () => {
             `);
 
             const expectedQuery = /* GraphQL */ `
-                {
+                query {
                     __typename
                     uiapi {
                         __typename
@@ -2366,7 +2483,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -2528,16 +2651,27 @@ describe('graphql', () => {
                                                     ApiName
                                                     ...defaultRecordFields
                                                 }
+                                                cursor
                                             }
+                                            pageInfo {
+                                                hasNextPage
+                                                hasPreviousPage
+                                            }
+                                            totalCount
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
                 }
-
                 fragment defaultRecordFields on Record {
                     __typename
                     ApiName
@@ -2654,7 +2788,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -2775,7 +2915,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -2931,7 +3077,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }
@@ -2976,7 +3128,13 @@ describe('graphql', () => {
                                         }
                                         ...defaultRecordFields
                                     }
+                                    cursor
                                 }
+                                pageInfo {
+                                    hasNextPage
+                                    hasPreviousPage
+                                }
+                                totalCount
                             }
                         }
                     }

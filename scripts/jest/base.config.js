@@ -22,6 +22,7 @@ module.exports = {
         '!**/__karma__/**',
         '!**/__tests__/**',
         '!**/__benchmarks__/**',
+        '!**/mocks/**',
         '!**/fixtures/**',
         '!**/generated/**',
     ],

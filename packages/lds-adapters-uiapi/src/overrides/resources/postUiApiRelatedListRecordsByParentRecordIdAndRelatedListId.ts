@@ -20,7 +20,6 @@ import { buildSelectionFromFields } from '../../selectors/record';
 import {
     records as ListRecordCollectionRepresentation_reader_records,
     variables as ListRecordCollectionRepresentation_reader_variables,
-    url as ListRecordCollectionRepresentation_reader_url,
 } from '../../helpers/ListRecordCollectionRepresentation/readers';
 import { staticValuePathSelection } from '../../util/pagination';
 import { markMissingOptionalFields, isGraphNode } from '../../util/records';
@@ -89,10 +88,6 @@ export const select: typeof generatedSelect = (
             },
             {
                 kind: 'Scalar',
-                name: 'currentPageUrl',
-            },
-            {
-                kind: 'Scalar',
                 name: 'fields',
                 plural: true,
             },
@@ -112,18 +107,8 @@ export const select: typeof generatedSelect = (
             },
             {
                 kind: 'Custom',
-                name: 'nextPageUrl',
-                reader: ListRecordCollectionRepresentation_reader_url,
-            },
-            {
-                kind: 'Custom',
                 name: 'previousPageToken',
                 reader: ListRecordCollectionRepresentation_reader_variables,
-            },
-            {
-                kind: 'Custom',
-                name: 'previousPageUrl',
-                reader: ListRecordCollectionRepresentation_reader_url,
             },
             staticValuePathSelection({
                 name: 'pageSize',

@@ -35,7 +35,7 @@ describe('basic', () => {
             fields: mockData.fields,
         };
         const element = await setupElement(props, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('gets data when specifying optionalFields and they are NOT returned', async () => {
@@ -59,7 +59,7 @@ describe('basic', () => {
             optionalFields: mockData.optionalFields,
         };
         const element = await setupElement(props, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('gets data when specifying optionalFields and they are returned', async () => {
@@ -83,7 +83,7 @@ describe('basic', () => {
             optionalFields: mockData.optionalFields,
         };
         const element = await setupElement(props, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('gets data when specifying fields + optionalFields with entity prefix', async () => {
@@ -107,7 +107,7 @@ describe('basic', () => {
             optionalFields: mockData.optionalFields,
         };
         const element = await setupElement(props, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('gets data when specifying junction object fields', async () => {
@@ -133,7 +133,7 @@ describe('basic', () => {
             pageSize: mockData.pageSize,
         };
         const element = await setupElement(props, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('gets data with no records', async () => {
@@ -156,7 +156,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('refreshes related list records', async () => {
@@ -186,12 +186,12 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshedMockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(refreshedMockData);
         expect(element.pushCount()).toBe(2);
     });
 
@@ -220,14 +220,14 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
         expect(element.pushCount()).toBe(1);
 
         // Delete the record from lds, our component should refresh automatically
         mockDeleteRecordNetwork(recordId);
         await deleteRecord(recordId);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshedMockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(refreshedMockData);
         expect(element.pushCount()).toBe(2);
     });
 
@@ -255,12 +255,12 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshedMockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(refreshedMockData);
         expect(element.pushCount()).toBe(2);
     });
 
@@ -291,7 +291,6 @@ describe('basic', () => {
         expireRelatedListRecordCollection();
         // second component should have the updated data by hitting network
         const element = await setupElement(componentConfig, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-        expect(element.getWiredData()).toBeImmutable();
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 });

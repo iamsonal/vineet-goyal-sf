@@ -1,3 +1,5 @@
+import { customMatchers } from '@salesforce/lds-jest';
+
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import { JSONStringify } from '../../../utils/language';
 import { resetLuvioStore, setup } from './integrationTestSetup';
@@ -6,6 +8,15 @@ import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
 import { flushPromises } from '../../testUtils';
 
 import mockData_Service_Appointments__r from './data/related-list-records/related-list-records-Service_Appointments__r.json';
+
+const RELATED_LIST_RECORD_COLLECTION_PRIVATE_FIELDS = [
+    'currentPageUrl',
+    'nextPageUrl',
+    'previousPageUrl',
+];
+
+// add toEqualFulfilledSnapshotWithData custom matcher
+expect.extend(customMatchers);
 
 describe('mobile runtime integration tests', () => {
     let networkAdapter: MockNimbusNetworkAdapter;
@@ -174,8 +185,10 @@ describe('mobile runtime integration tests', () => {
 
                 const snapshot = await getRelatedListRecords(config);
 
-                expect(snapshot.state).toBe('Fulfilled');
-                expect(snapshot.data).toEqual(mockData_Service_Appointments__r);
+                expect(snapshot).toEqualFulfilledSnapshotWithData(
+                    mockData_Service_Appointments__r,
+                    RELATED_LIST_RECORD_COLLECTION_PRIVATE_FIELDS
+                );
             });
         });
     });

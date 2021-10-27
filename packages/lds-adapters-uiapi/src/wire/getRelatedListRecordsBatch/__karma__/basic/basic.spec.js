@@ -59,7 +59,7 @@ describe('basic', () => {
 
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('gets data with valid parameters', async () => {
@@ -71,7 +71,7 @@ describe('basic', () => {
         const element = await setupElement(params, RelatedListRecordsBatch);
 
         const wireData = element.getWiredData();
-        expect(wireData).toEqualSnapshotWithoutEtags(mockData);
+        expect(wireData).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 });
 
@@ -86,7 +86,7 @@ describe('batching', () => {
         await setupElement(params, RelatedListRecordsBatch);
         // second component should have the cached data without hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('returns updated result when cached data is expired', async () => {
@@ -105,7 +105,7 @@ describe('batching', () => {
         expireRecords();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('returns updated result when cached data is expired with no record linking', async () => {
@@ -123,7 +123,7 @@ describe('batching', () => {
         expireRelatedListRecordCollection();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     // should provide a cache hit for existing single data
@@ -138,7 +138,7 @@ describe('batching', () => {
 
         // // second component should have the cached data without hitting network
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     // 1 single wire calls
@@ -156,7 +156,7 @@ describe('batching', () => {
 
         mockGetRelatedListRecordsBatchNetwork(batchResourceConfig, mockData);
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 });
 
@@ -172,7 +172,7 @@ describe('error cases', () => {
         mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it("emits to component twice with error data - 400 status doesn't cache", async () => {
@@ -184,11 +184,11 @@ describe('error cases', () => {
 
         // Get data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockErrorData);
+        expect(errorElement.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockErrorData);
 
         // Network is mocked only once, should still retrieve data here.
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockFullData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockFullData);
     });
 
     it('should retrieve actual data after error response cache expired', async () => {
@@ -200,14 +200,14 @@ describe('error cases', () => {
 
         // Get error data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockError);
+        expect(errorElement.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockError);
 
         // Cache bust
         expireRecords();
 
         // Should get the real data now
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     describe('gack cases', () => {
@@ -220,7 +220,7 @@ describe('error cases', () => {
             const element = await setupElement(params, RelatedListRecordsBatch);
 
             const wireData = element.getWiredData();
-            expect(wireData).toEqualSnapshotWithoutEtags(mockData);
+            expect(wireData).toEqualListSnapshotWithoutPrivateProps(mockData);
         });
     });
 });

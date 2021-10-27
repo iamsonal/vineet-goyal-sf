@@ -63,27 +63,3 @@ export function variables(
 ): void {
     reader.readScalar(selection.name, variables, data);
 }
-
-export function url(
-    key: string,
-    selection: CustomSelection<any>,
-    record: any,
-    data: any,
-    variables: any,
-    reader: Reader<any>
-): void {
-    let urlProp = selection.name;
-    let tokenProp = `${urlProp.substring(0, urlProp.indexOf('Url'))}Token`;
-
-    // TODO [W-6741077]: Remove this change when craig sets the currentPageUrl
-    if (variables[tokenProp] && record.currentPageUrl) {
-        // currentPageUrl should never be empty so use that as the template
-        variables[urlProp] = record.currentPageUrl
-            .replace(/pageToken=[^&]+/, `pageToken=${variables[tokenProp]}`)
-            .replace(/pageSize=\d+/, `pageSize=${variables.__pageSize}`);
-    } else if (variables[tokenProp] === null) {
-        variables[urlProp] = null;
-    }
-
-    reader.readScalar(selection.name, variables, data);
-}

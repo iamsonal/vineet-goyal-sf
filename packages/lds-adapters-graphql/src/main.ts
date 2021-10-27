@@ -1,13 +1,17 @@
 import {
     AdapterFactory,
+    AdapterRequestContext,
     CacheKeySet,
+    DispatchResourceRequest,
     FetchResponse,
     Luvio,
     Reader,
     ReaderFragment,
     ResourceRequest,
+    Selector,
     Snapshot,
     SnapshotRefresh,
+    StoreLookup,
 } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
@@ -235,9 +239,39 @@ function validateGraphQlConfig(untrustedConfig: unknown): {
     };
 }
 
+type BuildSnapshotContext = {
+    config: GraphQLConfig;
+    fragment: ReaderFragment;
+    luvio: Luvio;
+};
+
+function buildInMemorySnapshot(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<unknown>
+): Snapshot<unknown, any> {
+    const { config, fragment, luvio } = context;
+
+    const selector: Selector = {
+        recordId: GRAPHQL_ROOT_KEY,
+        node: fragment,
+        variables: {},
+    };
+
+    return storeLookup(selector, buildSnapshotRefresh(luvio, config, fragment));
+}
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    _dispatchResourceRequest: DispatchResourceRequest<unknown>
+): Promise<Snapshot<unknown, any>> {
+    const { config, fragment, luvio } = context;
+    return buildNetworkSnapshot(luvio, config, fragment);
+}
+
 export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (luvio: Luvio) =>
     function graphql(
-        untrustedConfig: unknown
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
     ): Promise<Snapshot<unknown, any>> | Snapshot<unknown, any> | null {
         const { validatedConfig, errors } = validateGraphQlConfig(untrustedConfig);
 
@@ -252,21 +286,10 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
 
         const fragment: ReaderFragment = createFragment(query, variables);
 
-        const snapshot = luvio.storeLookup(
-            {
-                recordId: GRAPHQL_ROOT_KEY,
-                node: fragment,
-                variables: {},
-            },
-            buildSnapshotRefresh(luvio, validatedConfig, fragment)
-        );
-
-        if (luvio.snapshotAvailable(snapshot)) {
-            return snapshot;
-        }
-
-        return luvio.resolveSnapshot(
-            snapshot,
-            buildSnapshotRefresh(luvio, validatedConfig, fragment)
+        return luvio.applyCachePolicy(
+            requestContext === undefined ? undefined : requestContext.cachePolicy,
+            { config: validatedConfig, fragment, luvio },
+            buildInMemorySnapshot,
+            buildNetworkSnapshotCachePolicy
         );
     };

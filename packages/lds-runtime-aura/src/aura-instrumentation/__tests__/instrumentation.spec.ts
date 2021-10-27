@@ -1,4 +1,4 @@
-import { setInstrumentationHooks } from '../instrumentation';
+import { setInstrumentationHooks } from '../main';
 import * as adaptersUiApi from '@salesforce/lds-adapters-uiapi';
 import * as ldsInstrumentation from '@salesforce/lds-instrumentation';
 

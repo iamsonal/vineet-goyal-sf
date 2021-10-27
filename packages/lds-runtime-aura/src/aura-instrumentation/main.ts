@@ -7,16 +7,33 @@ import {
     interaction,
     mark as instrumentationServiceMark,
     MetricsKey,
-    percentileHistogram,
     perfStart,
     perfEnd,
     registerCacheStats,
     registerPeriodicLogger,
-    PercentileHistogram,
     timer,
     Timer,
 } from 'instrumentation/service';
-import { LRUCache } from '@salesforce/lds-instrumentation';
+import {
+    instrumentAdapter as o11yInstrumentAdapter,
+    instrumentStoreMethods as o11yInstrumentStoreMethods,
+    setStoreScheduler as o11ySetStoreScheduler,
+    setupStoreStatsCollection as o11ySetupStoreStats,
+    instrumentStoreStatsCallback as o11yInstrumentStoreStatsCallback,
+    LRUCache,
+    updatePercentileHistogramMetric,
+    incrementCounterMetric,
+    incrementGetRecordAggregateInvokeCount,
+    incrementGetRecordNormalInvokeCount,
+    incrementGetRecordNotifyChangeAllowCount,
+    incrementGetRecordNotifyChangeDropCount,
+    incrementNetworkRateLimitExceededCount,
+    setAggregateUiChunkCountMetric,
+} from '@salesforce/lds-instrumentation';
+import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
+import { instrument as networkAuraInstrument } from '@salesforce/lds-network-aura';
+import { instrument as lwcBindingsInstrument } from '@salesforce/lds-bindings';
+import { instrument as adsBridgeInstrument } from '@salesforce/lds-ads-bridge';
 
 import {
     OBSERVABILITY_NAMESPACE,
@@ -227,7 +244,7 @@ export class Instrumentation {
         Object.defineProperty(instrumentedAdapter, 'name', {
             value: name + '__instrumented',
         });
-        return instrumentedAdapter;
+        return o11yInstrumentAdapter(instrumentedAdapter, metadata);
     }
 
     /**
@@ -506,40 +523,6 @@ export function log(_schema: any, payload: LightningInteractionSchema): void {
     interaction(target, scope, context, eventSource, eventType, attributes);
 }
 
-const counterMetricTracker: Record<string, Counter> = ObjectCreate(null);
-/**
- * Calls instrumentation/service telemetry counter
- * @param name Name of the metric
- * @param value number to increment by, if undefined increment by 1
- */
-export function incrementCounterMetric(name: string, value?: number) {
-    let metric = counterMetricTracker[name];
-    if (metric === undefined) {
-        metric = counter(createMetricsKey(NAMESPACE, name));
-        counterMetricTracker[name] = metric;
-    }
-    if (value === undefined) {
-        metric.increment(1);
-    } else {
-        metric.increment(value);
-    }
-}
-
-const percentileHistogramMetricTracker: Record<string, PercentileHistogram> = ObjectCreate(null);
-/**
- * Calls instrumentation/service telemetry percentileHistogram
- * @param name Name of the metric
- * @param value number to update the percentileHistogram with
- */
-export function updatePercentileHistogramMetric(name: string, value: number) {
-    let metric = percentileHistogramMetricTracker[name];
-    if (metric === undefined) {
-        metric = percentileHistogram(createMetricsKey(NAMESPACE, name));
-        percentileHistogramMetricTracker[name] = metric;
-    }
-    metric.update(value);
-}
-
 const timerMetricTracker: Record<string, Timer> = ObjectCreate(null);
 /**
  * Calls instrumentation/service telemetry timer
@@ -581,14 +564,54 @@ export function registerLdsCacheStats(name: string): CacheStatsLogger {
     return registerCacheStats(`${NAMESPACE}:${name}`);
 }
 
+export function setInstrumentationHooks() {
+    adaptersUiApiInstrument({
+        recordConflictsResolved: (serverRequestCount: number) =>
+            updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
+        nullDisplayValueConflict: ({ fieldType, areValuesEqual }) => {
+            const metricName = `merge-null-dv-count.${fieldType}`;
+            if (fieldType === 'scalar') {
+                incrementCounterMetric(`${metricName}.${areValuesEqual}`);
+            } else {
+                incrementCounterMetric(metricName);
+            }
+        },
+        getRecordNotifyChangeAllowed: incrementGetRecordNotifyChangeAllowCount,
+        getRecordNotifyChangeDropped: incrementGetRecordNotifyChangeDropCount,
+        recordApiNameChanged:
+            instrumentation.incrementRecordApiNameChangeCount.bind(instrumentation),
+        weakEtagZero: instrumentation.aggregateWeakETagEvents.bind(instrumentation),
+        getRecordNotifyChangeNetworkResult:
+            instrumentation.notifyChangeNetwork.bind(instrumentation),
+    });
+    networkAuraInstrument({
+        getRecordAggregateInvoke: incrementGetRecordAggregateInvokeCount,
+        getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
+        aggregateUiChunkCount: setAggregateUiChunkCountMetric,
+        logCrud: logCRUDLightningInteraction,
+        networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
+    });
+    lwcBindingsInstrument({
+        refreshCalled: instrumentation.handleRefreshApiCall.bind(instrumentation),
+        instrumentAdapter: instrumentation.instrumentAdapter.bind(instrumentation),
+    });
+    adsBridgeInstrument({
+        timerMetricAddDuration: updateTimerMetric,
+    });
+}
+
 /**
  * Initialize the instrumentation and instrument the LDS instance and the Store.
  *
  * @param luvio The Luvio instance to instrument.
  * @param store The Store to instrument.
  */
-export function setupInstrumentation(_luvio: Luvio, _store: Store): void {
-    // set instrumentation hooks for runtime
+export function setupInstrumentation(luvio: Luvio, store: Store): void {
+    setInstrumentationHooks();
+
+    o11yInstrumentStoreMethods(luvio, store);
+    o11ySetupStoreStats(luvio, o11yInstrumentStoreStatsCallback(store));
+    o11ySetStoreScheduler(store);
 }
 
 /**

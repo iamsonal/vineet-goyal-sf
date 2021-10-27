@@ -6,8 +6,6 @@ import { Adapter } from '@luvio/engine';
 import timekeeper from 'timekeeper';
 
 import {
-    incrementCounterMetric,
-    updatePercentileHistogramMetric,
     log,
     AdapterUnfulfilledError,
     Instrumentation,
@@ -140,24 +138,44 @@ describe('instrumentation', () => {
         });
     });
 
-    describe('incrementCounterMetric', () => {
-        it('should increment `foo` counter by 1, when value not specified', () => {
-            incrementCounterMetric('foo');
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(1);
+    describe('notifyChangeNetwork', () => {
+        const NETWORK_TRANSACTION_NAME = 'lds-network';
+        const NOTIFY_CHANGE_NETWORK = 'notify-change-network';
+        it('calls perfEnd with a boolean to reflect if weakEtags are unique', () => {
+            instrumentation.notifyChangeNetwork(true);
+            expect(instrumentationServiceSpies.perfStart).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledWith(NETWORK_TRANSACTION_NAME, {
+                [NOTIFY_CHANGE_NETWORK]: true,
+            });
         });
-        it('should increment `foo` counter by 100', () => {
-            incrementCounterMetric('foo', 100);
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(100);
+        it('calls perfEnd with "error" if there was an error', () => {
+            instrumentation.notifyChangeNetwork(true, true);
+            expect(instrumentationServiceSpies.perfStart).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledWith(NETWORK_TRANSACTION_NAME, {
+                [NOTIFY_CHANGE_NETWORK]: 'error',
+            });
         });
     });
 
-    describe('updatePercentileHistogramMetric', () => {
-        it('should increment `foo` counter by 1, when value not specified', () => {
-            updatePercentileHistogramMetric('foo', 10);
-            expect(instrumentationServiceSpies.percentileUpdateSpy).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.percentileUpdateSpy).toHaveBeenCalledWith(10);
+    describe('incrementRecordApiNameChangeCounter', () => {
+        const DUMMY_API_NAME = 'dummyApiName';
+        const testApiName = 'foo';
+        it('creates a new counter and increments it by 1', () => {
+            instrumentation.incrementRecordApiNameChangeCount(DUMMY_API_NAME, testApiName);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(1);
+            testMetricInvocations(instrumentationServiceSpies.counterIncrementSpy, [
+                { owner: 'lds', name: `record-api-name-change-count.${testApiName}` },
+            ]);
+        });
+        it('finds the existing counter in the map and increments it by 1', () => {
+            instrumentation.incrementRecordApiNameChangeCount(DUMMY_API_NAME, testApiName);
+            instrumentation.incrementRecordApiNameChangeCount(DUMMY_API_NAME, testApiName);
+            testMetricInvocations(instrumentationServiceSpies.counterIncrementSpy, [
+                { owner: 'lds', name: `record-api-name-change-count.${testApiName}` },
+                { owner: 'lds', name: `record-api-name-change-count.${testApiName}` },
+            ]);
         });
     });
 

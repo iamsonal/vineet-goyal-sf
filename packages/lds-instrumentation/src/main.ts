@@ -454,7 +454,7 @@ function instrumentStoreTrimTask(callback: () => number) {
     };
 }
 
-function setStoreScheduler(store: Store) {
+export function setStoreScheduler(store: Store) {
     const originalScheduler = store.scheduler;
     store.scheduler = (callback) => {
         originalScheduler(instrumentStoreTrimTask(callback));
@@ -462,7 +462,7 @@ function setStoreScheduler(store: Store) {
 }
 
 type storeStatsCallback = () => void;
-function instrumentStoreStatsCallback(store: Store) {
+export function instrumentStoreStatsCallback(store: Store) {
     return () => {
         const { records, snapshotSubscriptions, watchSubscriptions } = store;
         updatePercentileHistogramMetric(STORE_SIZE_COUNT, ObjectKeys(records).length);
@@ -483,7 +483,7 @@ function instrumentStoreStatsCallback(store: Store) {
  * @param luvio
  * @param store
  */
-function setupStoreStatsCollection(luvio: Luvio, callback: storeStatsCallback) {
+export function setupStoreStatsCollection(luvio: Luvio, callback: storeStatsCallback) {
     const wrapMethod = 'storeBroadcast';
     const originalMethod = luvio[wrapMethod];
     const throttledCallback = throttle(callback, 200);
@@ -533,6 +533,15 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
         getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
         networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
     });
+    instrumentStoreMethods(luvio, store);
+    setupStoreStatsCollection(luvio, instrumentStoreStatsCallback(store));
+
+    setStoreScheduler(store);
+
+    // TODO [W-10061321]: use periodic logger to log aggregated store stats
+}
+
+export function instrumentStoreMethods(luvio: Luvio, _store: Store) {
     instrumentMethods(luvio, [
         { methodName: 'storeBroadcast', metricKey: STORE_BROADCAST_DURATION },
         { methodName: 'storeIngest', metricKey: STORE_INGEST_DURATION },
@@ -543,11 +552,6 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
             metricKey: STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION,
         },
     ]);
-    setupStoreStatsCollection(luvio, instrumentStoreStatsCallback(store));
-
-    setStoreScheduler(store);
-
-    // TODO [W-10061321]: use periodic logger to log aggregated store stats
 }
 
 export const instrumentation = new Instrumentation();

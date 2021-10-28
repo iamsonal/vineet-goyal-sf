@@ -48,8 +48,9 @@ function testMetricInvocations(metricSpy: any, expectedCalls: any) {
 // - cacheHitCountByAdapterMetric or cacheMissCountByAdapterMetric
 // - wireRequestCounter
 // - totalAdapterRequestSuccessMetric
-const baseCacheHitCounterIncrement = 4;
-const baseCacheMissCounterIncrement = 4;
+// - cachePolicyType or cachePolicyUndefined
+const baseCacheHitCounterIncrement = 5;
+const baseCacheMissCounterIncrement = 5;
 const GET_RECORD_TTL = 30000;
 
 describe('instrumentMethods', () => {
@@ -210,6 +211,7 @@ describe('instrumentation', () => {
                 ['request', 1],
                 ['cache-hit-count', 1],
                 ['cache-hit-count.UiApi.getRecord', 1],
+                ['cache-policy-undefined', 2],
             ];
             testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
         });
@@ -328,7 +330,7 @@ describe('instrumentation', () => {
             await instrumentedAdapter({ cacheHit: false });
 
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
-            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(4);
+            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
         });
 
         it('logs nothing when adapter returns null', async () => {
@@ -345,6 +347,35 @@ describe('instrumentation', () => {
 
             // technically we bump two counters for calls to the adapter
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(0);
+        });
+
+        it('logs correct cache policy type when adapter is called with one', async () => {
+            const mockAdapter = ((config) => {
+                if (config.cacheHit === true) {
+                    return {};
+                } else {
+                    return Promise.resolve({});
+                }
+            }) as Adapter<any, any>;
+
+            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+
+            await instrumentedAdapter(
+                { cacheHit: false },
+                { cachePolicy: { type: 'cache-then-network' } }
+            );
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-cache-then-network', 1],
+                ['cache-miss-count', 1],
+                ['cache-miss-count.UiApi.getFoo', 1],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
         });
     });
 
@@ -373,6 +404,7 @@ describe('instrumentation', () => {
                 const expectedMetricCalls = [
                     ['request.UiApi.getRecord', 1],
                     ['request', 1],
+                    ['cache-policy-undefined', 1],
                     ['cache-miss-count', 1],
                     ['cache-miss-count.UiApi.getRecord', 1],
                 ];
@@ -405,6 +437,7 @@ describe('instrumentation', () => {
             const expectedMetricCalls = [
                 ['request.UiApi.getRecord', 1],
                 ['request', 1],
+                ['cache-policy-undefined', 1],
             ];
             testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
         });
@@ -432,6 +465,7 @@ describe('instrumentation', () => {
                 const expectedMetricCalls = [
                     ['request.UiApi.getRecord', 1],
                     ['request', 1],
+                    ['cache-policy-undefined', 1],
                     ['cache-miss-count', 1],
                     ['cache-miss-count.UiApi.getRecord', 1],
                 ];
@@ -478,10 +512,12 @@ describe('instrumentation', () => {
             const expectedMetricCalls = [
                 ['request.Apex.getApex', 1],
                 ['request', 1],
+                ['cache-policy-undefined', 1],
                 ['cache-miss-count', 1],
                 ['cache-miss-count.Apex.getApex', 1],
                 ['request.Apex.getApex', 1],
                 ['request', 1],
+                ['cache-policy-undefined', 1],
                 ['cache-miss-count', 1],
                 ['cache-miss-count.Apex.getApex', 1],
             ];
@@ -517,8 +553,8 @@ describe('instrumentation', () => {
 
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
 
-            // 4 standard counters + 1 for gql counter
-            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
+            // 5 standard counters + 1 for gql counter
+            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(6);
         });
         it('logs mixed bag response in case of a cache miss', async () => {
             const mockSnapshot = {
@@ -547,8 +583,8 @@ describe('instrumentation', () => {
 
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
 
-            // 4 standard counters + 1 for gql counter
-            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
+            // 5 standard counters + 1 for gql counter
+            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(6);
         });
     });
 });

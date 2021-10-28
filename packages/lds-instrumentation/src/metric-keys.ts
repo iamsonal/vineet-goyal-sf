@@ -133,3 +133,18 @@ export const STORE_TRIM_TASK_COUNT = 'store-trim-task-count';
  * Timer to measure performance for Luvio store trim task
  */
 export const STORE_TRIM_TASK_DURATION = 'store-trim-task-duration';
+
+/**
+ * W-9804037
+ * Counters for Luvio cache policy usage
+ * Note: Undefined cache policy defaults to different cache policies based on runtime
+ */
+export const CACHE_POLICY_COUNTERS = {
+    'cache-and-network': 'cache-policy-cache-and-network',
+    'cache-then-network': 'cache-policy-cache-then-network',
+    'no-cache': 'cache-policy-no-cache',
+    'only-if-cached': 'cache-policy-only-if-cached',
+    'stale-while-revalidate': 'cache-policy-stale-while-revalidate',
+    'valid-at': 'cache-policy-valid-at',
+};
+export const CACHE_POLICY_UNDEFINED_COUNTER = 'cache-policy-undefined';

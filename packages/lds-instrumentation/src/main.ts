@@ -38,6 +38,8 @@ import {
     STORE_WATCH_SUBSCRIPTIONS_COUNT,
     STORE_TRIM_TASK_COUNT,
     STORE_TRIM_TASK_DURATION,
+    CACHE_POLICY_UNDEFINED_COUNTER,
+    CACHE_POLICY_COUNTERS,
 } from './metric-keys';
 
 import {
@@ -119,6 +121,23 @@ function incrementAdapterRequestErrorCount(context: AdapterUnfulfilledError): vo
     );
     observabilityInstrumentation.incrementCounter(adapterRequestErrorCounter);
     observabilityInstrumentation.incrementCounter(TOTAL_ADAPTER_ERROR_COUNT);
+}
+
+/**
+ * Increment the counter based on the cache policy type for an adapter call
+ *
+ * @param requestContext Adapter request context that includes cache policy
+ */
+
+function incrementAdapterCachePolicyType(requestContext?: AdapterRequestContext) {
+    const cachePolicy =
+        requestContext && requestContext.cachePolicy && requestContext.cachePolicy.type;
+
+    if (cachePolicy !== undefined) {
+        ldsInstrumentation.incrementCounter(CACHE_POLICY_COUNTERS[cachePolicy], 1);
+        return;
+    }
+    ldsInstrumentation.incrementCounter(CACHE_POLICY_UNDEFINED_COUNTER, 1);
 }
 
 /**
@@ -223,6 +242,8 @@ export function instrumentAdapter<C, D>(
         // increment adapter request metrics
         observabilityInstrumentation.incrementCounter(wireAdapterRequestMetric, 1);
         observabilityInstrumentation.incrementCounter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT, 1);
+        // increment cache policy metrics
+        incrementAdapterCachePolicyType(requestContext);
 
         // start collecting
         const startTime = Date.now();

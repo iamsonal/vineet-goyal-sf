@@ -11,6 +11,7 @@ import {
     UnAvailableSnapshot,
     FulfilledSnapshot,
     StaleSnapshot,
+    CacheKeySet,
 } from '@luvio/engine';
 import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
 import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
@@ -27,7 +28,14 @@ import {
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
 import { dependencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
-import { ArrayPrototypePush, ObjectAssign, ObjectCreate, ObjectKeys } from '../../util/language';
+import {
+    ArrayPrototypePush,
+    JSONParse,
+    JSONStringify,
+    ObjectAssign,
+    ObjectCreate,
+    ObjectKeys,
+} from '../../util/language';
 import {
     markMissingOptionalFields,
     markNulledOutRequiredFields,
@@ -259,6 +267,74 @@ function prepareRequest(luvio: Luvio, config: GetRecordUiConfigWithDefaults) {
     return { key, selectorKey, resourceRequest };
 }
 
+function getCacheKeys(
+    luvio: Luvio,
+    config: GetRecordUiConfigWithDefaults,
+    key: string,
+    originalResponseBody: RecordUiRepresentation
+) {
+    const { recordIds, layoutTypes, modes } = config;
+
+    const responseBody = JSONParse(JSONStringify(originalResponseBody));
+
+    eachLayout(
+        responseBody,
+        (apiName: string, recordTypeId: string, layout: RecordLayoutRepresentation) => {
+            if (layout.id === null) {
+                return;
+            }
+            const layoutUserState = responseBody.layoutUserStates[layout.id];
+            // Temporary hack since we can't match keys from getLayoutUserState response
+            // to record ui's layout users states.
+            if (layoutUserState === undefined) {
+                return;
+            }
+            layoutUserState.apiName = apiName;
+            layoutUserState.recordTypeId = recordTypeId;
+            layoutUserState.mode = layout.mode;
+            layoutUserState.layoutType = layout.layoutType;
+        }
+    );
+
+    const recordLookupFields = getRecordUiMissingRecordLookupFields(responseBody);
+    const selPath = buildRecordUiSelector(
+        collectRecordDefs(responseBody, recordIds),
+        layoutTypes,
+        modes,
+        recordLookupFields
+    );
+
+    const sel = {
+        recordId: key,
+        node: selPath,
+        variables: {},
+    };
+
+    luvio.storeIngest(key, ingest, responseBody);
+
+    const snapshot = luvio.storeLookup<RecordUiRepresentation>(
+        sel,
+        buildSnapshotRefresh(luvio, config)
+    );
+
+    if (snapshot.state === 'Error') {
+        return {};
+    }
+
+    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
+    const keySet: CacheKeySet = ObjectCreate(null);
+    for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const namespace = key.split('::')[0];
+        const representationName = key.split('::')[1].split(':')[0];
+        keySet[key] = {
+            namespace,
+            representationName,
+        };
+    }
+    return keySet;
+}
+
 function onResourceResponseSuccess(
     luvio: Luvio,
     config: GetRecordUiConfigWithDefaults,
@@ -384,7 +460,10 @@ export function buildNetworkSnapshot(
 
     return luvio.dispatchResourceRequest<RecordUiRepresentation>(resourceRequest).then(
         (response) => {
-            return onResourceResponseSuccess(luvio, config, selectorKey, key, response.body);
+            return luvio.handleSuccessResponse(
+                () => onResourceResponseSuccess(luvio, config, selectorKey, key, response.body),
+                () => getCacheKeys(luvio, config, key, response.body)
+            );
         },
         (err: FetchResponse<unknown>) => {
             return onResourceResponseError(luvio, config, selectorKey, key, err);

@@ -242,6 +242,20 @@ module.exports = {
      * @returns {void}
      */
     afterGenerate: (compilerConfig, modelInfo, createGenerationContext) => {
+        // compositeResources map => Record<childEndpointId, resourceEndpointId>
+        const compositeChildToResourceEndpointIdMap = {};
+        // resources map => Record<resourceEndpointId, adapterName>
+        const resourceEndpointIdToNameMap = {};
+
+        Object.entries(modelInfo.compositeResources).forEach(([resourceKey, value]) => {
+            compositeChildToResourceEndpointIdMap[value.childEndpoint.id] = resourceKey;
+        });
+
+        modelInfo.resources.forEach((resource) => {
+            resourceEndpointIdToNameMap[resource.endPointId] =
+                resource.adapter && resource.adapter.name;
+        });
+
         const adapters = modelInfo.resources
             .filter((resource) => resource.adapter !== undefined)
             .map((resource) => {
@@ -259,7 +273,11 @@ module.exports = {
                         adapterInfo.ttl = shapeTtlValue;
                     }
                 }
-
+                // batch adapter info
+                const batchResourceEndpointId = compositeChildToResourceEndpointIdMap[resource.id];
+                if (batchResourceEndpointId !== undefined) {
+                    adapterInfo.batch = resourceEndpointIdToNameMap[batchResourceEndpointId];
+                }
                 return adapterInfo;
             });
         const imperativeAdapters = [...ADAPTERS_NOT_DEFINED_IN_OVERLAY];

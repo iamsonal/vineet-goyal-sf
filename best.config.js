@@ -1,12 +1,13 @@
 module.exports = {
     projectName: 'lds-benchmark',
+    benchmarkIterations: 30,
     plugins: [
         'rollup-plugin-node-resolve',
         '<rootDir>/best/rollup-plugin-mocks/index.js',
         ['rollup-plugin-replace', { 'process.env.NODE_ENV': JSON.stringify('production') }],
     ],
     specs: { name: 'chrome.headless', version: 80 },
-    metrics: ['aggregate', 'script', 'system', 'idle'],
+    mainBranch: 'main',
     runners: [
         {
             alias: 'default',

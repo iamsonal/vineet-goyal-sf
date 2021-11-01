@@ -213,7 +213,7 @@ jobs:
 
       - *setup_best_environment
       - *run_best
-      - *compare_best_results
+      # - *compare_best_results
       - *store_best_artifacts
 
 # Workflows definition
@@ -233,6 +233,6 @@ workflows:
       - test_unit:
           requires:
             - build
-#      - perf_and_compare:
-#          requires:
-#            - build
+      - perf_and_compare:
+          requires:
+            - build

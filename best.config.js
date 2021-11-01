@@ -1,5 +1,5 @@
 module.exports = {
-    projectName: 'lds-benchmark',
+    projectName: 'lds-lightning-platform',
     benchmarkIterations: 30,
     plugins: [
         'rollup-plugin-node-resolve',

@@ -1,17 +1,20 @@
 import {
     AdapterFactory,
-    Luvio,
-    Snapshot,
-    Selector,
-    FetchResponse,
-    GraphNode,
-    ErrorSnapshot,
-    SnapshotRefresh,
-    UnfulfilledSnapshot,
-    UnAvailableSnapshot,
-    FulfilledSnapshot,
-    StaleSnapshot,
+    AdapterRequestContext,
     CacheKeySet,
+    DispatchResourceRequest,
+    ErrorSnapshot,
+    FetchResponse,
+    FulfilledSnapshot,
+    GraphNode,
+    Luvio,
+    Selector,
+    Snapshot,
+    SnapshotRefresh,
+    StaleSnapshot,
+    StoreLookup,
+    UnAvailableSnapshot,
+    UnfulfilledSnapshot,
 } from '@luvio/engine';
 import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
 import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
@@ -44,7 +47,7 @@ import {
 import { dedupe } from '../../validation/utils';
 import { buildRecordUiSelector, RecordDef } from './selectors';
 import { getRecordTypeId } from '../../util/records';
-import { isFulfilledSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
+import { isFulfilledSnapshot, isStaleSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
 import { LayoutType } from '../../primitives/LayoutType';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
@@ -490,6 +493,82 @@ function publishDependencies(luvio: Luvio, recordIds: string[], depKeys: string[
     }
 }
 
+type BuildSelectorSnapshotContext = {
+    config: GetRecordUiConfigWithDefaults;
+    luvio: Luvio;
+};
+
+function buildInMemorySelectorSnapshot(
+    context: BuildSelectorSnapshotContext,
+    storeLookup: StoreLookup<Selector<RecordUiRepresentation>>
+): Snapshot<Selector<RecordUiRepresentation>> | undefined {
+    const { config } = context;
+    const { recordIds, layoutTypes, modes, optionalFields } = config;
+
+    const key = keyBuilder(
+        recordIds,
+        layoutTypes as LayoutType[],
+        modes as LayoutMode[],
+        optionalFields
+    );
+    const cachedSelectorKey = buildCachedSelectorKey(key);
+
+    return storeLookup({
+        recordId: cachedSelectorKey,
+        node: {
+            kind: 'Fragment',
+            private: [],
+            opaque: true,
+        },
+        variables: {},
+    });
+}
+
+function buildNetworkSelectorSnapshot(
+    context: BuildSelectorSnapshotContext,
+    _dispatchResourceRequest: DispatchResourceRequest<Selector<RecordUiRepresentation>>
+): Promise<Snapshot<Selector<RecordUiRepresentation>>> {
+    const { luvio } = context;
+
+    // We save the Selector in L1/L2, but it's not possible to actually retrieve it over
+    // the network. Just return an error snapshot to let the adapter know that it should
+    // skip trying to use the cached Selector to build the RecordUiRepresentation.
+    return Promise.resolve(
+        luvio.errorSnapshot({
+            status: 400,
+            body: undefined,
+            statusText: 'cannot request selector',
+            ok: false,
+            headers: {},
+        })
+    );
+}
+
+type BuildRecordUiRepresentationSnapshotContext = {
+    config: GetRecordUiConfigWithDefaults;
+    luvio: Luvio;
+    selector: Selector<RecordUiRepresentation> | undefined;
+};
+
+function buildInMemoryRecordUiRepresentationSnapshot(
+    context: BuildRecordUiRepresentationSnapshotContext,
+    storeLookup: StoreLookup<RecordUiRepresentation>
+): Snapshot<RecordUiRepresentation> | undefined {
+    const { config, luvio, selector } = context;
+
+    // try to resolve RecordUiRepresentation selector if previous steps were able to find one
+    if (selector !== undefined) {
+        return storeLookup(selector, buildSnapshotRefresh(luvio, config));
+    }
+}
+
+function buildNetworkRecordUiRepresentationSnapshot(
+    context: BuildRecordUiRepresentationSnapshotContext,
+    _dispatchResourceRequest: DispatchResourceRequest<RecordUiRepresentation>
+): Promise<Snapshot<RecordUiRepresentation>> {
+    return buildNetworkSnapshot(context.luvio, context.config);
+}
+
 export function coerceConfigWithDefaults(
     untrustedConfig: unknown
 ): GetRecordUiConfigWithDefaults | null {
@@ -512,14 +591,51 @@ export function coerceConfigWithDefaults(
     };
 }
 
+function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
+    return (value as any).then !== undefined;
+}
+
 export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> = (luvio: Luvio) =>
     function UiApi__getRecordUi(
-        untrustedConfig: unknown
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
     ): Promise<Snapshot<RecordUiRepresentation>> | Snapshot<RecordUiRepresentation> | null {
         // standard config validation and coercion
         const config = coerceConfigWithDefaults(untrustedConfig);
         if (config === null) {
             return null;
+        }
+
+        if (requestContext !== undefined) {
+            const cachePolicy =
+                requestContext === undefined ? undefined : requestContext.cachePolicy;
+
+            const selectorPromiseOrSnapshot = luvio.applyCachePolicy(
+                cachePolicy,
+                { config, luvio },
+                buildInMemorySelectorSnapshot,
+                buildNetworkSelectorSnapshot
+            );
+
+            const resolveSelector = (
+                selectorSnapshot: Snapshot<Selector<RecordUiRepresentation>>
+            ) => {
+                const selector =
+                    isFulfilledSnapshot(selectorSnapshot) || isStaleSnapshot(selectorSnapshot)
+                        ? selectorSnapshot.data
+                        : undefined;
+
+                return luvio.applyCachePolicy(
+                    cachePolicy,
+                    { config, luvio, selector },
+                    buildInMemoryRecordUiRepresentationSnapshot,
+                    buildNetworkRecordUiRepresentationSnapshot
+                );
+            };
+
+            return isPromise(selectorPromiseOrSnapshot)
+                ? selectorPromiseOrSnapshot.then(resolveSelector)
+                : resolveSelector(selectorPromiseOrSnapshot);
         }
 
         const cacheSnapshot = buildInMemorySnapshot(luvio, config);

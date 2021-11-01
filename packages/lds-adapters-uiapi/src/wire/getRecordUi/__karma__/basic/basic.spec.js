@@ -1,4 +1,11 @@
-import { clone, getMock as globalGetMock, setupElement } from 'test-util';
+import { getRecordUi_imperative } from 'lds-adapters-uiapi';
+import {
+    clone,
+    flushPromises,
+    getMock as globalGetMock,
+    setupElement,
+    stripEtags,
+} from 'test-util';
 import {
     expireObjectInfo,
     expireRecords,
@@ -489,5 +496,58 @@ describe('Non-layoutable entities', () => {
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+    });
+});
+
+describe('getRecordUi_imperative', () => {
+    // TODO [W-9803760]: enable when cache-and-network policy is available
+    xit('uses caller-supplied cache policy', async () => {
+        const mockRecordUiData1 = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData1);
+        const recordFields = extractRecordFields(mockRecordUiData1.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
+
+        const mockRecordUiData2 = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const updatedRecord = mockRecordUiData2.records[recordId];
+        updateRefreshRecord(updatedRecord);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+            optionalFields: ['Account.Industry'],
+        };
+
+        mockGetRecordUiNetwork(config, [mockRecordUiData1, mockRecordUiData2]);
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            mockRecordUiData2.records[recordId]
+        );
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mockRecordUiData1
+        getRecordUi_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mockRecordUiData1 from cache, then make network call & emit mockRecordUiData2
+        getRecordUi_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([
+            { data: stripEtags(mockRecordUiData1), error: undefined },
+        ]);
+        expect(callback.calls.argsFor(1)).toEqual([
+            { data: stripEtags(mockRecordUiData2), error: undefined },
+        ]);
     });
 });

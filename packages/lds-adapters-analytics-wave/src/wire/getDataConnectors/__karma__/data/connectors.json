@@ -13,7 +13,7 @@
             "description": "SFDC_LOCAL",
             "id": "0ItRM0000004Dfe0AE",
             "ingestionSchedule": {
-                "assetId": "0ItRM0000004Dfb0AE",
+                "assetId": "0ItRM0000004Dfe0AE",
                 "daysOfWeek": [],
                 "frequency": "weekly",
                 "notificationLevel": "warnings"

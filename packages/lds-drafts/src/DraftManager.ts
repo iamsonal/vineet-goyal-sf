@@ -6,9 +6,10 @@ import {
     DraftAction,
     isDraftError,
     DraftQueueState,
-    DraftQueueEvent,
     DraftQueueEventType,
     DraftActionMetadata,
+    isDraftQueueStateChangeEvent,
+    DraftQueueEvent,
 } from './DraftQueue';
 import { ArrayIsArray, JSONStringify } from './utils/language';
 
@@ -81,6 +82,8 @@ export enum DraftQueueOperationType {
     ItemCompleted = 'completed',
     ItemFailed = 'failed',
     ItemUpdated = 'updated',
+    QueueStarted = 'started',
+    QueueStopped = 'stopped',
 }
 
 /**
@@ -90,7 +93,8 @@ export enum DraftQueueOperationType {
 export declare type DraftQueueListener = (
     state: DraftManagerState,
     operationType: DraftQueueOperationType,
-    queueItem: DraftQueueItem
+    // If operation is start/stop, `queueItem` will not be provided
+    queueItem?: DraftQueueItem
 ) => void;
 
 /**
@@ -151,13 +155,14 @@ export class DraftManager {
 
     private shouldEmitDraftEvent(event: DraftQueueEvent) {
         const { type } = event;
-        return (
-            type === DraftQueueEventType.ActionAdded ||
-            type === DraftQueueEventType.ActionCompleted ||
-            type === DraftQueueEventType.ActionDeleted ||
-            type === DraftQueueEventType.ActionFailed ||
-            type === DraftQueueEventType.ActionUpdated
-        );
+        return [
+            DraftQueueEventType.ActionAdded,
+            DraftQueueEventType.ActionCompleted,
+            DraftQueueEventType.ActionDeleted,
+            DraftQueueEventType.ActionFailed,
+            DraftQueueEventType.ActionUpdated,
+            DraftQueueEventType.QueueStateChanged,
+        ].includes(type);
     }
 
     private draftQueueEventTypeToOperationType(type: DraftQueueEventType): DraftQueueOperationType {
@@ -172,6 +177,17 @@ export class DraftManager {
                 return DraftQueueOperationType.ItemFailed;
             case DraftQueueEventType.ActionUpdated:
                 return DraftQueueOperationType.ItemUpdated;
+            default:
+                throw Error('Unsupported event type');
+        }
+    }
+
+    private draftQueueStateToOperationType(state: DraftQueueState): DraftQueueOperationType {
+        switch (state) {
+            case DraftQueueState.Started:
+                return DraftQueueOperationType.QueueStarted;
+            case DraftQueueState.Stopped:
+                return DraftQueueOperationType.QueueStopped;
             default:
                 throw Error('Unsupported event type');
         }
@@ -299,9 +315,16 @@ export class DraftManager {
 
     private callListeners(event: DraftQueueEvent): Promise<void> {
         return this.getQueue().then((queueState) => {
-            const { action, type } = event;
-            const item = this.buildDraftQueueItem(action);
-            const operationType = this.draftQueueEventTypeToOperationType(type);
+            let operationType, item;
+
+            if (isDraftQueueStateChangeEvent(event)) {
+                operationType = this.draftQueueStateToOperationType(event.state);
+            } else {
+                const { action, type } = event;
+                item = this.buildDraftQueueItem(action);
+                operationType = this.draftQueueEventTypeToOperationType(type);
+            }
+
             for (let i = 0, len = this.listeners.length; i < len; i++) {
                 const listener = this.listeners[i];
                 listener(queueState, operationType, item);

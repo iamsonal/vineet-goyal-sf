@@ -1229,7 +1229,7 @@ describe('DurableDraftQueue', () => {
         });
 
         it('is called when item errors', async () => {
-            const completedSpy = jest.fn();
+            const listenerSpy = jest.fn();
             const args: MockPayload['networkArgs'] = {
                 method: 'patch',
                 basePath: '/z',
@@ -1239,7 +1239,7 @@ describe('DurableDraftQueue', () => {
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
             const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
-            draftQueue.registerOnChangedListener(completedSpy);
+            draftQueue.registerOnChangedListener(listenerSpy);
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
             await draftQueue.enqueue({
                 data: firstRequest,
@@ -1249,12 +1249,19 @@ describe('DurableDraftQueue', () => {
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.startQueue();
-            expect(completedSpy).toBeCalledTimes(4);
-            expect(completedSpy.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
-            expect(completedSpy.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
-            expect(completedSpy.mock.calls[2][0].type).toBe(DraftQueueEventType.ActionRunning);
-            expect(completedSpy.mock.calls[3][0].type).toBe(DraftQueueEventType.ActionRetrying);
             await draftQueue.stopQueue();
+            expect(listenerSpy).toBeCalledTimes(6);
+            expect(listenerSpy.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
+            expect(listenerSpy.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
+            // Queue state changes
+            expect(listenerSpy.mock.calls[2][0].type).toBe(DraftQueueEventType.QueueStateChanged);
+            expect(listenerSpy.mock.calls[2][0].state).toBe(DraftQueueState.Started);
+            expect(listenerSpy.mock.calls[3][0].type).toBe(DraftQueueEventType.ActionRunning);
+            expect(listenerSpy.mock.calls[4][0].type).toBe(DraftQueueEventType.ActionRetrying);
+            // Queue state changes
+            expect(listenerSpy.mock.calls[5][0].type).toBe(DraftQueueEventType.QueueStateChanged);
+            expect(listenerSpy.mock.calls[5][0].state).toBe(DraftQueueState.Stopped);
+
             //set a response so it isnt in a loop
             setMockNetworkPayloads(network, [successPayload]);
         });

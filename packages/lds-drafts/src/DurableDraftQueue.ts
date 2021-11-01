@@ -132,6 +132,7 @@ export class DurableDraftQueue implements DraftQueue {
     startQueue(): Promise<void> {
         this.userState = DraftQueueState.Started;
         if (this.state === DraftQueueState.Started) {
+            // Do nothing if the queue state is already started
             return Promise.resolve();
         }
         if (this.replacingAction !== undefined) {
@@ -140,32 +141,47 @@ export class DurableDraftQueue implements DraftQueue {
             // has last set the queue to be started
             return Promise.resolve();
         }
-        this.state = DraftQueueState.Started;
-        this.retryIntervalMilliseconds = 0;
-        return this.processNextAction().then((result) => {
-            switch (result) {
-                case ProcessActionResult.BLOCKED_ON_ERROR:
-                    this.state = DraftQueueState.Error;
-                    return Promise.reject();
 
-                default:
-                    return Promise.resolve();
-            }
+        this.retryIntervalMilliseconds = 0;
+        this.state = DraftQueueState.Started;
+        const notify = this.notifyChangedListeners({
+            type: DraftQueueEventType.QueueStateChanged,
+            state: this.state,
         });
+        const processNext = () =>
+            this.processNextAction().then((result) => {
+                switch (result) {
+                    case ProcessActionResult.BLOCKED_ON_ERROR:
+                        this.state = DraftQueueState.Error;
+                        return Promise.reject();
+                    default:
+                        return Promise.resolve();
+                }
+            });
+
+        return notify.then(processNext);
     }
 
     stopQueue(): Promise<void> {
         this.userState = DraftQueueState.Stopped;
-        return this.stopQueueManually();
+        if (this.state === DraftQueueState.Stopped) {
+            // Do nothing if the queue state is already stopped
+            return Promise.resolve();
+        }
+
+        this.stopQueueManually();
+
+        return this.notifyChangedListeners({
+            type: DraftQueueEventType.QueueStateChanged,
+            state: DraftQueueState.Stopped,
+        });
     }
 
     /**
      * Used to stop the queue within DraftQueue without user interaction
-     * @returns
      */
-    private stopQueueManually(): Promise<void> {
+    private stopQueueManually(): void {
         this.state = DraftQueueState.Stopped;
-        return Promise.resolve();
     }
 
     getQueueActions(): Promise<DraftAction<unknown, unknown>[]> {
@@ -379,8 +395,8 @@ export class DurableDraftQueue implements DraftQueue {
         });
     }
 
-    private notifyChangedListeners(event: DraftQueueEvent) {
-        var results: Promise<void>[] = [];
+    private notifyChangedListeners(event: DraftQueueEvent): Promise<void> {
+        const results: Promise<void>[] = [];
         const { draftQueueChangedListeners } = this;
         const { length: draftQueueLen } = draftQueueChangedListeners;
         for (let i = 0; i < draftQueueLen; i++) {
@@ -448,48 +464,50 @@ export class DurableDraftQueue implements DraftQueue {
         if (this.replacingAction !== undefined) {
             return Promise.reject('Cannot replace actions while a replace action is in progress');
         }
-        return this.stopQueueManually().then(() => {
-            const replacing = this.getQueueActions().then((actions) => {
-                const first = actions.filter((action) => action.id === actionId)[0];
-                if (first === undefined) {
-                    return Promise.reject('No action to replace');
-                }
 
-                const { original, actionToReplace, replacingAction } = this.handlers[
-                    first.handler
-                ].replaceAction(actionId, withActionId, this.uploadingActionId, actions);
+        this.stopQueueManually();
 
-                // TODO [W-8873834]: Will add batching support to durable store
-                // we should use that here to remove and set both actions in one operation
-                return this.removeDraftAction(replacingAction.id).then(() => {
-                    return this.notifyChangedListeners({
-                        type: DraftQueueEventType.ActionUpdating,
-                        action: original,
-                    }).then(() => {
-                        return this.draftStore.writeAction(actionToReplace).then(() => {
-                            return this.notifyChangedListeners({
-                                type: DraftQueueEventType.ActionUpdated,
-                                action: actionToReplace,
-                            }).then(() => {
-                                this.replacingAction = undefined;
-                                if (
-                                    this.userState === DraftQueueState.Started &&
-                                    this.state !== DraftQueueState.Started
-                                ) {
-                                    return this.startQueue().then(() => {
-                                        return actionToReplace;
-                                    });
-                                } else {
+        const replacing = this.getQueueActions().then((actions) => {
+            const first = actions.filter((action) => action.id === actionId)[0];
+            if (first === undefined) {
+                return Promise.reject('No action to replace');
+            }
+
+            const { original, actionToReplace, replacingAction } = this.handlers[
+                first.handler
+            ].replaceAction(actionId, withActionId, this.uploadingActionId, actions);
+
+            // TODO [W-8873834]: Will add batching support to durable store
+            // we should use that here to remove and set both actions in one operation
+            return this.removeDraftAction(replacingAction.id).then(() => {
+                return this.notifyChangedListeners({
+                    type: DraftQueueEventType.ActionUpdating,
+                    action: original,
+                }).then(() => {
+                    return this.draftStore.writeAction(actionToReplace).then(() => {
+                        return this.notifyChangedListeners({
+                            type: DraftQueueEventType.ActionUpdated,
+                            action: actionToReplace,
+                        }).then(() => {
+                            this.replacingAction = undefined;
+                            if (
+                                this.userState === DraftQueueState.Started &&
+                                this.state !== DraftQueueState.Started
+                            ) {
+                                return this.startQueue().then(() => {
                                     return actionToReplace;
-                                }
-                            });
+                                });
+                            } else {
+                                return actionToReplace;
+                            }
                         });
                     });
                 });
             });
-            this.replacingAction = replacing;
-            return replacing;
         });
+        this.replacingAction = replacing;
+
+        return replacing;
     }
 
     setMetadata(

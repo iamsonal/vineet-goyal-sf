@@ -65,6 +65,12 @@ export function isDraftError<Response, Data>(
     return draft.status === DraftActionStatus.Error;
 }
 
+export function isDraftQueueStateChangeEvent(
+    event: DraftQueueEvent
+): event is DraftQueueStateChangedEvent {
+    return event.type === DraftQueueEventType.QueueStateChanged;
+}
+
 export type DraftAction<Response, Data> =
     | CompletedDraftAction<Response, Data>
     | PendingDraftAction<Response, Data>
@@ -163,6 +169,10 @@ export enum DraftQueueEventType {
      * Triggered after an action has been updated by the updateAction API
      */
     ActionUpdated = 'updated',
+    /**
+     * Triggered after the Draft Queue state changes
+     */
+    QueueStateChanged = 'state',
 }
 
 export interface DraftQueueAddEvent {
@@ -204,8 +214,12 @@ export interface DraftQueueActionUpdatedEvent {
     type: DraftQueueEventType.ActionUpdated;
     action: DraftAction<unknown, unknown>;
 }
+export interface DraftQueueStateChangedEvent {
+    type: DraftQueueEventType.QueueStateChanged;
+    state: DraftQueueState;
+}
 
-export type DraftQueueEvent =
+export type DraftQueueItemEvent =
     | DraftQueueAddEvent
     | DraftQueueCompleteEvent
     | DraftQueueDeleteEvent
@@ -214,6 +228,8 @@ export type DraftQueueEvent =
     | DraftQueueActionFailedEvent
     | DraftQueueActionUpdatingEvent
     | DraftQueueActionUpdatedEvent;
+
+export type DraftQueueEvent = DraftQueueStateChangedEvent | DraftQueueItemEvent;
 
 export enum QueueOperationType {
     Add = 'add',

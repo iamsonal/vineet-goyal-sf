@@ -2895,6 +2895,70 @@ describe('routes', () => {
         );
     });
 
+    describe('put /record-locking/lock/{recordId}', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/lock/012T00000004MUHIA2`,
+                urlParams: {
+                    recordId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.lockRecord',
+                {
+                    recordId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/lock/012T00000004MUHIA2`,
+            },
+            {
+                code: 1,
+                message: 'lock called successfully',
+            }
+        );
+    });
+
+    describe('put /record-locking/unlock/{recordId}', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/unlock/012T00000004MUHIA2`,
+                urlParams: {
+                    recordId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.unlockRecord',
+                {
+                    recordId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/unlock/012T00000004MUHIA2`,
+            },
+            {
+                code: 1,
+                message: 'unlock called successfully',
+            }
+        );
+    });
+
     describe('post /reference-data/{category}/upload', () => {
         testControllerInput(
             {

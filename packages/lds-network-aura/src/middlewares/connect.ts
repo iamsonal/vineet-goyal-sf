@@ -356,7 +356,32 @@ const UPLOAD_REFERENCE_DATA_PATH = new RegExp(
     'i'
 );
 
+const LOCK_RECORD_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/sustainability/record-locking/lock/([A-Z0-9]){1,18}$`,
+    'i'
+);
+
+const UNLOCK_RECORD_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/sustainability/record-locking/unlock/([A-Z0-9]){1,18}$`,
+    'i'
+);
+
 const connect: ApiFamily = {
+    lockRecord: {
+        method: 'put',
+        predicate: (path) => path.startsWith(CONNECT_BASE_URI) && LOCK_RECORD_PATH.test(path),
+        transport: {
+            controller: 'SustainabilityFamilyController.lockRecord',
+        },
+    },
+    unlockRecord: {
+        method: 'put',
+        predicate: (path) => path.startsWith(CONNECT_BASE_URI) && UNLOCK_RECORD_PATH.test(path),
+        transport: {
+            controller: 'SustainabilityFamilyController.unlockRecord',
+        },
+    },
+
     ingestRecord: {
         method: 'post',
         predicate: (path: string) =>

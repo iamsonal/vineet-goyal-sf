@@ -1,0 +1,65 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v54.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  SCRecordLockUnlockRepresentation:
+    description: Represents the response of Lock/Unlock of Entity
+    type: object
+    properties:
+      code:
+        description: RecordLockUnlock Output Code
+        type: integer
+      message:
+        description: RecordLockUnlock Output Message
+        type: string
+/connect/sustainability:
+  /record-locking:
+    /lock/{recordId}:
+      put:
+        description: Lock Entity Record for Calculations
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SCRecordLockUnlockRepresentation
+      uriParameters:
+        recordId:
+          type: string
+          required: true
+    /unlock/{recordId}:
+      put:
+        description: Unlock Entity Record for Calculations
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SCRecordLockUnlockRepresentation
+      uriParameters:
+        recordId:
+          type: string
+          required: true

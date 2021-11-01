@@ -319,6 +319,18 @@ const GET_TAGS_BY_RECORD_PATH = new RegExp(
     'i'
 );
 
+const GET_RECORDS_BY_TAGID_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/interest-tags/assignments/tag/([A-Z0-9_]){1,80}$`,
+    'i'
+);
+
+const GET_TAGS_BY_CATEGORYID_PATH = new RegExp(`${CONNECT_BASE_URI}/interest-tags/tags$`, 'i');
+
+const GET_CATEGORIES_BY_TAGID_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/interest-tags/catogories$`,
+    'i'
+);
+
 const LOYALTY_PROGRAM_PROCESS_RULE = new RegExp(
     `${CONNECT_BASE_URI}/loyalty/programs/([A-Z0-9_]){1,80}/processes/([A-Z0-9_]){1,80}/rule/([A-Z0-9_]){1,80}$`,
     'i'
@@ -1202,6 +1214,30 @@ const interesttagging: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && GET_TAGS_BY_RECORD_PATH.test(path),
         transport: {
             controller: 'InterestTaggingFamilyController.getTagsByRecordId',
+        },
+    },
+    getInterestTagEntityAssignments: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_RECORDS_BY_TAGID_PATH.test(path),
+        transport: {
+            controller: 'InterestTaggingFamilyController.getInterestTagEntityAssignments',
+        },
+    },
+    getTagsByCategoryId: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_TAGS_BY_CATEGORYID_PATH.test(path),
+        transport: {
+            controller: 'InterestTaggingFamilyController.getTagsByCategoryId',
+        },
+    },
+    getTagCategoriesByTagId: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_CATEGORIES_BY_TAGID_PATH.test(path),
+        transport: {
+            controller: 'InterestTaggingFamilyController.getTagCategoriesByTagId',
         },
     },
 };

@@ -1,62 +1,62 @@
 import {
     clone,
-    mockGetTagsByRecordIdNetworkOnce,
-    mockGetTagsByRecordIdNetworkErrorOnce,
-    mockGetTagsByRecordIdNetworkSequence,
-    expireGetTagsByRecordId,
+    mockGetTagCategoriesByTagIdNetworkOnce,
+    mockGetTagCategoriesByTagIdNetworkErrorOnce,
+    mockGetTagCategoriesByTagIdNetworkSequence,
+    expireGetTagCategoriesByTagId,
 } from 'industries-interesttagging-test-util';
 import { getMock as globalGetMock, setupElement, clearCache } from 'test-util';
-import GetTagsByRecordId from '../lwc/get-tags-by-record-id';
+import GetTagCategoriesByTagId from '../lwc/get-tag-categories-by-tag-id';
 
-const MOCK_DATA_PATH = 'wire/getTagsByRecordId/__karma__/data/';
+const MOCK_DATA_PATH = 'wire/getTagCategoriesByTagId/__karma__/data/';
 
 function getDataMock(filename) {
     return globalGetMock(MOCK_DATA_PATH + filename);
 }
 
 const MOCK_TEST_CONFIG = {
-    recordId: 'mockId',
+    tagId: 'mockId',
 };
 
-describe('basic getTagsByRecordId tests', () => {
-    it('test Basic Cache Miss Scenario- tagDetails using getTagsByRecordId', async () => {
-        const outputMock = getDataMock('InterestTagListRepresentation');
-        mockGetTagsByRecordIdNetworkOnce(MOCK_TEST_CONFIG, outputMock);
+describe('basic getTagCategoriesByTagId tests', () => {
+    it('test Basic Cache Miss Scenario- tagDetails using getTagCategoriesByTagId', async () => {
+        const outputMock = getDataMock('TagCategoryListRepresentation');
+        mockGetTagCategoriesByTagIdNetworkOnce(MOCK_TEST_CONFIG, outputMock);
 
-        const element = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const element = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(clone(element.getWiredTagDetail())).toEqual(outputMock);
     });
 
     it('test Basic Cache Hit Scenario- do not fetch tagDetails second time', async () => {
-        const outputMock = getDataMock('InterestTagListRepresentation');
+        const outputMock = getDataMock('TagCategoryListRepresentation');
 
-        mockGetTagsByRecordIdNetworkOnce(MOCK_TEST_CONFIG, outputMock);
+        mockGetTagCategoriesByTagIdNetworkOnce(MOCK_TEST_CONFIG, outputMock);
 
-        const el = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el.pushCount()).toBe(1);
         expect(clone(el.getWiredTagDetail())).toEqual(outputMock);
 
         // second element should receive a value from LDS
         // even though it only mocked the network traffic once
-        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el2.pushCount()).toBe(1);
         expect(clone(el2.getWiredTagDetail())).toEqual(outputMock);
     });
 
     it('fetches a second time, i.e. cache miss for another component with different config', async () => {
-        const outputMock = getDataMock('InterestTagListRepresentation');
+        const outputMock = getDataMock('TagCategoryListRepresentation');
 
         const mockTestConfig2 = {
-            recordId: 'mockId2',
+            tagId: 'mockId2',
         };
 
-        mockGetTagsByRecordIdNetworkOnce(MOCK_TEST_CONFIG, outputMock);
-        mockGetTagsByRecordIdNetworkOnce(mockTestConfig2, outputMock);
+        mockGetTagCategoriesByTagIdNetworkOnce(MOCK_TEST_CONFIG, outputMock);
+        mockGetTagCategoriesByTagIdNetworkOnce(mockTestConfig2, outputMock);
 
-        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el1.getWiredTagDetail()).toEqual(outputMock);
 
-        const el2 = await setupElement(mockTestConfig2, GetTagsByRecordId);
+        const el2 = await setupElement(mockTestConfig2, GetTagCategoriesByTagId);
         expect(el2.getWiredTagDetail()).toEqual(outputMock);
 
         // Each element receive 1 push
@@ -65,17 +65,17 @@ describe('basic getTagsByRecordId tests', () => {
     });
 
     it('test Expired Data Cache Miss Scenario- should hit network if details are available but expired', async () => {
-        const outputMock = getDataMock('InterestTagListRepresentation');
+        const outputMock = getDataMock('TagCategoryListRepresentation');
 
-        mockGetTagsByRecordIdNetworkSequence(MOCK_TEST_CONFIG, [outputMock, outputMock]);
+        mockGetTagCategoriesByTagIdNetworkSequence(MOCK_TEST_CONFIG, [outputMock, outputMock]);
 
-        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el1.pushCount()).toBe(1);
         expect(el1.getWiredTagDetail()).toEqual(outputMock);
 
-        expireGetTagsByRecordId();
+        expireGetTagCategoriesByTagId();
 
-        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredTagDetail()).toEqual(outputMock);
 
@@ -95,9 +95,9 @@ describe('basic getTagsByRecordId tests', () => {
                 },
             ],
         };
-        mockGetTagsByRecordIdNetworkErrorOnce(MOCK_TEST_CONFIG, mock);
+        mockGetTagCategoriesByTagIdNetworkErrorOnce(MOCK_TEST_CONFIG, mock);
 
-        const el = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el.pushCount()).toBe(1);
         expect(el.getError()).toEqualImmutable(mock);
     });
@@ -115,20 +115,20 @@ describe('basic getTagsByRecordId tests', () => {
             ],
         };
 
-        mockGetTagsByRecordIdNetworkOnce(MOCK_TEST_CONFIG, {
+        mockGetTagCategoriesByTagIdNetworkOnce(MOCK_TEST_CONFIG, {
             reject: true,
             data: mockError,
         });
 
-        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el1.getError()).toEqualImmutable(mockError);
 
-        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el2.getError()).toEqualImmutable(mockError);
     });
 
     it('test Expired Server 404 Cache Miss Scenario- should refetch details when ingested properties error TTLs out', async () => {
-        const outputMock = getDataMock('InterestTagListRepresentation');
+        const outputMock = getDataMock('TagCategoryListRepresentation');
 
         const mockError = {
             ok: false,
@@ -142,7 +142,7 @@ describe('basic getTagsByRecordId tests', () => {
             ],
         };
 
-        mockGetTagsByRecordIdNetworkSequence(MOCK_TEST_CONFIG, [
+        mockGetTagCategoriesByTagIdNetworkSequence(MOCK_TEST_CONFIG, [
             {
                 reject: true,
                 data: mockError,
@@ -150,12 +150,12 @@ describe('basic getTagsByRecordId tests', () => {
             outputMock,
         ]);
 
-        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el1.getError()).toEqualImmutable(mockError);
 
         clearCache();
 
-        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
+        const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagCategoriesByTagId);
         expect(el2.error).toBeUndefined();
         expect(el2.getWiredTagDetail()).toEqual(outputMock);
     });

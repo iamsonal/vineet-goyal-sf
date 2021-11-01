@@ -7313,6 +7313,75 @@ describe('routes', () => {
         );
     });
 
+    describe('get /interest-tags/assignments/tag/${tagId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/assignments/tag/0qOxx0000004C93EAE`,
+            },
+            [
+                'InterestTaggingFamilyController.getInterestTagEntityAssignments',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/assignments/tag/0qOxx0000004C93EAE`,
+            },
+            {}
+        );
+    });
+
+    describe('get /interest-tags/tags', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/tags`,
+            },
+            [
+                'InterestTaggingFamilyController.getTagsByCategoryId',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/tags`,
+            },
+            {}
+        );
+    });
+
+    describe('get /interest-tags/catogories', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/catogories`,
+            },
+            [
+                'InterestTaggingFamilyController.getTagCategoriesByTagId',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/catogories`,
+            },
+            {}
+        );
+    });
+
     describe('post /connect/communities/{communityId}/microbatching', () => {
         testControllerInput(
             {

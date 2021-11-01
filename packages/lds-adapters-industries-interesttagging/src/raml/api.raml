@@ -124,6 +124,9 @@ types:
       name:
         description: The tag name
         type: string
+      recordAssignmentId:
+        description: The id of the assignment record of the tagid and recordId
+        type: string
       tagId:
         description: The tag Id
         type: string
@@ -174,6 +177,15 @@ types:
       tagId:
         description: Interest Tag Id
         type: string
+  TagCategoryListRepresentation:
+    description: A list of tag categories.
+    type: object
+    properties:
+      categories:
+        description: tag category list
+        type: array
+        items:
+          type: TagCategoryWithParentRepresentation
   TagCategoryRepresentation:
     description: The response for a category.
     type: object
@@ -181,8 +193,24 @@ types:
       categoryId:
         description: The category Id
         type: string
+      icon:
+        description: The icon of the category
+        type: string
       name:
         description: The category name
+        type: string
+  TagCategoryWithParentRepresentation:
+    description: The representation of a category with its parent category.
+    type: object
+    properties:
+      categoryId:
+        description: The category Id
+        type: string
+      name:
+        description: The category name
+        type: string
+      parentCategoryId:
+        description: The parent category Id
         type: string
   TagRecordAssignment:
     description: Tag record assignment representation
@@ -321,6 +349,31 @@ types:
         tagId:
           type: string
           required: true
+  /categories:
+    get:
+      description: Get a list of tag categories assigned to an interest tag.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TagCategoryListRepresentation
+      queryParameters:
+        limit:
+          type: integer
+          required: false
+        offset:
+          type: integer
+          required: false
+        orderBy:
+          type: string
+          required: false
+        sort:
+          type: string
+          required: false
+        tagId:
+          type: string
+          required: false
   /tags:
     get:
       description: Get a list of tags assigned to the given category.

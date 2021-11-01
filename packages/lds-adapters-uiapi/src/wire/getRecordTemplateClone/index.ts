@@ -7,6 +7,9 @@ import {
     Selector,
     FetchResponse,
     AdapterContext,
+    DispatchResourceRequest,
+    StoreLookup,
+    AdapterRequestContext,
 } from '@luvio/engine';
 import {
     validateAdapterConfig,
@@ -193,13 +196,65 @@ const buildInMemorySnapshot: (
     });
 };
 
+type BuildSnapshotContext = {
+    adapterContext: AdapterContext;
+    config: GetRecordTemplateCloneConfig;
+    luvio: Luvio;
+    recordTypeId: string | undefined;
+};
+
+const buildNetworkSnapshotCachePolicy: (
+    context: BuildSnapshotContext,
+    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
+    _dispatchResourceRequest: DispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>
+) => ReturnType<typeof buildNetworkSnapshot> = (
+    context: BuildSnapshotContext,
+    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
+    _dispatchResourceRequest: DispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>
+): Promise<Snapshot<RecordDefaultsTemplateCloneRepresentation, any>> => {
+    const { config, adapterContext, luvio } = context;
+    return buildNetworkSnapshot(luvio, adapterContext, config);
+};
+
+const buildInMemorySnapshotCachePolicy: (
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordDefaultsTemplateCloneRepresentation>
+) => ReturnType<typeof buildInMemorySnapshot> = (
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordDefaultsTemplateCloneRepresentation>
+): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> => {
+    const { adapterContext, config, luvio, recordTypeId } = context;
+
+    const updatedConfig = {
+        ...config,
+        recordTypeId,
+    };
+
+    const resourceParams = createResourceParams(updatedConfig);
+    const key = templateKeyBuilder({
+        cloneSourceId: updatedConfig.recordId,
+        recordTypeId: updatedConfig.recordTypeId || null,
+    });
+    const selector: Selector = {
+        recordId: key,
+        node: select(luvio, resourceParams),
+        variables: {},
+    };
+    return storeLookup(selector, {
+        config,
+        resolve: () =>
+            buildNetworkSnapshot(luvio, adapterContext, updatedConfig, snapshotRefreshOptions),
+    });
+};
+
 export const factory: AdapterFactory<
     GetRecordTemplateCloneConfig,
     RecordDefaultsTemplateCloneRepresentation
 > = (luvio: Luvio) =>
     luvio.withContext(function getRecordTemplateClone_ContextWrapper(
         untrustedConfig: unknown,
-        context: AdapterContext
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
     ) {
         const config = validateAdapterConfig(
             untrustedConfig,
@@ -211,9 +266,23 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        const recordTypeId = getRecordTypeId(config, context);
+        const recordTypeId = getRecordTypeId(config, adapterContext);
 
-        const cacheSnapshot = buildInMemorySnapshot(luvio, context, {
+        if (requestContext !== undefined) {
+            return luvio.applyCachePolicy(
+                requestContext === undefined ? undefined : requestContext.cachePolicy,
+                {
+                    luvio,
+                    config,
+                    recordTypeId,
+                    adapterContext,
+                },
+                buildInMemorySnapshotCachePolicy,
+                buildNetworkSnapshotCachePolicy
+            );
+        }
+
+        const cacheSnapshot = buildInMemorySnapshot(luvio, adapterContext, {
             ...config,
             recordTypeId,
         });
@@ -223,5 +292,5 @@ export const factory: AdapterFactory<
             return cacheSnapshot;
         }
 
-        return buildNetworkSnapshot(luvio, context, config);
+        return buildNetworkSnapshot(luvio, adapterContext, config);
     });

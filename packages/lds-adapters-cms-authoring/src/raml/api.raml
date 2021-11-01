@@ -1243,8 +1243,16 @@ types:
       isFolder:
         description: Boolean flag to indicate whether this folder item is a folder
         type: boolean
+      isPublished:
+        description: Boolean flag to indicate whether this folder item is published
+        type: boolean
+        required: false # TODO hand rolled --> see: W-9965762
       lastModifiedBy:
         description: The User ID for the user which last modified the ManagedContentVariant
+          or ManagedContentSpaceFolder
+        type: string
+      lastModifiedByName:
+        description: The User Name for the user which last modified the ManagedContentVariant
           or ManagedContentSpaceFolder
         type: string
       lastModifiedDate:
@@ -1258,14 +1266,9 @@ types:
         description: Latest Managed Content Variant Id of the folder item is ManagedContent
         type: string
         required: false # TODO hand rolled --> see: W-9965762
-      publishedDate:
-        description: Date when the ManagedContent was last published
+      mimeType:
+        description: The mimetype for the content
         type: string
-        required: false # TODO hand rolled --> see: W-9965762
-      status:
-        description: Status of the Managed Content
-        type: string
-        required: false # TODO hand rolled --> see: W-9965762
       title:
         description: Title of the ManagedContent/ManagedContentSpaceFolder
         type: string

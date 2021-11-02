@@ -20,6 +20,8 @@ types:
     (luvio.ttl): 300
     (luvio.key):
       id: id
+  FieldCollectionRepresentation:
+    (luvio.ttl): 5000
 
 /analytics/data-service/sync:
   /connectors:
@@ -42,3 +44,10 @@ types:
         name: getConnection
       (luvio.key):
         id: urlParams.id
+  /connections/{id}/sourceObjects/{sourceObjectName}/fields:
+    get:
+      (luvio.adapter):
+        name: getFields
+    (luvio.key):
+      id: urlParams.id
+      sourceObjectName: urlParams.sourceObjectName

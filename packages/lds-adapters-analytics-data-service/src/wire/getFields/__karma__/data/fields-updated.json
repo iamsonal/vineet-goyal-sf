@@ -1,0 +1,25 @@
+{
+    "fields": [
+        {
+            "name": "Id",
+            "type": "string",
+            "state": "Required",
+            "info": ""
+        },
+        {
+            "name": "Name",
+            "type": "string",
+            "state": "NotConnected",
+            "info": ""
+        },
+        {
+            "name": "Address",
+            "type": "string",
+            "state": "NotConnected",
+            "info": ""
+        }
+    ],
+    "totalSize": 3,
+    "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account/fields",
+    "nextPageUrl": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account/fields"
+}

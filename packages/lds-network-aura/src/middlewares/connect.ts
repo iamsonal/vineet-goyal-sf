@@ -74,7 +74,11 @@ const ADATS_CONNECTORS_PATH = new RegExp(`${ADATS_BASE_URI}/connectors$`, 'i');
 const ADATS_CONNECTOR_PATH = new RegExp(`${ADATS_BASE_URI}/connectors/[A-Z0-9_-]`, 'i');
 const ADATS_CONNECTIONS_PATH = new RegExp(`${ADATS_BASE_URI}/connections$`, 'i');
 const ADATS_CONNECTION_PATH = new RegExp(
-    `${ADATS_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`,
+    `${ADATS_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`,
+    'i'
+);
+const ADATS_FIELDS_PATH = new RegExp(
+    `${ADATS_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects/.{1,255}/fields$`,
     'i'
 );
 
@@ -1184,6 +1188,14 @@ const adats: ApiFamily = {
             path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTION_PATH.test(path),
         transport: {
             controller: 'AdatsController.getConnection',
+        },
+    },
+    getFields: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_BASE_URI) && ADATS_FIELDS_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getFields',
         },
     },
 };

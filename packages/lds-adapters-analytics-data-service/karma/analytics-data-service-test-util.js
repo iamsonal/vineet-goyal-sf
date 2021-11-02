@@ -67,6 +67,20 @@ function mockGetConnectionNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function mockGetFieldsNetworkOnce(config, mockData) {
+    const paramMatch = getFieldsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetFieldsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getFieldsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function getConnectorMatcher(config) {
     const { id } = config;
 
@@ -113,6 +127,22 @@ function getConnectionMatcher(config) {
         queryParams: {},
     });
 }
+
+function getFieldsMatcher(config) {
+    const { id, sourceObjectName, page, pageSize, q } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/connections/${id}/sourceObjects/${sourceObjectName}/fields`,
+        queryParams: {
+            page,
+            pageSize,
+            q,
+        },
+    });
+}
 function expireAsset() {
     timekeeper.travel(Date.now() + ASSET_TTL + 1);
 }
@@ -127,5 +157,7 @@ export {
     mockGetConnectorNetworkErrorOnce,
     mockGetConnectionNetworkOnce,
     mockGetConnectionNetworkErrorOnce,
+    mockGetFieldsNetworkOnce,
+    mockGetFieldsNetworkErrorOnce,
     expireAsset,
 };

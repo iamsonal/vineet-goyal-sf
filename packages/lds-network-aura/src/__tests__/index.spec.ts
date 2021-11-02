@@ -7772,6 +7772,54 @@ describe('routes', () => {
         );
     });
 
+    describe('get /analytics/data-service/sync/connections/{id}/sourceObjects/{sourceObjectName}/fields', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
+            },
+            [
+                'AdatsController.getFields',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: ADATS_BASE_URI,
+                    basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
+                    queryParams: {
+                        page: 1,
+                        pageSize: 3,
+                        q: 'acc',
+                    },
+                },
+                [
+                    'AdatsController.getFields',
+                    {
+                        pageParam: 1,
+                        pageSize: 3,
+                        q: 'acc',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
+            },
+            {}
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map((key) => key.split(':')))(
         '%s %s route tested',

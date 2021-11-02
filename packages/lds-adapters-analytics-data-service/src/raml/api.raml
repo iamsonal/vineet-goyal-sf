@@ -1,9 +1,9 @@
 #%RAML 1.0
-# This RAML has been modified and "ELT Foundation - Analytics" is responsible for maintaing it
+# This RAML has been modified and "Data Services - Analytics" is responsible for maintaining it
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '52.0'
+version: '54.0'
 mediaType: application/json
 protocols:
   - https
@@ -104,7 +104,48 @@ types:
       url:
         description: Url
         type: string
-
+  FieldCollectionRepresentation:
+    description: A paged collection of fields available on a source object
+    type: object
+    properties:
+      fields:
+        description: A list of Fields.
+        type: array
+        items:
+          type: FieldRepresentation
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective
+          of the page.
+        type: integer
+      url:
+        description: URL to get the collection.
+        type: string
+  FieldRepresentation:
+    description: A Field represents a field belonging to a source object on a connection
+    type: object
+    properties:
+      info:
+        description: Information about this field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The name of the field in the source system.
+        type: string
+      state:
+        description: The replication state of this field.
+        type: string
+        enum:
+          - Connected
+          - NotConnectable
+          - NotConnected
+          - Required
+      type:
+        description: The type of the field in the source system.
+        type: string
   ResourceReferenceRepresentation:
     description: A reference to a resource in the API that contains basic information about the resource and a URL to locate it.
     type: object
@@ -169,5 +210,31 @@ types:
               type: ConnectionRepresentation
     uriParameters:
       id:
+        type: string
+        required: true
+  /connections/{id}/sourceObjects/{sourceObjectName}/fields:
+    get:
+      description: Get a list of all the Fields belonging to a source object.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FieldCollectionRepresentation
+      queryParameters:
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+    uriParameters:
+      id:
+        type: string
+        required: true
+      sourceObjectName:
         type: string
         required: true

@@ -1,0 +1,18 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'sustainability-recalculate'
+types:
+  SustainabilityFootprintCalculationRepresentation:
+    (luvio.ttl): 300
+    (luvio.opaque): true
+    (luvio.key):
+      message: message
+
+/connect/sustainability/footprint-calculation/recalculate/{recordId}:
+  post:
+    (luvio.adapter):
+      name: recalculate

@@ -3047,6 +3047,38 @@ describe('routes', () => {
         );
     });
 
+    describe('post /footprint-calculation/recalculate/', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/footprint-calculation/recalculate/`,
+                urlParams: {
+                    recordId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.performSustainabilityFootprintCalculationOnRecord',
+                {
+                    recordId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/footprint-calculation/recalculate/`,
+            },
+            {
+                status: 'success',
+                message: 'called successfully',
+            }
+        );
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

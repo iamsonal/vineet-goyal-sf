@@ -361,6 +361,11 @@ const RCG_TPM_MANAGEMENT_PATH = new RegExp(
     'i'
 );
 
+const RECALCULATE_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/sustainability/footprint-calculation/recalculate`,
+    'i'
+);
+
 const LOCK_RECORD_PATH = new RegExp(
     `${CONNECT_BASE_URI}/sustainability/record-locking/lock/([A-Z0-9]){1,18}$`,
     'i'
@@ -699,6 +704,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && UPLOAD_REFERENCE_DATA_PATH.test(path),
         transport: {
             controller: 'SustainabilityFamilyController.uploadReferenceData',
+        },
+    },
+    recalculate: {
+        method: 'post',
+        predicate: (path) => path.startsWith(CONNECT_BASE_URI) && RECALCULATE_PATH.test(path),
+        transport: {
+            controller:
+                'SustainabilityFamilyController.performSustainabilityFootprintCalculationOnRecord',
         },
     },
     getTenantRegistrationStatus: {

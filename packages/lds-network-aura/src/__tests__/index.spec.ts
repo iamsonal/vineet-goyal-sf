@@ -2994,6 +2994,58 @@ describe('routes', () => {
             }
         );
     });
+    describe('get /consumer-goods/tenant-registration', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            [
+                'RCGTenantManagentController.getTenantRegistrationStatus',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            {
+                isCertAvailable: true,
+                state: 'registerd',
+            }
+        );
+    });
+
+    describe('put /consumer-goods/tenant-registration', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            [
+                'RCGTenantManagentController.putTenantCertificate',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            {
+                certificateUpdateStatus: 'success',
+            }
+        );
+    });
 
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {

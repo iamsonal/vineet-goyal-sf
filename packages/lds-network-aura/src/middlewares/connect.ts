@@ -13,6 +13,7 @@ import {
     EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
     CIB_BASE_URI,
+    RCG_TENANTMANAGEMENT_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_MICROBATCHING_PATH = new RegExp(
@@ -355,6 +356,10 @@ const UPLOAD_REFERENCE_DATA_PATH = new RegExp(
     `${CONNECT_BASE_URI}/sustainability/reference-data/([A-Z]){2,40}/upload$`,
     'i'
 );
+const RCG_TPM_MANAGEMENT_PATH = new RegExp(
+    `${RCG_TENANTMANAGEMENT_BASE_URI}/tenant-registration$`,
+    'i'
+);
 
 const LOCK_RECORD_PATH = new RegExp(
     `${CONNECT_BASE_URI}/sustainability/record-locking/lock/([A-Z0-9]){1,18}$`,
@@ -694,6 +699,22 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && UPLOAD_REFERENCE_DATA_PATH.test(path),
         transport: {
             controller: 'SustainabilityFamilyController.uploadReferenceData',
+        },
+    },
+    getTenantRegistrationStatus: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(RCG_TENANTMANAGEMENT_BASE_URI) && RCG_TPM_MANAGEMENT_PATH.test(path),
+        transport: {
+            controller: 'RCGTenantManagentController.getTenantRegistrationStatus',
+        },
+    },
+    putTenantCertificate: {
+        method: 'put',
+        predicate: (path) =>
+            path.startsWith(RCG_TENANTMANAGEMENT_BASE_URI) && RCG_TPM_MANAGEMENT_PATH.test(path),
+        transport: {
+            controller: 'RCGTenantManagentController.putTenantCertificate',
         },
     },
 };

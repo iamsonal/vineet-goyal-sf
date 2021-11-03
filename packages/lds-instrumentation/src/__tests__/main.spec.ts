@@ -624,6 +624,11 @@ describe('setupInstrumentation', () => {
             };
             const store = new Store();
 
+            // freeze to guarantee that the second param to `trackValue` will be zero
+            // for store-broadcast-duration
+            const now = Date.now();
+            timekeeper.freeze(now);
+
             // Exercise
             setupInstrumentation(mockLuvio, store);
             mockLuvio.storeBroadcast();

@@ -8,9 +8,8 @@ uses:
 types:
   JoinChimeMeetingResultRepresentation:
     (luvio.key):
-      attendeeId: attendee.attendeeId
-      meetingId: meeting.meetingId
-    (luvio.ttl): 30000
+      isSuccess: isSuccess
+    (luvio.ttl): 300
 
 /connect/health/video-visits/chime-meeting:
   post:

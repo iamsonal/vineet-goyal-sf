@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-loyalty-engine",
-    "version": "1.34.0",
+    "version": "1.35.0",
     "description": "The api is responsible for upserting Loyalty Process Rules",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-loyalty-engine.js",
@@ -27,13 +27,13 @@
         "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.34.0"
+        "@salesforce/lds-bindings": "1.35.0"
     },
     "devDependencies": {
         "@luvio/cli": "0.59.0",
         "@luvio/compiler": "0.59.0",
         "@luvio/engine": "0.59.0",
         "@luvio/lwc-luvio": "0.59.0",
-        "@salesforce/lds-karma": "1.34.0"
+        "@salesforce/lds-karma": "1.35.0"
     }
 }

@@ -20,6 +20,12 @@ types:
     (luvio.ttl): 300
     (luvio.key):
       id: id
+  SourceObjectRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      SourceObjectName: name
+  SourceObjectCollectionRepresentation:
+    (luvio.ttl): 5000
   FieldCollectionRepresentation:
     (luvio.ttl): 5000
 
@@ -38,12 +44,25 @@ types:
     get:
       (luvio.adapter):
         name: getConnections
+    post:
+      (luvio.adapter):
+        name: createConnection
   /connections/{id}:
     get:
       (luvio.adapter):
         name: getConnection
       (luvio.key):
         id: urlParams.id
+    /sourceObjects:
+      get:
+        (luvio.adapter):
+          name: getConnectionSourceObjects
+    /sourceObjects/{sourceObjectName}:
+      get:
+        (luvio.adapter):
+          name: getConnectionSourceObject
+        (luvio.key):
+          SourceObjectName: urlParams.sourceObjectName
   /connections/{id}/sourceObjects/{sourceObjectName}/fields:
     get:
       (luvio.adapter):

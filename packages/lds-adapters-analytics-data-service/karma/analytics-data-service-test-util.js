@@ -67,6 +67,15 @@ function mockGetConnectionNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function mockCreateConnectionNetworkOnce(config, mockData) {
+    const paramMatch = createDataConnectorsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetFieldsNetworkOnce(config, mockData) {
     const paramMatch = getFieldsMatcher(config);
     if (Array.isArray(mockData)) {
@@ -74,6 +83,83 @@ function mockGetFieldsNetworkOnce(config, mockData) {
     } else {
         mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
     }
+}
+
+function mockCreateConnectionNetworkErrorOnce(config, mockData) {
+    const paramMatch = createDataConnectorsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+// Data connector source objects
+function mockGetConnectionSourceObjectsNetworkOnce(config, mockData) {
+    const paramMatch = getConnectorSourceObjectsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetConnectionSourceObjectsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getConnectorSourceObjectsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+// Data connector source object
+function mockGetConnectionSourceObjectNetworkOnce(config, mockData) {
+    const paramMatch = mockGetConnectionSourceObjectMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetConnectionSourceObjectNetworkErrorOnce(config, mockData) {
+    const paramMatch = mockGetConnectionSourceObjectMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockGetConnectionSourceObjectMatcher(config) {
+    const { id, sourceObjectName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/connections/${id}/sourceObjects/${sourceObjectName}`,
+        queryParams: {},
+    });
+}
+
+function getConnectorSourceObjectsMatcher(config) {
+    const { id, page, pageSize } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/connections/${id}/sourceObjects`,
+        queryParams: {
+            page,
+            pageSize,
+        },
+    });
+}
+
+function createDataConnectorsMatcher(config) {
+    return sinon.match({
+        body: {
+            ...config,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/connections`,
+        queryParams: {},
+    });
 }
 
 function mockGetFieldsNetworkErrorOnce(config, mockData) {
@@ -157,6 +243,12 @@ export {
     mockGetConnectorNetworkErrorOnce,
     mockGetConnectionNetworkOnce,
     mockGetConnectionNetworkErrorOnce,
+    mockCreateConnectionNetworkOnce,
+    mockCreateConnectionNetworkErrorOnce,
+    mockGetConnectionSourceObjectsNetworkOnce,
+    mockGetConnectionSourceObjectsNetworkErrorOnce,
+    mockGetConnectionSourceObjectNetworkOnce,
+    mockGetConnectionSourceObjectNetworkErrorOnce,
     mockGetFieldsNetworkOnce,
     mockGetFieldsNetworkErrorOnce,
     expireAsset,

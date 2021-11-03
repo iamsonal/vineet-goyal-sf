@@ -30,6 +30,7 @@
         "build:services": "rollup --config rollup.config.js",
         "start": "karma start",
         "test": "karma start --single-run",
+        "test:debug": "karma start --single-run=false",
         "test:compat": "karma start --single-run --compat",
         "release:corejar": "yarn build && ../core-build/scripts/core.js --adapter=lds-adapters-analytics-data-service",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-analytics-data-service"

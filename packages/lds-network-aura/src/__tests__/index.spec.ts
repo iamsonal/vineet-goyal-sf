@@ -7724,6 +7724,37 @@ describe('routes', () => {
         );
     });
 
+    describe('post /analytics/data-service/sync/connections', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ADATS_BASE_URI,
+                basePath: '/connections',
+                body: {
+                    connectorId: 'SALESFORCE_ADS',
+                    name: 'sfdc2',
+                },
+            },
+            [
+                'AdatsController.createConnection',
+                {
+                    connectorId: 'SALESFORCE_ADS',
+                    name: 'sfdc2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections`,
+            },
+            {}
+        );
+    });
+
     describe('get /analytics/data-service/sync/connectors/{id}', () => {
         testControllerInput(
             {
@@ -7815,6 +7846,54 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: ADATS_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connections/{id}/sourceObjects', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects`,
+            },
+            [
+                'AdatsController.getConnectionSourceObjects',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connections/{id}/sourceObjects/{sourceObjectName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account`,
+            },
+            [
+                'AdatsController.getConnectionSourceObject',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account`,
             },
             {}
         );

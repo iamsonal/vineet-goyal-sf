@@ -104,6 +104,17 @@ types:
       url:
         description: Url
         type: string
+  ConnectionInputRepresentation:
+    description:
+    type: object
+    properties:
+      connectorId:
+        description: connector used for this connection
+        type: string
+      name:
+        description: Description of the connection
+        type: string
+
   FieldCollectionRepresentation:
     description: A paged collection of fields available on a source object
     type: object
@@ -146,6 +157,7 @@ types:
       type:
         description: The type of the field in the source system.
         type: string
+
   ResourceReferenceRepresentation:
     description: A reference to a resource in the API that contains basic information about the resource and a URL to locate it.
     type: object
@@ -164,6 +176,61 @@ types:
         description: Resource Label
         type: string
         required: false
+  SourceObjectCollectionRepresentation:
+    description: A paged list of Source Objects.
+    type: object
+    properties:
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string
+      sourceObjects:
+        description: A list of Source Objects.
+        type: array
+        items:
+          type: SourceObjectRepresentation
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective
+          of the page.
+        type: integer
+      url:
+        description: URL to get the collection.
+        type: string
+  SourceObjectInputRepresentation:
+    description: A source object for synchronization.
+    type: object
+    properties:
+      name:
+        description: The source object name, e.g. Account.
+        type: string
+  SourceObjectRepresentation:
+    description: A Source Object represents a type of data that the ADS Connection
+      knows about. When a Source Object is replicated into ADS, it creates a Table
+      in a Schema
+    type: object
+    properties:
+      fieldsUrl:
+        description: The URL to get the list of Source Fields that this Source Object
+          has.
+        type: string
+      info:
+        description: Information about a source Object. Could contain why this is
+          not synchronizable, or warnings
+        type: string
+      name:
+        description: The name of this Source Object in the external system. The specifics
+          will depend on the connector type.
+        type: string
+      state:
+        description: The synchronization state of this source object for this connection.
+        type: string
+        enum:
+          - Connected
+          - NotConnectable
+          - NotConnected
+          - Required
+      url:
+        description: The URL to get this Source Object.
+        type: string
 
 /analytics/data-service/sync:
   /connectors:
@@ -198,6 +265,17 @@ types:
           body:
             application/json:
               type: ConnectionCollectionRepresentation
+    post:
+      description: Create a new Connection.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ConnectionRepresentation
+      body:
+        application/json:
+          type: ConnectionInputRepresentation
 
   /connections/{id}:
     get:
@@ -212,6 +290,43 @@ types:
       id:
         type: string
         required: true
+
+    /sourceObjects:
+      get:
+        description: Get Connection Source Objects
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SourceObjectCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          q:
+            type: string
+            required: false
+      uriParameters:
+        id:
+          type: string
+    /sourceObjects/{sourceObjectName}:
+      get:
+        description: Get Connection Source Object by Name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SourceObjectRepresentation
+      uriParameters:
+        id:
+          type: string
+        sourceObjectName:
+          type: string
   /connections/{id}/sourceObjects/{sourceObjectName}/fields:
     get:
       description: Get a list of all the Fields belonging to a source object.

@@ -1,0 +1,16 @@
+{
+    "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c4",
+    "label": "sfdc2",
+    "name": "sfdc2",
+    "schema": {
+        "name": "salesforce.schema",
+        "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
+    },
+    "connector": {
+        "name": "SALESFORCE_ADS",
+        "url": "/services/data/v54.0/analytics/data-service/sync/connectors/SALESFORCE_ADS"
+    },
+    "sourceObjectsUrl": "",
+    "targetUrl": "",
+    "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
+}

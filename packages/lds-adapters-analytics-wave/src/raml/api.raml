@@ -1088,9 +1088,15 @@ types:
         description: Date on which the current version was last modified.
         type: string
         required: false # TODO Hand-rolled W-8253396
-      currentVersionTotalRows:
-        description: Total row count of this dataset.
-        type: integer
+      currentVersionSupportsNewDates:
+        description: Current dataset version supports new date format
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionTotalRowCount:
+        description: The total number of rows in the dataset.
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
         required: false # TODO Hand-rolled W-8253396
       currentVersionUrl:
         description: The URL for the current DatasetVersion.

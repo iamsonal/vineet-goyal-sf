@@ -232,6 +232,219 @@ types:
         description: The URL to get this Source Object.
         type: string
 
+  DatabaseCollectionRepresentation:
+    description: Representation of a collection of Analytics Data Service Databases
+    type: object
+    properties:
+      databases:
+        description: The list of databases.
+        type: array
+        items:
+          type: DatabaseRepresentation
+      totalSize:
+        description: The total number of databases returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  DatabaseRepresentation:
+    description: Details about an Analytics Data Service Database
+    type: object
+    properties:
+      description:
+        description: The description of the database.
+        type: string | nil
+        required: false
+      name:
+        description: The name of the database. Maximum of 80 characters
+        type: string
+      schemasUrl:
+        description: The URL of the schemas resource, listing the schemas contained
+          in this database.
+        type: string
+
+  SchemaCollectionRepresentation:
+    description: A list of Analytics Data Service Schemas
+    type: object
+    properties:
+      schemas:
+        description: The list of schemas.
+        type: array
+        items:
+          type: SchemaRepresentation
+      totalSize:
+        description: The total number of schemas returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  SchemaRepresentation:
+    description: Details about an Analytics Data Service Schema
+    type: object
+    properties:
+      description:
+        description: The description of the schema.
+        type: string | nil
+        required: false
+      name:
+        description: The name of the schema. Maximum of 255 characters
+        type: string
+      tablesUrl:
+        description: The URL of the tables resource, listing the tables contained
+          in this schema.
+        type: string
+
+  TableCollectionRepresentation:
+    description: A list of Analytics Data Service Tables
+    type: object
+    properties:
+      tables:
+        description: The list of tables.
+        type: array
+        items:
+          type: TableRepresentation
+      totalSize:
+        description: The total number of tables returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  TableRepresentation:
+    description: Details about an Analytics Data Service Table
+    type: object
+    properties:
+      createdOnDate:
+        description: The date and time that the table was created.
+        type: string
+      description:
+        description: The description of the table.
+        type: string | nil
+        required: false
+      lastUpdatedDate:
+        description: The date and time that the table was last modified.
+        type: string | nil
+        required: false
+      location:
+        description: The location of the table.
+        type: string | nil
+        required: false
+      name:
+        description: The name of the table.
+        type: string
+      tableUrl:
+        description: The URL of the table resource
+        type: string
+
+/analytics/data-service:
+  /databases:
+    get:
+      description: Retrieve a list of ADS Databases.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DatabaseCollectionRepresentation
+      queryParameters:
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+  /databases/{databaseName}:
+    get:
+      description: Get a Database by it's name
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DatabaseRepresentation
+    uriParameters:
+      databaseName:
+        type: string
+        required: true
+
+  /databases/{databaseName}/schemas:
+    get:
+      description: Retrieve a list of Analytics Data Service Schemas.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: SchemaCollectionRepresentation
+      queryParameters:
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+    uriParameters:
+      databaseName:
+        type: string
+        required: true
+  /databases/{databaseName}/schemas/{schemaName}:
+    get:
+      description: Get a Schema by its name
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: SchemaRepresentation
+    uriParameters:
+      databaseName:
+        type: string
+        required: true
+      schemaName:
+        type: string
+        required: true
+  /databases/{databaseName}/schemas/{schemaName}/tables:
+    get:
+      description: Retrieve a list of Analytics Data Service Tables.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TableCollectionRepresentation
+      queryParameters:
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+    uriParameters:
+      databaseName:
+        type: string
+        required: true
+      schemaName:
+        type: string
+        required: true
+  /databases/{databaseName}/schemas/{schemaName}/tables/{tableName}:
+    get:
+      description: Get a Table by its name
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TableRepresentation
+    uriParameters:
+      databaseName:
+        type: string
+        required: true
+      schemaName:
+        type: string
+        required: true
+      tableName:
+        type: string
+        required: true
+
 /analytics/data-service/sync:
   /connectors:
     get:

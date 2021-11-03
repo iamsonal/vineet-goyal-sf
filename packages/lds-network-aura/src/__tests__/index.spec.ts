@@ -17,6 +17,8 @@ import {
     EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
     CIB_BASE_URI,
+    ADATS_DATABASE_BASE_URI,
+    ADATS_SYNC_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -7680,7 +7682,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors`,
             },
             [
@@ -7693,7 +7695,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors`,
             },
             {}
@@ -7704,7 +7706,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections`,
             },
             [
@@ -7717,7 +7719,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors`,
             },
             {}
@@ -7728,7 +7730,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'post',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: '/connections',
                 body: {
                     connectorId: 'SALESFORCE_ADS',
@@ -7748,7 +7750,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'post',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections`,
             },
             {}
@@ -7759,7 +7761,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors/SALESFORCE_ADS`,
             },
             [
@@ -7772,7 +7774,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors/SALESFORCE_ADS`,
             },
             {}
@@ -7783,7 +7785,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812`,
             },
             [
@@ -7796,7 +7798,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812`,
             },
             {}
@@ -7807,7 +7809,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
             },
             [
@@ -7821,7 +7823,7 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    baseUri: ADATS_BASE_URI,
+                    baseUri: ADATS_SYNC_BASE_URI,
                     basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
                     queryParams: {
                         page: 1,
@@ -7844,7 +7846,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
             },
             {}
@@ -7855,7 +7857,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects`,
             },
             [
@@ -7868,7 +7870,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects`,
             },
             {}
@@ -7879,7 +7881,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account`,
             },
             [
@@ -7892,8 +7894,152 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/databases', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/databases`,
+            },
+            [
+                'AdatsController.getDatabases',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_BASE_URI,
+                basePath: `/databases`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/databases/{databaseName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01`,
+            },
+            [
+                'AdatsController.getDatabase',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/databases/{databaseName}/schemas', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas`,
+            },
+            [
+                'AdatsController.getSchemas',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/databases/{databaseName}/schemas/{schemaName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas/testSchema01`,
+            },
+            [
+                'AdatsController.getSchema',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas/testSchema01`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/databases/{databaseName}/schemas/{schemaName}/tables', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas/testSchema01/tables`,
+            },
+            [
+                'AdatsController.getTables',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas/testSchema01/tables`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas/testSchema01/tables/testTable01`,
+            },
+            [
+                'AdatsController.getTable',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_DATABASE_BASE_URI,
+                basePath: `/testDatabase01/schemas/testSchema01/tables/testTable01`,
             },
             {}
         );

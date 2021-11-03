@@ -1,0 +1,14 @@
+{
+    "tables": [
+        {
+            "createdOnDate": "2021-10-19T18:16:52.000Z",
+            "description": "table updated",
+            "lastUpdatedDate": null,
+            "location": null,
+            "name": "testTable01",
+            "tableUrl": "/services/data/v54.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables/testTable01"
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v54.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables?page=1&pageSize=25"
+}

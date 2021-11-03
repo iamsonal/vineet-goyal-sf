@@ -29,6 +29,45 @@ types:
   FieldCollectionRepresentation:
     (luvio.ttl): 5000
 
+  SchemaCollectionRepresentation:
+    (luvio.ttl): 5000
+  SchemaRepresentation:
+    (luvio.ttl): 5000
+  TableCollectionRepresentation:
+    (luvio.ttl): 5000
+  TableRepresentation:
+    (luvio.ttl): 5000
+  DatabaseCollectionRepresentation:
+    (luvio.ttl): 5000
+  DatabaseRepresentation:
+    (luvio.ttl): 5000
+
+/analytics/data-service:
+  /databases:
+    get:
+      (luvio.adapter):
+        name: getDatabases
+  /databases/{databaseName}:
+    get:
+      (luvio.adapter):
+        name: getDatabase
+  /databases/{databaseName}/schemas:
+    get:
+      (luvio.adapter):
+        name: getSchemas
+  /databases/{databaseName}/schemas/{schemaName}:
+    get:
+      (luvio.adapter):
+        name: getSchema
+  /databases/{databaseName}/schemas/{schemaName}/tables:
+    get:
+      (luvio.adapter):
+        name: getTables
+  /databases/{databaseName}/schemas/{schemaName}/tables/{tableName}:
+    get:
+      (luvio.adapter):
+        name: getTable
+
 /analytics/data-service/sync:
   /connectors:
     get:

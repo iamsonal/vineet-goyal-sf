@@ -6,9 +6,9 @@ import timekeeper from 'timekeeper';
 
 const API_VERSION = 'v54.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
-const URL_BASE = `/analytics/data-service/sync`;
+const URL_SYNC_BASE = `/analytics/data-service/sync`;
+const URL_DATABASE_BASE = `/analytics/data-service/databases`;
 const ASSET_TTL = 5000;
-
 // Data Connectors
 function mockGetConnectorsNetworkOnce(config, mockData) {
     const paramMatch = getConnectorsMatcher(config);
@@ -128,7 +128,7 @@ function mockGetConnectionSourceObjectMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connections/${id}/sourceObjects/${sourceObjectName}`,
+        basePath: `${URL_SYNC_BASE}/connections/${id}/sourceObjects/${sourceObjectName}`,
         queryParams: {},
     });
 }
@@ -141,7 +141,7 @@ function getConnectorSourceObjectsMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connections/${id}/sourceObjects`,
+        basePath: `${URL_SYNC_BASE}/connections/${id}/sourceObjects`,
         queryParams: {
             page,
             pageSize,
@@ -157,7 +157,7 @@ function createDataConnectorsMatcher(config) {
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connections`,
+        basePath: `${URL_SYNC_BASE}/connections`,
         queryParams: {},
     });
 }
@@ -175,7 +175,7 @@ function getConnectorMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connectors/${id}`,
+        basePath: `${URL_SYNC_BASE}/connectors/${id}`,
         queryParams: {},
     });
 }
@@ -186,7 +186,7 @@ function getConnectorsMatcher() {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connectors`,
+        basePath: `${URL_SYNC_BASE}/connectors`,
         queryParams: {},
     });
 }
@@ -197,7 +197,7 @@ function getConnectionsMatcher() {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connections`,
+        basePath: `${URL_SYNC_BASE}/connections`,
         queryParams: {},
     });
 }
@@ -209,7 +209,7 @@ function getConnectionMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connections/${id}`,
+        basePath: `${URL_SYNC_BASE}/connections/${id}`,
         queryParams: {},
     });
 }
@@ -221,7 +221,7 @@ function getFieldsMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/connections/${id}/sourceObjects/${sourceObjectName}/fields`,
+        basePath: `${URL_SYNC_BASE}/connections/${id}/sourceObjects/${sourceObjectName}/fields`,
         queryParams: {
             page,
             pageSize,
@@ -229,12 +229,161 @@ function getFieldsMatcher(config) {
         },
     });
 }
+
+// Schemas
+function mockGetSchemasNetworkOnce(config, mockData) {
+    const paramMatch = getSchemasMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetSchemasNetworkErrorOnce(config, mockData) {
+    const paramMatch = getSchemasMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+// Schema
+function mockGetSchemaNetworkOnce(config, mockData) {
+    const paramMatch = getSchemaMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetSchemaNetworkErrorOnce(config, mockData) {
+    const paramMatch = getSchemaMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+// Tables
+function mockGetTablesNetworkOnce(config, mockData) {
+    const paramMatch = getTablesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetTablesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getTablesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+// Table
+function mockGetTableNetworkOnce(config, mockData) {
+    const paramMatch = getTableMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetTableNetworkErrorOnce(config, mockData) {
+    const paramMatch = getTableMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+// Databases
+function mockGetDatabasesNetworkOnce(config, mockData) {
+    const paramMatch = getDatabasesMatcher();
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDatabasesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDatabasesMatcher();
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+// Database
+function mockGetDatabaseNetworkOnce(config, mockData) {
+    const paramMatch = getDatabaseMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+function mockGetDatabaseNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDatabaseMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getSchemasMatcher(config) {
+    const { dbName } = config;
+    return sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas`,
+        method: 'get',
+        body: null,
+    });
+}
+
+function getSchemaMatcher(config) {
+    const { dbName, schemaName } = config;
+    return sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas/${schemaName}`,
+        method: 'get',
+        body: null,
+    });
+}
+
+function getTablesMatcher(config) {
+    const { dbName, schemaName } = config;
+    return sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas/${schemaName}/tables`,
+        method: 'get',
+        body: null,
+    });
+}
+
+function getTableMatcher(config) {
+    const { dbName, schemaName, tableName } = config;
+    return sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas/${schemaName}/tables/${tableName}`,
+        method: 'get',
+        body: null,
+    });
+}
+
+function getDatabasesMatcher() {
+    return sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_DATABASE_BASE}`,
+        method: 'get',
+        body: null,
+    });
+}
+
+function getDatabaseMatcher(config) {
+    const { dbName } = config;
+    return sinon.match({
+        baseUri: BASE_URI,
+
+        basePath: `${URL_DATABASE_BASE}/${dbName}`,
+        method: 'get',
+        body: null,
+    });
+}
+
 function expireAsset() {
     timekeeper.travel(Date.now() + ASSET_TTL + 1);
 }
 
 export {
-    URL_BASE,
     mockGetConnectorsNetworkOnce,
     mockGetConnectorsNetworkErrorOnce,
     mockGetConnectionsNetworkOnce,
@@ -252,4 +401,16 @@ export {
     mockGetFieldsNetworkOnce,
     mockGetFieldsNetworkErrorOnce,
     expireAsset,
+    mockGetSchemasNetworkOnce,
+    mockGetSchemasNetworkErrorOnce,
+    mockGetSchemaNetworkOnce,
+    mockGetSchemaNetworkErrorOnce,
+    mockGetTablesNetworkOnce,
+    mockGetTablesNetworkErrorOnce,
+    mockGetTableNetworkOnce,
+    mockGetTableNetworkErrorOnce,
+    mockGetDatabasesNetworkOnce,
+    mockGetDatabasesNetworkErrorOnce,
+    mockGetDatabaseNetworkOnce,
+    mockGetDatabaseNetworkErrorOnce,
 };

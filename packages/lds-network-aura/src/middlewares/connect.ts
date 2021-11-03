@@ -4,7 +4,8 @@ import {
     COMMERCE_BASE_URI,
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
-    ADATS_BASE_URI,
+    ADATS_DATABASE_BASE_URI,
+    ADATS_SYNC_BASE_URI,
     CMS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     SCALECENTER_BASE_URI,
@@ -70,24 +71,41 @@ const GET_GUIDANCE_INITIALIZE_PATH = new RegExp(
     'i'
 );
 
-const ADATS_CONNECTORS_PATH = new RegExp(`${ADATS_BASE_URI}/connectors$`, 'i');
-const ADATS_CONNECTOR_PATH = new RegExp(`${ADATS_BASE_URI}/connectors/[A-Z0-9_-]`, 'i');
-const ADATS_CONNECTIONS_PATH = new RegExp(`${ADATS_BASE_URI}/connections$`, 'i');
+const ADATS_CONNECTORS_PATH = new RegExp(`${ADATS_SYNC_BASE_URI}/connectors$`, 'i');
+const ADATS_CONNECTOR_PATH = new RegExp(`${ADATS_SYNC_BASE_URI}/connectors/[A-Z0-9_-]`, 'i');
+const ADATS_CONNECTIONS_PATH = new RegExp(`${ADATS_SYNC_BASE_URI}/connections$`, 'i');
 const ADATS_CONNECTION_PATH = new RegExp(
-    `${ADATS_BASE_URI}/connections/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$`,
+    `${ADATS_SYNC_BASE_URI}/connections/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$`,
     'i'
 );
 const ADATS_SOURCE_OBJECTS_PATH = new RegExp(
-    `${ADATS_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects$`,
+    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects$`,
     'i'
 );
 const ADATS_SOURCE_OBJECT_PATH = new RegExp(
-    `${ADATS_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects/(.[^/]{1,255})$`,
+    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects/(.[^/]{1,255})$`,
     'i'
 );
 const ADATS_FIELDS_PATH = new RegExp(
-    `${ADATS_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects/(.[^/]{1,255})/fields$`,
+    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects/(.[^/]{1,255})/fields$`,
     'i'
+);
+
+const ADATS_DATABASES_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}$`, 'i');
+const ADATS_DATABASE_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+$`, 'i');
+
+const ADATS_SCHEMAS_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas$`, 'i');
+const ADATS_SCHEMA_PATH = new RegExp(
+    `${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas/[a-zA-Z0-9_-]+$`,
+    'i'
+);
+
+const ADATS_TABLES_PATH = new RegExp(
+    `${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas/[a-zA-Z0-9_-]+/tables$`,
+    'i'
+);
+const ADATS_TABLE_PATH = new RegExp(
+    `${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas/[a-zA-Z0-9_-]+/tables/[a-zA-Z0-9_-]+$`
 );
 
 const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
@@ -1168,7 +1186,7 @@ const adats: ApiFamily = {
     getConnectors: {
         method: 'get',
         predicate: (path: string) => {
-            return path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTORS_PATH.test(path);
+            return path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_CONNECTORS_PATH.test(path);
         },
         transport: {
             controller: 'AdatsController.getConnectors',
@@ -1177,7 +1195,7 @@ const adats: ApiFamily = {
     getConnector: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTOR_PATH.test(path),
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_CONNECTOR_PATH.test(path),
         transport: {
             controller: 'AdatsController.getConnector',
         },
@@ -1185,7 +1203,7 @@ const adats: ApiFamily = {
     getConnections: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTIONS_PATH.test(path),
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_CONNECTIONS_PATH.test(path),
         transport: {
             controller: 'AdatsController.getConnections',
         },
@@ -1193,7 +1211,7 @@ const adats: ApiFamily = {
     getConnection: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTION_PATH.test(path),
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_CONNECTION_PATH.test(path),
         transport: {
             controller: 'AdatsController.getConnection',
         },
@@ -1201,7 +1219,7 @@ const adats: ApiFamily = {
     createConnection: {
         method: 'post',
         predicate: (path: string) =>
-            path.startsWith(ADATS_BASE_URI) && ADATS_CONNECTIONS_PATH.test(path),
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_CONNECTIONS_PATH.test(path),
         transport: {
             controller: 'AdatsController.createConnection',
         },
@@ -1209,7 +1227,7 @@ const adats: ApiFamily = {
     getConnectionSourceObjects: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_BASE_URI) && ADATS_SOURCE_OBJECTS_PATH.test(path),
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_SOURCE_OBJECTS_PATH.test(path),
         transport: {
             controller: 'AdatsController.getConnectionSourceObjects',
         },
@@ -1217,7 +1235,7 @@ const adats: ApiFamily = {
     getConnectionSourceObject: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_BASE_URI) && ADATS_SOURCE_OBJECT_PATH.test(path),
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_SOURCE_OBJECT_PATH.test(path),
         transport: {
             controller: 'AdatsController.getConnectionSourceObject',
         },
@@ -1225,9 +1243,60 @@ const adats: ApiFamily = {
     getFields: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_BASE_URI) && ADATS_FIELDS_PATH.test(path),
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_FIELDS_PATH.test(path),
         transport: {
             controller: 'AdatsController.getFields',
+        },
+    },
+
+    getDatabases: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_DATABASES_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getDatabases',
+        },
+    },
+    getDatabase: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_DATABASE_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getDatabase',
+        },
+    },
+
+    getSchemas: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_SCHEMAS_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getSchemas',
+        },
+    },
+    getSchema: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_SCHEMA_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getSchema',
+        },
+    },
+
+    getTables: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_TABLES_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getTables',
+        },
+    },
+    getTable: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_TABLE_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getTable',
         },
     },
 };

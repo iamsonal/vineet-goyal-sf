@@ -1,24 +1,24 @@
 import {
-    mockPutTeneantCertificateNetworkOnce,
-    mockPutTeneantCertificateNetworkErrorOnce,
+    mockUpdateTenantCertificateNetworkOnce,
+    mockUpdateTenantCertificateNetworkErrorOnce,
 } from 'industries-rcg-tenantmanagement-test-util';
-import { putTenantCertificate } from 'lds-adapters-industries-rcg-tenantmanagement';
+import { updateTenantCertificate } from 'lds-adapters-industries-rcg-tenantmanagement';
 import { getMock as globalGetMock } from 'test-util';
 
-const MOCK_INPUT_PREFIX = 'wire/tenantMgmt/__karma__/putTenantCertificate/data/';
+const MOCK_INPUT_PREFIX = 'wire/tenantMgmt/__karma__/updateTenantCertificate/data/';
 
 function getInputMock(filename) {
     return globalGetMock(MOCK_INPUT_PREFIX + filename);
 }
 
-describe('putTenantCertificate test', () => {
+describe('updateTenantCertificate test', () => {
     it('test positive case of putting tenant certificate', async () => {
         const inputMock = getInputMock('input');
         const outputMock = getInputMock('putTenantCertificateOutput');
 
-        mockPutTeneantCertificateNetworkOnce(outputMock);
+        mockUpdateTenantCertificateNetworkOnce(outputMock);
 
-        const el = await putTenantCertificate(inputMock);
+        const el = await updateTenantCertificate(inputMock);
         expect(el).toEqual(outputMock);
     });
 
@@ -35,10 +35,10 @@ describe('putTenantCertificate test', () => {
                 },
             ],
         };
-        mockPutTeneantCertificateNetworkErrorOnce(mockErrorResponse);
+        mockUpdateTenantCertificateNetworkErrorOnce(mockErrorResponse);
         try {
-            await putTenantCertificate(inputMock);
-            fail('putTenantCertificate did not throw an error when expected to');
+            await updateTenantCertificate(inputMock);
+            fail('updateTenantCertificate did not throw an error when expected to');
         } catch (e) {
             expect(e).toEqual(mockErrorResponse);
         }

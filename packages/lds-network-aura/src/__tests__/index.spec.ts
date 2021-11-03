@@ -3029,7 +3029,7 @@ describe('routes', () => {
                 basePath: `/consumer-goods/tenant-registration`,
             },
             [
-                'RCGTenantManagentController.putTenantCertificate',
+                'RCGTenantManagentController.updateTenantCertificate',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]

@@ -739,7 +739,7 @@ const connect: ApiFamily = {
         predicate: (path) =>
             path.startsWith(RCG_TENANTMANAGEMENT_BASE_URI) && RCG_TPM_MANAGEMENT_PATH.test(path),
         transport: {
-            controller: 'RCGTenantManagentController.putTenantCertificate',
+            controller: 'RCGTenantManagentController.updateTenantCertificate',
         },
     },
 };

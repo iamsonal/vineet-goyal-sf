@@ -21,12 +21,12 @@ export function mockGetTenantRegistrationStatusNetworkErrorOnce(mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockPutTeneantCertificateNetworkOnce(mockData) {
+export function mockUpdateTenantCertificateNetworkOnce(mockData) {
     const paramMatch = tenantMgmtDataMatcher('put');
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockPutTeneantCertificateNetworkErrorOnce(mockData) {
+export function mockUpdateTenantCertificateNetworkErrorOnce(mockData) {
     const paramMatch = tenantMgmtDataMatcher('put');
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }

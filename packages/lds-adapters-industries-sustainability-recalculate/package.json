@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-sustainability-recalculate",
-    "version": "1.32.0",
+    "version": "1.34.0",
     "description": "Sustainability Recalculate Record with Childs",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-sustainability-recalculate.js",

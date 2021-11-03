@@ -8,6 +8,8 @@ import {
     targetConfigs,
 } from '../../scripts/rollup/rollup.config.karma';
 
+const ADAPTER_MODULE_NAME = 'lds-adapters-uiapi';
+
 function getTargetPath(filename, compat) {
     let targetDir = path.join(__dirname, 'karma', 'dist');
     targetDir = compat ? path.join(targetDir, 'compat') : targetDir;
@@ -74,7 +76,12 @@ module.exports = [
     // uiApiConstants needs to be built prior to uiApiTestUtil
     uiApiConstantsConfig(),
     ...uiApiTestSetupConfig(),
-    ...ldsAdaptersConfigs({ adapterModuleName: 'lds-adapters-uiapi' }),
-    ...adapterTestUtilConfigs({ testUtilName: 'uiapi-test-util' }),
+    ...ldsAdaptersConfigs({ adapterModuleName: ADAPTER_MODULE_NAME }),
+    ...adapterTestUtilConfigs({ testUtilName: 'uiapi-test-util' }).map((config) => {
+        const { output, external } = config;
+        output.globals[ADAPTER_MODULE_NAME] = 'ldsAdaptersUiapi';
+        external.push(ADAPTER_MODULE_NAME);
+        return config;
+    }),
     ...instrumentationConfigs(),
 ];

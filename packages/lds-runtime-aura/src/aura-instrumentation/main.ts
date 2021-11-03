@@ -16,6 +16,7 @@ import {
 } from 'instrumentation/service';
 import {
     instrumentAdapter as o11yInstrumentAdapter,
+    instrumentLuvio as o11yInstrumentLuvio,
     instrumentStoreMethods as o11yInstrumentStoreMethods,
     setStoreScheduler as o11ySetStoreScheduler,
     setupStoreStatsCollection as o11ySetupStoreStats,
@@ -280,6 +281,8 @@ export class Instrumentation {
      * @param context The transaction context.
      */
     public instrumentLuvio(context: unknown): void {
+        o11yInstrumentLuvio(context);
+
         if (this.isRefreshAdapterEvent(context)) {
             this.aggregateRefreshAdapterEvents(context);
         } else if (this.isAdapterUnfulfilledError(context)) {

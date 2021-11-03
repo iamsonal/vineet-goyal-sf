@@ -19,7 +19,7 @@ import {
 import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
 
-import { LRUCache } from '@salesforce/lds-instrumentation';
+import * as ldsInstrumentation from '@salesforce/lds-instrumentation';
 
 jest.mock('instrumentation/service', () => {
     const spies = {
@@ -89,7 +89,7 @@ beforeEach(() => {
     instrumentationServiceSpies.cacheStatsLogMissesSpy.mockClear();
     instrumentationServiceSpies.counterIncrementSpy.mockClear();
     instrumentationServiceSpies.counterDecrementSpy.mockClear();
-    (instrumentation as any).adapterCacheMisses = new LRUCache(250);
+    (instrumentation as any).adapterCacheMisses = new ldsInstrumentation.LRUCache(250);
     (instrumentation as any).resetRefreshStats();
 });
 
@@ -543,6 +543,7 @@ describe('instrumentation', () => {
 
     describe('Observability metrics', () => {
         it('incrementAdapterRequestErrorCount called through instrumentLuvio function', () => {
+            const o11yInstrumentLuvioSpy = jest.spyOn(ldsInstrumentation, 'instrumentLuvio');
             const context: AdapterUnfulfilledError = {
                 [ADAPTER_UNFULFILLED_ERROR]: true,
                 adapterName: 'fooAdapter',
@@ -550,6 +551,7 @@ describe('instrumentation', () => {
                 missingLinks: undefined,
             };
             instrumentation.instrumentLuvio(context);
+            expect(o11yInstrumentLuvioSpy).toBeCalled();
             expect(instrumentationSpies.incrementAdapterRequestErrorCount).toBeCalled();
         });
         it('should instrument error when UnfulfilledSnapshot is returned to the adapter', () => {

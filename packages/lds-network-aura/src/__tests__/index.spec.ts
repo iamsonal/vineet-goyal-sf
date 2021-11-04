@@ -19,6 +19,7 @@ import {
     CIB_BASE_URI,
     ADATS_DATABASE_BASE_URI,
     ADATS_SYNC_BASE_URI,
+    IDENTITY_VERIFICATION_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -8042,6 +8043,262 @@ describe('routes', () => {
                 basePath: `/testDatabase01/schemas/testSchema01/tables/testTable01`,
             },
             {}
+        );
+    });
+
+    describe('post /connect/identity-verification/search', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/search`,
+                body: {
+                    SearchRecordsContextData: {
+                        searchTerm: 'test',
+                        verificationContext: {
+                            processDefinition: {
+                                layoutType: 'Tab',
+                                processDetail: [
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        searchObjectName: 'Account',
+                                        searchSequenceNo: 0,
+                                        searchType: 'SOSL',
+                                        searchResultUniqueIdField: 'Id',
+                                        searchResultFilter: '',
+                                        searchResultSortOrder: '',
+                                        optionalVerifierCount: '1',
+                                        apexClassName: '',
+                                        verificationProcessFieldList: {
+                                            verificationProcessFields: [
+                                                {
+                                                    developerName: 'dob',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'RequiredVerifier',
+                                                    label: 'Date of Birth',
+                                                    fieldName: 'BirthDate',
+                                                },
+                                                {
+                                                    developerName: 'accountName',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'RequiredVerifier',
+                                                    label: 'Account Name',
+                                                    fieldName: 'Name',
+                                                },
+                                                {
+                                                    developerName: 'zip',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'OptionalVerifier',
+                                                    label: 'Zip',
+                                                    fieldName: 'ZipCode',
+                                                },
+                                                {
+                                                    developerName: 'name',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'ResultField',
+                                                    label: 'Account Name',
+                                                    fieldName: 'Name',
+                                                },
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                            selectedSearchResult: {
+                                objectName: '',
+                                selectedRecordId: '',
+                                selectedRecordObject: [],
+                            },
+                            verifiedResult: {
+                                requiredVerifiers: [
+                                    {
+                                        developerName: 'ssn',
+                                        verificationState: 'Yes',
+                                    },
+                                    {
+                                        developerName: 'dob',
+                                        verificationState: 'Yes',
+                                    },
+                                    {
+                                        developerName: 'accountName',
+                                        verificationState: 'Yes',
+                                    },
+                                ],
+                                optionalVerifiers: [
+                                    {
+                                        developerName: 'street',
+                                        verificationState: 'Unset',
+                                    },
+                                    {
+                                        developerName: 'zip',
+                                        verificationState: 'Yes',
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+            [
+                'IdentityVerificationController.searchRecords',
+                {
+                    SearchRecordsContextData: {
+                        searchTerm: 'test',
+                        verificationContext: {
+                            processDefinition: {
+                                layoutType: 'Tab',
+                                processDetail: [
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        searchObjectName: 'Account',
+                                        searchSequenceNo: 0,
+                                        searchType: 'SOSL',
+                                        searchResultUniqueIdField: 'Id',
+                                        searchResultFilter: '',
+                                        searchResultSortOrder: '',
+                                        optionalVerifierCount: '1',
+                                        apexClassName: '',
+                                        verificationProcessFieldList: {
+                                            verificationProcessFields: [
+                                                {
+                                                    developerName: 'dob',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'RequiredVerifier',
+                                                    label: 'Date of Birth',
+                                                    fieldName: 'BirthDate',
+                                                },
+                                                {
+                                                    developerName: 'accountName',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'RequiredVerifier',
+                                                    label: 'Account Name',
+                                                    fieldName: 'Name',
+                                                },
+                                                {
+                                                    developerName: 'zip',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'OptionalVerifier',
+                                                    label: 'Zip',
+                                                    fieldName: 'ZipCode',
+                                                },
+                                                {
+                                                    developerName: 'name',
+                                                    dataSourceType: 'Salesforce',
+                                                    fieldType: 'ResultField',
+                                                    label: 'Account Name',
+                                                    fieldName: 'Name',
+                                                },
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                            selectedSearchResult: {
+                                objectName: '',
+                                selectedRecordId: '',
+                                selectedRecordObject: [],
+                            },
+                            verifiedResult: {
+                                requiredVerifiers: [
+                                    {
+                                        developerName: 'ssn',
+                                        verificationState: 'Yes',
+                                    },
+                                    {
+                                        developerName: 'dob',
+                                        verificationState: 'Yes',
+                                    },
+                                    {
+                                        developerName: 'accountName',
+                                        verificationState: 'Yes',
+                                    },
+                                ],
+                                optionalVerifiers: [
+                                    {
+                                        developerName: 'street',
+                                        verificationState: 'Unset',
+                                    },
+                                    {
+                                        developerName: 'zip',
+                                        verificationState: 'Yes',
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                message: 'SUCCESS',
+                isSuccess: true,
+                searchResult: [
+                    {
+                        searchFields: [
+                            {
+                                apiName: 'name',
+                                value: 'Mister Tester',
+                                dataType: 'TEXT',
+                                displayLabel: 'Name',
+                            },
+                            {
+                                apiName: 'id',
+                                value: '001xx000003GYlTest',
+                                dataType: 'TEXT',
+                                displayLabel: 'Id',
+                            },
+                            {
+                                apiName: 'dob',
+                                value: '01-Apr-1976',
+                                dataType: 'DATE',
+                                displayLabel: 'Date Of Birth',
+                            },
+                        ],
+                    },
+                ],
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: IDENTITY_VERIFICATION_BASE_URI,
+            basePath: `/search`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/search`,
+            },
+            {
+                message: 'SUCCESS',
+                isSuccess: true,
+                searchResult: [
+                    {
+                        searchFields: [
+                            {
+                                apiName: 'name',
+                                value: 'Mister Tester',
+                                dataType: 'TEXT',
+                                displayLabel: 'Name',
+                            },
+                            {
+                                apiName: 'id',
+                                value: '001xx000003GYlTest',
+                                dataType: 'TEXT',
+                                displayLabel: 'Id',
+                            },
+                            {
+                                apiName: 'dob',
+                                value: '01-Apr-1976',
+                                dataType: 'DATE',
+                                displayLabel: 'Date Of Birth',
+                            },
+                        ],
+                    },
+                ],
+            }
         );
     });
 

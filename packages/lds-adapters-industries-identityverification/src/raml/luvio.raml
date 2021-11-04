@@ -1,0 +1,19 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'IdentityVerification'
+
+types:
+  SearchOutputRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      message: message
+
+/connect/identity-verification:
+  /search:
+    post:
+      (luvio.adapter):
+        name: searchRecords

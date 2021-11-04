@@ -1,0 +1,28 @@
+{
+    "message": "SUCCESS",
+    "isSuccess": true,
+    "searchResult": [
+        {
+            "searchFields": [
+                {
+                    "apiName": "name",
+                    "value": "Mister Tester",
+                    "dataType": "TEXT",
+                    "displayLabel": "Name"
+                },
+                {
+                    "apiName": "id",
+                    "value": "001xx000003GYlTest",
+                    "dataType": "TEXT",
+                    "displayLabel": "Id"
+                },
+                {
+                    "apiName": "dob",
+                    "value": "01-Apr-1976",
+                    "dataType": "DATE",
+                    "displayLabel": "Date Of Birth"
+                }
+            ]
+        }
+    ]
+}

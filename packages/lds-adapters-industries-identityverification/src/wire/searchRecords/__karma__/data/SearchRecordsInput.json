@@ -1,0 +1,84 @@
+{
+    "searchTerm": "test",
+    "verificationContext": {
+        "processDefinition": {
+            "layoutType": "Tab",
+            "processDetail": [
+                {
+                    "dataSourceType": "Salesforce",
+                    "searchObjectName": "Account",
+                    "searchSequenceNo": 0,
+                    "searchType": "SOSL",
+                    "searchResultUniqueIdField": "Id",
+                    "searchResultFilter": "",
+                    "searchResultSortOrder": "",
+                    "optionalVerifierCount": "1",
+                    "apexClassName": "",
+                    "verificationProcessFieldList": {
+                        "verificationProcessFields": [
+                            {
+                                "developerName": "dob",
+                                "dataSourceType": "Salesforce",
+                                "fieldType": "RequiredVerifier",
+                                "label": "Date of Birth",
+                                "fieldName": "BirthDate"
+                            },
+                            {
+                                "developerName": "accountName",
+                                "dataSourceType": "Salesforce",
+                                "fieldType": "RequiredVerifier",
+                                "label": "Account Name",
+                                "fieldName": "Name"
+                            },
+                            {
+                                "developerName": "zip",
+                                "dataSourceType": "Salesforce",
+                                "fieldType": "OptionalVerifier",
+                                "label": "Zip",
+                                "fieldName": "ZipCode"
+                            },
+                            {
+                                "developerName": "name",
+                                "dataSourceType": "Salesforce",
+                                "fieldType": "ResultField",
+                                "label": "Account Name",
+                                "fieldName": "Name"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "selectedSearchResult": {
+            "objectName": "",
+            "selectedRecordId": "",
+            "selectedRecordObject": []
+        },
+        "verifiedResult": {
+            "requiredVerifiers": [
+                {
+                    "developerName": "ssn",
+                    "verificationState": "Yes"
+                },
+                {
+                    "developerName": "dob",
+                    "verificationState": "Yes"
+                },
+                {
+                    "developerName": "accountName",
+                    "verificationState": "Yes"
+                }
+            ],
+            "optionalVerifiers": [
+                {
+                    "developerName": "street",
+                    "verificationState": "Unset"
+                },
+                {
+                    "developerName": "zip",
+                    "verificationState": "Yes"
+                }
+            ]
+        }
+    }
+}

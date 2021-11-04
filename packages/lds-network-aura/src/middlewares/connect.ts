@@ -15,6 +15,7 @@ import {
     SITES_BASE_URI,
     CIB_BASE_URI,
     RCG_TENANTMANAGEMENT_BASE_URI,
+    IDENTITY_VERIFICATION_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_MICROBATCHING_PATH = new RegExp(
@@ -403,6 +404,11 @@ const LOCK_RECORD_PATH = new RegExp(
 
 const UNLOCK_RECORD_PATH = new RegExp(
     `${CONNECT_BASE_URI}/sustainability/record-locking/unlock/([A-Z0-9]){1,18}$`,
+    'i'
+);
+
+const IDENTIFY_VERIFICATION_SEARCH_PATH = new RegExp(
+    `${IDENTITY_VERIFICATION_BASE_URI}/search`,
     'i'
 );
 
@@ -1414,6 +1420,17 @@ const interesttagging: ApiFamily = {
     },
 };
 
+const identityVerification: ApiFamily = {
+    searchRecords: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && IDENTIFY_VERIFICATION_SEARCH_PATH.test(path),
+        transport: {
+            controller: 'IdentityVerificationController.searchRecords',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
@@ -1425,3 +1442,4 @@ registerApiFamilyRoutes(billing);
 registerApiFamilyRoutes(marketingIntegration);
 registerApiFamilyRoutes(videovisits);
 registerApiFamilyRoutes(interesttagging);
+registerApiFamilyRoutes(identityVerification);

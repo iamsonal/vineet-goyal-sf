@@ -1,6 +1,6 @@
 import { FieldNode, StringValueNode } from 'graphql/language';
 import { transform as transformArgumentNode } from './argument-node';
-import { LuvioFieldNode } from './ast';
+import { LuvioArgumentNode, LuvioFieldNode } from './ast';
 import {
     CUSTOM_DIRECTIVE_CONNECTION,
     CUSTOM_DIRECTIVE_RESOURCE,
@@ -10,8 +10,9 @@ import {
     NODE_TYPE_CONNECTION,
 } from './constants';
 import { isCustomDirective, transform as transformDirectiveNode } from './directive-node';
+import { TransformState } from './operation/query';
 
-export function transform(node: FieldNode): LuvioFieldNode {
+export function transform(node: FieldNode, transformState: TransformState): LuvioFieldNode {
     const { name, alias, arguments: fieldArgs, selectionSet, directives } = node;
 
     let luvioNode: LuvioFieldNode = {
@@ -31,7 +32,9 @@ export function transform(node: FieldNode): LuvioFieldNode {
             const customDirectiveNode = directives.find(isCustomDirective);
             if (customDirectiveNode === undefined) {
                 // transform non client-side directives
-                luvioNode.directives = directives.map(transformDirectiveNode);
+                luvioNode.directives = directives.map((directive) =>
+                    transformDirectiveNode(directive, transformState)
+                );
             } else {
                 if (customDirectiveNode.name.value === CUSTOM_DIRECTIVE_CONNECTION) {
                     luvioNode = {
@@ -52,7 +55,12 @@ export function transform(node: FieldNode): LuvioFieldNode {
         }
 
         if (fieldArgs !== undefined && fieldArgs.length > 0) {
-            luvioNode.arguments = fieldArgs.map(transformArgumentNode);
+            const returnArguments: LuvioArgumentNode[] = [];
+            for (var index = 0; index < fieldArgs.length; index++) {
+                const value = transformArgumentNode(fieldArgs[index], transformState);
+                returnArguments.push(value);
+            }
+            luvioNode.arguments = returnArguments;
         }
     }
 

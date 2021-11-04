@@ -362,12 +362,46 @@ describe('LDS GraphQL Parser', () => {
             expect(target).toStrictEqual(expected);
         });
 
-        it('transform directives', () => {
+        it("throws an error when variable definition isn't used", () => {
             const source = /* GraphQL */ `
-                query Hero($episode: Episode, $withFriends: Boolean!) {
+                query HeroNameAndFriends($episode: Episode = JEDI) {
+                    hero(episode: JEDI) {
+                        name
+                        friends {
+                            name
+                        }
+                    }
+                }
+            `;
+
+            expect(() => parser.default(source)).toThrowError(
+                'Variable $episode was defined but never used.'
+            );
+        });
+
+        it("throws an error when variable used isn't defined", () => {
+            const source = /* GraphQL */ `
+                query HeroNameAndFriends {
                     hero(episode: $episode) {
                         name
-                        friends @include(if: $withFriends) {
+                        friends {
+                            name
+                        }
+                    }
+                }
+            `;
+
+            expect(() => parser.default(source)).toThrowError(
+                'Variable $episode was used but never defined.'
+            );
+        });
+
+        it('transform directives', () => {
+            const source = /* GraphQL */ `
+                query Hero($episode: Episode) {
+                    hero(episode: $episode) {
+                        name
+                        friends @include(if: true) {
                             name
                         }
                     }
@@ -402,8 +436,8 @@ describe('LDS GraphQL Parser', () => {
                                                         kind: 'Argument',
                                                         name: 'if',
                                                         value: {
-                                                            kind: 'Variable',
-                                                            name: 'withFriends',
+                                                            kind: 'BooleanValue',
+                                                            value: true,
                                                         },
                                                     },
                                                 ],
@@ -425,14 +459,6 @@ describe('LDS GraphQL Parser', () => {
                                 kind: 'VariableDefinition',
                                 variable: { kind: 'Variable', name: 'episode' },
                                 type: { kind: 'NamedType', name: 'Episode' },
-                            },
-                            {
-                                kind: 'VariableDefinition',
-                                variable: { kind: 'Variable', name: 'withFriends' },
-                                type: {
-                                    kind: 'NonNullType',
-                                    type: { kind: 'NamedType', name: 'Boolean' },
-                                },
                             },
                         ],
                     },

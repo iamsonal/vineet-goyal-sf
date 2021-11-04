@@ -1,7 +1,6 @@
 import { FragmentDefinitionNode } from 'graphql/language';
 import { LuvioFieldNode, LuvioFragmentDefinitionNode, LuvioSelectionNode } from './ast';
 import { selectionSetVisitor } from './visitor';
-import { transform as transformVariableDefinition } from './variable-definition';
 import { transform as transformDirectiveNode } from './directive-node';
 import { NODE_KIND_OBJECT_FIELD_SELECTION } from './constants';
 
@@ -13,7 +12,6 @@ export function transform(node: FragmentDefinitionNode): LuvioFragmentDefinition
             kind: typeKind,
             name: { value: typeName },
         },
-        variableDefinitions,
         directives,
     } = node;
 
@@ -25,7 +23,8 @@ export function transform(node: FragmentDefinitionNode): LuvioFragmentDefinition
     };
     const currentNodePath: LuvioSelectionNode[] = [fragmentRoot];
 
-    selectionSetVisitor(node, currentNodePath);
+    const transformState = { variablesUsed: {} };
+    selectionSetVisitor(node, currentNodePath, transformState);
 
     const luvioNode: LuvioFragmentDefinitionNode = {
         kind: nodeKind,
@@ -37,12 +36,10 @@ export function transform(node: FragmentDefinitionNode): LuvioFragmentDefinition
         luvioSelections: fragmentRoot.luvioSelections!,
     };
 
-    if (variableDefinitions !== undefined && variableDefinitions.length > 0) {
-        luvioNode.variableDefinitions = variableDefinitions.map(transformVariableDefinition);
-    }
-
     if (directives !== undefined && directives.length > 0) {
-        luvioNode.directives = directives.map(transformDirectiveNode);
+        luvioNode.directives = directives.map((node) =>
+            transformDirectiveNode(node, transformState)
+        );
     }
 
     return luvioNode;

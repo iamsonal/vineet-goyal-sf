@@ -10,20 +10,27 @@ import {
 import { transform as transformFieldNode } from './field-node';
 import { transform as transformFragmentSpreadNode } from './fragment-spread-node';
 import { transform as transformInlineFragmentNode } from './inline-fragment-node';
+import { TransformState } from './operation/query';
 
-export function selectionSetVisitor(ast: ASTNode, luvioSelectionPath: LuvioSelectionNode[]) {
+export function selectionSetVisitor(
+    ast: ASTNode,
+    luvioSelectionPath: LuvioSelectionNode[],
+    transformState: TransformState
+): void {
     const visitor: ASTVisitor = {
         enter(node) {
             let selectionNode: LuvioSelectionNode | undefined;
             switch (node.kind) {
-                case NODE_KIND_FIELD:
-                    selectionNode = transformFieldNode(node);
+                case NODE_KIND_FIELD: {
+                    const fieldNode = transformFieldNode(node, transformState);
+                    selectionNode = fieldNode;
                     break;
+                }
                 case NODE_KIND_FRAGMENT_SPREAD:
-                    selectionNode = transformFragmentSpreadNode(node);
+                    selectionNode = transformFragmentSpreadNode(node, transformState);
                     break;
                 case NODE_KIND_INLINE_FRAGMENT:
-                    selectionNode = transformInlineFragmentNode(node);
+                    selectionNode = transformInlineFragmentNode(node, transformState);
                     break;
             }
 

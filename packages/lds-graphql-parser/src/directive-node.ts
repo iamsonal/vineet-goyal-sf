@@ -1,9 +1,10 @@
 import { DirectiveNode } from 'graphql/language';
-import { LuvioDirectiveNode } from './ast';
+import { LuvioArgumentNode, LuvioDirectiveNode } from './ast';
 import { transform as transformArgumentNode } from './argument-node';
 import { CUSTOM_DIRECTIVE_CONNECTION, CUSTOM_DIRECTIVE_RESOURCE } from './constants';
+import { TransformState } from './operation/query';
 
-export function transform(node: DirectiveNode): LuvioDirectiveNode {
+export function transform(node: DirectiveNode, transformState: TransformState): LuvioDirectiveNode {
     const {
         kind,
         name: { value: nodeName },
@@ -15,7 +16,13 @@ export function transform(node: DirectiveNode): LuvioDirectiveNode {
     };
 
     if (nodeArguments !== undefined && nodeArguments.length > 0) {
-        ret.arguments = nodeArguments.map(transformArgumentNode);
+        let returnArguments: LuvioArgumentNode[] = [];
+        for (var index = 0; index < nodeArguments.length; index++) {
+            const argumentNode = nodeArguments[index];
+            const value = transformArgumentNode(argumentNode, transformState);
+            returnArguments.push(value);
+        }
+        ret.arguments = returnArguments;
     }
 
     return ret;

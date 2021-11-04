@@ -1,10 +1,12 @@
 import { VariableDefinitionNode } from 'graphql/language';
 import { LuvioVariableDefinitionNode } from './ast';
+import { TransformState } from './operation/query';
 import { transform as transformTypeNode } from './type-node';
 import { transform as transformValueNode } from './value-node';
 
 export function transform(
-    variableDefinitions: VariableDefinitionNode
+    variableDefinitions: VariableDefinitionNode,
+    transformState: TransformState
 ): LuvioVariableDefinitionNode {
     const {
         kind,
@@ -25,7 +27,8 @@ export function transform(
     };
 
     if (defaultValue !== undefined) {
-        ret.defaultValue = transformValueNode(defaultValue);
+        const value = transformValueNode(defaultValue, transformState);
+        ret.defaultValue = value;
     }
 
     // eslint-disable-next-line @salesforce/lds/no-invalid-todo

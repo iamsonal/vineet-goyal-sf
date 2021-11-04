@@ -64,6 +64,7 @@ export interface DraftEnvironmentOptions {
     isDraftId: (id: string) => boolean;
     apiNameForPrefix: (prefix: string) => Promise<string>;
     prefixForApiName: (apiName: string) => Promise<string | null>;
+    ensureObjectInfoCached: (apiName: string, entry?: ObjectInfoRepresentation) => Promise<void>;
     userId: string;
     registerDraftIdMapping: (draftId: string, canonicalId: string) => void;
     getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;

@@ -798,7 +798,7 @@ export function ensureReferencedIdsAreCached(
     apiName: string,
     recordInputFields: Record<string, ScalarFieldType>,
     getObjectInfoAdapter: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>
-) {
+): Promise<void> {
     return Promise.resolve(getObjectInfoAdapter({ objectApiName: apiName }))
         .then((snapshot) => {
             if (snapshot === null || snapshot.data === undefined) {

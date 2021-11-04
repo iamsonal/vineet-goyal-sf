@@ -108,6 +108,7 @@ export function updateRecordDraftEnvironment(
         getRecord,
         apiNameForPrefix,
         getObjectInfo,
+        ensureObjectInfoCached,
     }: UpdateRecordDraftEnvironmentOptions
 ): DurableEnvironment {
     // TODO [W-8909393]: can remove this when metadata is stored separately from data
@@ -137,26 +138,32 @@ export function updateRecordDraftEnvironment(
         const fields = getRecordFieldsFromRecordRequest(resolvedRequest);
 
         return apiNameForPrefix(prefix).then((apiName) => {
-            return assertReferenceIdsAreCached(apiName, resolvedRequest.body.fields).then(() => {
-                return assertRecordIsCached(key, targetId, apiName, fields).then(() => {
-                    return enqueueRequest(resolvedRequest, key, targetId);
-                });
-            });
+            return assertDraftPrerequisitesSatisfied(apiName, resolvedRequest.body.fields).then(
+                () => {
+                    return assertRecordIsCached(key, targetId, apiName, fields).then(() => {
+                        return enqueueRequest(resolvedRequest, key, targetId);
+                    });
+                }
+            );
         });
     };
 
     /**
-     * Asserts that any refrence ids being edited exist in the store
+     * Ensures that any reference ids being edited and the Object Info exist in the store
      * @param apiName apiName of record being updated
      * @param fields fields being edited
      * @returns
      */
-    function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
-        return ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo).catch(
-            (err: Error) => {
-                throw createDraftSynthesisErrorResponse(err.message);
-            }
-        );
+    function assertDraftPrerequisitesSatisfied(
+        apiName: string,
+        fields: Record<string, any>
+    ): Promise<void[]> {
+        return Promise.all([
+            ensureObjectInfoCached(apiName),
+            ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo),
+        ]).catch((err: Error) => {
+            throw createDraftSynthesisErrorResponse(err.message);
+        });
     }
 
     /**

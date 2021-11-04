@@ -209,6 +209,7 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     isDraftId: isGenerated,
     prefixForApiName,
     apiNameForPrefix,
+    ensureObjectInfoCached,
     getRecord,
     getObjectInfo,
     userId,

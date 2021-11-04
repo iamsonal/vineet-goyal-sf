@@ -72,6 +72,7 @@ export function createRecordDraftEnvironment(
         durableStore,
         getObjectInfo,
         apiNameForPrefix,
+        ensureObjectInfoCached,
     }: DraftEnvironmentOptions
 ): DurableEnvironment {
     // TODO [W-8909393]: can remove this when metadata is stored separately from data
@@ -97,9 +98,9 @@ export function createRecordDraftEnvironment(
             );
         }
 
-        return assertReferenceIdsAreCached(apiName, resolvedResourceRequest.body.fields).then(
-            () => {
-                return prefixForApiName(apiName).then((prefix) => {
+        return assertDraftPrerequisitesSatisfied(apiName, resolvedResourceRequest.body.fields).then(
+            () =>
+                prefixForApiName(apiName).then((prefix) => {
                     if (prefix === null) {
                         return Promise.reject(
                             createBadRequestResponse({
@@ -109,8 +110,7 @@ export function createRecordDraftEnvironment(
                     }
 
                     return enqueueRequest(prefix, resolvedResourceRequest);
-                });
-            }
+                })
         );
     };
 
@@ -134,12 +134,22 @@ export function createRecordDraftEnvironment(
         });
     };
 
-    function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
-        return ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo).catch(
-            (err: Error) => {
-                throw createDraftSynthesisErrorResponse(err.message);
-            }
-        );
+    /**
+     * Ensures that any reference ids being edited and the Object Info exist in the store
+     * @param apiName
+     * @param fields
+     * @returns Promise
+     */
+    function assertDraftPrerequisitesSatisfied(
+        apiName: string,
+        fields: Record<string, any>
+    ): Promise<void[]> {
+        return Promise.all([
+            ensureObjectInfoCached(apiName),
+            ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo),
+        ]).catch((err: Error) => {
+            throw createDraftSynthesisErrorResponse(err.message);
+        });
     }
 
     function enqueueRequest(prefix: string, request: ResourceRequest): any {

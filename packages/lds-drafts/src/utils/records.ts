@@ -227,6 +227,18 @@ export function buildSyntheticRecordRepresentation(
         links[fieldName] = { __ref: buildRecordFieldStoreKey(recordKey, fieldName) };
     }
 
+    // add isMissing for every field in the object info not in the action body
+    if (objectInfo !== undefined) {
+        const fieldNames = ObjectKeys(objectInfo.fields);
+        const fieldsLength = fieldNames.length;
+        for (let i = 0; i < fieldsLength; i++) {
+            const fieldName = fieldNames[i];
+            if (fields[fieldName] === undefined) {
+                links[fieldName] = { isMissing: true };
+            }
+        }
+    }
+
     const timestampString = timestamp.toString();
 
     return {

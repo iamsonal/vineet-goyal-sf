@@ -90,8 +90,13 @@ export function getRecordDraftEnvironment(
         // if the canonical key matches the key in the resource request it means we do not have a
         // mapping in our cache so return a non-cacheable error
         if (canonicalKey === recordKey) {
+            // The only way a request is dispatched with a draft record id is when a required field
+            // is requested which isnt in L2 cache or when an optional field that
+            // doesnt exist on the object info is requested
             return Promise.reject(
-                createBadRequestResponse({ message: 'cannot refresh a draft-created record' })
+                createBadRequestResponse({
+                    message: 'Required field is missing from draft created record',
+                })
             );
         }
 

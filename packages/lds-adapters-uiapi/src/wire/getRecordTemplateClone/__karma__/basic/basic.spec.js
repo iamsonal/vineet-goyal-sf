@@ -648,8 +648,7 @@ describe('refresh', () => {
 });
 
 describe('getRecordTemplateClone_imperative', () => {
-    // TODO [W-9803760]: enable when cache-and-network policy is available
-    xit('uses caller-supplied cache policy', async () => {
+    it('uses caller-supplied cache policy', async () => {
         const mock1 = getMock('record-template-clone-Custom_Object__c');
         const mock2 = getMock('record-template-clone-Custom_Object__c');
         mock2.record.fields.CloneSourceId.displayValue = 'foo';

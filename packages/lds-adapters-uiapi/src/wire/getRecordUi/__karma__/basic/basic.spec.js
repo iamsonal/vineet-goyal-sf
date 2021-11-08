@@ -500,8 +500,7 @@ describe('Non-layoutable entities', () => {
 });
 
 describe('getRecordUi_imperative', () => {
-    // TODO [W-9803760]: enable when cache-and-network policy is available
-    xit('uses caller-supplied cache policy', async () => {
+    it('uses caller-supplied cache policy', async () => {
         const mockRecordUiData1 = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData1);
         const recordFields = extractRecordFields(mockRecordUiData1.records[recordId], {

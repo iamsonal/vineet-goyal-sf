@@ -277,8 +277,7 @@ describe('getLayout', () => {
 });
 
 describe('getLayout_imperative', () => {
-    // TODO [W-9803760]: enable when cache-and-network policy is available
-    xit('uses caller-supplied cache policy', async () => {
+    it('uses caller-supplied cache policy', async () => {
         const recordMock = getMock('record-Opportunity');
         const mock1 = getMock('layout-Opportunity-Compact-Edit');
         const mock2 = getMock('layout-Opportunity-Compact-Edit');

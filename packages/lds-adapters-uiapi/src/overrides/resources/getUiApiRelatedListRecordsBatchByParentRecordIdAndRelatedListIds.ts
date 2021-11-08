@@ -7,6 +7,7 @@ import {
     SnapshotRefresh,
     FulfilledSnapshot,
     ErrorSnapshot,
+    CacheKeySet,
 } from '@luvio/engine';
 import {
     ResourceRequestConfig,
@@ -19,6 +20,7 @@ import {
     select as singleWireSelect,
     ingestSuccess as sinlgeWireIngestSuccess,
     ingestError as singleWireIngestError,
+    getResponseCacheKeys as singleWireGetResponseCacheKeys,
 } from './postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 
 // Generated Types
@@ -202,6 +204,48 @@ export function keyBuilder(params: ResourceRequestConfig): string {
         params.urlParams.relatedListIds +
         ')'
     );
+}
+
+export function getResponseCacheKeys(
+    resourceParams: ResourceRequestConfig,
+    response: RelatedListRecordCollectionBatchRepresentation
+): CacheKeySet {
+    let keys: CacheKeySet = {};
+
+    const childEnvelopes = response.results;
+    const childResourceParamsArray = createChildResourceParams(resourceParams);
+    if (process.env.NODE_ENV !== 'production') {
+        if (childResourceParamsArray.length !== childEnvelopes.length) {
+            throw new Error(
+                'Invalid composite resource response. Expected ' +
+                    childResourceParamsArray.length +
+                    ' items, received ' +
+                    childEnvelopes.length
+            );
+        }
+    }
+
+    // get children keys
+    for (let index = 0, len = childResourceParamsArray.length; index < len; index++) {
+        const childResourceParams = childResourceParamsArray[index];
+        const childResult = childEnvelopes[index];
+        const { statusCode: childStatusCode, result: childBody } = childResult;
+        if (childStatusCode === 200) {
+            const childKeys = singleWireGetResponseCacheKeys(
+                childResourceParams,
+                childBody as RelatedListRecordCollectionRepresentation
+            );
+            keys = { ...keys, ...childKeys };
+        } else if (childStatusCode === 404) {
+            const childKey = singleWireKeyBuilder(childResourceParams);
+            keys[childKey] = {
+                namespace: keyPrefix,
+                representationName: childKey.split('::')[1].split(':')[0],
+            };
+        }
+    }
+
+    return keys;
 }
 
 export function ingestSuccess(

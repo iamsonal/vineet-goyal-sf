@@ -6,6 +6,7 @@ import {
     keyBuilder,
     ingestError,
     createResourceRequest,
+    getResponseCacheKeys,
 } from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
     Luvio,
@@ -34,7 +35,13 @@ import {
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
 
-export { keyBuilder, ingestError, ResourceRequestConfig, createResourceRequest };
+export {
+    keyBuilder,
+    ingestError,
+    ResourceRequestConfig,
+    createResourceRequest,
+    getResponseCacheKeys,
+};
 
 const DEFAULT_PAGE_SIZE = 50;
 const RELATED_LIST_REFERENCE_SELECTIONS = RelatedListReferenceRepresentation_select().selections;

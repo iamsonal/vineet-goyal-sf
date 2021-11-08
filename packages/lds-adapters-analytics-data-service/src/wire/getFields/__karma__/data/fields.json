@@ -2,13 +2,22 @@
     "fields": [
         {
             "name": "Id",
-            "type": "string",
+            "type": {
+                "type": "String"
+            },
             "state": "Required",
-            "info": ""
+            "info": [
+                {
+                    "message": "You need this"
+                }
+            ]
         },
         {
             "name": "Name",
-            "type": "string",
+            "type": {
+                "type": "String"
+            },
+            "info": [],
             "state": "NotConnected"
         }
     ],

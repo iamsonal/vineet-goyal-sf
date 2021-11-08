@@ -10,7 +10,7 @@
                 "label": "Salesforce ADS",
                 "url": "/services/data/v54.0/analytics/data-service/sync/connectors/SALESFORCE_ADS"
             },
-            "schema": {
+            "targetSchema": {
                 "name": "salesforce.schema",
                 "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
             },

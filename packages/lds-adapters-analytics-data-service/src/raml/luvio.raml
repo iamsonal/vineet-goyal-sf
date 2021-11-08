@@ -92,17 +92,17 @@ types:
         name: getConnection
       (luvio.key):
         id: urlParams.id
-    /sourceObjects:
+    /source-objects:
       get:
         (luvio.adapter):
           name: getConnectionSourceObjects
-    /sourceObjects/{sourceObjectName}:
+    /source-objects/{sourceObjectName}:
       get:
         (luvio.adapter):
           name: getConnectionSourceObject
         (luvio.key):
           SourceObjectName: urlParams.sourceObjectName
-  /connections/{id}/sourceObjects/{sourceObjectName}/fields:
+  /connections/{id}/source-objects/{sourceObjectName}/fields:
     get:
       (luvio.adapter):
         name: getFields

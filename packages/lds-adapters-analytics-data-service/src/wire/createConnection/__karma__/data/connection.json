@@ -2,7 +2,7 @@
     "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c4",
     "label": "sfdc2",
     "name": "sfdc2",
-    "schema": {
+    "targetSchema": {
         "name": "salesforce.schema",
         "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
     },

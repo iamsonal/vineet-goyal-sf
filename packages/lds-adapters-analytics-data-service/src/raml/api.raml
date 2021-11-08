@@ -90,7 +90,7 @@ types:
       label:
         description: Connection Label
         type: string
-      schema:
+      targetSchema:
         description: Reference to the Schema
         type: ResourceReferenceRepresentation
       sourceObjectsUrl:
@@ -114,7 +114,20 @@ types:
       name:
         description: Description of the connection
         type: string
-
+  DataTypeInfoRepresentation:
+    description: 'Type information about a field '
+    type: object
+    properties:
+      type:
+        description: The type of the field in ADS.
+        type: string
+        enum:
+          - Array
+          - Binary
+          - Boolean
+          - Datetime
+          - Numeric
+          - String
   FieldCollectionRepresentation:
     description: A paged collection of fields available on a source object
     type: object
@@ -140,8 +153,10 @@ types:
     type: object
     properties:
       info:
-        description: Information about this field.
-        type: string
+        description: Information about this field. Can contain warnings or other information
+        type: array
+        items:
+          type: SourceObjectInfoRepresentation
         required: false # TODO Hand-rolled W-8253396
       name:
         description: The name of the field in the source system.
@@ -155,8 +170,8 @@ types:
           - NotConnected
           - Required
       type:
-        description: The type of the field in the source system.
-        type: string
+        description: The type information about this field.
+        type: DataTypeInfoRepresentation
 
   ResourceReferenceRepresentation:
     description: A reference to a resource in the API that contains basic information about the resource and a URL to locate it.
@@ -194,6 +209,13 @@ types:
         type: integer
       url:
         description: URL to get the collection.
+        type: string
+  SourceObjectInfoRepresentation:
+    description: Information from the source system about an object / field
+    type: object
+    properties:
+      message:
+        description: The message for this particular information.
         type: string
   SourceObjectInputRepresentation:
     description: A source object for synchronization.
@@ -504,7 +526,7 @@ types:
         type: string
         required: true
 
-    /sourceObjects:
+    /source-objects:
       get:
         description: Get Connection Source Objects
         responses:
@@ -526,7 +548,7 @@ types:
       uriParameters:
         id:
           type: string
-    /sourceObjects/{sourceObjectName}:
+    /source-objects/{sourceObjectName}:
       get:
         description: Get Connection Source Object by Name
         responses:
@@ -540,7 +562,7 @@ types:
           type: string
         sourceObjectName:
           type: string
-  /connections/{id}/sourceObjects/{sourceObjectName}/fields:
+  /connections/{id}/source-objects/{sourceObjectName}/fields:
     get:
       description: Get a list of all the Fields belonging to a source object.
       responses:

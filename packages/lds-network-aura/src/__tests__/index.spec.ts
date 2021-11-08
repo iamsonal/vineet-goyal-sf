@@ -7806,12 +7806,12 @@ describe('routes', () => {
         );
     });
 
-    describe('get /analytics/data-service/sync/connections/{id}/sourceObjects/{sourceObjectName}/fields', () => {
+    describe('get /analytics/data-service/sync/connections/{id}/source-objects/{sourceObjectName}/fields', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: ADATS_SYNC_BASE_URI,
-                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account/fields`,
             },
             [
                 'AdatsController.getFields',
@@ -7825,7 +7825,7 @@ describe('routes', () => {
                 {
                     method: 'get',
                     baseUri: ADATS_SYNC_BASE_URI,
-                    basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
+                    basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account/fields`,
                     queryParams: {
                         page: 1,
                         pageSize: 3,
@@ -7848,18 +7848,18 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: ADATS_SYNC_BASE_URI,
-                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account/fields`,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account/fields`,
             },
             {}
         );
     });
 
-    describe('get /analytics/data-service/sync/connections/{id}/sourceObjects', () => {
+    describe('get /analytics/data-service/sync/connections/{id}/source-objects', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: ADATS_SYNC_BASE_URI,
-                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects`,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects`,
             },
             [
                 'AdatsController.getConnectionSourceObjects',
@@ -7872,18 +7872,18 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: ADATS_SYNC_BASE_URI,
-                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects`,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects`,
             },
             {}
         );
     });
 
-    describe('get /analytics/data-service/sync/connections/{id}/sourceObjects/{sourceObjectName}', () => {
+    describe('get /analytics/data-service/sync/connections/{id}/sourceO-objects/{source-objectName}', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: ADATS_SYNC_BASE_URI,
-                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account`,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account`,
             },
             [
                 'AdatsController.getConnectionSourceObject',
@@ -7896,7 +7896,7 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: ADATS_SYNC_BASE_URI,
-                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/sourceObjects/Account`,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account`,
             },
             {}
         );

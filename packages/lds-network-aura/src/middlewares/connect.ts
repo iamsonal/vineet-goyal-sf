@@ -80,15 +80,15 @@ const ADATS_CONNECTION_PATH = new RegExp(
     'i'
 );
 const ADATS_SOURCE_OBJECTS_PATH = new RegExp(
-    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects$`,
+    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/source-objects$`,
     'i'
 );
 const ADATS_SOURCE_OBJECT_PATH = new RegExp(
-    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects/(.[^/]{1,255})$`,
+    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/source-objects/(.[^/]{1,255})$`,
     'i'
 );
 const ADATS_FIELDS_PATH = new RegExp(
-    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/sourceObjects/(.[^/]{1,255})/fields$`,
+    `${ADATS_SYNC_BASE_URI}/connections/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/source-objects/(.[^/]{1,255})/fields$`,
     'i'
 );
 

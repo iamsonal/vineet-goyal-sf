@@ -128,7 +128,7 @@ function mockGetConnectionSourceObjectMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_SYNC_BASE}/connections/${id}/sourceObjects/${sourceObjectName}`,
+        basePath: `${URL_SYNC_BASE}/connections/${id}/source-objects/${sourceObjectName}`,
         queryParams: {},
     });
 }
@@ -141,7 +141,7 @@ function getConnectorSourceObjectsMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_SYNC_BASE}/connections/${id}/sourceObjects`,
+        basePath: `${URL_SYNC_BASE}/connections/${id}/source-objects`,
         queryParams: {
             page,
             pageSize,
@@ -221,7 +221,7 @@ function getFieldsMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_SYNC_BASE}/connections/${id}/sourceObjects/${sourceObjectName}/fields`,
+        basePath: `${URL_SYNC_BASE}/connections/${id}/source-objects/${sourceObjectName}/fields`,
         queryParams: {
             page,
             pageSize,

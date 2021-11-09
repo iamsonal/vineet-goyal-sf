@@ -747,6 +747,15 @@ types:
         description: stores additional info about the step
         type: SimulationStepAdditionalInfoOutputRepresentation
         required: false
+      stepErrors:
+        description: stores step errors occurred in the step
+        type: object
+        required: false
+        properties:
+          //:
+            type: array
+            items:
+              type: string
       stepInputs:
         description: stores input variables of step
         type: array

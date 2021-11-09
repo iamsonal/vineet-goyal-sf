@@ -7,6 +7,7 @@ import timekeeper from 'timekeeper';
 const API_VERSION = 'v54.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const INTERACTION_TTL = 1000;
+const EXP_URI = `/connect/decision-explainer/action-logs`;
 
 export function clone(obj) {
     // this is needed for compat tests, because the toEqual matcher can't
@@ -42,7 +43,7 @@ function getExplainabilityActionLogsMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `/connect/explainability-service/action-logs`,
+        basePath: EXP_URI,
         queryParams: { actionContextCode, applicationType, applicationSubType },
     });
 }
@@ -57,7 +58,7 @@ function storeExplainabilityActionLogMatcher(config) {
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
-        basePath: `/connect/explainability-service/action-logs`,
+        basePath: EXP_URI,
         queryParams: {},
     });
 }

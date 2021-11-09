@@ -1,4 +1,5 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, flushPromises } from 'test-util';
+import { getRelatedListRecordsBatch_imperative } from 'lds-adapters-uiapi';
 import {
     expireRecords,
     expireRelatedListRecordCollection,
@@ -221,6 +222,40 @@ describe('error cases', () => {
 
             const wireData = element.getWiredData();
             expect(wireData).toEqualListSnapshotWithoutPrivateProps(mockData);
+        });
+    });
+
+    describe('getRelatedListRecordsBatch_imperative', () => {
+        it('uses caller-supplied cache policy', async () => {
+            const mock1 = getMock('related-list-records-standard-fields-Custom');
+            const mock2 = getMock('related-list-records-standard-fields-Custom');
+            mock2.results[0].result.records[0].fields.Name.value = 'NewName';
+            mock2.results[0].result.records[0].eTag = '33f99fd969583cd3a1b31ed8b5121e62';
+
+            const config = extractRelatedListsBatchParamsFromMockData(mock1);
+            const resourceConfig = convertRelatedListsBatchParamsToResourceParams(config);
+
+            mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mock1, mock2]);
+
+            const callback = jasmine.createSpy();
+
+            // populate cache with mock1
+            getRelatedListRecordsBatch_imperative.invoke(config, undefined, callback);
+            await flushPromises();
+
+            callback.calls.reset();
+
+            // should emit mock1 from cache, then make network call & emit mock2
+            getRelatedListRecordsBatch_imperative.subscribe(
+                config,
+                { cachePolicy: { type: 'cache-and-network' } },
+                callback
+            );
+            await flushPromises();
+
+            expect(callback).toHaveBeenCalledTimes(2);
+            expect(callback.calls.argsFor(0)[0].data).toEqualListSnapshotWithoutPrivateProps(mock1);
+            expect(callback.calls.argsFor(1)[0].data).toEqualListSnapshotWithoutPrivateProps(mock2);
         });
     });
 });

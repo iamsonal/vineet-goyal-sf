@@ -7,11 +7,11 @@ import {
     areRequiredParametersPresent,
 } from '../../generated/adapters/adapter-utils';
 import {
-    buildInMemorySnapshot,
-    buildNetworkSnapshot,
-    GetRelatedListRecordsBatchConfig as GeneratedGetRelatedListRecordBatchConfig,
+    GetRelatedListRecordsBatchConfig as GeneratedGetRelatedListRecordsBatchConfig,
+    buildInMemorySnapshotCachePolicy,
+    buildNetworkSnapshotCachePolicy,
 } from '../../generated/adapters/getRelatedListRecordsBatch';
-import { Luvio, Snapshot, AdapterFactory } from '@luvio/engine';
+import { Luvio, Snapshot, AdapterFactory, AdapterRequestContext } from '@luvio/engine';
 import { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
 
 export { adapterName } from '../../generated/adapters/getRelatedListRecordsBatch';
@@ -41,7 +41,7 @@ export interface GetRelatedListRecordsBatchConfig {
 
 export function coerceActualAdapterConfigToGeneratedRepresentation(
     config: GetRelatedListRecordsBatchConfig
-): GeneratedGetRelatedListRecordBatchConfig {
+): GeneratedGetRelatedListRecordsBatchConfig {
     var relatedListIds: Array<string> = [];
     var fields: Array<string> = [];
     var optionalFields: Array<string> = [];
@@ -172,36 +172,41 @@ export function typeCheckConfig(
     return config;
 }
 
+type BuildSnapshotContext = {
+    config: GeneratedGetRelatedListRecordsBatchConfig;
+    luvio: Luvio;
+};
+
 export const getRelatedListRecordsBatchAdapterFactory: AdapterFactory<
     GetRelatedListRecordsBatchConfig,
     RelatedListRecordCollectionBatchRepresentation
 > = (luvio: Luvio) =>
-    function getRelatedListRecordsBatch(
-        untrustedConfig: unknown
+    function UiApi__getRelatedListRecordsBatch(
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
     ):
-        | Promise<Snapshot<RelatedListRecordCollectionBatchRepresentation, any>>
-        | Snapshot<RelatedListRecordCollectionBatchRepresentation, any>
+        | Promise<Snapshot<RelatedListRecordCollectionBatchRepresentation>>
+        | Snapshot<RelatedListRecordCollectionBatchRepresentation>
         | null {
         const config = validateAdapterConfig(
             untrustedConfig,
             getRelatedListRecordsBatch_ConfigPropertyNames
         );
-
         // Invalid or incomplete config
         if (config === null) {
             return null;
         }
-
         const coercedConfig = coerceActualAdapterConfigToGeneratedRepresentation(config);
 
-        const cacheSnapshot = buildInMemorySnapshot(luvio, coercedConfig);
-
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot) === true) {
-            return cacheSnapshot;
-        }
-
-        return buildNetworkSnapshot(luvio, coercedConfig);
+        return luvio.applyCachePolicy<
+            BuildSnapshotContext,
+            RelatedListRecordCollectionBatchRepresentation
+        >(
+            (requestContext || {}).cachePolicy,
+            { config: coercedConfig, luvio },
+            buildInMemorySnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
     };
 
 // HUGE BLOCK OF COPY PASTED CODE:

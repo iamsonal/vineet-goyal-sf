@@ -15,7 +15,7 @@
                     {
                         "children": [],
                         "description": "Follow our recommendations for rolling out Salesforce to customers.",
-                        "progress": "NotStarted",
+                        "status": "NotStarted",
                         "step": {
                             "action": {
                                 "iconName": "linkIcon",
@@ -26,7 +26,7 @@
                             "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
                             "id": "learn_about_salesforce",
                             "isManaged": false,
-                            "progress": "NotStarted",
+                            "status": "NotStarted",
                             "tags": [],
                             "title": "Explore Salesforce Setup",
                             "updateStrategy": "None"
@@ -38,7 +38,7 @@
                     {
                         "children": [],
                         "description": "Follow our recommendations for rolling out Salesforce to customers.",
-                        "progress": "NotStarted",
+                        "status": "NotStarted",
                         "step": {
                             "action": {
                                 "iconName": "linkIcon",
@@ -49,7 +49,7 @@
                             "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
                             "id": "learn_about_salesforce",
                             "isManaged": false,
-                            "progress": "NotStarted",
+                            "status": "NotStarted",
                             "tags": [],
                             "title": "Explore Salesforce Setup",
                             "updateStrategy": "None"
@@ -60,7 +60,7 @@
                     }
                 ],
                 "description": "Follow our recommendations for rolling out Salesforce to customers.",
-                "progress": "NotStarted",
+                "status": "NotStarted",
                 "step": {
                     "action": {
                         "iconName": "linkIcon",
@@ -71,7 +71,7 @@
                     "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
                     "id": "learn_about_salesforce",
                     "isManaged": false,
-                    "progress": "NotStarted",
+                    "status": "NotStarted",
                     "tags": [],
                     "title": "Explore Salesforce Setup",
                     "updateStrategy": "None"

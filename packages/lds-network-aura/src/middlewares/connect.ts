@@ -857,7 +857,7 @@ const guidance: ApiFamily = {
         predicate: (path: string) =>
             path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_QUESTIONNAIRES_PATH.test(path),
         transport: {
-            controller: 'LightningExperienceAssistantPlatformController.getActiveQuestionnaires',
+            controller: 'LightningExperienceAssistantPlatformController.getQuestionnaires',
         },
     },
     getGuidanceQuestionnaire: {

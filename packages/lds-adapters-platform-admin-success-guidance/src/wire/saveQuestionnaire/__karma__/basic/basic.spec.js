@@ -23,7 +23,7 @@ describe('basic', () => {
         const config = {
             questionnaireName: mock.developerName,
             questionnaireData: {
-                progress: 'Completed',
+                status: 'Completed',
                 questionToAnswer: {},
             },
         };
@@ -47,7 +47,7 @@ describe('basic', () => {
                         whenAnswered: Date.now().toString(),
                     },
                 },
-                progress: 'Completed',
+                status: 'Completed',
             },
         };
         mockSaveQuestionnaireNetworkOnce(config, mock);
@@ -62,7 +62,7 @@ describe('basic', () => {
         const config = {
             questionnaireName: getMock('save-questionnaire').developerName,
             questionnaireData: {
-                progress: 'Completed',
+                status: 'Completed',
                 questionToAnswer: {},
             },
         };
@@ -91,7 +91,7 @@ describe('basic', () => {
         const config = {
             questionnaireName: mock.developerName,
             questionnaireData: {
-                progress: 'Completed',
+                status: 'Completed',
                 questionToAnswer: {},
             },
         };

@@ -111,12 +111,17 @@ types:
       Updates.
     type: object
     properties:
-      progress:
-        description: Input completion progress for a Lightning Assistant item or step.
+      pathToStep:
+        description: Label Path to the step.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      status:
+        description: Input status for a Lightning Assistant item or step.
         type: string
         enum:
           - Completed
           - InProgress
+          - Invisible
           - NotStarted
       whenPerformed:
         description: Input date of when the item or step was completed.
@@ -135,18 +140,18 @@ types:
           type: any
       description:
         description: The localized description for this node
-        type: string
-        required: false # TODO Hand-rolled W-8253396
-      progress:
-        description: The completion progress for this Node
-        type: string
+        type: string | nil # TODO Hand-rolled W-8253396
+      status:
+        description: The status for this node
+        type: string | nil # TODO Hand-rolled W-8253396
         enum:
           - Completed
           - InProgress
+          - Invisible
           - NotStarted
       step:
-        description: The list of substeps for an item
-        type: LightningAssistantStepRepresentation
+        description: The list of substeps for an node
+        type: LightningAssistantStepRepresentation | nil # TODO Hand-rolled W-8253396
       tags:
         description: Tags associated with this node
         type: array
@@ -154,7 +159,7 @@ types:
           type: string
       title:
         description: The localized title for this node
-        type: string
+        type: string | nil # TODO Hand-rolled W-8253396
       type:
         description: The type for this node
         type: string
@@ -246,8 +251,8 @@ types:
       Assistant questionnaire.
     type: object
     properties:
-      progress:
-        description: Input current progress when completing a questionnaire.
+      status:
+        description: Input current status when completing a questionnaire.
         type: string
         enum:
           - Completed
@@ -294,8 +299,13 @@ types:
       developerName:
         description: The developer name of a questionnaire that can be displayed
         type: string
-      progress:
-        description: The completion progress for the questionnaire
+      questions:
+        description: The list of questions for this questionnaire
+        type: array
+        items:
+          type: LightningAssistantQuestionRepresentation
+      status:
+        description: The status for the questionnaire
         type: string
         enum:
           - Completed
@@ -303,11 +313,6 @@ types:
           - Invisible
           - NotStarted
           - Skipped
-      questions:
-        description: The list of questions for this questionnaire
-        type: array
-        items:
-          type: LightningAssistantQuestionRepresentation
       title:
         description: The localized title for this questionnaire
         type: string
@@ -324,6 +329,7 @@ types:
       completionDate:
         description: The completion date for the assistant
         type: string
+        required: false # TODO Hand-rolled W-8253396
       debugModeEnabled:
         description: Is the guidance center in debug mode
         type: boolean
@@ -390,12 +396,13 @@ types:
       isManaged:
         description: Whether this step has a completedWhen or not
         type: boolean
-      progress:
-        description: The completion progress for this step
+      status:
+        description: The status for this step
         type: string
         enum:
           - Completed
           - InProgress
+          - Invisible
           - NotStarted
       stepComponent:
         description: The id of the component used to display this step
@@ -410,7 +417,8 @@ types:
         description: The localized title for this step
         type: string
       updateStrategy:
-        description: When isManaged is true, use this value to determine how to update the progress
+        description: When isManaged is true, use this value to determine how to update
+          the status
         type: string
         enum:
           - None
@@ -474,7 +482,7 @@ types:
 /assistant-platform:
   /questionnaire/{questionnaireName}:
     get:
-      description: Get the Guidance Center Questionnaire and progress
+      description: Get the Guidance Center Questionnaire and status
       responses:
         '200':
           description: Success
@@ -482,7 +490,7 @@ types:
             application/json:
               type: LightningAssistantQuestionnaireRepresentation
     patch:
-      description: Save the Guidance Center Questionnaire answers and progress
+      description: Save the Guidance Center Questionnaire answers and status
       responses:
         '200':
           description: Success

@@ -4576,7 +4576,7 @@ describe('routes', () => {
                 basePath: `/1234567890ABCDE/questionnaires`,
             },
             [
-                'LightningExperienceAssistantPlatformController.getActiveQuestionnaires',
+                'LightningExperienceAssistantPlatformController.getQuestionnaires',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]

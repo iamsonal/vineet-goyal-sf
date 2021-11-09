@@ -10,7 +10,7 @@
     "description": "See how the utility bar actions can be customized.",
     "id": "test_step_name",
     "isManaged": true,
-    "progress": "NotStarted",
+    "status": "NotStarted",
     "tags": ["premier"],
     "title": "Show Utility Bar Actions",
     "updateStrategy": "Periodic"

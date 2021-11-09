@@ -25,7 +25,7 @@ describe('basic', () => {
             assistantData: {
                 items: {
                     learn_about_salesforce: {
-                        progress: 'Completed',
+                        status: 'Completed',
                     },
                 },
             },
@@ -44,7 +44,7 @@ describe('basic', () => {
             assistantData: {
                 items: {
                     learn_about_salesforce: {
-                        progress: 'Completed',
+                        status: 'Completed',
                     },
                 },
             },
@@ -76,7 +76,7 @@ describe('basic', () => {
             assistantData: {
                 items: {
                     learn_about_salesforce: {
-                        progress: 'Completed',
+                        status: 'Completed',
                     },
                 },
             },

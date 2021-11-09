@@ -2,7 +2,6 @@
     "assistantTarget": "test_assistant_target",
     "description": "Setup Assistant is here to help you get Salesforce ready for your users. First, we'll get acquainted by asking you a few questions. Then, we'll provide some setup resources just for you.",
     "developerName": "test_questionnaire_name",
-    "progress": "NotStarted",
     "questions": [
         {
             "choices": [
@@ -42,5 +41,6 @@
             "title": "How much experience do you have with Salesforce setup?"
         }
     ],
+    "status": "NotStarted",
     "title": "Welcome to Salesforce"
 }

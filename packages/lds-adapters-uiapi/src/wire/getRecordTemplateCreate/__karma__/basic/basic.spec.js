@@ -1,4 +1,5 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getRecordTemplateCreate_imperative } from 'lds-adapters-uiapi';
+import { flushPromises, getMock as globalGetMock, setupElement, stripEtags } from 'test-util';
 import {
     expireCreateTemplateRepresentation,
     expireCreateRecordTemplateRepresentation,
@@ -606,5 +607,43 @@ describe('refresh', () => {
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshed);
+    });
+});
+
+describe('getRecordTemplateCreate_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mock1 = getMock('record-template-create-Custom_Object_2__c-optionalField-Number');
+        const mock2 = getMock('record-template-create-Custom_Object_2__c-optionalField-Number');
+        mock2.record.fields.Number__c.value += 1;
+
+        const apiName = mock1.record.apiName;
+        const recordTypeId = mock1.record.recordTypeId;
+        const config = {
+            objectApiName: apiName,
+            optionalFields: [`${apiName}.Number__c`],
+            recordTypeId,
+        };
+
+        mockGetRecordTemplateCreateNetwork(config, [mock1, mock2]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mock1
+        getRecordTemplateCreate_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getRecordTemplateCreate_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([{ data: stripEtags(mock1), error: undefined }]);
+        expect(callback.calls.argsFor(1)).toEqual([{ data: stripEtags(mock2), error: undefined }]);
     });
 });

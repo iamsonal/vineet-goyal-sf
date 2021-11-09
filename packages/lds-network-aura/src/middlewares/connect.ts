@@ -92,6 +92,12 @@ const ADATS_FIELDS_PATH = new RegExp(
     'i'
 );
 
+const ADATS_TARGETS_PATH = new RegExp(`${ADATS_SYNC_BASE_URI}/targets$`, 'i');
+const ADATS_TARGET_PATH = new RegExp(
+    `${ADATS_SYNC_BASE_URI}/targets/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`,
+    'i'
+);
+
 const ADATS_DATABASES_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}$`, 'i');
 const ADATS_DATABASE_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+$`, 'i');
 
@@ -1254,7 +1260,30 @@ const adats: ApiFamily = {
             controller: 'AdatsController.getFields',
         },
     },
-
+    getTargets: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_TARGETS_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getTargets',
+        },
+    },
+    getTarget: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_TARGET_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getTarget',
+        },
+    },
+    createTarget: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_TARGETS_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.createTarget',
+        },
+    },
     getDatabases: {
         method: 'get',
         predicate: (path: string) =>

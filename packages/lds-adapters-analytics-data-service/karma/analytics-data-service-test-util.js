@@ -167,6 +167,49 @@ function mockGetFieldsNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+// targets
+function mockGetTargetNetworkOnce(config, mockData) {
+    const paramMatch = getTargetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetTargetNetworkErrorOnce(config, mockData) {
+    const paramMatch = getTargetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockGetTargetsNetworkOnce(config, mockData) {
+    const paramMatch = getTargetsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetTargetsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getTargetsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockCreateTargetNetworkOnce(config, mockData) {
+    const paramMatch = createTargetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCreateTargetNetworkErrorOnce(config, mockData) {
+    const paramMatch = createTargetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function getConnectorMatcher(config) {
     const { id } = config;
 
@@ -227,6 +270,46 @@ function getFieldsMatcher(config) {
             pageSize,
             q,
         },
+    });
+}
+
+function getTargetsMatcher(config) {
+    const { connectionId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_SYNC_BASE}/targets`,
+        queryParams: {
+            connectionId,
+        },
+    });
+}
+
+function getTargetMatcher(config) {
+    const { id } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_SYNC_BASE}/targets/${id}`,
+        queryParams: {},
+    });
+}
+
+function createTargetMatcher(config) {
+    const { targetInput } = config;
+    return sinon.match({
+        body: {
+            targetInput,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_SYNC_BASE}/targets`,
+        queryParams: {},
     });
 }
 
@@ -400,6 +483,12 @@ export {
     mockGetConnectionSourceObjectNetworkErrorOnce,
     mockGetFieldsNetworkOnce,
     mockGetFieldsNetworkErrorOnce,
+    mockGetTargetNetworkOnce,
+    mockGetTargetNetworkErrorOnce,
+    mockGetTargetsNetworkOnce,
+    mockGetTargetsNetworkErrorOnce,
+    mockCreateTargetNetworkOnce,
+    mockCreateTargetNetworkErrorOnce,
     expireAsset,
     mockGetSchemasNetworkOnce,
     mockGetSchemasNetworkErrorOnce,

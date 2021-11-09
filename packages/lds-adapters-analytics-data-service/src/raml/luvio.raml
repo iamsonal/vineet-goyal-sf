@@ -28,6 +28,12 @@ types:
     (luvio.ttl): 5000
   FieldCollectionRepresentation:
     (luvio.ttl): 5000
+  TargetCollectionRepresentation:
+    (luvio.ttl): 5000
+  TargetRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      id: id
 
   SchemaCollectionRepresentation:
     (luvio.ttl): 5000
@@ -109,3 +115,16 @@ types:
     (luvio.key):
       id: urlParams.id
       sourceObjectName: urlParams.sourceObjectName
+  /targets:
+    get:
+      (luvio.adapter):
+        name: getTargets
+    post:
+      (luvio.adapter):
+        name: createTarget
+  /targets/{id}:
+    get:
+      (luvio.adapter):
+        name: getTarget
+      (luvio.key):
+        id: urlParams.id

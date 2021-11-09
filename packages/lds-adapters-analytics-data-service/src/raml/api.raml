@@ -187,6 +187,7 @@ types:
       url:
         description: Resource Url
         type: string
+        required: false # TODO Hand-rolled W-8253396
       label:
         description: Resource Label
         type: string
@@ -253,6 +254,125 @@ types:
       url:
         description: The URL to get this Source Object.
         type: string
+
+  TargetCollectionRepresentation:
+    description: A collection of Synchronization Targets for Analytics Data Service
+    type: object
+    properties:
+      targets:
+        description: The list of targets
+        type: array
+        items:
+          type: TargetRepresentation
+      totalSize:
+        description: The total number of targets in the collection
+        type: integer
+      url:
+        description: The url of this collection
+        type: string
+
+  TargetRepresentation:
+    description: Details about an Analytics Data Service synchronization target
+    type: object
+    properties:
+      connection:
+        description: The connection that synchronizes this target
+        type: ResourceReferenceRepresentation
+      fields:
+        description: The synchronized fields
+        type: array
+        items:
+          type: TargetFieldRepresentation
+      id:
+        description: The unique identifier of this target
+        type: string
+      name:
+        description: The name of this target. Often, the target name is the same as the source object name
+        type: string
+      sourceObject:
+        description: The synchronized source object
+        type: ResourceReferenceRepresentation
+      status:
+        description: The synchronization status
+        type: StatusRepresentation
+      table:
+        description: The target table
+        type: ResourceReferenceRepresentation
+      url:
+        description: The URL of this target
+        type: string
+
+  TargetFieldRepresentation:
+    description: A field that is replicated to a target ADS table
+    type: object
+    properties:
+      name:
+        description: The name of the field
+        type: string
+
+  TargetInputRepresentation:
+    description: Input representation for creating a synchronization target
+    type: object
+    properties:
+      connectionId:
+        description: The unique ID of the connection doing synchronization
+        type: string
+      fields:
+        description: The fields in the source object
+        type: array
+        items:
+          type: FieldInputRepresentation
+      sourceObject:
+        description: The Source object for synchronization
+        type: SourceObjectInputRepresentation
+
+  TargetInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for target input representation
+    type: object
+    properties:
+      targetInput:
+        type: TargetInputRepresentation
+        description: Target input representation
+
+  FieldInputRepresentation:
+    description: A source object field for synchronization
+    type: object
+    properties:
+      name:
+        description: The source object field name
+        type: string
+
+  StatusRepresentation:
+    description: The synchronization status of a synchronized object
+    type: object
+    properties:
+      errors:
+        description: The number of errors during the last synchronization
+        format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        type: number
+      frequency:
+        description: The frequency of synchronization in seconds
+        type: integer
+      lastSync:
+        description: The date and time of the last successful synchronization
+        type: string
+      sourceRecordCount:
+        description: The number of records in the source object
+        format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        type: number
+      state:
+        description: The actual synchronization state
+        type: string
+        enum:
+          - Error
+          - InvalidConfig
+          - New
+          - Synced
+          - Syncing
+      targetRecordCount:
+        description: The number of records in the target table
+        format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        type: number
 
   DatabaseCollectionRepresentation:
     description: Representation of a collection of Analytics Data Service Databases
@@ -586,5 +706,45 @@ types:
         type: string
         required: true
       sourceObjectName:
+        type: string
+        required: true
+  /targets:
+    get:
+      description: Get the list of synchronization targets
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetCollectionRepresentation
+      queryParameters:
+        connectionId:
+          description: Connection Id for which to get the targets
+          type: string
+          required: false
+    post:
+      description: Add a synchronization target to a connection
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetRepresentation
+      body:
+        application/json:
+          # TODO Hand-rolled W-8334626. Original type: TargetInputRepresentation
+          type: TargetInputWrapperRepresentation
+          (oas-body-name): targetInput
+  /targets/{id}:
+    get:
+      description: Get the details about a synchronization target
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetRepresentation
+    uriParameters:
+      id:
         type: string
         required: true

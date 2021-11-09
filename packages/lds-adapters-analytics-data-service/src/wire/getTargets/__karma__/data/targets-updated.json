@@ -1,0 +1,94 @@
+{
+    "targets": [
+        {
+            "connection": {
+                "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c4",
+                "label": "Salesforce ADS",
+                "name": "Salesforce ADS",
+                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
+            },
+            "fields": [
+                {
+                    "name": "CreatedDate"
+                },
+                {
+                    "name": "Id"
+                },
+                {
+                    "name": "IsDeleted"
+                },
+                {
+                    "name": "SystemModstamp"
+                }
+            ],
+            "id": "c11fdb87-a196-46aa-8b44-5ad6e9e253c5",
+            "name": "Account",
+            "sourceObject": {
+                "id": "Account",
+                "label": "Account",
+                "name": "Account",
+                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account"
+            },
+            "status": {
+                "errors": 4,
+                "frequency": 120,
+                "lastSync": "2021-10-19T21:07:51.000Z",
+                "sourceRecordCount": 2,
+                "state": "Synced",
+                "targetRecordCount": 1
+            },
+            "table": {
+                "id": "Account",
+                "label": "Account",
+                "name": "Account"
+            },
+            "url": "/services/data/v54.0/analytics/data-service/sync/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5"
+        },
+        {
+            "connection": {
+                "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c8",
+                "label": "Salesforce ADS 2",
+                "name": "Salesforce ADS 2",
+                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c8"
+            },
+            "fields": [
+                {
+                    "name": "CreatedDate"
+                },
+                {
+                    "name": "Id"
+                },
+                {
+                    "name": "IsDeleted"
+                },
+                {
+                    "name": "SystemModstamp"
+                }
+            ],
+            "id": "c11fdb87-a196-46aa-8b44-5ad6e9e253c6",
+            "name": "Opportunity",
+            "sourceObject": {
+                "id": "Opportunity",
+                "label": "Opportunity",
+                "name": "Opportunity",
+                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c8/sourceObjects/Opportunity"
+            },
+            "status": {
+                "errors": 4,
+                "frequency": 120,
+                "lastSync": "2021-10-19T21:07:51.000Z",
+                "sourceRecordCount": 2,
+                "state": "Synced",
+                "targetRecordCount": 1
+            },
+            "table": {
+                "id": "Opportunity",
+                "label": "Opportunity",
+                "name": "Opportunity"
+            },
+            "url": "/services/data/v54.0/analytics/data-service/sync/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c6"
+        }
+    ],
+    "totalSize": 2,
+    "url": "/services/data/v54.0/analytics/data-service/sync/targets"
+}

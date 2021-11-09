@@ -7902,6 +7902,118 @@ describe('routes', () => {
         );
     });
 
+    describe('get /analytics/data-service/sync/targets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            [
+                'AdatsController.getTarget',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/targets', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+            },
+            [
+                'AdatsController.getTargets',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('get /analytics/data-service/sync/targets', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: ADATS_SYNC_BASE_URI,
+                    basePath: `/targets`,
+                    queryParams: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                    },
+                },
+                [
+                    'AdatsController.getTargets',
+                    {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+            },
+            {}
+        );
+    });
+
+    describe('post /analytics/data-service/sync/targets', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            [
+                'AdatsController.createTarget',
+                {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /analytics/data-service/databases', () => {
         testControllerInput(
             {

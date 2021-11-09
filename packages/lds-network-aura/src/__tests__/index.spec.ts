@@ -3005,7 +3005,7 @@ describe('routes', () => {
                 basePath: `/consumer-goods/tenant-registration`,
             },
             [
-                'RCGTenantManagentController.getTenantRegistrationStatus',
+                'RCGTenantManagementController.getTenantRegistrationStatus',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -3032,7 +3032,7 @@ describe('routes', () => {
                 basePath: `/consumer-goods/tenant-registration`,
             },
             [
-                'RCGTenantManagentController.updateTenantCertificate',
+                'RCGTenantManagementController.updateTenantCertificate',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]

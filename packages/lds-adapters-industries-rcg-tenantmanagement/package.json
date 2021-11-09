@@ -21,8 +21,8 @@
         "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
         "build:services": "rollup --config rollup.config.js",
         "clean": "rm -rf dist sfdc src/generated karma/dist",
-        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-industries-sustainability-reference-data",
-        "release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter=lds-adapters-industries-sustainability-reference-data",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-industries-rcg-tenantmanagement",
+        "release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter=lds-adapters-industries-rcg-tenantmanagement",
         "start": "karma start",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat"

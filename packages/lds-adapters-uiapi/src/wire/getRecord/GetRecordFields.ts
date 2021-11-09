@@ -6,6 +6,9 @@ import {
     SnapshotRefresh,
     ResourceResponse,
     CacheKeySet,
+    AdapterRequestContext,
+    StoreLookup,
+    DispatchResourceRequest,
 } from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
 import { keyBuilder } from '../../generated/resources/getUiApiRecordsByRecordId';
@@ -250,4 +253,44 @@ export function getRecordByFields(
     }
 
     return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, config));
+}
+
+export type BuildSnapshotContext = {
+    config: GetRecordConfig;
+    luvio: Luvio;
+};
+
+export function buildInMemorySnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordRepresentation>
+): Snapshot<RecordRepresentation> {
+    const { config, luvio } = context;
+
+    const fields = config.fields === undefined ? [] : config.fields;
+    const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
+
+    const sel = buildRecordSelector(config.recordId, fields, optionalFields);
+    return storeLookup(sel, buildSnapshotRefresh(luvio, config));
+}
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    _dispatchResourceRequest: DispatchResourceRequest<RecordRepresentation>
+): Promise<Snapshot<RecordRepresentation>> {
+    const { config, luvio } = context;
+
+    return buildNetworkSnapshot(luvio, config);
+}
+
+export function getRecordByFields_requestContext(
+    luvio: Luvio,
+    config: GetRecordConfig,
+    requestContext?: AdapterRequestContext
+): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
+    return luvio.applyCachePolicy(
+        requestContext === undefined ? undefined : requestContext.cachePolicy,
+        { config, luvio },
+        buildInMemorySnapshotCachePolicy,
+        buildNetworkSnapshotCachePolicy
+    );
 }

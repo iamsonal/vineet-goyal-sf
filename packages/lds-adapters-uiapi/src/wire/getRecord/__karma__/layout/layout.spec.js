@@ -1,4 +1,5 @@
-import { setupElement, getMock as globalGetMock } from 'test-util';
+import { getRecord_imperative } from 'lds-adapters-uiapi';
+import { flushPromises, setupElement, getMock as globalGetMock, stripEtags } from 'test-util';
 import {
     MASTER_RECORD_TYPE_ID,
     extractRecordFields,
@@ -373,5 +374,52 @@ describe('refresh', () => {
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
             refershMockUiData.records[recordId]
         );
+    });
+});
+
+describe('getRecord_imperative', () => {
+    // TODO [W-9803760]: enable when cache-and-network policy is available
+    it('uses caller-supplied cache policy when a record is requested by layout', async () => {
+        const mockRecordUiData1 = getMock('record-Opportunity-layouttypes-Full-modes-View');
+        const mockRecord1 = mockRecordUiData1.records[Object.keys(mockRecordUiData1.records)[0]];
+
+        const mockRecordUiData2 = getMock('record-Opportunity-layouttypes-Full-modes-View');
+        const mockRecord2 = mockRecordUiData2.records[Object.keys(mockRecordUiData2.records)[0]];
+        mockRecord2.fields.Name.value = 'updated';
+
+        const config = {
+            recordId: mockRecord1.id,
+            layoutTypes: ['Full'],
+        };
+
+        const networkParams = {
+            recordIds: config.recordId,
+            layoutTypes: config.layoutTypes,
+        };
+        mockGetRecordUiNetwork(networkParams, [mockRecordUiData1, mockRecordUiData2]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mockData1
+        getRecord_imperative.invoke(config, {}, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mockRecordUiData1 from cache, then make network call & emit mockRecordUiData2
+        getRecord_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([
+            { data: stripEtags(mockRecord1), error: undefined },
+        ]);
+        expect(callback.calls.argsFor(1)).toEqual([
+            { data: stripEtags(mockRecord2), error: undefined },
+        ]);
     });
 });

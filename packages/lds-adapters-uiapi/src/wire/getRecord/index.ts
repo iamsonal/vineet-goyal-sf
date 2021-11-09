@@ -1,4 +1,11 @@
-import { AdapterFactory, FetchResponse, GraphNode, Luvio, Snapshot } from '@luvio/engine';
+import {
+    AdapterFactory,
+    AdapterRequestContext,
+    FetchResponse,
+    GraphNode,
+    Luvio,
+    Snapshot,
+} from '@luvio/engine';
 import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
 import { GetRecordConfig, validateAdapterConfig } from '../../generated/adapters/getRecord';
 import { createResourceRequest as getUiApiRecordsByRecordId } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
@@ -10,8 +17,9 @@ import {
 } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
-import { getRecordByFields } from './GetRecordFields';
+import { getRecordByFields, getRecordByFields_requestContext } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
+import { getRecordLayoutType as getRecordLayoutType_requestContext } from './GetRecordLayoutTypeRequestContext';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 import { instrumentation } from '../../instrumentation';
@@ -137,7 +145,8 @@ export const notifyChangeFactory = (luvio: Luvio) => {
 
 export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (luvio: Luvio) =>
     function getRecord(
-        untrustedConfig: unknown
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
     ): Promise<Snapshot<RecordRepresentation>> | Snapshot<RecordRepresentation> | null {
         // standard config validation and coercion
         const config = validateAdapterConfig(untrustedConfig, GET_RECORD_ADAPTER_CONFIG);
@@ -146,9 +155,13 @@ export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (l
         }
 
         if (hasLayoutTypes(config)) {
-            return getRecordLayoutType(luvio, config);
+            return requestContext
+                ? getRecordLayoutType_requestContext(luvio, config, requestContext)
+                : getRecordLayoutType(luvio, config);
         } else if (hasFieldsOrOptionalFields(config)) {
-            return getRecordByFields(luvio, config);
+            return requestContext
+                ? getRecordByFields_requestContext(luvio, config, requestContext)
+                : getRecordByFields(luvio, config);
         }
 
         return null;

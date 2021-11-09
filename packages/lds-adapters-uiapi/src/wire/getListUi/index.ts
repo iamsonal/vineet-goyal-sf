@@ -711,15 +711,7 @@ export const factory: AdapterFactory<
             return buildNetworkSnapshot_getListUi(luvio, context, config);
         }
 
-        const listInfoSnapshot = getListInfo(
-            listRef,
-            luvio,
-            buildSnapshotRefresh_getListUi(
-                luvio,
-                context,
-                config
-            ) as unknown as SnapshotRefresh<ListInfoRepresentation>
-        );
+        const listInfoSnapshot = getListInfo(listRef, luvio);
 
         // if we have list info then build a snapshot from that
         if (isFulfilledSnapshot(listInfoSnapshot)) {

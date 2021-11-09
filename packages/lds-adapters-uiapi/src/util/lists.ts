@@ -3,7 +3,6 @@ import {
     PathSelection,
     AdapterContext,
     Snapshot,
-    SnapshotRefresh,
     FulfilledSnapshot,
     StaleSnapshot,
 } from '@luvio/engine';
@@ -95,21 +94,14 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
  */
 export function getListInfo(
     listRef: ListReferenceRepresentation,
-    luvio: Luvio,
-    // TODO [W-9601746]: today makeDurable environment needs a refresh set for
-    // "resolveSnapshot" override to work properly, but once this work
-    // item is done we won't need refresh set anymore and this parameter can go away
-    refresh?: SnapshotRefresh<ListInfoRepresentation>
+    luvio: Luvio
 ): Snapshot<ListInfoRepresentation> {
     const key = ListInfoRepresentation_keyBuilder(listRef);
-    return luvio.storeLookup<ListInfoRepresentation>(
-        {
-            recordId: key,
-            node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
-            variables: {},
-        },
-        refresh
-    );
+    return luvio.storeLookup<ListInfoRepresentation>({
+        recordId: key,
+        node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
+        variables: {},
+    });
 }
 
 // The server assumes defaults for certain config fields, which makes caching

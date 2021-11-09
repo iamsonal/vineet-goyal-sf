@@ -433,11 +433,7 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
                 objectApiName: config.objectApiName,
                 type: 'mru',
             },
-            luvio,
-            buildSnapshotRefresh_getMruListUi(
-                luvio,
-                config
-            ) as unknown as SnapshotRefresh<ListInfoRepresentation>
+            luvio
         );
 
         // if we have list info then build a snapshot from that

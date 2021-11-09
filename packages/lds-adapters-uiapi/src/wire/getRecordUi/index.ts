@@ -175,21 +175,15 @@ export function buildInMemorySnapshot(
     );
     const cachedSelectorKey = buildCachedSelectorKey(key);
 
-    const cacheSel = luvio.storeLookup<Selector>(
-        {
-            recordId: cachedSelectorKey,
-            node: {
-                kind: 'Fragment',
-                private: [],
-                opaque: true,
-            },
-            variables: {},
+    const cacheSel = luvio.storeLookup<Selector>({
+        recordId: cachedSelectorKey,
+        node: {
+            kind: 'Fragment',
+            private: [],
+            opaque: true,
         },
-        // TODO [W-9601746]: today makeDurable environment needs a refresh set for
-        // "resolveSnapshot" override to work properly, but once this work
-        // item is done we won't need to pass in a refresh here
-        buildSnapshotRefresh(luvio, config) as unknown as SnapshotRefresh<Selector>
-    );
+        variables: {},
+    });
 
     if (isFulfilledSnapshot(cacheSel)) {
         const cachedSelector = cacheSel.data;

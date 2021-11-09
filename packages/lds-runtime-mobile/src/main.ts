@@ -1,4 +1,4 @@
-import { Luvio, Store, Environment, CacheKeySet, RecordSource } from '@luvio/engine';
+import { Luvio, Store, Environment, RecordSource } from '@luvio/engine';
 import { makeOffline, makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
@@ -7,6 +7,7 @@ import {
     ingestRecord,
     keyBuilderRecord,
     buildSelectionFromRecord,
+    getTypeCacheKeysRecord,
 } from '@salesforce/lds-adapters-uiapi';
 import {
     makeDurableStoreDraftAware,
@@ -30,8 +31,6 @@ import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
 
-import { JSONParse, JSONStringify, ObjectCreate, ObjectKeys } from './utils/language';
-
 let luvio: Luvio;
 
 function onResponseSuccess(record: RecordRepresentation) {
@@ -54,49 +53,14 @@ function onResponseSuccess(record: RecordRepresentation) {
     return snapshot;
 }
 
-// TODO [W-10054341]: this is done manually right now but can be removed when the compiler generates these functsino
-function getRecordResponseKeys(originalRecord: RecordRepresentation) {
-    const record = JSONParse(JSONStringify(originalRecord));
-    const selections = buildSelectionFromRecord(record);
-    const key = keyBuilderRecord({
-        recordId: record.id,
-    });
-
-    luvio.storeIngest(key, ingestRecord, record);
-    const snapshot = luvio.storeLookup<RecordRepresentation>({
-        recordId: key,
-        node: {
-            kind: 'Fragment',
-            private: [],
-            selections,
-        },
-        variables: {},
-    });
-
-    if (snapshot.state === 'Error') {
-        return {};
-    }
-
-    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
-    const keySet: CacheKeySet = ObjectCreate(null);
-    for (let i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        const namespace = key.split('::')[0];
-        const representationName = key.split('::')[1].split(':')[0];
-        keySet[key] = {
-            namespace,
-            representationName,
-        };
-    }
-    return keySet;
-}
-
 // TODO [W-8291468]: have ingest get called a different way somehow
 const recordIngestFunc = (record: RecordRepresentation): Promise<void> => {
     return Promise.resolve(
         luvio.handleSuccessResponse(
             () => onResponseSuccess(record),
-            () => getRecordResponseKeys(record)
+            // getTypeCacheKeysRecord uses the response, not the full path factory
+            // so 2nd parameter will be unused
+            () => getTypeCacheKeysRecord(record, () => '')
         )
     ).then(() => {
         // the signature requires a Promise<void> result so drop the Snapshot from the result

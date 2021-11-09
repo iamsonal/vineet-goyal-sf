@@ -6,11 +6,11 @@ import { buildSelectionFromRecord } from '../../selectors/record';
 import {
     RecordRepresentation,
     keyBuilder as recordRepresentationKeyBuilder,
-    keyBuilderFromType,
-    RepresentationType,
 } from '../../generated/types/RecordRepresentation';
-import { keyPrefix } from '../../generated/adapters/adapter-utils';
-import postUiApiRecords from '../../generated/resources/postUiApiRecords';
+import {
+    getResponseCacheKeys,
+    default as postUiApiRecords,
+} from '../../generated/resources/postUiApiRecords';
 import { createResourceParams, CreateRecordConfig } from '../../generated/adapters/createRecord';
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
@@ -64,16 +64,7 @@ export const factory = (luvio: Luvio) => {
             (response) => {
                 return luvio.handleSuccessResponse(
                     () => onResponseSuccess(luvio, response, recordIngest, conflictMap),
-                    // TODO [W-10055997]: use getResponseCacheKeys from type
-                    () => {
-                        const key = keyBuilderFromType(response.body);
-                        return {
-                            [key]: {
-                                namespace: keyPrefix,
-                                representationName: RepresentationType,
-                            },
-                        };
-                    }
+                    () => getResponseCacheKeys(resourceParams, response.body)
                 );
             },
             (err: FetchResponse<{ error: string }>) => {

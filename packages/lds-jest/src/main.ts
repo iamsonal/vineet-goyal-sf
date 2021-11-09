@@ -6,3 +6,4 @@ export {
 } from './offline';
 export { customMatchers } from './matchers';
 export { flushPromises } from './utils';
+export { testResponseCacheKeysMatchIngestCacheKeys } from './cache-keys';

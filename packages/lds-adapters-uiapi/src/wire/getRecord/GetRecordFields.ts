@@ -5,13 +5,15 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
-    CacheKeySet,
     AdapterRequestContext,
     StoreLookup,
     DispatchResourceRequest,
 } from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
-import { keyBuilder } from '../../generated/resources/getUiApiRecordsByRecordId';
+import {
+    keyBuilder,
+    getResponseCacheKeys,
+} from '../../generated/resources/getUiApiRecordsByRecordId';
 import { createResourceRequest } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
 import {
     keyBuilder as recordRepresentationKeyBuilder,
@@ -23,7 +25,6 @@ import { difference } from '../../validation/utils';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 import { RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS } from './index';
-import { JSONParse, JSONStringify, ObjectCreate, ObjectKeys } from '../../util/language';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(
@@ -69,54 +70,14 @@ function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
     );
     const optionalFields =
         fields === undefined ? allTrackedFields : difference(allTrackedFields, fields);
-    const params = createResourceParams({
+    const resourceParams = createResourceParams({
         recordId,
         fields,
         optionalFields: optionalFields.length > 0 ? optionalFields : undefined,
     });
-    const request = createResourceRequest(params);
+    const request = createResourceRequest(resourceParams);
 
-    return { request, key, allTrackedFields };
-}
-
-function getResponseCacheKeys(
-    luvio: Luvio,
-    config: GetRecordConfig,
-    key: string,
-    allTrackedFields: string[],
-    response: ResourceResponse<RecordRepresentation>,
-    serverRequestCount: number
-): CacheKeySet {
-    // TODO [W-10055997]: make this more efficient
-
-    // for now we will get the cache keys by actually ingesting then looking at
-    // the seenRecords + recordId
-    const responseCopy = JSONParse(JSONStringify(response));
-    const snapshot = ingestSuccess(
-        luvio,
-        config,
-        key,
-        allTrackedFields,
-        responseCopy,
-        serverRequestCount
-    );
-
-    if (snapshot.state === 'Error') {
-        return {};
-    }
-
-    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
-    const keySet: CacheKeySet = ObjectCreate(null);
-    for (let i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        const namespace = key.split('::')[0];
-        const representationName = key.split('::')[1].split(':')[0];
-        keySet[key] = {
-            namespace,
-            representationName,
-        };
-    }
-    return keySet;
+    return { request, key, allTrackedFields, resourceParams };
 }
 
 export function ingestSuccess(
@@ -196,7 +157,7 @@ export function buildNetworkSnapshot(
     config: GetRecordConfig,
     serverRequestCount: number = 0
 ) {
-    const { request, key, allTrackedFields } = prepareRequest(luvio, config);
+    const { request, key, allTrackedFields, resourceParams } = prepareRequest(luvio, config);
 
     return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
         (response) => {
@@ -210,15 +171,7 @@ export function buildNetworkSnapshot(
                         response,
                         serverRequestCount + 1
                     ),
-                () =>
-                    getResponseCacheKeys(
-                        luvio,
-                        config,
-                        key,
-                        allTrackedFields,
-                        response,
-                        serverRequestCount + 1
-                    )
+                () => getResponseCacheKeys(resourceParams, response.body)
             );
         },
         (err: FetchResponse<unknown>) => {

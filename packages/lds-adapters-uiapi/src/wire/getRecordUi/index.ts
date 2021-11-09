@@ -270,6 +270,9 @@ function prepareRequest(luvio: Luvio, config: GetRecordUiConfigWithDefaults) {
     return { key, selectorKey, resourceRequest };
 }
 
+// NOTE: getRecordUi is special and we can't use the generated getResponseCacheKeys
+// (just like we don't use the generated ingestSuccess).  To get the cache keys
+// we have to run ingest code and look at the resulting snapshot's seenRecords.
 function getCacheKeys(
     luvio: Luvio,
     config: GetRecordUiConfigWithDefaults,

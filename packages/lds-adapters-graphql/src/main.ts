@@ -110,7 +110,7 @@ function getResponseCacheKeys(
     response: FetchResponse<GraphQL>,
     fragment: ReaderFragment
 ): CacheKeySet {
-    // TODO [W-10055997]: make this more efficient
+    // TODO [W-10147827]: make this more efficient
 
     // for now we will get the cache keys by actually ingesting then looking at
     // the seenRecords + recordId

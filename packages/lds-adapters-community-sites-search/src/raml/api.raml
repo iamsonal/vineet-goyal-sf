@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '52.0'
+version: '54.0'
 mediaType: application/json
 protocols:
   - https
@@ -68,24 +68,24 @@ types:
           type: SiteSearchItemRepresentation
       language:
         description: Language of the search results.
-        type: string
+        type: string | nil
       nextPageToken:
         description: The token for the next page of search results.
-        type: string
+        type: string | nil
       nextPageUrl:
         description: URL to the next page of search result, null if there isn’t the
           next page.
-        type: string
+        type: string | nil
       pageSize:
         description: Number of items per page in search result
         type: integer
       previousPageToken:
         description: The token for the previous page of search results.
-        type: string
+        type: string | nil
       previousPageUrl:
         description: URL to the previous page of search result, null if there isn’t
           any previous page.
-        type: string
+        type: string | nil
       totalItems:
         description: Total number of items in the search result across all pages.
         type: integer

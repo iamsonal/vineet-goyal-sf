@@ -51,6 +51,7 @@ import { isFulfilledSnapshot, isStaleSnapshot, isUnfulfilledSnapshot } from '../
 import { LayoutType } from '../../primitives/LayoutType';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
+import { buildNotFetchableNetworkSnapshot } from '../../util/cache-policy';
 
 type GetRecordUiConfigWithDefaults = Omit<
     Required<GetRecordUiConfig>,
@@ -521,26 +522,6 @@ function buildInMemorySelectorSnapshot(
     });
 }
 
-function buildNetworkSelectorSnapshot(
-    context: BuildSelectorSnapshotContext,
-    _dispatchResourceRequest: DispatchResourceRequest<Selector<RecordUiRepresentation>>
-): Promise<Snapshot<Selector<RecordUiRepresentation>>> {
-    const { luvio } = context;
-
-    // We save the Selector in L1/L2, but it's not possible to actually retrieve it over
-    // the network. Just return an error snapshot to let the adapter know that it should
-    // skip trying to use the cached Selector to build the RecordUiRepresentation.
-    return Promise.resolve(
-        luvio.errorSnapshot({
-            status: 400,
-            body: undefined,
-            statusText: 'cannot request selector',
-            ok: false,
-            headers: {},
-        })
-    );
-}
-
 type BuildRecordUiRepresentationSnapshotContext = {
     config: GetRecordUiConfigWithDefaults;
     luvio: Luvio;
@@ -611,7 +592,7 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
                 cachePolicy,
                 { config, luvio },
                 buildInMemorySelectorSnapshot,
-                buildNetworkSelectorSnapshot
+                buildNotFetchableNetworkSnapshot(luvio)
             );
 
             const resolveSelector = (

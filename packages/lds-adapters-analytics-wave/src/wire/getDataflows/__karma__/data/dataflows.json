@@ -88,7 +88,16 @@
             "scheduleAttributes": "{&quot;scheduleType&quot;:&quot;eventdriven&quot;,&quot;triggerRule&quot;:&quot;$ALL_SALESFORCE_OBJECTS&quot;}",
             "type": "dataflow",
             "url": "/services/data/v54.0/wave/dataflows/02KRM0000002bFG2AY",
-            "definition": {}
+            "definition": {},
+            "current": {
+                "createdBy": {
+                    "id": "",
+                    "name": "",
+                    "profilePhotoUrl": ""
+                },
+                "createdDate": "2020-10-21T20:35:54.000Z",
+                "id": "02Lxx0000004HTgEAM"
+            }
         }
     ]
 }

@@ -5,6 +5,9 @@ import {
     Snapshot,
     SnapshotRefresh,
     ResourceResponse,
+    DispatchResourceRequest,
+    AdapterRequestContext,
+    StoreLookup,
 } from '@luvio/engine';
 import {
     adapterName as getPicklistValuesAdapterName,
@@ -118,6 +121,51 @@ export function buildInMemorySnapshot(luvio: Luvio, config: GetPicklistValuesCon
     );
 }
 
+type BuildSnapshotContext = {
+    config: GetPicklistValuesConfig;
+    luvio: Luvio;
+};
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
+    _dispatchResourceRequest: DispatchResourceRequest<PicklistValuesRepresentation>
+): Promise<Snapshot<PicklistValuesRepresentation, any>> {
+    const { config, luvio } = context;
+    return buildNetworkSnapshot(luvio, config);
+}
+
+function buildInMemorySnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<PicklistValuesRepresentation>
+): Snapshot<PicklistValuesRepresentation, any> {
+    const { config, luvio } = context;
+
+    const fieldNames = getFieldId(config.fieldApiName);
+    const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
+        urlParams: {
+            objectApiName: fieldNames.objectApiName,
+            fieldApiName: fieldNames.fieldApiName,
+            recordTypeId: config.recordTypeId,
+        },
+    });
+
+    const key = picklistValuesKeyBuilder({ id: `${request.baseUri}${request.basePath}` });
+
+    return storeLookup(
+        {
+            recordId: key,
+            node: {
+                kind: 'Fragment',
+                private: ['eTag'],
+                selections: path,
+            },
+            variables: {},
+        },
+        buildSnapshotRefresh(luvio, config)
+    );
+}
+
 const picklistValuesConfigPropertyNames = {
     displayName: getPicklistValuesAdapterName,
     parameters: {
@@ -129,10 +177,22 @@ const picklistValuesConfigPropertyNames = {
 export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepresentation> = (
     luvio: Luvio
 ) =>
-    function getPicklistValues(untrusted: unknown) {
+    function getPicklistValues(untrusted: unknown, requestContext?: AdapterRequestContext) {
         const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);
         if (config === null) {
             return null;
+        }
+
+        if (requestContext !== undefined) {
+            return luvio.applyCachePolicy(
+                requestContext === undefined ? undefined : requestContext.cachePolicy,
+                {
+                    luvio,
+                    config,
+                },
+                buildInMemorySnapshotCachePolicy,
+                buildNetworkSnapshotCachePolicy
+            );
         }
 
         const snapshot = buildInMemorySnapshot(luvio, config);

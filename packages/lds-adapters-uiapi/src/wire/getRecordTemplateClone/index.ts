@@ -203,26 +203,19 @@ type BuildSnapshotContext = {
     recordTypeId: string | undefined;
 };
 
-const buildNetworkSnapshotCachePolicy: (
+function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
     // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
     _dispatchResourceRequest: DispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>
-) => ReturnType<typeof buildNetworkSnapshot> = (
-    context: BuildSnapshotContext,
-    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
-    _dispatchResourceRequest: DispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>
-): Promise<Snapshot<RecordDefaultsTemplateCloneRepresentation, any>> => {
+): Promise<Snapshot<RecordDefaultsTemplateCloneRepresentation, any>> {
     const { config, adapterContext, luvio } = context;
     return buildNetworkSnapshot(luvio, adapterContext, config);
-};
+}
 
-const buildInMemorySnapshotCachePolicy: (
+function buildInMemorySnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordDefaultsTemplateCloneRepresentation>
-) => ReturnType<typeof buildInMemorySnapshot> = (
-    context: BuildSnapshotContext,
-    storeLookup: StoreLookup<RecordDefaultsTemplateCloneRepresentation>
-): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> => {
+): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> {
     const { adapterContext, config, luvio, recordTypeId } = context;
 
     const updatedConfig = {
@@ -245,7 +238,7 @@ const buildInMemorySnapshotCachePolicy: (
         resolve: () =>
             buildNetworkSnapshot(luvio, adapterContext, updatedConfig, snapshotRefreshOptions),
     });
-};
+}
 
 export const factory: AdapterFactory<
     GetRecordTemplateCloneConfig,

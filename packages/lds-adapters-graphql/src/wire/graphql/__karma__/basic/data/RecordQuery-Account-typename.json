@@ -1,13 +1,18 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "Account": {
                     "__typename": "AccountConnection",
                     "edges": [
                         {
+                            "__typename": "AccountEdge",
                             "node": {
                                 "Name": {
+                                    "__typename": "StringValue",
                                     "value": "Account1",
                                     "displayValue": null
                                 },
@@ -28,9 +33,15 @@
                                 "RecordTypeId": {
                                     "value": "012RM000000E79WYAS"
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

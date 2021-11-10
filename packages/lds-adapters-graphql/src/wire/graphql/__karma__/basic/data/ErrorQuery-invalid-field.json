@@ -4,8 +4,8 @@
         {
             "locations": [
                 {
-                    "column": 29,
-                    "line": 4
+                    "column": 7,
+                    "line": 7
                 }
             ],
             "message": "Validation error of type FieldUndefined: Field 'asd' in type 'RecordQuery' is undefined @ 'uiapi/query/asd'",

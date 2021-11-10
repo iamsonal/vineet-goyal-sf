@@ -1,18 +1,26 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "Opportunity": {
+                    "__typename": "OpportunityConnection",
                     "edges": [
                         {
+                            "__typename": "OpportunityEdge",
                             "node": {
                                 "Name": {
+                                    "__typename": "StringValue",
                                     "value": "Opp1",
                                     "displayValue": null
                                 },
                                 "Partners": {
+                                    "__typename": "PartnerConnection",
                                     "edges": [
                                         {
+                                            "__typename": "PartnerEdge",
                                             "node": {
                                                 "ApiName": "Partner",
                                                 "__typename": "Partner",
@@ -31,9 +39,11 @@
                                                 "RecordTypeId": {
                                                     "value": null
                                                 }
-                                            }
+                                            },
+                                            "cursor": "djE6MA=="
                                         },
                                         {
+                                            "__typename": "PartnerEdge",
                                             "node": {
                                                 "ApiName": "Partner",
                                                 "__typename": "Partner",
@@ -52,9 +62,15 @@
                                                 "RecordTypeId": {
                                                     "value": null
                                                 }
-                                            }
+                                            },
+                                            "cursor": "djE6MQ=="
                                         }
-                                    ]
+                                    ],
+                                    "pageInfo": {
+                                        "hasNextPage": false,
+                                        "hasPreviousPage": false
+                                    },
+                                    "totalCount": 2
                                 },
                                 "__typename": "Opportunity",
                                 "ApiName": "Opportunity",
@@ -71,11 +87,17 @@
                                     "value": "2021-06-08T16:24:45.000Z"
                                 },
                                 "RecordTypeId": {
-                                    "value": "012000000000000AAA"
+                                    "value": null
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

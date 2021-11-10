@@ -3,7 +3,8 @@
         {
             "objectName": "Contact",
             "recordId": "003xx000004WhDLAA0",
-            "recordName": "Fake Name"
+            "recordName": "Fake Name",
+            "assignmentId": "0qrxx000004WhDLAA0"
         }
     ]
 }

@@ -206,16 +206,25 @@ types:
       categoryId:
         description: The category Id
         type: string
+      icon:
+        description: The icon name of this category
+        type: string
       name:
         description: The category name
         type: string
       parentCategoryId:
         description: The parent category Id
         type: string
+      tagCategoryAssignmentId:
+        description: The TagCategoryAssignmentId of this category with the given tagId
+        type: string
   TagRecordAssignment:
     description: Tag record assignment representation
     type: object
     properties:
+      assignmentId:
+        description: The id of the tag entity assignment record of the tagid and recordId
+        type: string
       objectName:
         description: Object Name for the Record.
         type: string

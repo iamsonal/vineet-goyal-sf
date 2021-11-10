@@ -3,7 +3,9 @@
         {
             "categoryId": "0qRS70000004C9SMAU",
             "name": "Life Style",
-            "parentCategoryId": ""
+            "parentCategoryId": "",
+            "icon": "referenceToStaticIcon",
+            "tagCategoryAssignmentId": "0qTxx00000001YpEAI"
         }
     ]
 }

@@ -7926,6 +7926,74 @@ describe('routes', () => {
         );
     });
 
+    describe('delete /analytics/data-service/sync/targets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            [
+                'AdatsController.deleteTarget',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /analytics/data-service/sync/targets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            [
+                'AdatsController.updateTarget',
+                {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /analytics/data-service/sync/targets', () => {
         testControllerInput(
             {

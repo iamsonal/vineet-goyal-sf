@@ -8,6 +8,7 @@
                 "name": "salesforce.schema",
                 "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
             },
+            "state": "Active",
             "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
         },
         {
@@ -18,6 +19,7 @@
                 "name": "salesforce.schema",
                 "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
             },
+            "state": "Active",
             "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c5"
         }
     ],

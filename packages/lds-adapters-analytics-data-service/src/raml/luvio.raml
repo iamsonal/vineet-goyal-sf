@@ -123,8 +123,16 @@ types:
       (luvio.adapter):
         name: createTarget
   /targets/{id}:
+    delete:
+      (luvio.adapter):
+        name: deleteTarget
+      (luvio.key):
+        id: urlParams.id
     get:
       (luvio.adapter):
         name: getTarget
       (luvio.key):
         id: urlParams.id
+    patch:
+      (luvio.adapter):
+        name: updateTarget

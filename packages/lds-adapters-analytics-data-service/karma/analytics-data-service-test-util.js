@@ -210,6 +210,34 @@ function mockCreateTargetNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function mockUpdateTargetNetworkOnce(config, mockData) {
+    const paramMatch = updateTargetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockUpdateTargetNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateTargetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockDeleteTargetNetworkOnce(config, mockData) {
+    const paramMatch = deleteTargetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteTargetNetworkErrorOnce(config, mockData) {
+    const paramMatch = deleteTargetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function getConnectorMatcher(config) {
     const { id } = config;
 
@@ -309,6 +337,32 @@ function createTargetMatcher(config) {
         method: 'post',
         baseUri: BASE_URI,
         basePath: `${URL_SYNC_BASE}/targets`,
+        queryParams: {},
+    });
+}
+
+function updateTargetMatcher(config) {
+    const { id, targetInput } = config;
+    return sinon.match({
+        body: {
+            targetInput,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_SYNC_BASE}/targets/${id}`,
+        queryParams: {},
+    });
+}
+
+function deleteTargetMatcher(config) {
+    const { id } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_SYNC_BASE}/targets/${id}`,
         queryParams: {},
     });
 }
@@ -489,6 +543,10 @@ export {
     mockGetTargetsNetworkErrorOnce,
     mockCreateTargetNetworkOnce,
     mockCreateTargetNetworkErrorOnce,
+    mockUpdateTargetNetworkOnce,
+    mockUpdateTargetNetworkErrorOnce,
+    mockDeleteTargetNetworkOnce,
+    mockDeleteTargetNetworkErrorOnce,
     expireAsset,
     mockGetSchemasNetworkOnce,
     mockGetSchemasNetworkErrorOnce,

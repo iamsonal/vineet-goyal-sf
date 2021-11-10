@@ -27,92 +27,102 @@ annotationTypes:
     allowedTargets: TypeDeclaration
 types:
   ConnectorCollectionRepresentation:
-    description: A list of Data Connectors.
+    description: A collection of Synchronization Connectors available to Analytics
+      Data Service
     type: object
     properties:
       connectors:
-        description: A list of Data Connectors.
+        description: The list of connectors.
         type: array
         items:
           type: ConnectorRepresentation
       totalSize:
-        description: Number of items in the collection
+        description: The total number of connectors in the collection.
         type: integer
       url:
-        description: The URL to get the collection.
+        description: The url of this collection.
         type: string
   ConnectorRepresentation:
-    description: Data Service Connector input representation
+    description: A Synchronization Connector available to Analytics Data Service
     discriminatorValue: connector
     type: object
     properties:
       id:
-        description: Id
+        description: The unique identifier of this Connector.
         type: string
       label:
-        description:
+        description: The Connector label.
         type: string
       name:
-        description: Name of the connector
+        description: The name of this Connector.
         type: string
       url:
-        description: Name of the connector
+        description: The URL of this Connector.
         type: string
   ConnectionCollectionRepresentation:
-    description: List of Connections Representation
+    description: A collection of Synchronization Connections for Analytics Data Service
     type: object
     properties:
       connections:
-        description: List of Connections
+        description: The list of connections.
         type: array
         items:
           type: ConnectionRepresentation
       totalSize:
-        description: Number of items in the collection
+        description: The total number of connections in the collection.
         type: integer
       url:
-        description: The URL to get the collection.
+        description: The url of this collection.
         type: string
   ConnectionRepresentation:
     description: A Connection used to synchronize data with Analytics Data Service
     type: object
     properties:
       connector:
-        description: Connector Reference
+        description: The Connector that this Connection uses
         type: ResourceReferenceRepresentation
         required: false
       id:
-        description: Connection Id
-        type: string
-      name:
-        description: Connection Name
+        description: The unique identifier of this Connection.
         type: string
       label:
-        description: Connection Label
+        description: A label to use for this Connection.
         type: string
-      targetSchema:
-        description: Reference to the Schema
-        type: ResourceReferenceRepresentation
+      name:
+        description: The name of this Connection.
+        type: string
       sourceObjectsUrl:
-        description: Source Objects Url
+        description: The URL to get the source objects for this connection
         type: string
         required: false
-      targetUrl:
-        description: Target Url
+      state:
+        description: The current state of this Connection
+        type: string
+        enum:
+          - Active
+          - Inactive
+          - InvalidConfig
+          - Pending
+      targetSchema:
+        description: The target Analytics Data Service Schema for this Connection
+        type: ResourceReferenceRepresentation
+      targetsUrl:
+        description: The URL to get the targets for this connection
         type: string
         required: false
       url:
-        description: Url
+        description: The URL for this Connection.
         type: string
   ConnectionInputRepresentation:
-    description:
+    description: 'A definition used to create a Synchronization Connection in Analytics
+      Data Service '
     type: object
     properties:
       connectorId:
-        description: connector used for this connection
+        description: The identifier of the Connector for this Connection
         type: string
       name:
-        description: Description of the connection
+        description: The name to use for this Connection
         type: string
   DataTypeInfoRepresentation:
     description: 'Type information about a field '
@@ -128,6 +138,7 @@ types:
           - Datetime
           - Numeric
           - String
+
   FieldCollectionRepresentation:
     description: A paged collection of fields available on a source object
     type: object
@@ -333,6 +344,38 @@ types:
       targetInput:
         type: TargetInputRepresentation
         description: Target input representation
+
+  UpdateTargetInputRepresentation:
+    description: Input representation for updating a synchronization target
+    type: object
+    properties:
+      fields:
+        description: The fields in the source object
+        type: array
+        items:
+          type: UpdateFieldInputRepresentation
+
+  UpdateFieldInputRepresentation:
+    description: A source object field update.
+    type: object
+    properties:
+      name:
+        description: The source object field name.
+        type: string
+      operation:
+        description: The update operation.
+        type: string
+        enum:
+          - Add
+          - Remove
+
+  UpdateTargetInputWrapperRepresentation: # TODO Hand-rolled W-10128739
+    description: Wrapper for update target input representation
+    type: object
+    properties:
+      target:
+        type: UpdateTargetInputRepresentation
+        description: Update target input representation
 
   FieldInputRepresentation:
     description: A source object field for synchronization
@@ -736,6 +779,11 @@ types:
           type: TargetInputWrapperRepresentation
           (oas-body-name): targetInput
   /targets/{id}:
+    delete:
+      description: Deletes the mapping and the synced data in ADS.
+      responses:
+        '204':
+          description: Success
     get:
       description: Get the details about a synchronization target
       responses:
@@ -744,6 +792,20 @@ types:
           body:
             application/json:
               type: TargetRepresentation
+    patch:
+      description: Update a synchronization target
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetRepresentation
+      body:
+        application/json:
+          description: Target update payload
+          # TODO Hand-rolled W-10128739. Original type: UpdateTargetInputRepresentation
+          type: UpdateTargetInputWrapperRepresentation
+          (oas-body-name): target
     uriParameters:
       id:
         type: string

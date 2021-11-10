@@ -1284,6 +1284,22 @@ const adats: ApiFamily = {
             controller: 'AdatsController.createTarget',
         },
     },
+    deleteTarget: {
+        method: 'delete',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_TARGET_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.deleteTarget',
+        },
+    },
+    updateTarget: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_SYNC_BASE_URI) && ADATS_TARGET_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.updateTarget',
+        },
+    },
     getDatabases: {
         method: 'get',
         predicate: (path: string) =>

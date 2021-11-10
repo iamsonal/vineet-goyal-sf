@@ -1,31 +1,42 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "FieldServiceOrgSettings": {
+                    "__typename": "FieldServiceOrgSettingsConnection",
                     "edges": [
                         {
+                            "__typename": "FieldServiceOrgSettingsEdge",
                             "node": {
-                                "Id": "0UJx00000000001GAA",
+                                "Id": "0UJRM0000003CBM4A2",
                                 "__typename": "FieldServiceOrgSettings",
                                 "ApiName": "FieldServiceOrgSettings",
-                                "WeakEtag": 1626132337000,
+                                "WeakEtag": 1611883993000,
                                 "DisplayValue": "Field_Service_Default_Org_Settings",
                                 "SystemModstamp": {
-                                    "value": "2021-07-12T23:25:37.000Z"
+                                    "value": "2021-01-29T01:33:13.000Z"
                                 },
                                 "LastModifiedById": {
-                                    "value": "005x0000000xNhqAAE"
+                                    "value": "005RM0000024932YAA"
                                 },
                                 "LastModifiedDate": {
-                                    "value": "2021-07-12T23:25:37.000Z"
+                                    "value": "2021-01-29T01:33:13.000Z"
                                 },
                                 "RecordTypeId": {
                                     "value": null
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

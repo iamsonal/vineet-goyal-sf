@@ -1,3 +1,4 @@
+import { PredicateError } from './Error';
 import { PredicateContainer } from './Predicate';
 
 export type PredicateResult = Result<PredicateContainer, PredicateError[]>;
@@ -81,5 +82,3 @@ export function unwrappedError<V, T>(r: Result<V, T>): T | undefined {
 
     return undefined;
 }
-
-export type PredicateError = string;

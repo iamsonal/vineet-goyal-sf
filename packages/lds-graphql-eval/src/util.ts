@@ -1,4 +1,5 @@
 import { removeDuplicatePredicates } from './comparison';
+import { missingObjectInfo, PredicateError } from './Error';
 import { FieldInfo, ObjectInfo, RelationshipInfo } from './info-types';
 import {
     BooleanLiteral,
@@ -21,6 +22,7 @@ import {
     StringLiteral,
     ValueType,
 } from './Predicate';
+import { failure, Result, success } from './Result';
 
 import { flatten } from './util/flatten';
 
@@ -28,28 +30,32 @@ export function getFieldInfo(
     apiName: string,
     fieldName: string,
     infoMap: { [name: string]: ObjectInfo }
-): FieldInfo | undefined {
+): Result<FieldInfo | undefined, PredicateError> {
     const objInfo = infoMap[apiName];
 
     if (objInfo === undefined) {
-        return undefined;
+        return failure(missingObjectInfo(apiName));
     }
 
-    return Object.values(objInfo.fields).filter(
+    const fieldInfo = Object.values(objInfo.fields).filter(
         (field) =>
             field.apiName === fieldName ||
             (field.dataType === 'Reference' && field.relationshipName === fieldName)
     )[0];
+    return success(fieldInfo);
 }
 
 export function getRelationshipInfo(
     apiName: string,
     fieldName: string,
     infoMap: { [name: string]: ObjectInfo }
-): RelationshipInfo | undefined {
+): Result<RelationshipInfo | undefined, PredicateError> {
     const objInfo = infoMap[apiName];
 
-    return objInfo !== undefined ? objInfo.childRelationships[fieldName] : undefined;
+    if (objInfo === undefined) {
+        return failure(missingObjectInfo(apiName));
+    }
+    return success(objInfo.childRelationships[fieldName]);
 }
 
 export function stringLiteral(value: string): StringLiteral {

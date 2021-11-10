@@ -11,6 +11,7 @@ import {
     CompoundOperator,
     ValueType,
 } from '../Predicate';
+import { message } from '../Error';
 
 const objectInfoMap = infoJson as unknown as ObjectInfoMap;
 const Extract = ValueType.Extract;
@@ -128,7 +129,7 @@ describe('ast-parser', () => {
 
             const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([
-                'Scope MINE requires the entity type to have an OwnerId field.',
+                message('Scope MINE requires the entity type to have an OwnerId field.'),
             ]);
         });
     });
@@ -154,7 +155,9 @@ describe('ast-parser', () => {
             `;
 
             const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedError(result)).toEqual(['Scope type should be an EnumValueNode.']);
+            expect(unwrappedError(result)).toEqual([
+                message('Scope type should be an EnumValueNode.'),
+            ]);
         });
 
         it('unknown scope results in an error', () => {
@@ -177,7 +180,7 @@ describe('ast-parser', () => {
             `;
 
             const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedError(result)).toEqual(["Scope 'UNKNOWN is not supported."]);
+            expect(unwrappedError(result)).toEqual([message("Scope 'UNKNOWN is not supported.")]);
         });
     });
 
@@ -1158,7 +1161,7 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const expected = ['first type should be an IntValue.'];
+            const expected = [message('first type should be an IntValue.')];
             const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual(expected);
         });
@@ -1408,7 +1411,7 @@ describe('ast-parser', () => {
 
             const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([
-                'ASSIGNEDTOME can only be used with ServiceAppointment',
+                message('ASSIGNEDTOME can only be used with ServiceAppointment'),
             ]);
         });
     });

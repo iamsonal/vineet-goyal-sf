@@ -16,6 +16,7 @@ import {
 } from '../Predicate';
 import { parseOrderBy } from '../orderby-parser';
 import { ObjectInfoMap } from '../info-types';
+import { message } from '../Error';
 
 function findOrderByArg(document: LuvioDocumentNode): LuvioArgumentNode | undefined {
     return findRecordSelections(document).flatMap((selection) => {
@@ -55,13 +56,13 @@ function operatorResult(source: string | undefined): OrderByContainer | undefine
     return unwrappedValue(orderBy);
 }
 
-function testExpectedError(source: string, expectedError: any) {
+function testExpectedError(source: string, expectedError: string) {
     const graphqlSource = makeOrderByGraphQL(source);
     const orderByArg = findOrderByArg(parser.default(graphqlSource));
     const orderBy = parseOrderBy(orderByArg, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(orderBy.isSuccess).toEqual(false);
-    expect(unwrappedError(orderBy)).toEqual(expectedError);
+    expect(unwrappedError(orderBy)).toEqual(message(expectedError));
 }
 
 describe('order by filter parser', () => {

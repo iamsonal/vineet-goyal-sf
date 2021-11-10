@@ -4,6 +4,7 @@ import {
     LuvioObjectValueNode,
     LuvioValueNode,
 } from 'packages/lds-graphql-parser/dist/ast';
+import { message, PredicateError } from './Error';
 import { ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
 import { ComparisonOperator, JsonExtract, OrderBy, OrderByContainer, ValueType } from './Predicate';
 import { failure, Result, success } from './Result';
@@ -15,11 +16,13 @@ function fieldsToOrderBy(
     joinAlias: string,
     apiName: string,
     input: { [name: string]: ObjectInfo }
-): Result<OrderByContainer, string> {
+): Result<OrderByContainer, PredicateError> {
     const firstObject = fieldValues[0];
 
     if (!isObjectValueNode(firstObject)) {
-        return failure<OrderByContainer, string>('Parent OrderBy node should be an object.');
+        return failure<OrderByContainer, PredicateError>(
+            message('Parent OrderBy node should be an object.')
+        );
     }
 
     return Object.entries(firstObject.fields).map(([key, value]) =>
@@ -33,9 +36,9 @@ function orderBy<T extends LuvioValueNode>(
     tableAlias: string,
     apiName: string,
     input: { [name: string]: ObjectInfo }
-): Result<OrderByContainer, string> {
+): Result<OrderByContainer, PredicateError> {
     if (!isObjectValueNode(value)) {
-        return failure('OrderBy node must be an object.');
+        return failure(message('OrderBy node must be an object.'));
     }
 
     return fieldsOrderBy(name, value, tableAlias, apiName, input);
@@ -46,7 +49,7 @@ function spanningOrderBy(
     fieldNode: LuvioObjectValueNode,
     alias: string,
     input: { [name: string]: ObjectInfo }
-): Result<OrderByContainer, string> {
+): Result<OrderByContainer, PredicateError> {
     const { apiName: fieldName, referenceToInfos, relationshipName } = fieldInfo;
 
     const referenceInfo: ReferenceToInfo | undefined = referenceToInfos[0];
@@ -54,7 +57,7 @@ function spanningOrderBy(
     const joinPredicate = referencePredicate(alias, jsonAlias, fieldName);
 
     if (referenceInfo === undefined) {
-        return failure(`No reference info found for ${fieldName}`);
+        return failure(message(`No reference info found for ${fieldName}`));
     }
 
     const { apiName } = referenceInfo;
@@ -77,11 +80,15 @@ function fieldsOrderBy(
     alias: string,
     apiName: string,
     input: { [name: string]: ObjectInfo }
-): Result<OrderByContainer, string> {
-    const fieldInfo = getFieldInfo(apiName, fieldName, input);
+): Result<OrderByContainer, PredicateError> {
+    const fieldInfoResult = getFieldInfo(apiName, fieldName, input);
+    if (fieldInfoResult.isSuccess === false) {
+        return failure(fieldInfoResult.error);
+    }
 
+    const fieldInfo = fieldInfoResult.value;
     if (fieldInfo === undefined) {
-        return failure(`Field ${fieldName} for type ${apiName} not found.`);
+        return failure(message(`Field ${fieldName} for type ${apiName} not found.`));
     }
 
     if (fieldInfo.dataType === 'Reference' && fieldInfo.relationshipName === fieldName) {
@@ -97,7 +104,7 @@ function orderByDetails(
     fieldNode: LuvioObjectValueNode,
     jsonAlias: string,
     path: string
-): Result<OrderBy, string> {
+): Result<OrderBy, PredicateError> {
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path: extractPath(path) };
 
     const orderField = fieldNode.fields['order'];
@@ -117,7 +124,7 @@ function orderByDetails(
     return success({ asc: asc.value, extract, nullsFirst: nulls.value });
 }
 
-function isAsc(field: LuvioValueNode): Result<boolean, string> {
+function isAsc(field: LuvioValueNode): Result<boolean, PredicateError> {
     if (field !== undefined) {
         if (is<EnumValueNode>(field, 'EnumValue')) {
             switch (field.value) {
@@ -126,17 +133,17 @@ function isAsc(field: LuvioValueNode): Result<boolean, string> {
                 case 'DESC':
                     return success(false);
                 default:
-                    return failure(`Unknown order enum ${field.value}.`);
+                    return failure(message(`Unknown order enum ${field.value}.`));
             }
         }
 
-        return failure(`OrderBy order field must be an enum.`);
+        return failure(message(`OrderBy order field must be an enum.`));
     }
 
     return success(true);
 }
 
-function nullsFirst(field: LuvioValueNode): Result<boolean, string> {
+function nullsFirst(field: LuvioValueNode): Result<boolean, PredicateError> {
     if (field !== undefined) {
         if (is<EnumValueNode>(field, 'EnumValue')) {
             switch (field.value) {
@@ -145,11 +152,11 @@ function nullsFirst(field: LuvioValueNode): Result<boolean, string> {
                 case 'LAST':
                     return success(false);
                 default:
-                    return failure(`Unknown nulls enum ${field.value}.`);
+                    return failure(message(`Unknown nulls enum ${field.value}.`));
             }
         }
 
-        return failure(`OrderBy nulls field must be an enum.`);
+        return failure(message(`OrderBy nulls field must be an enum.`));
     }
 
     return success(false);
@@ -160,7 +167,7 @@ export function parseOrderBy(
     joinAlias: string,
     apiName: string,
     input: { [name: string]: ObjectInfo }
-): Result<OrderByContainer | undefined, string> {
+): Result<OrderByContainer | undefined, PredicateError> {
     if (orderByArg === undefined) {
         return success(undefined);
     }

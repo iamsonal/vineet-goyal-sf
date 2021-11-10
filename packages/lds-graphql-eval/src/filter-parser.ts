@@ -13,6 +13,7 @@ import {
     ListValueNode,
     NullValueNode,
 } from 'graphql/language';
+import { message, PredicateError } from './Error';
 import { DataType, ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
 import {
     BooleanLiteral,
@@ -48,7 +49,6 @@ import {
     flattenResults,
     isFailure,
     isSuccess,
-    PredicateError,
     PredicateResult,
     Result,
     success,
@@ -86,7 +86,7 @@ function fieldsToFilters(
     const results = fieldValues
         .map((value): PredicateResult[] => {
             if (!isObjectValueNode(value)) {
-                return [failure(['Parent filter node should be an object.'])];
+                return [failure([message('Parent filter node should be an object.')])];
             }
 
             return Object.entries(value.fields).map(([key, value]) =>
@@ -141,7 +141,7 @@ function filter<T extends LuvioValueNode>(
 ): PredicateResult {
     if (isCompoundOperator(name)) {
         if (!isListValueNode(value)) {
-            return failure([`Value for ${name} node must be a list.`]);
+            return failure([message(`Value for ${name} node must be a list.`)]);
         }
 
         return compoundPredicate(name, value, tableAlias, apiName, input);
@@ -155,7 +155,7 @@ function filter<T extends LuvioValueNode>(
     }
 
     if (!isObjectValueNode(value)) {
-        return failure(['Filter node must be an object or list.']);
+        return failure([message('Filter node must be an object or list.')]);
     }
 
     return fieldFilter(name, value, tableAlias, apiName, input);
@@ -184,7 +184,7 @@ function spanningFilter(
     const joinPredicate = referencePredicate(alias, jsonAlias, fieldName);
 
     if (referenceInfo === undefined) {
-        return failure([`No reference info found for ${fieldName}`]);
+        return failure([message(`No reference info found for ${fieldName}`)]);
     }
 
     const { apiName } = referenceInfo;
@@ -208,10 +208,14 @@ function fieldFilter(
     apiName: string,
     input: { [name: string]: ObjectInfo }
 ): PredicateResult {
-    const fieldInfo = getFieldInfo(apiName, fieldName, input);
+    const fieldInfoResult = getFieldInfo(apiName, fieldName, input);
+    if (fieldInfoResult.isSuccess === false) {
+        return failure([fieldInfoResult.error]);
+    }
 
+    const fieldInfo = fieldInfoResult.value;
     if (fieldInfo === undefined) {
-        return failure([`Field ${fieldName} for type ${apiName} not found.`]);
+        return failure([message(`Field ${fieldName} for type ${apiName} not found.`)]);
     }
 
     if (fieldInfo.dataType === 'Reference' && fieldInfo.relationshipName === fieldName) {
@@ -376,14 +380,14 @@ function dateFunctions(
             return success([]);
         }
         if (!isObjectValueNode(valueNode)) {
-            return failure(['Date function expects an object node.']);
+            return failure([message('Date function expects an object node.')]);
         }
 
         const [opKey, opValue] = Object.entries(valueNode.fields)[0];
         const result = operatorWithValue(opKey, opValue, 'Int')
             .flatMap((op): Result<DateFunctionPredicate, PredicateError[]> => {
                 if (op.type !== 'IntOperator') {
-                    return failure(['Date function expects Int values']);
+                    return failure([message('Date function expects Int values')]);
                 }
 
                 const predicate: DateFunctionPredicate = {
@@ -466,7 +470,9 @@ function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
 
     const badValue = list.values.filter((n) => !typeAssert(n))[0];
     if (badValue !== undefined) {
-        return failure(`${JSON.stringify(badValue)} is not a valid value in list of ${kind}.`);
+        return failure(
+            message(`${JSON.stringify(badValue)} is not a valid value in list of ${kind}.`)
+        );
     }
 
     const values = list.values.filter(typeAssert).map((u) => u.value);
@@ -491,7 +497,7 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.StringLiteral, value: value.value },
                   })
-                : failure([`Comparison value must be a string.`]);
+                : failure([message(`Comparison value must be a string.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -505,7 +511,7 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([`Comparison value must be a string array.`]);
+                : failure([message(`Comparison value must be a string array.`)]);
         }
     }
 
@@ -517,7 +523,7 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.IntLiteral, value: parseInt(value.value) },
                   })
-                : failure([`Comparison value must be an int.`]);
+                : failure([message(`Comparison value must be an int.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -534,7 +540,7 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([`Comparison value must be an int array.`]);
+                : failure([message(`Comparison value must be an int array.`)]);
         }
     }
 
@@ -546,7 +552,7 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.DoubleLiteral, value: parseFloat(value.value) },
                   })
-                : failure([`Comparison value must be a double.`]);
+                : failure([message(`Comparison value must be a double.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -563,7 +569,7 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([`Comparison value must be a double array.`]);
+                : failure([message(`Comparison value must be a double array.`)]);
         }
     }
 
@@ -575,7 +581,7 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.BooleanLiteral, value: value.value },
                   })
-                : failure([`Comparison value must be a boolean.`]);
+                : failure([message(`Comparison value must be a boolean.`)]);
         }
     }
 
@@ -605,7 +611,7 @@ function operatorWithValue(
                 });
             }
 
-            return failure(['Comparison value must be a date array.']);
+            return failure([message('Comparison value must be a date array.')]);
         }
     }
 
@@ -635,11 +641,13 @@ function operatorWithValue(
                 });
             }
 
-            return failure(['Comparison value must be a date time array.']);
+            return failure([message('Comparison value must be a date time array.')]);
         }
     }
 
-    return failure([`Comparison operator ${operator} is not supported for type ${schemaType}.`]);
+    return failure([
+        message(`Comparison operator ${operator} is not supported for type ${schemaType}.`),
+    ]);
 }
 
 function dateInput(node: LuvioValueNode): Result<DateInput, PredicateError> {
@@ -672,13 +680,13 @@ function dateTimeInput(node: LuvioValueNode): Result<DateTimeInput, PredicateErr
     });
 }
 
-function parseNullValue(op: string): Result<NullOperator, string> {
+function parseNullValue(op: string): Result<NullOperator, PredicateError> {
     const operator = nullOperatorTypeFrom(op);
     if (operator !== undefined) {
         return success({ type: 'NullOperator', operator });
     }
 
-    return failure(`Null can not be compared with ${op}`);
+    return failure(message(`Null can not be compared with ${op}`));
 }
 
 type DateNodeResult =
@@ -695,7 +703,7 @@ function parseDateNode(
 ): Result<DateNodeResult, PredicateError> {
     const typeName = hasTime ? 'DateTime' : 'Date';
     if (!isObjectValueNode(node)) {
-        return failure(`Comparison value must be a ${typeName} input.`);
+        return failure(message(`Comparison value must be a ${typeName} input.`));
     }
 
     const valueField = node.fields['value'];
@@ -705,14 +713,14 @@ function parseDateNode(
                 return success({ type: ValueType.StringLiteral, value: valueField.value });
             }
 
-            return failure(`${typeName} format must be ${dateFormat}.`);
+            return failure(message(`${typeName} format must be ${dateFormat}.`));
         }
 
         if (is<NullValueNode>(valueField, 'NullValue')) {
             return success({ type: ValueType.NullValue });
         }
 
-        return failure(`${typeName} input value field must be a string.`);
+        return failure(message(`${typeName} input value field must be a string.`));
     }
 
     const literalField = node.fields['literal'];
@@ -724,11 +732,11 @@ function parseDateNode(
                 case 'TOMORROW':
                     return success({ type: 'enum', value: DateEnumType.tomorrow });
                 default:
-                    return failure(`Unknown ${typeName} literal ${literalField.value}.`);
+                    return failure(message(`Unknown ${typeName} literal ${literalField.value}.`));
             }
         }
 
-        return failure(`${typeName} input literal field must be an enum.`);
+        return failure(message(`${typeName} input literal field must be an enum.`));
     }
 
     const rangeField = node.fields['range'];
@@ -819,10 +827,10 @@ function parseDateNode(
                     return success({ type: 'range', start, end });
                 }
             }
-            return failure(`invalid date range name`);
+            return failure(message(`invalid date range name`));
         }
-        return failure(`${typeName} range must be an object.`);
+        return failure(message(`${typeName} range must be an object.`));
     }
 
-    return failure(`${typeName} input must include a value or literal field.`);
+    return failure(message(`${typeName} input must include a value or literal field.`));
 }

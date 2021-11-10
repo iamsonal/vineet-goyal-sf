@@ -6,6 +6,8 @@ import {
     LuvioSelectionObjectFieldNode,
 } from '@salesforce/lds-graphql-parser/dist/ast';
 
+import { message, missingObjectInfo, PredicateError } from './Error';
+
 import { recordFilter } from './filter-parser';
 import { RelationshipInfo, ReferenceFieldInfo, ObjectInfoMap, ReferenceToInfo } from './info-types';
 import { parseOrderBy } from './orderby-parser';
@@ -24,16 +26,7 @@ import {
     ComparisonOperator,
     ValueType,
 } from './Predicate';
-import {
-    errors,
-    failure,
-    isFailure,
-    isSuccess,
-    PredicateError,
-    Result,
-    success,
-    values,
-} from './Result';
+import { errors, failure, isFailure, isSuccess, Result, success, values } from './Result';
 import { scopeFilter } from './scope-parser';
 
 import {
@@ -161,21 +154,35 @@ function selectionToQueryField(
     input: ParserInput
 ): Result<QueryField[], PredicateError[]> {
     if (!isObjectFieldSelection(node) && !isCustomFieldNode(node) && !isScalarFieldNode(node)) {
-        return failure([`Node type ${node.kind} is not a valid record field type.`]);
+        return failure([message(`Node type ${node.kind} is not a valid record field type.`)]);
     }
 
-    const fieldInfo = getFieldInfo(parentApiName, node.name, input.objectInfoMap);
-    const relationshipInfo = getRelationshipInfo(parentApiName, node.name, input.objectInfoMap);
+    const fieldInfoResult = getFieldInfo(parentApiName, node.name, input.objectInfoMap);
+    const relationshipInfoResult = getRelationshipInfo(
+        parentApiName,
+        node.name,
+        input.objectInfoMap
+    );
 
+    if (fieldInfoResult.isSuccess === false) {
+        return failure([fieldInfoResult.error]);
+    }
+    if (relationshipInfoResult.isSuccess === false) {
+        return failure([relationshipInfoResult.error]);
+    }
+    const fieldInfo = fieldInfoResult.value;
+    const relationshipInfo = relationshipInfoResult.value;
     if (fieldInfo === undefined && relationshipInfo === undefined) {
-        return failure([`Field ${node.name} for type ${parentApiName} not found.`]);
+        return failure([message(`Field ${node.name} for type ${parentApiName} not found.`)]);
     }
 
     if (fieldInfo !== undefined) {
         //This is a spanning field
         if (fieldInfo.dataType === REFERENCE_NAME_KEY) {
             if (!isObjectFieldSelection(node) && !isCustomFieldNode(node)) {
-                return failure([`Node type ${node.kind} is not a valid reference field type.`]);
+                return failure([
+                    message(`Node type ${node.kind} is not a valid reference field type.`),
+                ]);
             }
 
             const selection: LuvioSelectionNode = { ...node, kind: 'ObjectFieldSelection' };
@@ -195,7 +202,9 @@ function selectionToQueryField(
         //Scalar field
         if (isScalarDataType(fieldInfo.dataType)) {
             if (!isObjectFieldSelection(node)) {
-                return failure([`Node type ${node.kind} is not a valid scalar field type.`]);
+                return failure([
+                    message(`Node type ${node.kind} is not a valid scalar field type.`),
+                ]);
             }
 
             return success(scalarField(node, names, parentAlias));
@@ -203,12 +212,12 @@ function selectionToQueryField(
     }
 
     if (relationshipInfo === undefined) {
-        return failure([`Relationship ${node.name} for type ${parentApiName} not found.`]);
+        return failure([message(`Relationship ${node.name} for type ${parentApiName} not found.`)]);
     }
 
     //Field is a connection to a child record type
     if (!isCustomFieldNode(node)) {
-        return failure([`Node type ${node.kind} is not a valid child field type.`]);
+        return failure([message(`Node type ${node.kind} is not a valid child field type.`)]);
     }
 
     const fieldPath = names.concat(node.name);
@@ -240,7 +249,7 @@ function recordFields(
     return success(fields);
 }
 
-function queryContainer<T extends RecordQuery>(
+function queryContainer(
     inputFields: Result<QueryField[], PredicateError[]>,
     jsonAlias: string,
     apiName: string,
@@ -288,7 +297,7 @@ function spanningRecordQuery(
 
     const referenceToInfo: ReferenceToInfo | undefined = referenceInfos[0];
     if (referenceToInfo === undefined) {
-        return failure([`No reference info found for ${fieldName}`]);
+        return failure([message(`No reference info found for ${fieldName}`)]);
     }
 
     const { apiName } = referenceToInfo;
@@ -319,14 +328,16 @@ function childRecordQuery(
     return recordQuery(selection, apiName, alias, additionalPredicates, input);
 }
 
-function parseFirst(arg: LuvioArgumentNode | undefined): Result<number | undefined, string[]> {
+function parseFirst(
+    arg: LuvioArgumentNode | undefined
+): Result<number | undefined, PredicateError> {
     if (arg === undefined) {
         return success(undefined);
     }
 
     const value = arg.value;
     if (value.kind !== 'IntValue') {
-        return failure(['first type should be an IntValue.']);
+        return failure(message('first type should be an IntValue.'));
     }
 
     return success(parseInt(value.value));
@@ -367,7 +378,7 @@ function recordQuery(
     }
 
     if (firstResult.isSuccess === false) {
-        return failure(firstResult.error);
+        return failure([firstResult.error]);
     }
 
     if (scopeResult.value !== undefined) {
@@ -438,7 +449,7 @@ function rootRecordQuery(
     const apiName = selection.name;
 
     if (input.objectInfoMap[alias] === undefined) {
-        return failure([`Unknown record type "${alias}"`]);
+        return failure([missingObjectInfo(apiName)]);
     }
 
     return recordQuery(selection, alias, apiName, [], input);

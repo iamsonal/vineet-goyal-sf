@@ -17,6 +17,7 @@ import {
 import { comparison, combinePredicates, stringLiteral } from '../util';
 import infoJson from './mockData/objectInfos.json';
 import { unwrappedError, unwrappedValue } from '../Result';
+import { message } from '../Error';
 
 const infoMap = infoJson as ObjectInfoMap;
 const { eq, ne, gt, gte, like, lt, lte, nin } = ComparisonOperator;
@@ -208,7 +209,9 @@ describe('filter-parser', () => {
             expect(filter.isSuccess).toEqual(false);
 
             expect(unwrappedError(filter).length).toEqual(1);
-            expect(unwrappedError(filter)[0]).toEqual('Value for and node must be a list.');
+            expect(unwrappedError(filter)[0]).toEqual(
+                message('Value for and node must be a list.')
+            );
         });
 
         it('returns undefined filter for empty AND', () => {
@@ -298,8 +301,8 @@ describe('filter-parser', () => {
             const errors = unwrappedError(filter);
             expect(filter.isSuccess).toEqual(false);
             expect(errors).toEqual([
-                'Comparison operator foo is not supported for type String.',
-                'Comparison operator bar is not supported for type String.',
+                message('Comparison operator foo is not supported for type String.'),
+                message('Comparison operator bar is not supported for type String.'),
             ]);
         });
 
@@ -682,7 +685,7 @@ describe('filter-parser', () => {
 
                 expect(filter.isSuccess).toEqual(false);
                 expect(unwrappedError(filter).length).toEqual(1);
-                expect(unwrappedError(filter)[0]).toEqual(expectedError);
+                expect(unwrappedError(filter)[0]).toEqual(message(expectedError));
             }
 
             it('returns an error when double field IN or NIN ListValueNode contains a value with type different from field type', () => {
@@ -867,7 +870,9 @@ describe('filter-parser', () => {
             );
             expect(filter.isSuccess).toEqual(false);
             expect(unwrappedError(filter).length).toEqual(1);
-            expect(unwrappedError(filter)[0]).toEqual('Parent filter node should be an object.');
+            expect(unwrappedError(filter)[0]).toEqual(
+                message('Parent filter node should be an object.')
+            );
         });
 
         it('returns an error if field value is not an object or list', () => {
@@ -881,7 +886,9 @@ describe('filter-parser', () => {
             );
 
             expect(filter.isSuccess).toEqual(false);
-            expect(unwrappedError(filter)[0]).toEqual('Filter node must be an object or list.');
+            expect(unwrappedError(filter)[0]).toEqual(
+                message('Filter node must be an object or list.')
+            );
         });
     });
 });

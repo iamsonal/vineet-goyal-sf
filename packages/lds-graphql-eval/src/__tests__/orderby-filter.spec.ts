@@ -115,7 +115,6 @@ describe('order by filter parser', () => {
                 type: 'root',
                 connections: [
                     {
-                        type: 'connection',
                         alias: 'TimeSheet',
                         apiName: 'TimeSheet',
                         fields: [
@@ -135,6 +134,15 @@ describe('order by filter parser', () => {
                                     type: ValueType.Extract,
                                     jsonAlias: 'TimeSheet',
                                     path: 'data.drafts',
+                                },
+                            },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._metadata',
+                                extract: {
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'metadata',
+                                    type: ValueType.Extract,
                                 },
                             },
                         ],

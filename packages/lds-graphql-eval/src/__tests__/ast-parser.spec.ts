@@ -43,7 +43,6 @@ describe('ast-parser', () => {
                     {
                         alias: 'TimeSheet',
                         apiName: 'TimeSheet',
-                        type: 'connection',
                         first: undefined,
                         orderBy: undefined,
                         joinNames: [],
@@ -65,6 +64,24 @@ describe('ast-parser', () => {
                                     type: Extract,
                                     jsonAlias: 'TimeSheet',
                                     path: 'data.drafts',
+                                },
+                            },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node.Id',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'data.id',
+                                },
+                            },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._metadata',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'metadata',
                                 },
                             },
                         ],
@@ -208,7 +225,6 @@ describe('ast-parser', () => {
                     {
                         alias: 'TimeSheet',
                         apiName: 'TimeSheet',
-                        type: 'connection',
                         first: undefined,
                         orderBy: undefined,
                         joinNames: [],
@@ -230,6 +246,15 @@ describe('ast-parser', () => {
                                     type: Extract,
                                     jsonAlias: 'TimeSheet',
                                     path: 'data.drafts',
+                                },
+                            },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._metadata',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'metadata',
                                 },
                             },
                         ],
@@ -281,7 +306,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
                     joinNames: [],
@@ -312,6 +336,24 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.drafts',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'metadata',
                             },
                         },
                     ],
@@ -371,7 +413,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
                     joinNames: [],
@@ -431,6 +472,24 @@ describe('ast-parser', () => {
                                 path: 'data.drafts',
                             },
                         },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'metadata',
+                            },
+                        },
                     ],
                     predicate: {
                         type: PredicateType.comparison,
@@ -481,7 +540,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
                     joinNames: ['TimeSheet.CreatedBy'],
@@ -512,6 +570,24 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.drafts',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'metadata',
                             },
                         },
                     ],
@@ -610,7 +686,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
                     joinNames: ['TimeSheet.CreatedBy'],
@@ -641,6 +716,24 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.drafts',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'metadata',
                             },
                         },
                     ],
@@ -694,7 +787,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'User',
                     apiName: 'User',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
 
@@ -726,6 +818,24 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'User',
                                 path: 'data.drafts',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'User',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'User',
+                                path: 'metadata',
                             },
                         },
                     ],
@@ -809,7 +919,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
                     joinNames: [],
@@ -840,6 +949,24 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.drafts',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'metadata',
                             },
                         },
                     ],
@@ -893,7 +1020,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
 
@@ -905,7 +1031,6 @@ describe('ast-parser', () => {
                             connection: {
                                 alias: 'TimeSheet.TimeSheetEntries',
                                 apiName: 'TimeSheetEntry',
-                                type: 'connection',
                                 first: undefined,
                                 orderBy: undefined,
 
@@ -927,6 +1052,15 @@ describe('ast-parser', () => {
                                             type: Extract,
                                             jsonAlias: 'TimeSheet.TimeSheetEntries',
                                             path: 'data.drafts',
+                                        },
+                                    },
+                                    {
+                                        type: FieldType.Scalar,
+                                        path: 'node._metadata',
+                                        extract: {
+                                            type: Extract,
+                                            jsonAlias: 'TimeSheet.TimeSheetEntries',
+                                            path: 'metadata',
                                         },
                                     },
                                 ],
@@ -972,6 +1106,24 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.drafts',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'metadata',
                             },
                         },
                     ],
@@ -1022,7 +1174,6 @@ describe('ast-parser', () => {
                 {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
-                    type: 'connection',
                     first: undefined,
                     orderBy: undefined,
 
@@ -1045,6 +1196,24 @@ describe('ast-parser', () => {
                                 type: Extract,
                                 jsonAlias: 'TimeSheet',
                                 path: 'data.drafts',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node.Id',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.id',
+                            },
+                        },
+                        {
+                            type: FieldType.Scalar,
+                            path: 'node._metadata',
+                            extract: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'metadata',
                             },
                         },
                     ],
@@ -1189,7 +1358,6 @@ describe('ast-parser', () => {
                     {
                         alias: 'TimeSheet',
                         apiName: 'TimeSheet',
-                        type: 'connection',
                         first: 43,
                         orderBy: undefined,
                         joinNames: [],
@@ -1211,6 +1379,15 @@ describe('ast-parser', () => {
                                     type: Extract,
                                     jsonAlias: 'TimeSheet',
                                     path: 'data.drafts',
+                                },
+                            },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._metadata',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'metadata',
                                 },
                             },
                         ],
@@ -1260,7 +1437,6 @@ describe('ast-parser', () => {
                     {
                         alias: 'ServiceAppointment',
                         apiName: 'ServiceAppointment',
-                        type: 'connection',
                         first: undefined,
                         orderBy: undefined,
                         joinNames: [],
@@ -1282,6 +1458,15 @@ describe('ast-parser', () => {
                                     type: Extract,
                                     jsonAlias: 'ServiceAppointment',
                                     path: 'data.drafts',
+                                },
+                            },
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node._metadata',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'ServiceAppointment',
+                                    path: 'metadata',
                                 },
                             },
                         ],

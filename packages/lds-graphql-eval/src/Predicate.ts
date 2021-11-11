@@ -215,7 +215,6 @@ export interface RootQuery {
 }
 
 export interface RecordQuery {
-    type: 'connection';
     predicate: Predicate | undefined;
     fields: RecordQueryField[];
     alias: string;

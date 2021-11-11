@@ -37,7 +37,9 @@ describe('ast-parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
-                `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), '$.node._drafts', ` +
+                `(json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( ` +
@@ -69,7 +71,8 @@ describe('ast-parser', () => {
         const expected =
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
-            `'$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet'  ` +
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ` +
@@ -99,7 +102,8 @@ describe('ast-parser', () => {
         const expected =
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
-            `'$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet'  ` +
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' LIMIT 49` +
@@ -129,7 +133,8 @@ describe('ast-parser', () => {
         const expected =
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.ServiceAppointment.edges', ` +
-            `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("ServiceAppointment.JSON", '$.data.id')), '$.node._drafts', (json_extract("ServiceAppointment.JSON", '$.data.drafts')) )) ` +
+            `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("ServiceAppointment.JSON", '$.data.id')), '$.node._drafts', (json_extract("ServiceAppointment.JSON", '$.data.drafts')), ` +
+            `'$.node._metadata', (json_extract("ServiceAppointment.JSON", '$.metadata')) )) ` +
             `FROM (SELECT 'ServiceAppointment'.TABLE_1_1 as 'ServiceAppointment.JSON' FROM recordsCTE as 'ServiceAppointment' ` +
             ` WHERE ( ` +
             `EXISTS (` +
@@ -171,7 +176,9 @@ describe('ast-parser', () => {
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
             `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), ` +
-            `'$.node.TimeSheetNumber.displayValue', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.displayValue')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.TimeSheetNumber.displayValue', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.displayValue')), ` +
+            `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet'  ` +
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' )) ) as json`;
@@ -216,7 +223,9 @@ describe('ast-parser', () => {
             `'$.node.TimeSheetNumber.displayValue', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.displayValue')), ` +
             `'$.node.OwnerId.value', (json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.value')), ` +
             `'$.node.OwnerId.displayValue', (json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.displayValue')), ` +
-            `'$.node.IsDeleted.value', (json_extract("TimeSheet.JSON", '$.data.fields.IsDeleted.value')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.IsDeleted.value', (json_extract("TimeSheet.JSON", '$.data.fields.IsDeleted.value')), ` +
+            `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
             `FROM recordsCTE as 'TimeSheet'  ` +
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' )) ) as json`;
@@ -251,7 +260,9 @@ describe('ast-parser', () => {
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
             `'$.node.CreatedBy.Email.value', (json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.Email.value')), ` +
-            `'$.node.CreatedBy.Email.displayValue', (json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.Email.displayValue')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.CreatedBy.Email.displayValue', (json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.Email.displayValue')), ` +
+            `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT ` +
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
             `'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
@@ -308,7 +319,9 @@ describe('ast-parser', () => {
             //timesheet records
             `'$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
             `'$.node.CreatedBy.Email.value', (json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.Email.value')), ` +
-            `'$.node.CreatedBy.Email.displayValue', (json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.Email.displayValue')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.CreatedBy.Email.displayValue', (json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.Email.displayValue')), ` +
+            `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT ` +
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
             `'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
@@ -319,7 +332,9 @@ describe('ast-parser', () => {
             //user records
             `'$.data.uiapi.query.User.edges', (SELECT json_group_array(json_set('{}', ` +
             `'$.node.CreatedBy.Email.value', (json_extract("User.CreatedBy.JSON", '$.data.fields.Email.value')), ` +
-            `'$.node.CreatedBy.Email.displayValue', (json_extract("User.CreatedBy.JSON", '$.data.fields.Email.displayValue')), '$.node._drafts', (json_extract("User.JSON", '$.data.drafts')) )) ` +
+            `'$.node.CreatedBy.Email.displayValue', (json_extract("User.CreatedBy.JSON", '$.data.fields.Email.displayValue')), ` +
+            `'$.node._drafts', (json_extract("User.JSON", '$.data.drafts')), '$.node.Id', (json_extract("User.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("User.JSON", '$.metadata')) )) ` +
             `FROM (SELECT ` +
             `'User.CreatedBy'.TABLE_1_1 as 'User.CreatedBy.JSON', ` +
             `'User'.TABLE_1_1 as 'User.JSON' ` +
@@ -358,11 +373,14 @@ describe('ast-parser', () => {
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
             `'$.node.TimeSheetEntries.edges', (SELECT json_group_array(json_set('{}', ` +
-            `'$.node.Id', (json_extract("TimeSheet.TimeSheetEntries.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.TimeSheetEntries.JSON", '$.data.drafts')) )) ` +
+            `'$.node.Id', (json_extract("TimeSheet.TimeSheetEntries.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.TimeSheetEntries.JSON", '$.data.drafts')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.TimeSheetEntries.JSON", '$.metadata')) )) ` +
             `FROM (SELECT 'TimeSheet.TimeSheetEntries'.TABLE_1_1 as 'TimeSheet.TimeSheetEntries.JSON' ` +
             `FROM recordsCTE as 'TimeSheet.TimeSheetEntries'  ` +
             `WHERE ( json_extract("TimeSheet.TimeSheetEntries.JSON", '$.data.apiName') = 'TimeSheetEntry' AND ` +
-            `json_extract("TimeSheet.TimeSheetEntries.JSON", '$.data.fields.TimeSheetId.value') = json_extract("TimeSheet.JSON", '$.data.id') ) )), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `json_extract("TimeSheet.TimeSheetEntries.JSON", '$.data.fields.TimeSheetId.value') = json_extract("TimeSheet.JSON", '$.data.id') ) )), ` +
+            `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' FROM recordsCTE as 'TimeSheet'  ` +
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' )) ) as json`;
 
@@ -393,7 +411,9 @@ describe('ast-parser', () => {
         const expected =
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
-            `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), ` +
+            `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT ` +
             `'TimeSheet.CreatedBy.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.CreatedBy.JSON', ` +
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +
@@ -462,7 +482,9 @@ describe('ast-parser', () => {
         const expected =
             `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
-            `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+            `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), '$.node._drafts', ` +
+            `(json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
+            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
             `FROM (SELECT ` +
             `'TimeSheet.CreatedBy.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.CreatedBy.JSON', ` +
             `'TimeSheet.CreatedBy'.TABLE_1_1 as 'TimeSheet.CreatedBy.JSON', ` +

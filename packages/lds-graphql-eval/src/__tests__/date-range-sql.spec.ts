@@ -67,7 +67,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
@@ -81,7 +82,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', 'start of month', '-4 months') ` +
@@ -107,7 +109,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
@@ -121,7 +124,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', 'start of month', '1 months') ` +
@@ -146,7 +150,8 @@ describe('date range to sql parser', () => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                     `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
@@ -161,7 +166,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', '-4 days') ` +
@@ -186,7 +192,8 @@ describe('date range to sql parser', () => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                     `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
@@ -201,7 +208,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', '1 days') ` +
@@ -229,7 +237,8 @@ describe('date range to sql parser', () => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                     `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${expectedComp} ` +
@@ -244,7 +253,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', 'start of month', '-4 months') ` +
@@ -272,7 +282,8 @@ describe('date range to sql parser', () => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                     `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${expectedComp} ` +
@@ -287,7 +298,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', 'start of month', '1 months') ` +
@@ -312,7 +324,8 @@ describe('date range to sql parser', () => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                     `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${expectedComp} ` +
@@ -327,7 +340,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', '-4 days') ` +
@@ -352,7 +366,8 @@ describe('date range to sql parser', () => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                     `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                     `FROM recordsCTE as 'TimeSheet'  ` +
                     `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') ${expectedComp} ` +
@@ -367,7 +382,8 @@ describe('date range to sql parser', () => {
             const expected =
                 `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')) )) ` +
+                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', '1 days') ` +

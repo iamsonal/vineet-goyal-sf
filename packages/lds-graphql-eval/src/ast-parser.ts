@@ -5,7 +5,7 @@ import {
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
 } from '@salesforce/lds-graphql-parser/dist/ast';
-
+import { removeDuplicateFields } from './comparison';
 import { message, missingObjectInfo, PredicateError } from './Error';
 
 import { recordFilter } from './filter-parser';
@@ -421,9 +421,25 @@ function recordQuery(
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias: alias, path };
     const draftsField: ScalarField = { type: FieldType.Scalar, extract, path: 'node._drafts' };
 
+    const idPath = extractPath('Id');
+    const idExtract: JsonExtract = { type: ValueType.Extract, jsonAlias: alias, path: idPath };
+    const idField: ScalarField = { type: FieldType.Scalar, extract: idExtract, path: 'node.Id' };
+    const metadataPath = extractPath('metadata');
+    const metadataExtract: JsonExtract = {
+        type: ValueType.Extract,
+        jsonAlias: alias,
+        path: metadataPath,
+    };
+    const metadataField: ScalarField = {
+        type: FieldType.Scalar,
+        extract: metadataExtract,
+        path: 'node._metadata',
+    };
     return queryContainer(internalFields, alias, apiName, predicates).map((result) => {
         const { fields } = result;
-        const allFields = fields.concat(draftsField);
+        const allFields = removeDuplicateFields(
+            fields.concat(...[draftsField, idField, metadataField])
+        );
 
         //combine the joins and remove duplicates
         const joinSet = new Set([...result.joinNames, ...filterJoins, ...orderByJoins]);
@@ -434,10 +450,9 @@ function recordQuery(
             CompoundOperator.and
         );
         const first = firstResult.value;
-        const type = 'connection';
         const orderBy = orderByResult.value === undefined ? undefined : orderByResult.value.orderBy;
 
-        return { joinNames, fields: allFields, first, orderBy, type, apiName, alias, predicate };
+        return { joinNames, fields: allFields, first, orderBy, apiName, alias, predicate };
     });
 }
 

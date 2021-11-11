@@ -1,4 +1,13 @@
-import { Expression, Predicate, PredicateType, ValueType } from './Predicate';
+import {
+    Expression,
+    FieldType,
+    OrderBy,
+    Predicate,
+    PredicateType,
+    RecordQuery,
+    RecordQueryField,
+    ValueType,
+} from './Predicate';
 
 export function isExpressionEqual(lh: Expression, rh: Expression): boolean {
     if (lh.type === ValueType.StringLiteral && rh.type === ValueType.StringLiteral) {
@@ -90,7 +99,13 @@ function isArrayEqual<T>(lh: T[], rh: T[], compare: (l: T, r: T) => boolean): bo
     return true;
 }
 
-function isPredicateEqual(lh: Predicate, rh: Predicate): boolean {
+function isPredicateEqual(lh: Predicate | undefined, rh: Predicate | undefined): boolean {
+    if (lh === undefined) {
+        return lh === rh;
+    }
+    if (rh === undefined) {
+        return rh === lh;
+    }
     const { nullComparison, not, comparison, compound, between } = PredicateType;
 
     if (rh.type === nullComparison && lh.type === nullComparison) {
@@ -144,6 +159,56 @@ export function removeDuplicatePredicates(predicates: Predicate[]): Predicate[] 
             acc.push(b);
         }
 
+        return acc;
+    }, []);
+}
+function isOrderByEqual(lh: OrderBy | undefined, rh: OrderBy | undefined): boolean {
+    if (lh === undefined) {
+        return lh === rh;
+    }
+    if (rh === undefined) {
+        return lh === rh;
+    }
+    return (
+        lh.asc === rh.asc &&
+        isExpressionEqual(lh.extract, rh.extract) &&
+        lh.nullsFirst === rh.nullsFirst
+    );
+}
+function isRecordQueryEqual(lh: RecordQuery, rh: RecordQuery): boolean {
+    return (
+        lh.alias === rh.alias &&
+        lh.apiName === rh.apiName &&
+        isArrayEqual(lh.fields, rh.fields, isFieldEqual) &&
+        lh.first === rh.first &&
+        isArrayEqual(lh.joinNames, rh.joinNames, isStrictEqual) &&
+        isOrderByEqual(lh.orderBy, rh.orderBy) &&
+        isPredicateEqual(lh.predicate, rh.predicate)
+    );
+}
+function isFieldEqual(lh: RecordQueryField, rh: RecordQueryField): boolean {
+    if (rh.type === FieldType.Child && lh.type === FieldType.Child) {
+        return isRecordQueryEqual(lh.connection, rh.connection) && lh.path === rh.path;
+    }
+    if (rh.type === FieldType.Scalar && lh.type === FieldType.Scalar) {
+        return isExpressionEqual(lh.extract, rh.extract) && lh.path === rh.path;
+    }
+    return false;
+}
+function containsField(fields: RecordQueryField[], field: RecordQueryField): boolean {
+    for (let index = 0; index < fields.length; index++) {
+        const element = fields[index];
+        if (isFieldEqual(field, element)) {
+            return true;
+        }
+    }
+    return false;
+}
+export function removeDuplicateFields(fields: RecordQueryField[]): RecordQueryField[] {
+    return fields.reduce(function (acc: RecordQueryField[], b) {
+        if (containsField(acc, b) === false) {
+            acc.push(b);
+        }
         return acc;
     }, []);
 }

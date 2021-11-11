@@ -1,19 +1,154 @@
-import { isExpressionEqual, removeDuplicatePredicates } from '../comparison';
+import { isExpressionEqual, removeDuplicateFields, removeDuplicatePredicates } from '../comparison';
 import {
+    ChildField,
     ComparisonOperator,
     ComparisonPredicate,
     CompoundOperator,
     CompoundPredicate,
     DateEnumType,
     Expression,
+    FieldType,
     NotPredicate,
     NullComparisonOperator,
     NullComparisonPredicate,
     PredicateType,
+    ScalarField,
     ValueType,
 } from '../Predicate';
 
 describe('comparison', () => {
+    describe('removeDuplicateFields', () => {
+        describe('scalar fields', () => {
+            it('removes scalar field with matching extract and path', () => {
+                const fields: ScalarField[] = [
+                    {
+                        extract: { type: ValueType.Extract, jsonAlias: 'data.id', path: 'Id' },
+                        path: 'Id',
+                        type: FieldType.Scalar,
+                    },
+                    {
+                        extract: { type: ValueType.Extract, jsonAlias: 'data.id', path: 'Id' },
+                        path: 'Id',
+                        type: FieldType.Scalar,
+                    },
+                ];
+
+                expect(removeDuplicateFields(fields)).toEqual([fields[1]]);
+            });
+
+            it('does not remove scalar field with different path', () => {
+                const fields: ScalarField[] = [
+                    {
+                        extract: { type: ValueType.Extract, jsonAlias: 'data.id', path: 'Id' },
+                        path: 'Id',
+                        type: FieldType.Scalar,
+                    },
+                    {
+                        extract: { type: ValueType.Extract, jsonAlias: 'data.id', path: 'Id' },
+                        path: 'Name',
+                        type: FieldType.Scalar,
+                    },
+                ];
+
+                expect(removeDuplicateFields(fields)).toEqual(fields);
+            });
+
+            it('does not remove scalar field with different extract', () => {
+                const fields: ScalarField[] = [
+                    {
+                        extract: { type: ValueType.Extract, jsonAlias: 'data.id', path: 'Id' },
+                        path: 'Id',
+                        type: FieldType.Scalar,
+                    },
+                    {
+                        extract: { type: ValueType.Extract, jsonAlias: 'data.id', path: 'Id2' },
+                        path: 'Id',
+                        type: FieldType.Scalar,
+                    },
+                ];
+
+                expect(removeDuplicateFields(fields)).toEqual(fields);
+            });
+        });
+
+        describe('child fields', () => {
+            it('removes duplicate child field', () => {
+                const fields: ChildField[] = [
+                    {
+                        connection: {
+                            predicate: undefined,
+                            fields: [],
+                            alias: 'Alias1',
+                            first: undefined,
+                            orderBy: undefined,
+                            joinNames: [],
+                            apiName: 'TimeSheet',
+                        },
+                        path: 'Id',
+                        type: FieldType.Child,
+                    },
+                    {
+                        connection: {
+                            predicate: undefined,
+                            fields: [],
+                            alias: 'Alias1',
+                            first: undefined,
+                            orderBy: undefined,
+                            joinNames: [],
+                            apiName: 'TimeSheet',
+                        },
+                        path: 'Id',
+                        type: FieldType.Child,
+                    },
+                    {
+                        connection: {
+                            predicate: undefined,
+                            fields: [],
+                            alias: 'Alias2',
+                            first: 10,
+                            orderBy: {
+                                asc: true,
+                                extract: {
+                                    type: ValueType.Extract,
+                                    path: 'Name',
+                                    jsonAlias: 'TimeSheet',
+                                },
+                                nullsFirst: false,
+                            },
+                            joinNames: [],
+                            apiName: 'TimeSheet',
+                        },
+                        path: 'Id',
+                        type: FieldType.Child,
+                    },
+                    {
+                        connection: {
+                            predicate: undefined,
+                            fields: [],
+                            alias: 'Alias2',
+                            first: 10,
+                            orderBy: {
+                                asc: true,
+                                extract: {
+                                    type: ValueType.Extract,
+                                    path: 'Name',
+                                    jsonAlias: 'TimeSheet',
+                                },
+                                nullsFirst: false,
+                            },
+                            joinNames: [],
+                            apiName: 'TimeSheet',
+                        },
+                        path: 'Id',
+                        type: FieldType.Child,
+                    },
+                ];
+
+                expect(removeDuplicateFields(fields)).toEqual([fields[1], fields[3]]);
+            });
+        });
+    });
+
     describe('removeDuplicatePredicates', () => {
         describe('NullComparison', () => {
             const predicateType = PredicateType.nullComparison;

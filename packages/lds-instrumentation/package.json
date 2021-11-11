@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-instrumentation",
-    "version": "1.35.0",
+    "version": "1.36.0",
     "description": "Instrumentation utils for Lightning Data Service",
     "license": "MIT",
     "main": "dist/ldsInstrumentation.js",
@@ -19,8 +19,8 @@
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-instrumentation"
     },
     "dependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.35.0",
-        "@salesforce/lds-bindings": "1.35.0",
-        "@salesforce/lds-network-adapter": "1.35.0"
+        "@salesforce/lds-adapters-uiapi": "1.36.0",
+        "@salesforce/lds-bindings": "1.36.0",
+        "@salesforce/lds-network-adapter": "1.36.0"
     }
 }

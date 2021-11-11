@@ -1,7 +1,7 @@
 {
     "name": "@salesforce/core-build",
     "private": false,
-    "version": "1.35.0",
+    "version": "1.36.0",
     "description": "LDS Build System",
     "license": "MIT",
     "files": [

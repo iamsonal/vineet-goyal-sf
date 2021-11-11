@@ -1,3 +1,4 @@
+import { getLayoutUserState_imperative } from 'lds-adapters-uiapi';
 import {
     LayoutType,
     LayoutMode,
@@ -5,7 +6,7 @@ import {
     expireLayoutUserState,
     mockGetLayoutUserStateNetwork,
 } from 'uiapi-test-util';
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { flushPromises, getMock as globalGetMock, setupElement, stripEtags } from 'test-util';
 
 import GetLayoutUserState from '../lwc/get-layout-user-state';
 
@@ -190,5 +191,35 @@ describe('getLayoutUserState', () => {
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshed);
+    });
+});
+
+describe('getLayoutUserState_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mock1 = getMock('layoutUserState-Account-Full-View');
+        const mock2 = getMock('layoutUserState-Account-Full-View');
+        mock2.eTag = mock2.eTag + '999';
+
+        mockGetLayoutUserStateNetwork(DEFAULT_CONFIG, [mock1, mock2]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mock1
+        getLayoutUserState_imperative.invoke(DEFAULT_CONFIG, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getLayoutUserState_imperative.subscribe(
+            DEFAULT_CONFIG,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([{ data: stripEtags(mock1), error: undefined }]);
+        expect(callback.calls.argsFor(1)).toEqual([{ data: stripEtags(mock2), error: undefined }]);
     });
 });

@@ -28,7 +28,11 @@ withDefaultLuvio((luvio: Luvio) => {
         createInstrumentedAdapter(ldsAdapter, adapterMetadata),
         adapterMetadata
     );
-    unstable_graphQL_imperative = createImperativeAdapter(luvio, ldsAdapter, adapterMetadata);
+    unstable_graphQL_imperative = createImperativeAdapter(
+        luvio,
+        createInstrumentedAdapter(ldsAdapter, adapterMetadata),
+        adapterMetadata
+    );
     graphQLImperative = ldsAdapter;
 });
 

@@ -183,6 +183,7 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
             return null;
         }
 
+        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
         if (requestContext !== undefined) {
             return luvio.applyCachePolicy(
                 requestContext === undefined ? undefined : requestContext.cachePolicy,

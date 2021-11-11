@@ -113,6 +113,15 @@ describe('isContinuation Header', () => {
         const mockLuvio: any = {
             storeIngest: jest.fn(),
             storeLookup: jest.fn(),
+            applyCachePolicy: jest
+                .fn()
+                .mockImplementation(
+                    (_cachePolicy, buildSnapshotContext, _buildInMemoryFunc, buildNetowrkFunc) => {
+                        // have mock implementation call buildNetworkSnapshot so we can
+                        // validate dispatchResourceRequest is called with correct params
+                        return buildNetowrkFunc(buildSnapshotContext);
+                    }
+                ),
             dispatchResourceRequest: jest.fn().mockReturnValue(Promise.resolve({})),
             withContext: (fn: any) => fn,
             snapshotAvailable: jest.fn().mockReturnValue(false),

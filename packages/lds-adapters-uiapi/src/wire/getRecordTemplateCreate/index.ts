@@ -303,6 +303,7 @@ export const factory: AdapterFactory<
 
         const recordTypeId = getRecordTypeId(adapterContext, config);
 
+        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
         if (requestContext !== undefined) {
             return luvio.applyCachePolicy(
                 requestContext === undefined ? undefined : requestContext.cachePolicy,

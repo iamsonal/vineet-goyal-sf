@@ -1,6 +1,8 @@
 import {
     Adapter,
     AdapterContext,
+    AdapterRequestContext,
+    DispatchResourceRequest,
     FetchResponse,
     FulfilledSnapshot,
     Luvio,
@@ -10,6 +12,7 @@ import {
     Snapshot,
     SnapshotRefresh,
     StaleSnapshot,
+    StoreLookup,
     UnAvailableSnapshot,
 } from '@luvio/engine';
 import { stableJSONStringify } from '../../util/utils';
@@ -30,6 +33,7 @@ import {
     setCacheControlAdapterContext,
     shouldCache,
     SHARED_ADAPTER_CONTEXT_ID,
+    BuildSnapshotContext,
 } from '../../util/shared';
 
 export function createResourceParams(config: ApexAdapterConfig): ResourceRequestConfig {
@@ -104,6 +108,26 @@ function buildInMemorySnapshot(luvio: Luvio, _context: AdapterContext, config: A
     });
 }
 
+function buildInMemorySnapshotCachePolicy(
+    buildSnapshotContext: BuildSnapshotContext,
+    storeLookup: StoreLookup<any>
+) {
+    const { config } = buildSnapshotContext;
+
+    const { apexClass, apexMethod, xSFDCAllowContinuation, methodParams } = config;
+    const recordId = keyBuilder(apexClass, apexMethod, xSFDCAllowContinuation, methodParams);
+
+    return storeLookup({
+        recordId: recordId,
+        node: {
+            kind: 'Fragment',
+            opaque: true,
+            private: [],
+        },
+        variables: {},
+    });
+}
+
 export function onResourceResponseSuccess(
     luvio: Luvio,
     context: AdapterContext,
@@ -155,12 +179,21 @@ export function buildNetworkSnapshot(
     const request = createResourceRequest(resourceParams);
     return luvio.dispatchResourceRequest<any>(request, override).then(
         (response) => {
+            // TODO [W-10155026]: this should call luvio.handleSuccessResponse
             return onResourceResponseSuccess(luvio, context, config, resourceParams, response);
         },
         (response: FetchResponse<unknown>) => {
             return onResourceResponseError(luvio, context, config, resourceParams, response);
         }
     );
+}
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    _dispatchResourceRequest: DispatchResourceRequest<any>
+): Promise<Snapshot<any, any>> {
+    const { luvio, config, adapterContext } = context;
+    return buildNetworkSnapshot(luvio, adapterContext, config);
 }
 
 export const invoker = (luvio: Luvio, invokerParams: ApexInvokerParams) => {
@@ -170,8 +203,8 @@ export const invoker = (luvio: Luvio, invokerParams: ApexInvokerParams) => {
 };
 
 function getInvoker(ldsAdapter: Adapter<any, any>) {
-    return (config: unknown) => {
-        const snapshotOrPromise = ldsAdapter(config);
+    return (config: unknown, requestContext?: AdapterRequestContext) => {
+        const snapshotOrPromise = ldsAdapter(config, requestContext);
         return Promise.resolve(snapshotOrPromise!).then((snapshot: Snapshot<any>) => {
             if (snapshot.state === 'Error') {
                 throw snapshot.error;
@@ -191,7 +224,8 @@ function postApexAdapterFactory(
     return luvio.withContext(
         function apex__postApex(
             config: unknown,
-            context: AdapterContext
+            context: AdapterContext,
+            requestContext?: AdapterRequestContext
         ): Promise<Snapshot<any, any>> | Snapshot<any, any> {
             // config validation is unnecessary for this imperative adapter
             // due to the config being of type `any`.
@@ -204,23 +238,35 @@ function postApexAdapterFactory(
                 isContinuation
             );
 
-            if (isCacheable(configPlus, context)) {
-                const cacheSnapshot = buildInMemorySnapshot(luvio, context, configPlus);
+            // TODO [W-10164140]: this if block can go away and this adapter always calls
+            // luvio.applyCachePolicy (if isCacheable is false we can pass a "cache-only"
+            // cache-policy into it)
+            if (requestContext === undefined) {
+                if (isCacheable(configPlus, context)) {
+                    const cacheSnapshot = buildInMemorySnapshot(luvio, context, configPlus);
 
-                // Cache Hit
-                if (luvio.snapshotAvailable(cacheSnapshot) === true) {
-                    return cacheSnapshot;
+                    // Cache Hit
+                    if (luvio.snapshotAvailable(cacheSnapshot) === true) {
+                        return cacheSnapshot;
+                    }
+
+                    // Resolve if snapshot not available
+                    // we have to cast to AvailableSnapshot because TS doesn't know how to infer types after "=== true" on the previous line
+                    return luvio.resolveSnapshot(cacheSnapshot as UnAvailableSnapshot<any, any>, {
+                        config: {},
+                        resolve: () => buildNetworkSnapshot(luvio, context, configPlus),
+                    });
                 }
 
-                // Resolve if snapshot not available
-                // we have to cast to AvailableSnapshot because TS doesn't know how to infer types after "=== true" on the previous line
-                return luvio.resolveSnapshot(cacheSnapshot as UnAvailableSnapshot<any, any>, {
-                    config: {},
-                    resolve: () => buildNetworkSnapshot(luvio, context, configPlus),
-                });
+                return buildNetworkSnapshot(luvio, context, configPlus);
             }
 
-            return buildNetworkSnapshot(luvio, context, configPlus);
+            return luvio.applyCachePolicy<BuildSnapshotContext, any>(
+                (requestContext || {}).cachePolicy,
+                { config: configPlus, luvio, adapterContext: context },
+                buildInMemorySnapshotCachePolicy,
+                buildNetworkSnapshotCachePolicy
+            );
         },
         { contextId: SHARED_ADAPTER_CONTEXT_ID }
     );

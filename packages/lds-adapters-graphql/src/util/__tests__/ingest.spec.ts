@@ -1,10 +1,16 @@
 import { Environment, Luvio, Store } from '@luvio/engine';
 import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
 import { createIngest } from '../ingest';
+import timekeeper from 'timekeeper';
+
+beforeEach(() => {
+    timekeeper.reset();
+});
 
 describe('ingest', () => {
     describe('createIngest', () => {
         it('should properly ingest nodes with arguments', () => {
+            timekeeper.freeze(100);
             const ast: LuvioSelectionObjectFieldNode = {
                 kind: 'ObjectFieldSelection',
                 name: 'foo',
@@ -43,6 +49,7 @@ describe('ingest', () => {
             };
 
             const data = {
+                __typename: 'DataRepresentation',
                 child: {
                     title: 'title',
                 },
@@ -73,11 +80,23 @@ describe('ingest', () => {
                     title: 'title',
                 },
                 toplevel: {
+                    __typename: 'DataRepresentation',
                     'child(where:{Name:{like:"Account1"}})': {
                         __ref: 'toplevel__child',
                     },
                 },
             });
+
+            expect(store.metadata).toMatchInlineSnapshot(`
+                Object {
+                  "toplevel": Object {
+                    "expirationTimestamp": 30100,
+                    "ingestionTimestamp": 100,
+                    "namespace": "GraphQL",
+                    "representationName": "DataRepresentation",
+                  },
+                }
+            `);
         });
     });
 });

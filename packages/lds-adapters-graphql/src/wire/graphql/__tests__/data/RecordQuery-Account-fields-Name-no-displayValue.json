@@ -1,34 +1,46 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "Account": {
+                    "__typename": "AccountConnection",
                     "edges": [
                         {
+                            "__typename": "AccountEdge",
                             "node": {
-                                "Id": "001RM000004uuhnYAA",
-                                "WeakEtag": 1615493739000,
                                 "Name": {
+                                    "__typename": "StringValue",
                                     "value": "Account1"
                                 },
                                 "__typename": "Account",
                                 "ApiName": "Account",
+                                "WeakEtag": 1621975562000,
+                                "Id": "001RM000004uuhnYAA",
                                 "DisplayValue": "Account1",
                                 "SystemModstamp": {
-                                    "value": "2021-03-11T20:15:39.000Z"
+                                    "value": "2021-05-25T20:46:02.000Z"
                                 },
                                 "LastModifiedById": {
                                     "value": "005RM000002492xYAA"
                                 },
                                 "LastModifiedDate": {
-                                    "value": "2021-03-11T20:15:39.000Z"
+                                    "value": "2021-05-25T20:46:02.000Z"
                                 },
                                 "RecordTypeId": {
                                     "value": "012RM000000E79WYAS"
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

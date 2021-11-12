@@ -23,13 +23,6 @@ function getMock(filename) {
  * using jest tests instead.
  */
 
-/**
- * TODO: W-10088909
- * https://gus.lightning.force.com/lightning/r/a07EE00000JWW1rYAH/view
- * Update mock data to support @connection required fields
- * edges.cursor, pageInfo.hasNextPage, pageInfo.hasPreviousPage, totalCount
- */
-
 describe('graphql', () => {
     describe('no cache', () => {
         it('hits network when no data is in the cache', async () => {

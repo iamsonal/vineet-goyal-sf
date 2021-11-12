@@ -124,12 +124,12 @@ setup_best_environment: &setup_best_environment
 run_best: &run_best
   run:
     name: Run performance Test
-    command: yarn test:perf --externalStorage=@best/store-aws --runner remote --dbAdapter=sql/postgres --dbURI=${BEST_HUB_DATABASE_URL}
+    command: yarn test:perf --externalStorage=@best/store-aws --runner remote --dbAdapter=sql/postgres --dbURI=${BEST_HUB_DATABASE_URL} || true
 
 compare_best_results: &compare_best_results
   run:
     name: Comparing perf examples
-    command: yarn test:perf --compareStats ${BASE_COMMIT} ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration
+    command: yarn test:perf --compareStats ${BASE_COMMIT} ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration || true
 
 store_best_artifacts: &store_best_artifacts
   store_artifacts:

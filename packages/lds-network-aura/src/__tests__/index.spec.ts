@@ -3076,7 +3076,7 @@ describe('routes', () => {
                 basePath: `/sustainability/footprint-calculation/recalculate/`,
             },
             {
-                status: 'success',
+                code: 1,
                 message: 'called successfully',
             }
         );

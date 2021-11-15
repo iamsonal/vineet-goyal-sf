@@ -29,11 +29,11 @@ types:
     description: Output object for Sustainability Footprint Calculation Trigger
     type: object
     properties:
+      code:
+        description: return code
+        type: integer
       message:
         description: return message
-        type: string
-      status:
-        description: return status
         type: string
 /connect/sustainability/footprint-calculation/recalculate/{recordId}:
   post:

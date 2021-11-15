@@ -18,7 +18,10 @@ describe('basic', () => {
             communityId: '0DBR00000000lk0CAI',
             requestIngestionInput: {
                 requestBody: {
-                    Name: 'James Bond',
+                    FirstName: 'James',
+                    LastName: 'Bond',
+                    Subscribed_to__c: true, // ensure request can include booleans
+                    NumberofLocations__c: 1, // ensure request can include integers
                 },
                 processType: 'LEAD_MS',
                 groupBy: '',

@@ -365,7 +365,7 @@ const GET_RECORDS_BY_TAGID_PATH = new RegExp(
 const GET_TAGS_BY_CATEGORYID_PATH = new RegExp(`${CONNECT_BASE_URI}/interest-tags/tags$`, 'i');
 
 const GET_CATEGORIES_BY_TAGID_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/interest-tags/catogories$`,
+    `${CONNECT_BASE_URI}/interest-tags/categories$`,
     'i'
 );
 

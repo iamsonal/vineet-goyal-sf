@@ -7540,11 +7540,11 @@ describe('routes', () => {
         );
     });
 
-    describe('get /interest-tags/catogories', () => {
+    describe('get /interest-tags/categories', () => {
         testControllerInput(
             {
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interest-tags/catogories`,
+                basePath: `/interest-tags/categories`,
             },
             [
                 'InterestTaggingFamilyController.getTagCategoriesByTagId',
@@ -7557,7 +7557,7 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interest-tags/catogories`,
+                basePath: `/interest-tags/categories`,
             },
             {}
         );

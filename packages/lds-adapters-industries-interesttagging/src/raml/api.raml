@@ -214,7 +214,10 @@ types:
         type: string
       parentCategoryId:
         description: The parent category Id
-        type: string
+        type: string | nil
+      parentCategoryName:
+        description: The parent category name
+        type: string | nil
       tagCategoryAssignmentId:
         description: The TagCategoryAssignmentId of this category with the given tagId
         type: string

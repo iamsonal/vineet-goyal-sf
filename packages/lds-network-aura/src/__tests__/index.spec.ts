@@ -4844,6 +4844,36 @@ describe('routes', () => {
         );
     });
 
+    describe('delete /wave/dataconnectors/{connectorIdOrApiName}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+            },
+            [
+                'WaveController.deleteDataConnector',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'delete',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+            },
+            null
+        );
+    });
+
     describe('post /wave/dataconnectors/{connectorIdOrApiName}/ingest', () => {
         testControllerInput(
             {

@@ -943,6 +943,14 @@ const analytics: ApiFamily = {
             controller: 'WaveController.updateDataConnector',
         },
     },
+    deleteDataConnector: {
+        method: 'delete',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_PATH.test(path),
+        transport: {
+            controller: 'WaveController.deleteDataConnector',
+        },
+    },
     getDataConnectorSourceFields: {
         method: 'get',
         predicate: (path: string) =>

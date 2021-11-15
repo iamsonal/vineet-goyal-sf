@@ -183,6 +183,32 @@ function updateDataConnectorMatcher(config) {
     });
 }
 
+function mockDeleteDataConnectorNetworkOnce(config, mockData = {}) {
+    const paramMatch = deleteDataConnectorMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteDataConnectorNetworkErrorOnce(config, mockData = {}) {
+    const paramMatch = deleteDataConnectorMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function deleteDataConnectorMatcher(config) {
+    let { connectorIdOrApiName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}`,
+    });
+}
+
 // Data connector source objects
 function mockGetDataConnectorSourceObjectsNetworkOnce(config, mockData) {
     const paramMatch = getDataConnectorSourceObjectsMatcher(config);
@@ -1134,6 +1160,8 @@ export {
     mockGetDataConnectorNetworkErrorOnce,
     mockUpdateDataConnectorNetworkOnce,
     mockUpdateDataConnectorNetworkErrorOnce,
+    mockDeleteDataConnectorNetworkOnce,
+    mockDeleteDataConnectorNetworkErrorOnce,
     mockGetDataConnectorsNetworkOnce,
     mockGetDataConnectorsNetworkErrorOnce,
     mockGetDataConnectorSourceObjectNetworkOnce,

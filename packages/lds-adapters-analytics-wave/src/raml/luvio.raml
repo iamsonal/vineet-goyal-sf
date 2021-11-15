@@ -95,6 +95,11 @@ types:
     patch:
       (luvio.adapter):
         name: updateDataConnector
+    delete:
+      (luvio.adapter):
+        name: deleteDataConnector
+      (luvio.key):
+        id: urlParams.connectorIdOrApiName
     /sourceObjects:
       get:
         (luvio.adapter):

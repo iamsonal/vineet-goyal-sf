@@ -3739,6 +3739,11 @@ types:
         application/json:
           type: DataConnectorInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DataConnectorInputRepresentation
           (oas-body-name): dataConnector
+    delete:
+      description: Delete a data connector resource.
+      responses:
+        '200':
+          description: Success
     uriParameters:
       connectorIdOrApiName:
         type: string

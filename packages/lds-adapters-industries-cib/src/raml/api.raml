@@ -78,10 +78,10 @@ types:
           type: InteractionRepresentation
       name:
         description: The name of the Contact
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
       title:
         description: The title of the Contact
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
   ContactRepresentation:
     description: Contact record
     type: object
@@ -94,10 +94,10 @@ types:
         type: integer
       name:
         description: The name of the Contact
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
       title:
         description: The title of the Contact
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
   ContactsRepresentation:
     description: List of contacts
     type: object
@@ -123,19 +123,19 @@ types:
       icon:
         description: The icon of the Interaction. This could be either SLDS icon or
           a file url
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
       id:
         description: The recordId of the Interaction
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
       isPrivate:
         description: Flag to check if Interaction is visible to current user or not
         type: boolean
       name:
         description: The name of the Interaction
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
       startDate:
         description: The start date of the Interaction
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
       users:
         description: List of users added as Attendee on the interaction
         type: array
@@ -156,7 +156,7 @@ types:
         type: string
       title:
         description: The title of the user
-        type: string
+        type: string | nil # TODO Hand-rolled W-10182415
 /connect/financialservices:
   /contacts-interactions:
     get:

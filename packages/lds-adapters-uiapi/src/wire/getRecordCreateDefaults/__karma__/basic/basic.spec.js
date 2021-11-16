@@ -1,4 +1,11 @@
-import { getMock as globalGetMock, setupElement, updateElement } from 'test-util';
+import { getRecordCreateDefaults_imperative } from 'lds-adapters-uiapi';
+import {
+    flushPromises,
+    getMock as globalGetMock,
+    setupElement,
+    updateElement,
+    stripEtags,
+} from 'test-util';
 import {
     expireLayout,
     expireRecordDefaultsRepresentation,
@@ -421,5 +428,40 @@ describe('refresh', () => {
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshed);
+    });
+});
+
+describe('getRecordCreateDefaults_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mock1 = getMock('record-defaults-create-Account');
+        const mock2 = getMock('record-defaults-create-Account');
+        mock2.layout.eTag = mock2.layout.eTag + '999';
+        mock2.layout.sections[0].collapsible = !mock2.layout.sections[0].collapsible;
+
+        const config = {
+            objectApiName: 'Account',
+        };
+
+        mockGetRecordCreateDefaultsNetwork(config, [mock1, mock2]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mock1
+        getRecordCreateDefaults_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getRecordCreateDefaults_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([{ data: stripEtags(mock1), error: undefined }]);
+        expect(callback.calls.argsFor(1)).toEqual([{ data: stripEtags(mock2), error: undefined }]);
     });
 });

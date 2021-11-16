@@ -7,6 +7,9 @@ import {
     SnapshotRefresh,
     Snapshot,
     AdapterContext,
+    AdapterRequestContext,
+    StoreLookup,
+    DispatchResourceRequest,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
@@ -164,11 +167,38 @@ export function buildInMemorySnapshot(
     );
 }
 
+type BuildSnapshotContext = {
+    adapterContext: AdapterContext;
+    config: GetRecordCreateDefaultsConfigWithDefaults;
+    luvio: Luvio;
+    cachedSelector?: Selector;
+};
+
+function buildInMemorySnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordDefaultsRepresentation>
+): Snapshot<RecordDefaultsRepresentation, any> | undefined {
+    const { luvio, config, cachedSelector, adapterContext } = context;
+    return cachedSelector === undefined
+        ? undefined
+        : storeLookup(cachedSelector, buildSnapshotRefresh(luvio, adapterContext, config));
+}
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
+    _dispatchResourceRequest: DispatchResourceRequest<RecordDefaultsRepresentation>
+): Promise<Snapshot<RecordDefaultsRepresentation, any>> {
+    const { config, adapterContext, luvio } = context;
+    return buildNetworkSnapshot(luvio, adapterContext, config);
+}
+
 export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaultsRepresentation> =
     (luvio: Luvio) => {
         return luvio.withContext(function UiApi__getRecordCreateDefaults(
             untrusted: unknown,
-            context: AdapterContext
+            adapterContext: AdapterContext,
+            requestContext?: AdapterRequestContext
         ):
             | Promise<Snapshot<RecordDefaultsRepresentation, any>>
             | Snapshot<RecordDefaultsRepresentation, any>
@@ -189,15 +219,34 @@ export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaul
              * store cached selector in the adapter context and if it does not exist
              * we need to fetch it from the network and set it.
              */
-            const cachedSelector = context.get<Selector>(selectorKey);
-            if (cachedSelector === undefined) {
-                return buildNetworkSnapshot(luvio, context, config);
+            const cachedSelector = adapterContext.get<Selector>(selectorKey);
+
+            // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
+            if (requestContext !== undefined) {
+                return luvio.applyCachePolicy(
+                    requestContext === undefined ? undefined : requestContext.cachePolicy,
+                    {
+                        luvio,
+                        config,
+                        adapterContext,
+                        cachedSelector,
+                    },
+                    buildInMemorySnapshotCachePolicy,
+                    buildNetworkSnapshotCachePolicy
+                );
             }
 
-            const snapshot = buildInMemorySnapshot(cachedSelector, luvio, context, config);
+            if (cachedSelector === undefined) {
+                return buildNetworkSnapshot(luvio, adapterContext, config);
+            }
+
+            const snapshot = buildInMemorySnapshot(cachedSelector, luvio, adapterContext, config);
             if (luvio.snapshotAvailable(snapshot)) {
                 return snapshot;
             }
-            return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, context, config));
+            return luvio.resolveSnapshot(
+                snapshot,
+                buildSnapshotRefresh(luvio, adapterContext, config)
+            );
         });
     };

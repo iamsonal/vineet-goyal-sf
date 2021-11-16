@@ -7,6 +7,9 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
+    StoreLookup,
+    AdapterRequestContext,
+    DispatchResourceRequest,
 } from '@luvio/engine';
 import { ObjectKeys, ArrayPrototypeReduce } from '../../util/language';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
@@ -219,6 +222,51 @@ function buildNetworkSnapshot(luvio: Luvio, config: GetRecordAvatarsConfig, reco
     return luvioResponse ? luvioResponse : Promise.resolve(buildInMemorySnapshot(luvio, config));
 }
 
+type BuildSnapshotContext = {
+    luvio: Luvio;
+    config: GetRecordAvatarsConfig;
+    cachedSnapshot?: Snapshot<RecordAvatarBulkMapRepresentation>;
+};
+
+function buildInMemorySnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordAvatarBulkMapRepresentation>
+): Snapshot<RecordAvatarBulkMapRepresentation, any> {
+    const { luvio, config } = context;
+    const { recordIds } = config;
+    const sel = selectAvatars(recordIds);
+    const cachedSnapshot = storeLookup(
+        {
+            recordId: KEY,
+            node: {
+                kind: 'Fragment',
+                private: [],
+                selections: sel,
+            },
+            variables: {},
+        },
+        buildSnapshotRefresh(luvio, config, recordIds)
+    );
+    if (isUnfulfilledSnapshot(cachedSnapshot)) {
+        context.cachedSnapshot = cachedSnapshot;
+    }
+    return cachedSnapshot;
+}
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
+    _dispatchResourceRequest: DispatchResourceRequest<RecordAvatarBulkMapRepresentation>
+): Promise<Snapshot<RecordAvatarBulkMapRepresentation, any>> {
+    const { luvio, config, cachedSnapshot } = context;
+    // Only fetch avatars that are missing
+    let recordIds: string[] = config.recordIds;
+    if (cachedSnapshot) {
+        recordIds = getRecordIds(config, cachedSnapshot);
+    }
+    return buildNetworkSnapshot(luvio, config, recordIds);
+}
+
 // We have to type guard against pending snapshots
 // We should only ever get UnfulfilledSnapshot here
 function getRecordIds(config: GetRecordAvatarsConfig, snapshot: Snapshot<unknown, unknown>) {
@@ -239,11 +287,25 @@ function getRecordIds(config: GetRecordAvatarsConfig, snapshot: Snapshot<unknown
 export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkMapRepresentation> = (
     luvio: Luvio
 ) =>
-    function getRecordAvatars(unknown: unknown) {
+    function getRecordAvatars(unknown: unknown, requestContext?: AdapterRequestContext) {
         const config = validateAdapterConfig(unknown, getRecordAvatars_ConfigPropertyNames);
         if (config === null) {
             return null;
         }
+
+        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
+        if (requestContext !== undefined) {
+            return luvio.applyCachePolicy(
+                requestContext === undefined ? undefined : requestContext.cachePolicy,
+                {
+                    luvio,
+                    config,
+                },
+                buildInMemorySnapshotCachePolicy,
+                buildNetworkSnapshotCachePolicy
+            );
+        }
+
         const cacheLookup = buildInMemorySnapshot(luvio, config);
 
         // CACHE HIT

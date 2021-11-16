@@ -1,3 +1,4 @@
+import { getRecordAvatars_imperative } from 'lds-adapters-uiapi';
 import {
     getMock as globalGetMock,
     setupElement,
@@ -507,5 +508,47 @@ describe('test record avatar dedupe', () => {
         expect(elmA.getWiredData()).toEqualRecordAvatarsSnapshot(configA.recordIds, mockA);
         expect(elmB.getWiredData()).toEqualRecordAvatarsSnapshot(configB.recordIds, mockB);
         expect(karmaNetworkAdapter.callCount).toBe(2);
+    });
+});
+
+describe('getRecordAvatars_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mock1 = getMock('avatar-aDO0M000000GmaJWAS');
+        const mock2 = getMock('avatar-aDO0M000000GmaJWAS');
+        mock2.results[0].result.eTag = mock2.results[0].result.eTag + '999';
+        mock2.results[0].result.backgroundColor = 'ffffff';
+
+        const config = {
+            recordIds: ['aDO0M000000GmaJWAS'],
+        };
+
+        mockGetAvatarsNetwork(config, [mock1, mock2]);
+
+        const callback = jasmine.createSpy();
+        // populate cache with mock1
+        getRecordAvatars_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getRecordAvatars_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)[0].data).toEqualRecordAvatarsSnapshot(
+            config.recordIds,
+            mock1
+        );
+        expect(callback.calls.argsFor(0)[0].error).toBeUndefined();
+        expect(callback.calls.argsFor(1)[0].data).toEqualRecordAvatarsSnapshot(
+            config.recordIds,
+            mock2
+        );
+        expect(callback.calls.argsFor(1)[0].error).toBeUndefined();
     });
 });

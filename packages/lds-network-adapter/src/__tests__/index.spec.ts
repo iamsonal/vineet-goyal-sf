@@ -116,6 +116,23 @@ describe('routes', () => {
                 });
             }
         });
+
+        it('handles when server returns non http error', async () => {
+            const expected = 'an unexpected non-http shape';
+            const fn = jest.fn().mockRejectedValueOnce(expected);
+
+            const request = {
+                method: 'get',
+                baseUri: '/base-uri',
+                basePath: '/some-random/api',
+                urlParams: {
+                    api: 'api',
+                },
+            };
+            await expect(platformNetworkAdapter(fn)(buildResourceRequest(request))).rejects.toBe(
+                expected
+            );
+        });
     });
 
     describe('post /records', () => {

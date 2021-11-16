@@ -36,17 +36,20 @@ export const defaultDispatcher: Dispatcher = (
             throw errResp;
         }
 
-        const errResp: FetchResponse<unknown> = {
-            status: err.status,
-            body: {
-                error: err.message,
-            },
-            ok: err.ok,
-            statusText: err.statusText,
-            headers: err.headers,
-        };
+        if (err.status !== undefined) {
+            const errResp: FetchResponse<unknown> = {
+                status: err.status,
+                body: {
+                    error: err.message,
+                },
+                ok: err.ok,
+                statusText: err.statusText,
+                headers: err.headers,
+            };
+            throw errResp;
+        }
 
-        throw errResp;
+        throw err;
     });
 };
 

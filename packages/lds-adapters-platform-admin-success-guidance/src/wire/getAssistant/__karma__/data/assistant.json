@@ -2,6 +2,7 @@
     "assistantTarget": "test_assistant_target",
     "category": "test_category",
     "completionDate": "3921-07-01T00:00:00.000Z",
+    "contentVersion": "0.0.1",
     "debugModeEnabled": false,
     "description": "This is a test assistant fetched with getAssistant(...)",
     "developerName": "test_assistant_name",

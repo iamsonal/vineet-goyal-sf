@@ -330,6 +330,9 @@ types:
         description: The completion date for the assistant
         type: string
         required: false # TODO Hand-rolled W-8253396
+      contentVersion:
+        description: The content version of the assistant
+        type: string
       debugModeEnabled:
         description: Is the guidance center in debug mode
         type: boolean
@@ -388,6 +391,10 @@ types:
         required: false # TODO Hand-rolled W-8253396
       figureComponent:
         description: The id of the component used to display this step's figure
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      firstSeenTime:
+        description: Date when this step was first seen
         type: string
         required: false # TODO Hand-rolled W-8253396
       id:

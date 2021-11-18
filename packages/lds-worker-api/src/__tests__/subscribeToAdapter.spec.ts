@@ -136,4 +136,58 @@ describe('subscribeToAdapter', () => {
         await flushPromises();
         unsubscribe();
     });
+
+    describe('config errors', () => {
+        it('calls onResponse with error on invalid config for GET adapter', (done) => {
+            subscribeToAdapter('getObjectInfo', JSON.stringify({}), (result) => {
+                expect(result.error).toBeDefined();
+                expect(result.error.status).toBe(400);
+                expect(result.error.statusText).toBe('INVALID_CONFIG');
+                expect((result.error.body as any).message).toBe(
+                    'adapter getObjectInfo configuration must specify objectApiName'
+                );
+                done();
+            });
+        });
+
+        it('calls onResponse with error on incomplete config for GET adapter', (done) => {
+            subscribeToAdapter(
+                'getObjectInfo',
+                JSON.stringify({ objectApiName: null }),
+                (result) => {
+                    expect(result.error).toBeDefined();
+                    expect(result.error.status).toBe(400);
+                    expect(result.error.statusText).toBe('INVALID_CONFIG');
+                    expect(result.error.body).toBeUndefined();
+                    done();
+                }
+            );
+        });
+
+        it('calls onResponse with error on invalid config for GET adapter with adapterContext', (done) => {
+            // getListUi uses adapter context so config check is async
+            subscribeToAdapter('getListUi', JSON.stringify({}), (result) => {
+                expect(result.error).toBeDefined();
+                expect(result.error.status).toBe(400);
+                expect(result.error.statusText).toBe('INVALID_CONFIG');
+                expect(result.error.body).toBeUndefined();
+                done();
+            });
+        });
+
+        it('calls onResponse with error on incomplete config for GET adapter with adapterContext', (done) => {
+            // getListUi uses adapter context so config check is async
+            subscribeToAdapter(
+                'getListUi',
+                JSON.stringify({ objectApiName: null, listViewApiName: null }),
+                (result) => {
+                    expect(result.error).toBeDefined();
+                    expect(result.error.status).toBe(400);
+                    expect(result.error.statusText).toBe('INVALID_CONFIG');
+                    expect(result.error.body).toBeUndefined();
+                    done();
+                }
+            );
+        });
+    });
 });

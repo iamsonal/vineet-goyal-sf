@@ -32,6 +32,19 @@ export type OnResponse = (value: CallbackValue) => void;
 
 export type Unsubscribe = () => void;
 
+function buildInvalidConfigError(error: unknown): CallbackValue {
+    return {
+        data: undefined,
+        error: {
+            ok: false,
+            status: 400,
+            statusText: 'INVALID_CONFIG',
+            body: error,
+            headers: {},
+        },
+    };
+}
+
 /**
  *
  * @param adapterId
@@ -87,7 +100,12 @@ export function subscribeToAdapter(
         }
     }
 
-    return imperativeAdapter.subscribe(configObject, requestContext, onSnapshot);
+    try {
+        return imperativeAdapter.subscribe(configObject, requestContext, onSnapshot);
+    } catch (err) {
+        onSnapshot(buildInvalidConfigError(err));
+        return () => {};
+    }
 }
 
 /**
@@ -98,14 +116,18 @@ export function subscribeToAdapter(
  * @param onResponse : OnResponse
  */
 function invokeDmlAdapter(adapter: any, configObject: any, onResponse: OnResponse) {
-    adapter(configObject).then(
-        (data: any) => {
-            onResponse({ data, error: undefined });
-        },
-        (error: FetchResponse<unknown>) => {
-            onResponse({ data: undefined, error });
-        }
-    );
+    try {
+        adapter(configObject).then(
+            (data: any) => {
+                onResponse({ data, error: undefined });
+            },
+            (error: FetchResponse<unknown>) => {
+                onResponse({ data: undefined, error });
+            }
+        );
+    } catch (err) {
+        onResponse(buildInvalidConfigError(err));
+    }
 }
 
 /**
@@ -255,7 +277,11 @@ export function invokeAdapter(
                 return;
             }
         }
-        imperativeAdapter.invoke(configObject, requestContext, onResponse);
+        try {
+            imperativeAdapter.invoke(configObject, requestContext, onResponse);
+        } catch (err) {
+            onResponse(buildInvalidConfigError(err));
+        }
         return;
     }
 

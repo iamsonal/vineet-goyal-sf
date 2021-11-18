@@ -3,6 +3,9 @@ core-deploy:
   enabled: true
   use-core-packager: false
 steps:
+  node-build:
+    env:
+      NODE_OPTIONS: "--max_old_space_size=7680"
   node-pre-release-tests:
     run:
       command: yarn test:unit:coverage

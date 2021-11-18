@@ -275,7 +275,6 @@ export function instrumentAdapter<C, D>(
                 // handle async resolved/rejected
                 result
                     .then((_snapshot: Snapshot<D>) => {
-                        activity.stop('cache-miss');
                         ldsInstrumentation.trackValue(
                             cacheMissDurationByAdapterMetric,
                             Date.now() - startTime
@@ -283,6 +282,9 @@ export function instrumentAdapter<C, D>(
                     })
                     .catch((error) => {
                         activity.error(error);
+                    })
+                    .finally(() => {
+                        activity.stop('cache-miss');
                     });
                 ldsInstrumentation.incrementCounter(ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, 1);
                 ldsInstrumentation.incrementCounter(cacheMissCountByAdapterMetric, 1);
@@ -298,16 +300,20 @@ export function instrumentAdapter<C, D>(
                     );
                 }
             } else if (result !== null) {
-                activity.stop('cache-hit');
                 ldsInstrumentation.incrementCounter(ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, 1);
                 ldsInstrumentation.incrementCounter(cacheHitCountByAdapterMetric, 1);
                 ldsInstrumentation.trackValue(cacheHitDurationByAdapterMetric, executionTime);
+                // not tracking L1 cache hits with activities
+                activity.discard();
+            } else if (result === null) {
+                // not tracking adapters with incomplete configs with activities
+                activity.discard();
             }
 
             return result;
         } catch (error) {
             // handle synchronous throw
-            activity.error(error);
+            activity.discard();
             // rethrow error
             throw error;
         }

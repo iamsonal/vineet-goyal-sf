@@ -16,11 +16,16 @@ import {
 } from '../main';
 
 jest.mock('o11y/client');
-import { instrumentation as o11yInstrumentation } from 'o11y/client';
+import { activity, instrumentation as o11yInstrumentation } from 'o11y/client';
 const o11yInstrumentationSpies = {
     trackValue: jest.spyOn(o11yInstrumentation, 'trackValue'),
     incrementCounter: jest.spyOn(o11yInstrumentation, 'incrementCounter'),
     startActivity: jest.spyOn(o11yInstrumentation, 'startActivity'),
+};
+const o11yActivitySpies = {
+    discard: jest.spyOn(activity, 'discard'),
+    error: jest.spyOn(activity, 'error'),
+    stop: jest.spyOn(activity, 'stop'),
 };
 
 beforeEach(() => {
@@ -129,6 +134,195 @@ describe('instrumentMethods', () => {
         } catch {
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
         }
+    });
+});
+
+describe('instrumentAdapter', () => {
+    describe('adapter returning null', () => {
+        const mockAdapter = ((_config) => {
+            return null;
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        it('does not increment cache hit or miss counters', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('does not track cache hit or miss durations', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
+        });
+        it('discards activity', () => {
+            instrumentedAdapter({});
+            expect(o11yActivitySpies.discard).toHaveBeenCalled();
+        });
+    });
+    describe('luvio store (L1) cache hit', () => {
+        const mockAdapter = ((config) => {
+            if (config.error === true) {
+                throw new Error('error');
+            }
+            return {};
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+        it('increments cache hit counters', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-hit-count', 1],
+                ['cache-hit-count.UiApi.getFoo', 1],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('tracks cache hit duration', () => {
+            timekeeper.freeze(Date.now());
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [['cache-hit-duration.UiApi.getFoo', 0]];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
+        });
+        it('discards activity', () => {
+            instrumentedAdapter({});
+            expect(o11yActivitySpies.discard).toHaveBeenCalled();
+        });
+        it('discards activity with error', () => {
+            try {
+                instrumentedAdapter({ error: true });
+            } catch (error) {
+                expect(o11yActivitySpies.discard).toHaveBeenCalled();
+            }
+        });
+        xit('logs error', () => {});
+    });
+    describe('luvio store (L1) cache miss', () => {
+        const mockAdapter = ((config) => {
+            if (config.error === true) {
+                return Promise.reject({});
+            } else {
+                return Promise.resolve({} as any);
+            }
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+        it('increments cache miss counters', async () => {
+            await instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-miss-count', 1],
+                ['cache-miss-count.UiApi.getFoo', 1],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('tracks cache miss duration', async () => {
+            timekeeper.freeze(Date.now());
+            await instrumentedAdapter({});
+
+            const expectedMetricCalls = [['cache-miss-duration.UiApi.getFoo', 0]];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
+        });
+        it('calls activity.stop with "cache-miss"', async () => {
+            await instrumentedAdapter({});
+            await flushPromises();
+            expect(o11yActivitySpies.stop).toHaveBeenCalled();
+            expect(o11yActivitySpies.stop).toHaveBeenCalledWith('cache-miss');
+        });
+        it('calls activity.error and activity.stop with error', async () => {
+            try {
+                await instrumentedAdapter({ error: true });
+            } catch (_error) {
+                // swallow error here
+            }
+            await flushPromises();
+            expect(o11yActivitySpies.error).toHaveBeenCalled();
+            expect(o11yActivitySpies.stop).toHaveBeenCalled();
+            expect(o11yActivitySpies.stop).toHaveBeenCalledWith('cache-miss');
+        });
+    });
+    it('logs cache miss when adapter returns a Promise', async () => {
+        const mockAdapter = ((config) => {
+            if (config.cacheHit === true) {
+                return {};
+            } else {
+                return Promise.resolve({});
+            }
+        }) as Adapter<any, any>;
+
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        await instrumentedAdapter({ cacheHit: false });
+
+        expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
+        expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
+    });
+
+    it('logs nothing when adapter returns null', async () => {
+        const mockAdapter = (() => {
+            return null;
+        }) as Adapter<any, any>;
+
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        await instrumentedAdapter({});
+
+        // technically we bump two counters for calls to the adapter
+        expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(0);
+    });
+
+    it('logs correct cache policy type when adapter is called with one', async () => {
+        const mockAdapter = ((config) => {
+            if (config.cacheHit === true) {
+                return {};
+            } else {
+                return Promise.resolve({});
+            }
+        }) as Adapter<any, any>;
+
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        await instrumentedAdapter(
+            { cacheHit: false },
+            { cachePolicy: { type: 'cache-then-network' } }
+        );
+
+        const expectedMetricCalls = [
+            ['request.UiApi.getFoo', 1],
+            ['request', 1],
+            ['cache-policy-cache-then-network', 1],
+            ['cache-miss-count', 1],
+            ['cache-miss-count.UiApi.getFoo', 1],
+        ];
+        testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
     });
 });
 
@@ -307,73 +501,6 @@ describe('instrumentation', () => {
                 ['cache-miss-count', 1],
                 ['cache-miss-count.UiApi.getRecord', 1],
                 ['cache-miss-out-of-ttl-count.UiApi.getRecord', 1],
-            ];
-            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
-        });
-    });
-
-    describe('instrumentedAdapter', () => {
-        it('logs cache miss when adapter returns a Promise', async () => {
-            const mockAdapter = ((config) => {
-                if (config.cacheHit === true) {
-                    return {};
-                } else {
-                    return Promise.resolve({});
-                }
-            }) as Adapter<any, any>;
-
-            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
-                apiFamily: 'UiApi',
-                name: 'getFoo',
-            });
-
-            await instrumentedAdapter({ cacheHit: false });
-
-            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
-            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
-        });
-
-        it('logs nothing when adapter returns null', async () => {
-            const mockAdapter = (() => {
-                return null;
-            }) as Adapter<any, any>;
-
-            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
-                apiFamily: 'UiApi',
-                name: 'getFoo',
-            });
-
-            await instrumentedAdapter({});
-
-            // technically we bump two counters for calls to the adapter
-            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(0);
-        });
-
-        it('logs correct cache policy type when adapter is called with one', async () => {
-            const mockAdapter = ((config) => {
-                if (config.cacheHit === true) {
-                    return {};
-                } else {
-                    return Promise.resolve({});
-                }
-            }) as Adapter<any, any>;
-
-            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
-                apiFamily: 'UiApi',
-                name: 'getFoo',
-            });
-
-            await instrumentedAdapter(
-                { cacheHit: false },
-                { cachePolicy: { type: 'cache-then-network' } }
-            );
-
-            const expectedMetricCalls = [
-                ['request.UiApi.getFoo', 1],
-                ['request', 1],
-                ['cache-policy-cache-then-network', 1],
-                ['cache-miss-count', 1],
-                ['cache-miss-count.UiApi.getFoo', 1],
             ];
             testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
         });

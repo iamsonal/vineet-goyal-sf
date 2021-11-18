@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-analytics-data-service",
-    "version": "1.37.0",
+    "version": "1.37.1",
     "description": "The Einstein Analytics family of APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/analytics-data-service.js",
@@ -36,14 +36,14 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-analytics-data-service"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.37.0"
+        "@salesforce/lds-bindings": "1.37.1"
     },
     "devDependencies": {
         "@luvio/cli": "0.61.0",
         "@luvio/compiler": "0.61.0",
         "@luvio/engine": "0.61.0",
         "@luvio/lwc-luvio": "0.61.0",
-        "@salesforce/lds-karma": "1.37.0"
+        "@salesforce/lds-karma": "1.37.1"
     },
     "volta": {
         "extends": "../../package.json"

@@ -5,7 +5,9 @@ core-deploy:
 steps:
   node-build:
     env:
-      NODE_OPTIONS: "--max_old_space_size=7680"
+      NODE_OPTIONS: "--max_old_space_size=1024"
+    run:
+      command: yarn build:nucleus
   node-pre-release-tests:
     run:
       command: yarn test:unit:coverage

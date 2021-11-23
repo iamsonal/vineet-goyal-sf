@@ -9,6 +9,7 @@
     "scripts": {
         "build": "yarn test:versions && lerna run build",
         "build:ci": "yarn test:versions && lerna-parallelism run build",
+        "build:nucleus": "yarn test:versions && lerna run build --concurrency=7",
         "clean": "lerna run clean; lerna clean --yes; rm -rf node_modules; rm -rf dist",
         "format:check": "prettier --check '**/*.{js,ts,json,md,yml,raml}'",
         "format:fix": "prettier --write '**/*.{js,ts,json,md,yml,raml}'",

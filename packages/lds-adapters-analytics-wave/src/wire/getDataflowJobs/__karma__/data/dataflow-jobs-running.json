@@ -17,7 +17,8 @@
             "lastModifiedBy": { "id": "", "name": "", "profilePhotoUrl": "" },
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "waitTime": 42
         },
         {
             "createdDate": "2020-09-30T01:30:55.000Z",
@@ -43,7 +44,8 @@
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
             "message": "",
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "waitTime": 42
         }
     ],
     "url": "/services/data/v54.0/wave/dataflowjobs"

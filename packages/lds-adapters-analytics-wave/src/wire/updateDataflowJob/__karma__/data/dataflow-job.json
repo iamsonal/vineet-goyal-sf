@@ -22,5 +22,6 @@
     "message": "",
     "executedDate": "",
     "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-    "syncDataflows": { "dataflows": [] }
+    "syncDataflows": { "dataflows": [] },
+    "waitTime": 42
 }

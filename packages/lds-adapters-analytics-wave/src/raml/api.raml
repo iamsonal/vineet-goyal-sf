@@ -987,6 +987,10 @@ types:
       syncDataflows:
         description: The dataflows to sync when the job is triggered.
         type: DataflowCollectionRepresentation
+      waitTime:
+        description: The wait time in seconds before start of a dataflow job's execution
+        type: integer | nil
+        required: false # TODO Hand-rolled W-8253396
   DataflowRepresentation:
     description: Wave dataflow asset representation.
     discriminatorValue: Dataflow

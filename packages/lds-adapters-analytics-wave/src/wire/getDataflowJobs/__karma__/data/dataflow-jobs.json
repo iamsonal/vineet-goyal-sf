@@ -12,7 +12,8 @@
             "status": "Success",
             "type": "dataflowjob",
             "url": "/services/data/v54.0/wave/dataflowjobs/03CRM0000006tEf2AI",
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "waitTime": 42
         },
         {
             "createdDate": "2020-09-30T01:30:55.000Z",
@@ -38,7 +39,8 @@
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
             "message": "",
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "waitTime": 42
         },
         {
             "createdDate": "2020-09-29T15:40:40.000Z",
@@ -64,7 +66,8 @@
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
             "message": "",
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "waitTime": 42
         },
         {
             "createdDate": "2020-09-29T15:39:46.000Z",
@@ -90,7 +93,8 @@
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
             "message": "",
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "waitTime": 42
         },
         {
             "createdDate": "2020-09-30T01:42:57.000Z",
@@ -116,7 +120,8 @@
             "message": "",
             "executedDate": "",
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "waitTime": 42
         }
     ],
     "url": "/services/data/v54.0/wave/dataflowjobs"

@@ -22,5 +22,6 @@
     "permissions": { "create": true, "manage": true, "modify": true, "view": true },
     "message": "",
     "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-    "syncDataflows": { "dataflows": [] }
+    "syncDataflows": { "dataflows": [] },
+    "waitTime": 42
 }

@@ -19,7 +19,8 @@
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
             "syncDataflows": { "dataflows": [] },
-            "licenseAttributes": { "type": "Sonic" }
+            "licenseAttributes": { "type": "Sonic" },
+            "waitTime": 42
         }
     ],
     "nextPageUrl": "/services/data/v54.0/wave/dataflowjobs?page=eyJwYWdlU3",

@@ -1645,7 +1645,7 @@ types:
     properties:
       longRunningAlertInMins:
         description: Number of minutes that a recipe can run before sending an alert.
-        type: integer
+        type: integer | nil
         required: false # TODO Hand-rolled W-8253396
       notificationLevel:
         description: Notification level for emails.

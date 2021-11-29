@@ -15,47 +15,77 @@ function getMock(filename) {
 describe('basic', () => {
     it('update notification with notification level and long running alert', async () => {
         const mockRecipe = getMock('recipe1');
-        const mock = getMock('notification');
+        const mockRecipeNotification = getMock('notification');
         const config = {
             id: mockRecipe.id,
-            recipeNotification: mock,
+            recipeNotification: mockRecipeNotification,
         };
-        mockUpdateRecipeNotificationNetworkOnce(config, mock);
+        const mockData = {
+            ...mockRecipeNotification,
+            recipe: { id: mockRecipe.id },
+        };
+        mockUpdateRecipeNotificationNetworkOnce(config, mockData);
 
         const data = await updateRecipeNotification(config);
 
-        expect(data).toEqual(mock);
+        expect(data).toEqual(mockData);
+    });
+
+    it('update notification with null long running alert', async () => {
+        const mockRecipe = getMock('recipe1');
+        const mockRecipeNotification = getMock('notification-level-only');
+        const config = {
+            id: mockRecipe.id,
+            recipeNotification: { ...mockRecipeNotification, longRunningAlertInMins: null },
+        };
+        const mockData = {
+            ...mockRecipeNotification,
+            recipe: { id: mockRecipe.id },
+        };
+        mockUpdateRecipeNotificationNetworkOnce(config, mockData);
+
+        const data = await updateRecipeNotification(config);
+
+        expect(data).toEqual(mockData);
     });
 
     it('update notification with notification level only', async () => {
         const mockRecipe = getMock('recipe1');
-        const mock = getMock('notification-level-only');
+        const mockRecipeNotification = getMock('notification-level-only');
         const config = {
             id: mockRecipe.id,
-            recipeNotification: mock,
+            recipeNotification: mockRecipeNotification,
         };
-        mockUpdateRecipeNotificationNetworkOnce(config, mock);
+        const mockData = {
+            ...mockRecipeNotification,
+            recipe: { id: mockRecipe.id },
+        };
+        mockUpdateRecipeNotificationNetworkOnce(config, mockData);
 
         const data = await updateRecipeNotification(config);
 
-        expect(data).toEqual(mock);
+        expect(data).toEqual(mockData);
     });
 
     it('should not hit the network when another wire tries to access the newly updated notification', async () => {
         const mockRecipe = getMock('recipe1');
-        const mock = getMock('notification-level-only');
+        const mockRecipeNotification = getMock('notification-level-only');
         const config = {
             id: mockRecipe.id,
-            recipeNotification: mock,
+            recipeNotification: mockRecipeNotification,
         };
-        mockUpdateRecipeNotificationNetworkOnce(config, mock);
+        const mockData = {
+            ...mockRecipeNotification,
+            recipe: { id: mockRecipe.id },
+        };
+        mockUpdateRecipeNotificationNetworkOnce(config, mockData);
 
         const data = await updateRecipeNotification(config);
 
         const element = await setupElement({ id: data.recipe.id }, GetRecipeNotification);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredData()).toEqual(mock);
+        expect(element.getWiredData()).toEqual(mockData);
     });
 
     it('displays error when network request 404s', async () => {

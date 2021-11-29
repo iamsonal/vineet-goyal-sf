@@ -7,6 +7,9 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
+    AdapterRequestContext,
+    DispatchResourceRequest,
+    StoreLookup,
 } from '@luvio/engine';
 
 import {
@@ -194,12 +197,41 @@ export function buildNetworkSnapshot(
     );
 }
 
+type BuildSnapshotContext = {
+    config: GetListViewSummaryCollectionConfig;
+    luvio: Luvio;
+};
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
+    _dispatchResourceRequest: DispatchResourceRequest<ListViewSummaryCollectionRepresentation>
+): Promise<Snapshot<ListViewSummaryCollectionRepresentation, any>> {
+    const { config, luvio } = context;
+    return buildNetworkSnapshot(luvio, config);
+}
+
+function buildInMemorySnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<ListViewSummaryCollectionRepresentation>
+): Snapshot<ListViewSummaryCollectionRepresentation, any> {
+    const { config, luvio } = context;
+    const selector: Selector = {
+        recordId: keyBuilder(createResourceParams(config)),
+        node: buildListViewSummaryCollectionFragment(config),
+        variables: {},
+    };
+
+    return storeLookup(selector, buildRefreshSnapshot(luvio, config));
+}
+
 export const factory: AdapterFactory<
     GetListViewSummaryCollectionConfig,
     ListViewSummaryCollectionRepresentation
 > = (luvio: Luvio) =>
     function getListViewSummaryCollection(
-        untrustedConfig: unknown
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
     ):
         | Promise<Snapshot<ListViewSummaryCollectionRepresentation>>
         | Snapshot<ListViewSummaryCollectionRepresentation>
@@ -212,6 +244,19 @@ export const factory: AdapterFactory<
         // Invalid or incomplete config
         if (config === null) {
             return null;
+        }
+
+        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
+        if (requestContext !== undefined) {
+            return luvio.applyCachePolicy(
+                requestContext === undefined ? undefined : requestContext.cachePolicy,
+                {
+                    luvio,
+                    config,
+                },
+                buildInMemorySnapshotCachePolicy,
+                buildNetworkSnapshotCachePolicy
+            );
         }
 
         const cacheSnapshot = buildInMemorySnapshot(luvio, config);

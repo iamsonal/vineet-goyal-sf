@@ -1,5 +1,7 @@
 import ObjectApiName from '../lwc/objectApiName';
+import { getListUi_imperative } from 'lds-adapters-uiapi';
 import {
+    flushPromises,
     mockNetworkOnce,
     mockNetworkSequence,
     setupElement,
@@ -294,5 +296,41 @@ describe('errors', () => {
         mockNetworkListUi(config, { reject: true, data: mockError });
         const element = await setupElement(config, ObjectApiName);
         expect(element.getWiredError()).toEqualImmutable(mockError);
+    });
+});
+
+describe('getListUi_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mock1 = getMock('list-ui-Opportunity');
+        const mock2 = getMock('list-ui-Opportunity');
+        mock2.eTag = mock2.eTag + '999';
+        mock2.lists = [];
+        mock2.count = 0;
+
+        const config = { objectApiName: mock1.objectApiName };
+
+        mockNetworkListUi(config, [mock1, mock2]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mock1
+        getListUi_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getListUi_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)[0].data).toEqualListSnapshotWithoutPrivateProps(mock1);
+        expect(callback.calls.argsFor(0)[0].error).toBeUndefined();
+        expect(callback.calls.argsFor(1)[0].data).toEqualListSnapshotWithoutPrivateProps(mock2);
+        expect(callback.calls.argsFor(1)[0].error).toBeUndefined();
     });
 });

@@ -12,6 +12,7 @@ import {
     UnAvailableSnapshot,
     CacheKeySet,
     FulfilledSnapshot,
+    AdapterRequestContext,
 } from '@luvio/engine';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
@@ -691,7 +692,7 @@ export const factory: AdapterFactory<
     ListUiRepresentation | ListViewSummaryCollectionRepresentation
 > = (luvio: Luvio) => {
     // adapter implementation for getListUiBy*
-    const listUiAdapter = (untrustedConfig: unknown, context: AdapterContext) => {
+    const listUiAdapter = (untrustedConfig: unknown, adapterContext: AdapterContext) => {
         const config = validateGetListUiConfig(untrustedConfig);
 
         if (config === null) {
@@ -700,7 +701,7 @@ export const factory: AdapterFactory<
 
         // try to get a list reference and a list info for the list; this should come back
         // non-null if we have the list info cached
-        const listRef = getListReference(config, context);
+        const listRef = getListReference(config, adapterContext);
 
         // no listRef means we can't even attempt to build an in-memory snapshot
         // so make a full list-ui request
@@ -708,14 +709,19 @@ export const factory: AdapterFactory<
             // TODO [W-9712566]: this is returning network response directly to caller,
             // this means LDS on Mobile environment does not have a chance to overlay
             // draft edits on top of results
-            return buildNetworkSnapshot_getListUi(luvio, context, config);
+            return buildNetworkSnapshot_getListUi(luvio, adapterContext, config);
         }
 
         const listInfoSnapshot = getListInfo(listRef, luvio);
 
         // if we have list info then build a snapshot from that
         if (isFulfilledSnapshot(listInfoSnapshot)) {
-            return getListUiSnapshotFromListInfo(luvio, context, config, listInfoSnapshot.data);
+            return getListUiSnapshotFromListInfo(
+                luvio,
+                adapterContext,
+                config,
+                listInfoSnapshot.data
+            );
         }
 
         // In default environment resolving a snapshot is just hitting the network
@@ -733,7 +739,7 @@ export const factory: AdapterFactory<
                 listInfoSnapshot as UnAvailableSnapshot<ListInfoRepresentation>,
                 buildSnapshotRefresh_getListUi(
                     luvio,
-                    context,
+                    adapterContext,
                     config
                 ) as unknown as SnapshotRefresh<ListInfoRepresentation>
             )
@@ -743,7 +749,7 @@ export const factory: AdapterFactory<
                 if (isListInfoSnapshotWithData(resolvedSnapshot)) {
                     return getListUiSnapshotFromListInfo(
                         luvio,
-                        context,
+                        adapterContext,
                         config,
                         resolvedSnapshot.data
                     );
@@ -760,7 +766,8 @@ export const factory: AdapterFactory<
     // we delegate to are responsible for returning refreshable results
     return luvio.withContext(function UiApi__custom_getListUi(
         untrustedConfig: unknown,
-        context: AdapterContext
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
     ) {
         // if the MRU symbol is there then just return the getMruListUi adapter
         if (looksLikeGetMruListUiConfig(untrustedConfig)) {
@@ -783,7 +790,7 @@ export const factory: AdapterFactory<
                     getListViewSummaryCollectionAdapterFactory(luvio);
             }
 
-            return listViewSummaryCollectionAdapter(untrustedConfig);
+            return listViewSummaryCollectionAdapter(untrustedConfig, requestContext);
         }
 
         // see if config looks like a listViewId or listViewApiName request
@@ -791,7 +798,7 @@ export const factory: AdapterFactory<
             looksLikeGetListUiByApiNameConfig(untrustedConfig) ||
             looksLikeGetListUiByListViewIdConfig(untrustedConfig)
         ) {
-            return listUiAdapter(untrustedConfig, context);
+            return listUiAdapter(untrustedConfig, adapterContext);
         }
 
         return null;

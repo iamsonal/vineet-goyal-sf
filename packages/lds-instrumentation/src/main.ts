@@ -279,11 +279,10 @@ export function instrumentAdapter<C, D>(
                             cacheMissDurationByAdapterMetric,
                             Date.now() - startTime
                         );
+                        activity.stop('cache-miss');
                     })
                     .catch((error) => {
                         activity.error(error);
-                    })
-                    .finally(() => {
                         activity.stop('cache-miss');
                     });
                 ldsInstrumentation.incrementCounter(ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, 1);

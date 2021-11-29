@@ -30,6 +30,7 @@ import { restoreDraftKeyMapping } from './utils/restoreDraftKeyMapping';
 import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
+import { makeDebugEnvironment } from './debug/makeDebugEnvironment';
 
 let luvio: Luvio;
 
@@ -164,7 +165,7 @@ const durableEnv = makeDurable(offlineEnv, {
 });
 getIngestRecords = durableEnv.getIngestStagingStoreRecords;
 getIngestMetadata = durableEnv.getIngestStagingStoreMetadata;
-const draftEnv = makeEnvironmentDraftAware(durableEnv, {
+let draftEnv = makeEnvironmentDraftAware(durableEnv, {
     store,
     draftQueue,
     durableStore: recordDenormingStore,
@@ -179,6 +180,10 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     userId,
     registerDraftIdMapping,
 });
+
+if (process.env.NODE_ENV !== 'production') {
+    draftEnv = makeDebugEnvironment(draftEnv);
+}
 
 luvio = new Luvio(draftEnv, {
     instrument: instrumentLuvio,
@@ -195,6 +200,8 @@ setupInstrumentation(luvio, store);
 setDefaultLuvio({ luvio });
 
 export { luvio, draftQueue, draftManager };
+
+export { debugLog } from './debug/DebugLog';
 
 /**
  * NB: to exactly match force/ldsEngine, we'd also need to:

@@ -19,6 +19,9 @@ import {
     DRAFT_DOESNT_EXIST_MESSAGE,
     NativeFetchResponse,
 } from './NativeFetchResponse';
+import { debugLog } from 'native/ldsEngineMobile';
+
+let adapterCounter = 0;
 
 const instr = getInstrumentation('lds-worker-api');
 
@@ -57,6 +60,11 @@ function imperativeAdapterKeyBuilder(adapterId: string): string {
 
     return `${UNSTABLE_ADAPTER_PREFIX}${adapterId}${IMPERATIVE_ADAPTER_SUFFIX}`;
 }
+
+function generateAdapterUniqueId() {
+    return (adapterCounter++).toString();
+}
+
 /**
  * Executes the adapter with the given adapterId and config.  Will call onSnapshot
  * callback with data or error.  Returns an unsubscribe function that should
@@ -73,6 +81,25 @@ export function subscribeToAdapter(
 ): Unsubscribe {
     const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
     const imperativeAdapter = imperativeAdapterMap[imperativeAdapterIdentifier];
+
+    const adapterUuid = generateAdapterUniqueId();
+
+    debugLog({
+        type: 'adapter-start',
+        timestamp: Date.now(),
+        adapterId: adapterUuid,
+        adapterName: adapterId,
+        config,
+    });
+
+    const onResponseDelegate: OnSnapshot = (value) => {
+        debugLog({
+            type: 'adapter-callback',
+            timestamp: Date.now(),
+            adapterId: adapterUuid,
+        });
+        onSnapshot(value);
+    };
 
     if (imperativeAdapter === undefined) {
         // This check is here for legacy purpose
@@ -95,15 +122,18 @@ export function subscribeToAdapter(
         } catch (parseError) {
             // call the callback with error
             instr.error(parseError as Error, 'gql-parse-error');
-            onSnapshot({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
+            onResponseDelegate({
+                data: undefined,
+                error: parseError as NativeFetchResponse<unknown>,
+            });
             return () => {};
         }
     }
 
     try {
-        return imperativeAdapter.subscribe(configObject, requestContext, onSnapshot);
+        return imperativeAdapter.subscribe(configObject, requestContext, onResponseDelegate);
     } catch (err) {
-        onSnapshot(buildInvalidConfigError(err));
+        onResponseDelegate(buildInvalidConfigError(err));
         return () => {};
     }
 }
@@ -257,6 +287,25 @@ export function invokeAdapter(
     onResponse: OnResponse,
     requestContext?: AdapterRequestContext
 ) {
+    const adapterUuid = generateAdapterUniqueId();
+
+    debugLog({
+        type: 'adapter-start',
+        timestamp: Date.now(),
+        adapterId: adapterUuid,
+        adapterName: adapterId,
+        config,
+    });
+
+    const onResponseDelegate: OnResponse = (value) => {
+        debugLog({
+            type: 'adapter-callback',
+            timestamp: Date.now(),
+            adapterId: adapterUuid,
+        });
+        onResponse(value);
+    };
+
     const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
     const imperativeAdapter = imperativeAdapterMap[imperativeAdapterIdentifier];
     const configObject = JSONParse(config);
@@ -273,14 +322,17 @@ export function invokeAdapter(
             } catch (parseError) {
                 // call the callback with error
                 instr.error(parseError as Error, 'gql-parse-error');
-                onResponse({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
+                onResponseDelegate({
+                    data: undefined,
+                    error: parseError as NativeFetchResponse<unknown>,
+                });
                 return;
             }
         }
         try {
-            imperativeAdapter.invoke(configObject, requestContext, onResponse);
+            imperativeAdapter.invoke(configObject, requestContext, onResponseDelegate);
         } catch (err) {
-            onResponse(buildInvalidConfigError(err));
+            onResponseDelegate(buildInvalidConfigError(err));
         }
         return;
     }
@@ -291,7 +343,7 @@ export function invokeAdapter(
         throw Error(`adapter ${adapterId} not recognized`);
     }
 
-    invokeDmlAdapter(adapter, configObject, onResponse);
+    invokeDmlAdapter(adapter, configObject, onResponseDelegate);
 }
 
 /**

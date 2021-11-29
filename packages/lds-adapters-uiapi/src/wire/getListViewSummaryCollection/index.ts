@@ -166,7 +166,7 @@ function buildInMemorySnapshotCachePolicy(
     const { config, luvio } = context;
     const selector: Selector = {
         recordId: keyBuilder(createResourceParams(config)),
-        node: buildListViewSummaryCollectionFragment(config),
+        node: adapterFragment(luvio, config),
         variables: {},
     };
 

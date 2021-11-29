@@ -108,6 +108,9 @@ types:
       previousToken: previousPageToken
       pageSize: pageSize
       count: count
+  ListViewSummaryRepresentation:
+    (luvio.key):
+      id: id
   NavItemsRepresentation:
     examples:
       getNavItemsResponse1: !include ../mocks/types/NavItemsRepresentation/response1.json
@@ -697,6 +700,10 @@ types:
           objectApiName: urlParams.objectApiName
           queryString: queryParams.q || null
           recentListsOnly: queryParams.recentListsOnly || false
+        (luvio.paginationParams):
+          queryParameters:
+            token: pageToken
+            pageSize: pageSize
     '/{objectApiName}/{listViewApiName}':
       get:
         (luvio.adapter):

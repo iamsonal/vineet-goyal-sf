@@ -1,6 +1,5 @@
 import {
     AdapterFactory,
-    Fragment,
     Luvio,
     Snapshot,
     Selector,
@@ -17,6 +16,7 @@ import {
     validateAdapterConfig,
     getListViewSummaryCollection_ConfigPropertyNames,
     createResourceParams,
+    adapterFragment,
 } from '../../generated/adapters/getListViewSummaryCollection';
 import {
     ListViewSummaryCollectionRepresentation,
@@ -24,67 +24,15 @@ import {
     ingest as listViewSummaryCollectionRepresentationIngest,
 } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import {
+    ResourceRequestConfig,
     createResourceRequest,
     keyBuilder,
 } from '../../generated/resources/getUiApiListUiByObjectApiName';
-import {
-    pathSelectionsFor,
-    minimizeRequest,
-    staticValuePathSelection,
-} from '../../util/pagination';
-import { select as listViewSummaryRepresentationSelect } from '../../generated/types/ListViewSummaryRepresentation';
-import { ResourceRequestConfig } from '../../generated/resources/getUiApiListUiByObjectApiName';
+import { minimizeRequest } from '../../util/pagination';
 
 // eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
 const DEFAULT_PAGE_SIZE = 20;
-
-const LISTVIEWSUMMARY_PATH_SELECTIONS = listViewSummaryRepresentationSelect().selections;
-const LIST_VIEW_SUMMARY_COLLECTION_PRIVATE = [
-    'eTag',
-    'currentPageUrl',
-    'previousPageUrl',
-    'nextPageUrl',
-];
-
-function buildListViewSummaryCollectionFragment(
-    config: GetListViewSummaryCollectionConfig
-): Fragment {
-    return {
-        kind: 'Fragment',
-        private: LIST_VIEW_SUMMARY_COLLECTION_PRIVATE,
-        selections: [
-            ...pathSelectionsFor({
-                name: 'lists',
-                selections: LISTVIEWSUMMARY_PATH_SELECTIONS,
-                pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
-                pageToken: config.pageToken,
-                tokenDataKey: paginationKeyBuilder({
-                    objectApiName: config.objectApiName,
-                    queryString: config.q === undefined ? null : config.q,
-                    recentListsOnly:
-                        config.recentListsOnly === undefined ? false : config.recentListsOnly,
-                }),
-            }),
-            {
-                kind: 'Scalar',
-                name: 'objectApiName',
-            },
-            staticValuePathSelection({
-                name: 'pageSize',
-                value: config.pageSize === undefined ? DEFAULT_PAGE_SIZE : config.pageSize,
-            }),
-            {
-                kind: 'Scalar',
-                name: 'queryString',
-            },
-            {
-                kind: 'Scalar',
-                name: 'recentListsOnly',
-            },
-        ],
-    };
-}
 
 function buildRefreshSnapshot(
     luvio: Luvio,
@@ -102,7 +50,7 @@ export function buildInMemorySnapshot(
 ): Snapshot<ListViewSummaryCollectionRepresentation> {
     const selector: Selector = {
         recordId: keyBuilder(createResourceParams(config)),
-        node: buildListViewSummaryCollectionFragment(config),
+        node: adapterFragment(luvio, config),
         variables: {},
     };
 

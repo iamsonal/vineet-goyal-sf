@@ -1334,6 +1334,11 @@ types:
         sortBy: body.sortBy || []
         parentRecordId: urlParams.parentRecordId
         relatedListId: urlParams.relatedListId
+      (luvio.paginationParams):
+        defaultSize: 50
+        body:
+          token: pageToken
+          pageSize: pageSize
   '/related-list-records/batch/{parentRecordId}/{relatedListIds}':
     uriParameters:
       parentRecordId:

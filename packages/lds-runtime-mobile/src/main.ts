@@ -91,11 +91,7 @@ const getDraftActionForRecordKeys = (keys: string[]) => {
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
 // non-draft-aware base services
-// TODO [W-9883150]: use default scheduler
-const storeOptions = {
-    scheduler: () => {},
-};
-const store = new Store(storeOptions);
+const store = new Store();
 const networkAdapter = salesforceNetworkAdapter(
     makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter)
 );

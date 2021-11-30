@@ -3613,19 +3613,19 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@luvio/adapter-test-library@0.61.0":
-  version "0.61.0"
-  resolved "https://registry.npmjs.org/@luvio/adapter-test-library/-/adapter-test-library-0.61.0.tgz#9948ef0324a66b295a5edeb7de2973f1e2fc2dc7"
-  integrity sha512-gMdTN6EJlfu/DlNmo+HzkKBIlQxtOTXqLwL47oOjZbGjbg6K0Z04DNEVL+iIQiGjVmUlFMt60623NrB1hY/Ycw==
+"@luvio/adapter-test-library@0.61.1":
+  version "0.61.1"
+  resolved "https://registry.npmjs.org/@luvio/adapter-test-library/-/adapter-test-library-0.61.1.tgz#490e8a2c48a70083f6ab56cb4f9557a5bd9e1458"
+  integrity sha512-kuYv8CbUU1nU6nQgZrWWHgbWAK70ElpzJs0eMj5YHzAcjI6DaEblglr3o8GaylIiLOSj7zkYkfacvvHaUV27Yg==
   dependencies:
     sinon "^7.5.0"
 
-"@luvio/cli@0.61.0":
-  version "0.61.0"
-  resolved "https://registry.npmjs.org/@luvio/cli/-/cli-0.61.0.tgz#e43f832306ecd44e829a984c0bff23f498406361"
-  integrity sha512-+sONMqpcrMEpes/oDMsko4KiNo9z4t5hKYH8zCEgdFp7YbUgPd6+NzsMyp3PQNVQPZyKf/EAWUf8Ley9xMEF8A==
+"@luvio/cli@0.61.1":
+  version "0.61.1"
+  resolved "https://registry.npmjs.org/@luvio/cli/-/cli-0.61.1.tgz#ebfced41af956b9a50cca2aa80be28da1dc7ac6d"
+  integrity sha512-ptNkItxB08Wjd9KMg2ec+nQ0PlJzR7gj3M++lKiIa3KcvyhBZId15Lg4LDmGTwCJqIqrkAmqow9OBKq5XqjXHg==
   dependencies:
-    "@luvio/compiler" "0.61.0"
+    "@luvio/compiler" "0.61.1"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
@@ -3633,32 +3633,32 @@
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@luvio/compiler@0.61.0":
-  version "0.61.0"
-  resolved "https://registry.npmjs.org/@luvio/compiler/-/compiler-0.61.0.tgz#7fb0a04a456db106f475aa7f46cf042cc4d67f46"
-  integrity sha512-sBjhHP6LIMMb1cpOorCVOxLKhi3NysXtnP3d/VAeBa+iOi+J9h2Rg0/M3h1PB3bU3xCQM1ihP9mwNDFHUmBl7Q==
+"@luvio/compiler@0.61.1":
+  version "0.61.1"
+  resolved "https://registry.npmjs.org/@luvio/compiler/-/compiler-0.61.1.tgz#01252958b437b230aeb00c658f08753e5e5a46c4"
+  integrity sha512-jUcPu7dhlbjCCPsfKbZRFH4ntA4GnardkTDSbUG8Mp38A3Nu1afZbMWfnLvCDGuK89p5b5Ze0yA01JNA7pF00g==
   dependencies:
     amf-client-js "4.2.0"
 
-"@luvio/engine@0.61.0":
-  version "0.61.0"
-  resolved "https://registry.npmjs.org/@luvio/engine/-/engine-0.61.0.tgz#ed60847ec9e36efba443c8e5ff1972ff29aadc96"
-  integrity sha512-GzyQN3yLhtEFykDUaNo7AHlG54Yv+PswhhTE+NAXYgZRiXd7ieaAe8qr+IhxBIde3gY9i+dVOmTk53G2VbQelw==
+"@luvio/engine@0.61.1":
+  version "0.61.1"
+  resolved "https://registry.npmjs.org/@luvio/engine/-/engine-0.61.1.tgz#c957d1008508a3a883768fee402112c7386e09a1"
+  integrity sha512-+LovZbDfyBxP1gOPi8GwLefFAxicVTrCgl/mlI+VT8xdOa/nVljoGOioOhuhkKnva35cTdDGNw9ZyZd7uW1mhw==
 
-"@luvio/environments@0.61.0":
-  version "0.61.0"
-  resolved "https://registry.npmjs.org/@luvio/environments/-/environments-0.61.0.tgz#3885d4280bc553afd530fd9c745d34d59db7d90b"
-  integrity sha512-oUVHzKHKZg+BYjbJV9NA01Mu9anve3p6VpFTyp5K73mf4v17zjcBXpaIjWhAleWiXmSF26/NqEXPdEsVzP+IYw==
+"@luvio/environments@0.61.1":
+  version "0.61.1"
+  resolved "https://registry.npmjs.org/@luvio/environments/-/environments-0.61.1.tgz#8b28533efad857ec48dcfdff22a002365f5edba6"
+  integrity sha512-jo6nga4mLRmumu3xEbMfUHb2e3DgvCvgAKxA7tRb6lHWpRCybELFgENev3c7ERbNvm7BwvCCft9GBLE+F4GW/Q==
   dependencies:
-    "@luvio/engine" "0.61.0"
+    "@luvio/engine" "0.61.1"
 
-"@luvio/lwc-luvio@0.61.0":
-  version "0.61.0"
-  resolved "https://registry.npmjs.org/@luvio/lwc-luvio/-/lwc-luvio-0.61.0.tgz#e5d35278018a0249cac2cb2093cafa8368cfc683"
-  integrity sha512-pI+4mtDxG/Vf6BD3JnC0WlglmddCxxM+7tkYMUmhNYuhj/dSjHGBSgWFB7nPGFMSp7DCNevxPLNbM4ypQUmVkA==
+"@luvio/lwc-luvio@0.61.1":
+  version "0.61.1"
+  resolved "https://registry.npmjs.org/@luvio/lwc-luvio/-/lwc-luvio-0.61.1.tgz#0a0ee3e21ab3ed29ec27928e8e596c006f64eff0"
+  integrity sha512-XaBMXWqyRVzLG6q2Pm/cQsFhXSyK6Wtd4cISvAsAVkagJz6gE1qKiOXlwEEjIA0y8BJj9Yo2UpwtoJPE4cjmWQ==
   dependencies:
-    "@luvio/engine" "0.61.0"
-    "@lwc/engine-core" "^1.7.5"
+    "@luvio/engine" "0.61.1"
+    "@lwc/engine-core" "^2.5.10"
 
 "@lwc/babel-plugin-component@1.7.14":
   version "1.7.14"
@@ -3687,10 +3687,13 @@
     rollup "~2.26.3"
     terser "~5.1.0"
 
-"@lwc/engine-core@^1.7.5":
-  version "1.17.6"
-  resolved "https://registry.yarnpkg.com/@lwc/engine-core/-/engine-core-1.17.6.tgz#1fddb8cfa79d7aa62545b2a2b9087ff857c74925"
-  integrity sha512-y9kMTgrhxUDCMhhRehzuRYYGe2ejdng/dv+x9H2WokjZVHZ6YHOz/YI+5GFhI/1/Os1eCiH34LyYvJMWqLWDDg==
+"@lwc/engine-core@^2.5.10":
+  version "2.6.1"
+  resolved "https://registry.npmjs.org/@lwc/engine-core/-/engine-core-2.6.1.tgz#dcafed00212e360a82732cb4de8d265cb9fe1d84"
+  integrity sha512-4qTrznurrxTr53AaGHnpWgYSvC6KcxNZbm3hYnZUYSeXFpEbBO2vNVLwOy6LX2kEM0yNE9+gIL9wuMEjgqHqyQ==
+  dependencies:
+    "@lwc/features" "2.6.1"
+    "@lwc/shared" "2.6.1"
 
 "@lwc/engine-core@~1.7.5":
   version "1.7.14"
@@ -3712,6 +3715,13 @@
   resolved "https://registry.yarnpkg.com/@lwc/features/-/features-1.7.14.tgz#4206921e30b2224620e79d9d09dec098066302c6"
   integrity sha512-q3vWDSb+M4Ur4iEEELfind2xigYPyTEfzGQTmZiRA/VHczIKlmOuY9iUixalC/8EnRR8BvhX3mlJi9NJgJthGQ==
 
+"@lwc/features@2.6.1":
+  version "2.6.1"
+  resolved "https://registry.npmjs.org/@lwc/features/-/features-2.6.1.tgz#55474adefa4fe5b7d91dd2c9e40601822cc29c8c"
+  integrity sha512-ZYZ9R6AWt23KpdKjmBgaV+kqfbq618AdsnExON7wtTFyYSvWridSXCvpIRO2mMfpFVQki/aCjS9dhPby52Ho4Q==
+  dependencies:
+    "@lwc/shared" "2.6.1"
+
 "@lwc/module-resolver@1.6.9":
   version "1.6.9"
   resolved "https://registry.yarnpkg.com/@lwc/module-resolver/-/module-resolver-1.6.9.tgz#dcc484afaad23a338b489103f01225a3c9f74680"
@@ -3731,6 +3741,11 @@
   version "1.7.14"
   resolved "https://registry.yarnpkg.com/@lwc/shared/-/shared-1.7.14.tgz#cdf1d3667432265c014e083c6120830818047f48"
   integrity sha512-Zo11Udd5DuZkqug0EWjWLxvbufa3jUmBggvvOT6uuw9kyRP7P2zdk+TsBf9WWLfNnhWM6uBhbIAjojcaBkt3hQ==
+
+"@lwc/shared@2.6.1":
+  version "2.6.1"
+  resolved "https://registry.npmjs.org/@lwc/shared/-/shared-2.6.1.tgz#c69467c01f9789e6c81b44ed82f9a6dd0bf008d3"
+  integrity sha512-YIcqvJyPQKdzz79fPB4DuEZ2ViyO0H6V7GgYpGwbvvhF38gUPSBld5NbkiFoOv+AwDMjrsXg/KHueDOHJj2VyA==
 
 "@lwc/style-compiler@1.7.14":
   version "1.7.14"

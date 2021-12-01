@@ -2,7 +2,6 @@ import {
     AdapterFactory,
     AdapterRequestContext,
     CacheKeySet,
-    DispatchResourceRequest,
     ErrorSnapshot,
     FetchResponse,
     FulfilledSnapshot,
@@ -541,8 +540,7 @@ function buildInMemoryRecordUiRepresentationSnapshot(
 }
 
 function buildNetworkRecordUiRepresentationSnapshot(
-    context: BuildRecordUiRepresentationSnapshotContext,
-    _dispatchResourceRequest: DispatchResourceRequest<RecordUiRepresentation>
+    context: BuildRecordUiRepresentationSnapshotContext
 ): Promise<Snapshot<RecordUiRepresentation>> {
     return buildNetworkSnapshot(context.luvio, context.config);
 }

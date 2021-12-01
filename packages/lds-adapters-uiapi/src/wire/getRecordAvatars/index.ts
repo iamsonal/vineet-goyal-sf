@@ -9,7 +9,6 @@ import {
     ResourceResponse,
     StoreLookup,
     AdapterRequestContext,
-    DispatchResourceRequest,
 } from '@luvio/engine';
 import { ObjectKeys, ArrayPrototypeReduce } from '../../util/language';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
@@ -254,9 +253,7 @@ function buildInMemorySnapshotCachePolicy(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext,
-    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
-    _dispatchResourceRequest: DispatchResourceRequest<RecordAvatarBulkMapRepresentation>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<RecordAvatarBulkMapRepresentation, any>> {
     const { luvio, config, cachedSnapshot } = context;
     // Only fetch avatars that are missing

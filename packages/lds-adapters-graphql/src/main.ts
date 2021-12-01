@@ -2,7 +2,6 @@ import {
     AdapterFactory,
     AdapterRequestContext,
     CacheKeySet,
-    DispatchResourceRequest,
     FetchResponse,
     Luvio,
     Reader,
@@ -261,8 +260,7 @@ function buildInMemorySnapshot(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext,
-    _dispatchResourceRequest: DispatchResourceRequest<unknown>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<unknown, any>> {
     const { config, fragment, luvio } = context;
     return buildNetworkSnapshot(luvio, config, fragment);

@@ -6,7 +6,6 @@ import {
     SnapshotRefresh,
     ResourceResponse,
     AdapterRequestContext,
-    DispatchResourceRequest,
     StoreLookup,
 } from '@luvio/engine';
 import {
@@ -129,9 +128,7 @@ type BuildSnapshotContext = {
 };
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext,
-    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
-    _dispatchResourceRequest: DispatchResourceRequest<RecordLayoutUserStateRepresentation>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation, any>> {
     const { config, luvio } = context;
     return buildNetworkSnapshot(luvio, config);

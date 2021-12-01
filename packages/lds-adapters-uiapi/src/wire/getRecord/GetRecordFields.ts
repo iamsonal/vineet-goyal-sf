@@ -7,7 +7,6 @@ import {
     ResourceResponse,
     AdapterRequestContext,
     StoreLookup,
-    DispatchResourceRequest,
 } from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
 import {
@@ -227,8 +226,7 @@ export function buildInMemorySnapshotCachePolicy(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext,
-    _dispatchResourceRequest: DispatchResourceRequest<RecordRepresentation>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<RecordRepresentation>> {
     const { config, luvio } = context;
 

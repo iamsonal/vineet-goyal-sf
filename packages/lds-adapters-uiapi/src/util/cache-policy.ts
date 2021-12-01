@@ -1,4 +1,4 @@
-import { BuildNetworkSnapshot, DispatchResourceRequest, Luvio } from '@luvio/engine';
+import { BuildNetworkSnapshot, Luvio } from '@luvio/engine';
 
 /**
  * Returns a BuildNetworkSnapshot function that always returns a Promise<ErrorSnapshot>.
@@ -13,7 +13,7 @@ export function buildNotFetchableNetworkSnapshot<C, D>(
     status: number = 400,
     statusText: string = 'data is not fetchable'
 ): BuildNetworkSnapshot<C, D> {
-    return <C, D>(_context: C, _dispatchResourceRequest: DispatchResourceRequest<D>) =>
+    return <C, D>(_context: C) =>
         Promise.resolve(
             luvio.errorSnapshot({
                 status,

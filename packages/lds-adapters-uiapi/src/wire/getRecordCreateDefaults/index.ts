@@ -9,7 +9,6 @@ import {
     AdapterContext,
     AdapterRequestContext,
     StoreLookup,
-    DispatchResourceRequest,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
@@ -185,9 +184,7 @@ function buildInMemorySnapshotCachePolicy(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext,
-    // TODO [W-10034584]: remove unused dispatchResourceRequest parameter
-    _dispatchResourceRequest: DispatchResourceRequest<RecordDefaultsRepresentation>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<RecordDefaultsRepresentation, any>> {
     const { config, adapterContext, luvio } = context;
     return buildNetworkSnapshot(luvio, adapterContext, config);

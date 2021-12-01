@@ -2,7 +2,6 @@ import {
     Adapter,
     AdapterContext,
     AdapterRequestContext,
-    DispatchResourceRequest,
     FetchResponse,
     FulfilledSnapshot,
     Luvio,
@@ -207,8 +206,7 @@ export function buildNetworkSnapshot(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext,
-    _dispatchResourceRequest: DispatchResourceRequest<any>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<any, any>> {
     const { luvio, config, adapterContext } = context;
     return buildNetworkSnapshot(luvio, adapterContext, config);

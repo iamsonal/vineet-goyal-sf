@@ -4,7 +4,6 @@ import {
     FetchResponse,
     FulfilledSnapshot,
     StoreLookup,
-    DispatchResourceRequest,
     Snapshot,
     AdapterRequestContext,
 } from '@luvio/engine';
@@ -186,8 +185,7 @@ function buildInMemorySnapshot(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext,
-    _dispatchResourceRequest: DispatchResourceRequest<RecordCollectionRepresentation>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<RecordCollectionRepresentation>> {
     return buildNetworkSnapshot(context.luvio, context.config);
 }

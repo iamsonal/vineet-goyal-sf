@@ -1,6 +1,5 @@
 import {
     AdapterRequestContext,
-    DispatchResourceRequest,
     Luvio,
     PathSelection,
     Snapshot,
@@ -398,8 +397,7 @@ function buildInMemorySnapshot(
 }
 
 function buildNetworkSnapshot(
-    context: BuildSnapshotContext,
-    _dispatchResourceRequest: DispatchResourceRequest<any>
+    context: BuildSnapshotContext
 ): Promise<Snapshot<RecordRepresentation>> {
     const { config, luvio } = context;
     const { recordId } = config;

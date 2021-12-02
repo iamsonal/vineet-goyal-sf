@@ -221,7 +221,7 @@ export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaul
             // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
             if (requestContext !== undefined) {
                 return luvio.applyCachePolicy(
-                    requestContext === undefined ? undefined : requestContext.cachePolicy,
+                    requestContext,
                     {
                         luvio,
                         config,

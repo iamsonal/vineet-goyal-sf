@@ -210,7 +210,7 @@ export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation
         }
 
         return luvio.applyCachePolicy<BuildSnapshotContext, RecordLayoutRepresentation>(
-            requestContext === undefined ? undefined : requestContext.cachePolicy,
+            requestContext || {},
             { config, luvio }, // Adapter Context
             buildInMemorySnapshotCachePolicy,
             buildNetworkSnapshotCachePolicy

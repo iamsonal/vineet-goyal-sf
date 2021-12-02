@@ -28,13 +28,14 @@ describe('postApex adapter calls luvio.applyCachePolicy', () => {
                 .mockResolvedValue({ data: mockReturnedData } as FulfilledSnapshot<any>);
 
             const cachePolicy: CachePolicyNoCache = { type: 'no-cache' };
-            const data = await invoker({}, { cachePolicy });
+            const adapterRequestContext = { cachePolicy };
+            const data = await invoker({}, adapterRequestContext);
 
             expect(data).toBe(mockReturnedData);
 
             expect(applyCachePolicySpy).toHaveBeenCalledTimes(1);
             // ensure the first parameter was the cache policy
-            expect(applyCachePolicySpy.mock.calls[0][0]).toBe(cachePolicy);
+            expect(applyCachePolicySpy.mock.calls[0][0]).toEqual(adapterRequestContext);
         });
     });
 

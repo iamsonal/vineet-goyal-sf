@@ -239,7 +239,7 @@ export function getRecordByFields_requestContext(
     requestContext?: AdapterRequestContext
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
     return luvio.applyCachePolicy(
-        requestContext === undefined ? undefined : requestContext.cachePolicy,
+        requestContext || {},
         { config, luvio },
         buildInMemorySnapshotCachePolicy,
         buildNetworkSnapshotCachePolicy

@@ -584,8 +584,7 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
 
         // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
         if (requestContext !== undefined) {
-            const cachePolicy =
-                requestContext === undefined ? undefined : requestContext.cachePolicy;
+            const cachePolicy = requestContext || {};
 
             const selectorPromiseOrSnapshot = luvio.applyCachePolicy(
                 cachePolicy,

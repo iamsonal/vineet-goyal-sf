@@ -28,13 +28,14 @@ describe('getApex adapter', () => {
                 .mockResolvedValue(mockReturnedSnapshot);
 
             const cachePolicy: CachePolicyNoCache = { type: 'no-cache' };
-            const snapshot = await adapter({}, { cachePolicy });
+            const adapterRequestContext = { cachePolicy };
+            const snapshot = await adapter({}, adapterRequestContext);
 
             expect(snapshot).toBe(mockReturnedSnapshot);
 
             expect(applyCachePolicySpy).toHaveBeenCalledTimes(1);
             // ensure the first parameter was the cache policy
-            expect(applyCachePolicySpy.mock.calls[0][0]).toBe(cachePolicy);
+            expect(applyCachePolicySpy.mock.calls[0][0]).toBe(adapterRequestContext);
         });
 
         it('when caller DOES NOT supply cache policy', async () => {
@@ -49,8 +50,8 @@ describe('getApex adapter', () => {
             expect(snapshot).toBe(mockReturnedSnapshot);
 
             expect(applyCachePolicySpy).toHaveBeenCalledTimes(1);
-            // if no requestContext given then it should pass an undefined cache policy
-            expect(applyCachePolicySpy.mock.calls[0][0]).toBe(undefined);
+            // if no requestContext given then it should pass not pass a cache policy
+            expect(applyCachePolicySpy.mock.calls[0][0]).toEqual({});
         });
     });
 });

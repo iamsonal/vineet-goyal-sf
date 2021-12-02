@@ -225,7 +225,7 @@ export const factory: AdapterFactory<
 
         if (requestContext !== undefined) {
             return luvio.applyCachePolicy(
-                requestContext === undefined ? undefined : requestContext.cachePolicy,
+                requestContext,
                 {
                     luvio,
                     config,

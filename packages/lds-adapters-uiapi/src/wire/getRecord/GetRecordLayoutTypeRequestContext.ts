@@ -442,7 +442,7 @@ export function getRecordLayoutType(
     requestContext?: AdapterRequestContext
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
     return luvio.applyCachePolicy(
-        requestContext === undefined ? undefined : requestContext.cachePolicy,
+        requestContext || {},
         { config, luvio },
         buildInMemorySnapshot,
         buildNetworkSnapshot

@@ -202,7 +202,7 @@ export const getRelatedListRecordsBatchAdapterFactory: AdapterFactory<
             BuildSnapshotContext,
             RelatedListRecordCollectionBatchRepresentation
         >(
-            (requestContext || {}).cachePolicy,
+            requestContext || {},
             { config: coercedConfig, luvio },
             buildInMemorySnapshotCachePolicy,
             buildNetworkSnapshotCachePolicy

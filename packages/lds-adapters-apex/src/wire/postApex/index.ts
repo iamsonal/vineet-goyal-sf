@@ -260,7 +260,7 @@ function postApexAdapterFactory(
             }
 
             return luvio.applyCachePolicy<BuildSnapshotContext, any>(
-                (requestContext || {}).cachePolicy,
+                requestContext || {},
                 { config: configPlus, luvio, adapterContext: context },
                 buildInMemorySnapshotCachePolicy,
                 buildNetworkSnapshotCachePolicy

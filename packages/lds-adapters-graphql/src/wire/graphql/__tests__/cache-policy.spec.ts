@@ -64,11 +64,12 @@ describe('graphql adapter calls luvio.applyCachePolicy', () => {
             const applyCachePolicySpy = jest.spyOn(luvio, 'applyCachePolicy');
 
             const cachePolicy: CachePolicyNoCache = { type: 'no-cache' };
-            await adapter(config, { cachePolicy });
+            const adapterRequestConext = { cachePolicy };
+            await adapter(config, adapterRequestConext);
 
             expect(applyCachePolicySpy).toHaveBeenCalledTimes(1);
             // ensure the first parameter was the cache policy
-            expect(applyCachePolicySpy.mock.calls[0][0]).toBe(cachePolicy);
+            expect(applyCachePolicySpy.mock.calls[0][0]).toEqual(adapterRequestConext);
         });
     });
 

@@ -288,7 +288,7 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
         //TODO [W-10164140]: remove this if block and always call applyCachePolicy
         if (requestContext !== undefined) {
             return luvio.applyCachePolicy(
-                requestContext === undefined ? undefined : requestContext.cachePolicy,
+                requestContext || {},
                 context,
                 buildInMemorySnapshot,
                 buildNetworkSnapshotCachePolicy

@@ -234,7 +234,7 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
             };
 
             const promiseOrSnapshot = luvio.applyCachePolicy(
-                requestContext === undefined ? undefined : requestContext.cachePolicy,
+                requestContext || {},
                 { config, luvio },
                 buildInMemorySnapshot,
                 buildNetworkSnapshotCachePolicy

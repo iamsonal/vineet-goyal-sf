@@ -204,6 +204,7 @@ jobs:
       - *stop_sauce_connect
 
   perf_and_compare:
+    circleci_ip_ranges: true
     <<: *env_perf
     steps:
       - *load_workspace

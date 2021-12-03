@@ -72,7 +72,7 @@
     "records": {
         "count": 1,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v54.0/ui-api/mru-list-records/Opportunity?optionalFields=Opportunity.IsPrivate%2COpportunity.NextStep&pageSize=1&pageToken=0",
+        "currentPageUrl": "/services/data/v55.0/ui-api/mru-list-records/Opportunity?optionalFields=Opportunity.IsPrivate%2COpportunity.NextStep&pageSize=1&pageToken=0",
         "fields": [],
         "listInfoETag": "c355e750392b638e71407b962e0b5544",
         "listReference": {
@@ -82,7 +82,7 @@
             "type": "mru"
         },
         "nextPageToken": "1",
-        "nextPageUrl": "/services/data/v54.0/ui-api/mru-list-records/Opportunity?optionalFields=Opportunity.IsPrivate%2COpportunity.NextStep&pageSize=1&pageToken=1",
+        "nextPageUrl": "/services/data/v55.0/ui-api/mru-list-records/Opportunity?optionalFields=Opportunity.IsPrivate%2COpportunity.NextStep&pageSize=1&pageToken=1",
         "optionalFields": ["Opportunity.IsPrivate", "Opportunity.NextStep"],
         "pageSize": 1,
         "previousPageToken": null,

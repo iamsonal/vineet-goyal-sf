@@ -7,9 +7,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006PKl:Opportunity::Lookup:Desktop:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000074GAA",
+                    "externalId": "00DT10000000rFX:Opportunity::Lookup:Desktop:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVT10000000001OAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -24,7 +24,7 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v54.0/ui-api/actions/lookup/Opportunity"
+            "url": "/services/data/v55.0/ui-api/actions/lookup/Opportunity"
         },
         "Lead": {
             "actions": [
@@ -33,9 +33,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006PKl:Lead::Lookup:Desktop:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000075GAA",
+                    "externalId": "00DT10000000rFX:Lead::Lookup:Desktop:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVT10000000002OAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -50,9 +50,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v54.0/ui-api/actions/lookup/Lead"
+            "url": "/services/data/v55.0/ui-api/actions/lookup/Lead"
         }
     },
-    "eTag": "508076b674148e63c5ad0b3d4fcad3cb",
-    "url": "/services/data/v54.0/ui-api/actions/lookup/Lead,Opportunity"
+    "eTag": "58b45dd7d95c98162cce8ee0e907261e",
+    "url": "/services/data/v55.0/ui-api/actions/lookup/Lead,Opportunity"
 }

@@ -78,7 +78,7 @@
     "records": {
         "count": 3,
         "currentPageToken": "3",
-        "currentPageUrl": "/services/data/v54.0/ui-api/list-records/00Bxx0000029fjBEAQ?pageSize=3&pageToken=3",
+        "currentPageUrl": "/services/data/v55.0/ui-api/list-records/00Bxx0000029fjBEAQ?pageSize=3&pageToken=3",
         "fields": [],
         "listInfoETag": "f0e942e0760364ed7049fe34bef755ea",
         "listReference": {
@@ -88,11 +88,11 @@
             "type": "listView"
         },
         "nextPageToken": "6",
-        "nextPageUrl": "/services/data/v54.0/ui-api/list-records/00Bxx0000029fjBEAQ?pageSize=3&pageToken=6",
+        "nextPageUrl": "/services/data/v55.0/ui-api/list-records/00Bxx0000029fjBEAQ?pageSize=3&pageToken=6",
         "optionalFields": [],
         "pageSize": 3,
         "previousPageToken": "0",
-        "previousPageUrl": "/services/data/v54.0/ui-api/list-records/00Bxx0000029fjBEAQ?pageSize=3&pageToken=0",
+        "previousPageUrl": "/services/data/v55.0/ui-api/list-records/00Bxx0000029fjBEAQ?pageSize=3&pageToken=0",
         "records": [
             {
                 "apiName": "Opportunity",

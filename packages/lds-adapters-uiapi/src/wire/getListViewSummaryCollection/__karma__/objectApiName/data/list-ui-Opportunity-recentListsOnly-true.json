@@ -1,38 +1,38 @@
 {
     "count": 5,
     "currentPageToken": "0",
-    "currentPageUrl": "/services/data/v54.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0&recentListsOnly=true",
+    "currentPageUrl": "/services/data/v55.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0&recentListsOnly=true",
     "eTag": "1bb5a67e04fdec82e49d175388a06a1b",
     "lists": [
         {
             "apiName": "Default_Opportunity_Pipeline",
             "id": "00Bxx0000029fsVEAQ",
             "label": "Opportunity Pipeline",
-            "listUiUrl": "/services/data/v54.0/ui-api/list-ui/Opportunity/Default_Opportunity_Pipeline"
+            "listUiUrl": "/services/data/v55.0/ui-api/list-ui/Opportunity/Default_Opportunity_Pipeline"
         },
         {
             "apiName": "MyOpportunities",
             "id": "00Bxx0000029fjYEAQ",
             "label": "My Opportunities",
-            "listUiUrl": "/services/data/v54.0/ui-api/list-ui/Opportunity/MyOpportunities"
+            "listUiUrl": "/services/data/v55.0/ui-api/list-ui/Opportunity/MyOpportunities"
         },
         {
             "apiName": "NewThisWeek",
             "id": "00Bxx0000029fjQEAQ",
             "label": "New This Week",
-            "listUiUrl": "/services/data/v54.0/ui-api/list-ui/Opportunity/NewThisWeek"
+            "listUiUrl": "/services/data/v55.0/ui-api/list-ui/Opportunity/NewThisWeek"
         },
         {
             "apiName": "AllOpportunities",
             "id": "00Bxx0000029fjBEAQ",
             "label": "All Opportunities",
-            "listUiUrl": "/services/data/v54.0/ui-api/list-ui/Opportunity/AllOpportunities"
+            "listUiUrl": "/services/data/v55.0/ui-api/list-ui/Opportunity/AllOpportunities"
         },
         {
             "apiName": "NewLastWeek",
             "id": "00Bxx0000029fj1EAA",
             "label": "New Last Week",
-            "listUiUrl": "/services/data/v54.0/ui-api/list-ui/Opportunity/NewLastWeek"
+            "listUiUrl": "/services/data/v55.0/ui-api/list-ui/Opportunity/NewLastWeek"
         }
     ],
     "nextPageToken": null,

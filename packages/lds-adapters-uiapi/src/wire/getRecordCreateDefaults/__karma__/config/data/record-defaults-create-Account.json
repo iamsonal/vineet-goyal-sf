@@ -1,7 +1,7 @@
 {
     "layout": {
-        "eTag": "5672d8ddeef3c75ee3b0b390a1520e27",
-        "id": "00hxx0000019cU3AAI",
+        "eTag": "1f815b43350d4e3d3c2288f8dfc99c2b",
+        "id": "00hT1000000H5lgIAC",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "Account",
@@ -12,7 +12,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Account Information",
-                "id": "01Bxx000002CDUREA4",
+                "id": "01BT1000000cUphMAE",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -294,7 +294,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Address Information",
-                "id": "01Bxx000002CDUVEA4",
+                "id": "01BT1000000cUplMAE",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -376,154 +376,9 @@
             },
             {
                 "collapsible": false,
-                "columns": 2,
-                "heading": "Additional Information",
-                "id": "01Bxx000002CDUSEA4",
-                "layoutRows": [
-                    {
-                        "layoutItems": [
-                            {
-                                "editableForNew": true,
-                                "editableForUpdate": true,
-                                "label": "Customer Priority",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": "CustomerPriority__c",
-                                        "componentType": "Field",
-                                        "label": "Customer Priority"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            },
-                            {
-                                "editableForNew": true,
-                                "editableForUpdate": true,
-                                "label": "SLA",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": "SLA__c",
-                                        "componentType": "Field",
-                                        "label": "SLA"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            }
-                        ]
-                    },
-                    {
-                        "layoutItems": [
-                            {
-                                "editableForNew": true,
-                                "editableForUpdate": true,
-                                "label": "SLA Expiration Date",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": "SLAExpirationDate__c",
-                                        "componentType": "Field",
-                                        "label": "SLA Expiration Date"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            },
-                            {
-                                "editableForNew": true,
-                                "editableForUpdate": true,
-                                "label": "SLA Serial Number",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": "SLASerialNumber__c",
-                                        "componentType": "Field",
-                                        "label": "SLA Serial Number"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            }
-                        ]
-                    },
-                    {
-                        "layoutItems": [
-                            {
-                                "editableForNew": true,
-                                "editableForUpdate": true,
-                                "label": "Number of Locations",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": "NumberofLocations__c",
-                                        "componentType": "Field",
-                                        "label": "Number of Locations"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            },
-                            {
-                                "editableForNew": true,
-                                "editableForUpdate": true,
-                                "label": "Upsell Opportunity",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": "UpsellOpportunity__c",
-                                        "componentType": "Field",
-                                        "label": "Upsell Opportunity"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            }
-                        ]
-                    },
-                    {
-                        "layoutItems": [
-                            {
-                                "editableForNew": true,
-                                "editableForUpdate": true,
-                                "label": "Active",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": "Active__c",
-                                        "componentType": "Field",
-                                        "label": "Active"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            },
-                            {
-                                "editableForNew": false,
-                                "editableForUpdate": false,
-                                "label": "",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": null,
-                                        "componentType": "EmptySpace"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            }
-                        ]
-                    }
-                ],
-                "rows": 4,
-                "useHeading": true
-            },
-            {
-                "collapsible": false,
                 "columns": 1,
                 "heading": "Description Information",
-                "id": "01Bxx000002CDUWEA4",
+                "id": "01BT1000000cUpmMAE",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -774,6 +629,13 @@
                     "relationshipName": "Contracts"
                 },
                 {
+                    "childObjectApiName": "CreditMemo",
+                    "fieldName": "BillingAccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "CreditMemos"
+                },
+                {
                     "childObjectApiName": "DigitalWallet",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -835,6 +697,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "FinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "Invoice",
+                    "fieldName": "BillingAccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "Invoices"
                 },
                 {
                     "childObjectApiName": "MaintenancePlan",
@@ -919,6 +788,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "PaymentAuthorizations"
+                },
+                {
+                    "childObjectApiName": "PaymentLineInvoice",
+                    "fieldName": "AssociatedAccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "PaymentLinesInvoice"
                 },
                 {
                     "childObjectApiName": "ProcessInstance",
@@ -1052,6 +928,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "WorkOrders"
+                },
+                {
+                    "childObjectApiName": "WorkPlanSelectionRule",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "WorkPlanSelectionRules"
                 }
             ],
             "createable": true,
@@ -1059,7 +942,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "067d3ef8235950f39585edb4b7348ddc",
+            "eTag": "294d042a8a59f0dac121455c569cf872",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -1113,39 +996,6 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "Account Source",
-                    "length": 255,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": false,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": true
-                },
-                "Active__c": {
-                    "apiName": "Active__c",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": true,
-                    "dataType": "Picklist",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "Active",
                     "length": 255,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -1627,39 +1477,6 @@
                     "sortable": true,
                     "unique": false,
                     "updateable": false
-                },
-                "CustomerPriority__c": {
-                    "apiName": "CustomerPriority__c",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": true,
-                    "dataType": "Picklist",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "Customer Priority",
-                    "length": 255,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": false,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": true
                 },
                 "DandbCompanyId": {
                     "apiName": "DandbCompanyId",
@@ -2303,39 +2120,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "NumberofLocations__c": {
-                    "apiName": "NumberofLocations__c",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": true,
-                    "dataType": "Double",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "Number of Locations",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 3,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": false,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": true
-                },
                 "OperatingHoursId": {
                     "apiName": "OperatingHoursId",
                     "calculated": false,
@@ -2567,105 +2351,6 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "Account Rating",
-                    "length": 255,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": false,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": true
-                },
-                "SLAExpirationDate__c": {
-                    "apiName": "SLAExpirationDate__c",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": true,
-                    "dataType": "Date",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "SLA Expiration Date",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": false,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": true
-                },
-                "SLASerialNumber__c": {
-                    "apiName": "SLASerialNumber__c",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": true,
-                    "dataType": "String",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "SLA Serial Number",
-                    "length": 10,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": false,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": true
-                },
-                "SLA__c": {
-                    "apiName": "SLA__c",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": true,
-                    "dataType": "Picklist",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "SLA",
                     "length": 255,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -3209,39 +2894,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "UpsellOpportunity__c": {
-                    "apiName": "UpsellOpportunity__c",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": true,
-                    "dataType": "Picklist",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "Upsell Opportunity",
-                    "length": 255,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": false,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": true
-                },
                 "Website": {
                     "apiName": "Website",
                     "calculated": false,
@@ -3328,7 +2980,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3527,20 +3179,6 @@
                     "relationshipName": "ReceivedByProductTransfers"
                 },
                 {
-                    "childObjectApiName": "ProfileSkillEndorsement",
-                    "fieldName": "UserId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "UserProfileSkillUserEndorsements"
-                },
-                {
-                    "childObjectApiName": "ProfileSkillUser",
-                    "fieldName": "UserId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "UserProfileSkillChildren"
-                },
-                {
                     "childObjectApiName": "RecordAction",
                     "fieldName": "RecordId",
                     "junctionIdListNames": [],
@@ -3665,7 +3303,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "1f98958e0b40b0648a4e8d172c090750",
+            "eTag": "1e8db7bd0ac295ec79bcef599b2ca7c6",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -7126,39 +6764,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "UserPreferencesDisableFeedbackEmail": {
-                    "apiName": "UserPreferencesDisableFeedbackEmail",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "DisableFeedbackEmail",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
                 "UserPreferencesDisableFileShareNotificationsForApi": {
                     "apiName": "UserPreferencesDisableFileShareNotificationsForApi",
                     "calculated": false,
@@ -7408,39 +7013,6 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "DisableSharePostEmail",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
-                "UserPreferencesDisableWorkEmail": {
-                    "apiName": "UserPreferencesDisableWorkEmail",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "DisableWorkEmail",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -7753,6 +7325,72 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesHasSentWarningEmail": {
+                    "apiName": "UserPreferencesHasSentWarningEmail",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HasSentWarningEmail",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHeavyPagePromptEnabled": {
+                    "apiName": "UserPreferencesHeavyPagePromptEnabled",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HeavyPagePromptEnabled",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesHideBiggerPhotoCallout": {
                     "apiName": "UserPreferencesHideBiggerPhotoCallout",
                     "calculated": false,
@@ -7936,39 +7574,6 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideEventCalendar",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
-                "UserPreferencesHideLearningPathModal": {
-                    "apiName": "UserPreferencesHideLearningPathModal",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "HideLearningPathModal",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -9304,6 +8909,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesShowForecastingChangeSignals": {
+                    "apiName": "UserPreferencesShowForecastingChangeSignals",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "ShowForecastingChangeSignals",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesShowManagerToExternalUsers": {
                     "apiName": "UserPreferencesShowManagerToExternalUsers",
                     "calculated": false,
@@ -10179,7 +9817,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
@@ -10187,13 +9825,9 @@
     "record": {
         "apiName": "Account",
         "childRelationships": {},
-        "eTag": "587cc86d3be1e5cab30be48558d05df0",
+        "eTag": "a9b4b1dbdd162fbce3a0237cb468d7a3",
         "fields": {
             "AccountNumber": {
-                "displayValue": null,
-                "value": null
-            },
-            "Active__c": {
                 "displayValue": null,
                 "value": null
             },
@@ -10221,10 +9855,6 @@
                 "displayValue": null,
                 "value": null
             },
-            "CustomerPriority__c": {
-                "displayValue": null,
-                "value": null
-            },
             "Description": {
                 "displayValue": null,
                 "value": null
@@ -10245,27 +9875,23 @@
                 "displayValue": null,
                 "value": null
             },
-            "NumberofLocations__c": {
-                "displayValue": null,
-                "value": null
-            },
             "Owner": {
                 "displayValue": "User User",
                 "value": {
                     "apiName": "User",
                     "childRelationships": {},
-                    "eTag": "2a0d58fa1933900fe4d663c703ff53be",
+                    "eTag": "f8147089af44b4e88f39aa016a8f5ce4",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005xx000001XFXZAA4"
+                            "value": "005T1000000IJQGIA4"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005xx000001XFXZAA4",
+                    "id": "005T1000000IJQGIA4",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -10276,7 +9902,7 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005xx000001XFXZAA4"
+                "value": "005T1000000IJQGIA4"
             },
             "Ownership": {
                 "displayValue": null,
@@ -10295,18 +9921,6 @@
                 "value": null
             },
             "Rating": {
-                "displayValue": null,
-                "value": null
-            },
-            "SLAExpirationDate__c": {
-                "displayValue": null,
-                "value": null
-            },
-            "SLASerialNumber__c": {
-                "displayValue": null,
-                "value": null
-            },
-            "SLA__c": {
                 "displayValue": null,
                 "value": null
             },
@@ -10343,10 +9957,6 @@
                 "value": null
             },
             "Type": {
-                "displayValue": null,
-                "value": null
-            },
-            "UpsellOpportunity__c": {
                 "displayValue": null,
                 "value": null
             },

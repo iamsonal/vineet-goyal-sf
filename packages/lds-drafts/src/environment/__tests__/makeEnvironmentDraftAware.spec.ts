@@ -13,7 +13,7 @@ describe('makeEnvironmentDraftAware', () => {
         it('does not intercept non record endpoints', async () => {
             const { draftEnvironment, network } = await setupDraftEnvironment();
             await draftEnvironment.dispatchResourceRequest({
-                baseUri: '/services/data/v54.0',
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/not-record-endpoint`,
                 method: 'patch',
                 body: {},

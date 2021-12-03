@@ -143,7 +143,7 @@ describe('executeMutatingAdapter', () => {
         // setup mock responses
         addMockNetworkResponse(
             'GET',
-            `/services/data/v54.0/ui-api/records/${recordRep_Account.id}`,
+            `/services/data/v55.0/ui-api/records/${recordRep_Account.id}`,
             {
                 headers: {},
                 status: 200,

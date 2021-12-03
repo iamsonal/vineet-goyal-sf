@@ -78,7 +78,7 @@
     "records": {
         "count": 1,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v54.0/ui-api/list-records/Account/AllAccounts?fields=Rating%2CWebsite&pageSize=1&pageToken=0",
+        "currentPageUrl": "/services/data/v55.0/ui-api/list-records/Account/AllAccounts?fields=Rating%2CWebsite&pageSize=1&pageToken=0",
         "fields": ["Rating", "Website"],
         "listInfoETag": "557b2f31a795090582cc2b7c27795044",
         "listReference": {
@@ -88,7 +88,7 @@
             "type": "listView"
         },
         "nextPageToken": "1",
-        "nextPageUrl": "/services/data/v54.0/ui-api/list-records/Account/AllAccounts?fields=Rating%2CWebsite&pageSize=1&pageToken=1",
+        "nextPageUrl": "/services/data/v55.0/ui-api/list-records/Account/AllAccounts?fields=Rating%2CWebsite&pageSize=1&pageToken=1",
         "optionalFields": [],
         "pageSize": 1,
         "previousPageToken": null,

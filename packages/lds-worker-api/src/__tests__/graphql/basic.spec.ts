@@ -13,7 +13,7 @@ describe(`invokeAdapter("${gqlAdapterName}")`, () => {
     });
     it('takes in gql query string and calls the GQL adapter', (done) => {
         // setup mock response
-        addMockNetworkResponse('POST', '/services/data/v54.0/graphql', {
+        addMockNetworkResponse('POST', '/services/data/v55.0/graphql', {
             headers: {},
             status: 200,
             body: JSON.stringify(recordQuery_account1),

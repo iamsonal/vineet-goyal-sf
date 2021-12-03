@@ -69,6 +69,55 @@
                     "relationshipName": "FeedSubscriptionsForEntity"
                 },
                 {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "LegalEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "ReferenceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "DestinationEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "DestinationFinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "LegalEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "ParentReferenceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ParentFinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "ReferenceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "SourceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "SourceFinanceTransactions"
+                },
+                {
                     "childObjectApiName": "Note",
                     "fieldName": "ParentId",
                     "junctionIdListNames": [],
@@ -81,6 +130,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "NotesAndAttachments"
+                },
+                {
+                    "childObjectApiName": "ProcessException",
+                    "fieldName": "AttachedToId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ProcessExceptions"
                 },
                 {
                     "childObjectApiName": "ProcessInstance",
@@ -123,7 +179,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "87d1ad987cabf691c5eed3d8400b3b1d",
+            "eTag": "b26127464abf5fa789f50ffdc16fdb73",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -476,7 +532,7 @@
                     "updateable": false
                 }
             },
-            "keyPrefix": "a00",
+            "keyPrefix": "a01",
             "label": "Custom Object",
             "labelPlural": "Custom Object",
             "layoutable": true,

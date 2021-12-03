@@ -1,6 +1,6 @@
 {
-    "eTag": "2778b22849560561e61b9fb549ee5801",
-    "id": "00hxx0000019cUOAAY",
+    "eTag": "041fcfa634e0ef5b99ffcecd91f6974d",
+    "id": "00hT1000000H5lsIAC",
     "layoutType": "Full",
     "mode": "View",
     "objectApiName": "Opportunity",
@@ -11,7 +11,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Opportunity Information",
-            "id": "01Bxx000002CDWMEA4",
+            "id": "01BT1000000cUrcMAE",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -257,119 +257,8 @@
         {
             "collapsible": false,
             "columns": 2,
-            "heading": "Additional Information",
-            "id": "01Bxx000002CDWOEA4",
-            "layoutRows": [
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Order Number",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "OrderNumber__c",
-                                    "componentType": "Field",
-                                    "label": "Order Number"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Main Competitor(s)",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "MainCompetitors__c",
-                                    "componentType": "Field",
-                                    "label": "Main Competitor(s)"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Current Generator(s)",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "CurrentGenerators__c",
-                                    "componentType": "Field",
-                                    "label": "Current Generator(s)"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Delivery/Installation Status",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "DeliveryInstallationStatus__c",
-                                    "componentType": "Field",
-                                    "label": "Delivery/Installation Status"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Tracking Number",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "TrackingNumber__c",
-                                    "componentType": "Field",
-                                    "label": "Tracking Number"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "",
-                            "layoutComponents": [
-                                {
-                                    "apiName": null,
-                                    "componentType": "EmptySpace"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                }
-            ],
-            "rows": 3,
-            "useHeading": false
-        },
-        {
-            "collapsible": false,
-            "columns": 2,
             "heading": "System Information",
-            "id": "01Bxx000002CDWREA4",
+            "id": "01BT1000000cUrhMAE",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -423,7 +312,7 @@
             "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01Bxx000002CDWQEA4",
+            "id": "01BT1000000cUrgMAE",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -436,65 +325,6 @@
                                     "apiName": "Description",
                                     "componentType": "Field",
                                     "label": "Description"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                }
-            ],
-            "rows": 1,
-            "useHeading": false
-        },
-        {
-            "collapsible": false,
-            "columns": 3,
-            "heading": "Custom Links",
-            "id": "01Bxx000002CDWPEA4",
-            "layoutRows": [
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "DeliveryStatus",
-                                    "behavior": "NewWindow",
-                                    "componentType": "CustomLink",
-                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bxx000000lJgx&eid=ENTITY_ID&ic=1",
-                                    "label": "Delivery Status"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "",
-                            "layoutComponents": [
-                                {
-                                    "apiName": null,
-                                    "componentType": "EmptySpace"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "",
-                            "layoutComponents": [
-                                {
-                                    "apiName": null,
-                                    "componentType": "EmptySpace"
                                 }
                             ],
                             "lookupIdApiName": null,

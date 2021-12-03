@@ -8,7 +8,7 @@
     "defaultRecordTypeId": null,
     "deletable": false,
     "dependentFields": {},
-    "eTag": "017f228c3836cab01ec2077c393192b4",
+    "eTag": "e986942162ac84bc74645c2ef0550e40",
     "feedEnabled": false,
     "fields": {
         "AccountId": {
@@ -462,7 +462,7 @@
     "searchable": false,
     "themeInfo": {
         "color": "7F8DE1",
-        "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+        "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
     },
     "updateable": false
 }

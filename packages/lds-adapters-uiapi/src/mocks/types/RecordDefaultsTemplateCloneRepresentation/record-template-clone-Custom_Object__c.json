@@ -179,7 +179,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "6ffcfc222bec188ca1a62daf095ce16d",
+            "eTag": "974008dafc3d7480a459ab3a60fc0689",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -558,11 +558,11 @@
     },
     "record": {
         "apiName": "Custom_Object__c",
-        "cloneSourceId": "a00xx000000bqPtAAI",
+        "cloneSourceId": "a00T1000000iaHGIAY",
         "fields": {
             "CloneSourceId": {
                 "displayValue": null,
-                "value": "a00xx000000bqPtAAI"
+                "value": "a00T1000000iaHGIAY"
             }
         },
         "recordTypeId": "012000000000000AAA"

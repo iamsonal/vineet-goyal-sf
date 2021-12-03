@@ -9,8 +9,8 @@
         "validFor": [],
         "value": "New"
     },
-    "eTag": "0e11171243305e7c3451983733aae125",
-    "url": "/services/data/v54.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Status",
+    "eTag": "ed7a24b7942b2416885e200438e88530",
+    "url": "/services/data/v55.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Status",
     "values": [
         {
             "attributes": {

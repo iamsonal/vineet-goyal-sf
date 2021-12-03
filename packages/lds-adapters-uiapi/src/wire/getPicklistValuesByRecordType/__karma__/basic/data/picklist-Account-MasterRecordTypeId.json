@@ -1,11 +1,11 @@
 {
-    "eTag": "28320ea883bb4d96016f9f7286c9a247",
+    "eTag": "d7c7ff897807255a57184d456e815372",
     "picklistFieldValues": {
         "AccountSource": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "cebe744780a6fc00e0f24819ab0437d5",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/AccountSource",
+            "eTag": "65cde2e87436049f796d618e26928055",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/AccountSource",
             "values": [
                 {
                     "attributes": null,
@@ -39,31 +39,11 @@
                 }
             ]
         },
-        "Active__c": {
-            "controllerValues": {},
-            "defaultValue": null,
-            "eTag": "239799e8ea172c1e1983fe728f36ace9",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Active__c",
-            "values": [
-                {
-                    "attributes": null,
-                    "label": "No",
-                    "validFor": [],
-                    "value": "No"
-                },
-                {
-                    "attributes": null,
-                    "label": "Yes",
-                    "validFor": [],
-                    "value": "Yes"
-                }
-            ]
-        },
         "BillingGeocodeAccuracy": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "14304b3691a80d82b16caf8275f91ec9",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/BillingGeocodeAccuracy",
+            "eTag": "538129bd5c4ef4c15fb365811e35c9ad",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/BillingGeocodeAccuracy",
             "values": [
                 {
                     "attributes": null,
@@ -136,8 +116,8 @@
         "CleanStatus": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "856a08328eb35ac6c66bd9ef9e6c90c2",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/CleanStatus",
+            "eTag": "ccd7ae940102ad562f3be6a28ebb3077",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/CleanStatus",
             "values": [
                 {
                     "attributes": null,
@@ -189,37 +169,11 @@
                 }
             ]
         },
-        "CustomerPriority__c": {
-            "controllerValues": {},
-            "defaultValue": null,
-            "eTag": "f4f3f63ce41fec531a4423002065baea",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/CustomerPriority__c",
-            "values": [
-                {
-                    "attributes": null,
-                    "label": "High",
-                    "validFor": [],
-                    "value": "High"
-                },
-                {
-                    "attributes": null,
-                    "label": "Low",
-                    "validFor": [],
-                    "value": "Low"
-                },
-                {
-                    "attributes": null,
-                    "label": "Medium",
-                    "validFor": [],
-                    "value": "Medium"
-                }
-            ]
-        },
         "Industry": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "b3c43b8c8a8e93ddbf209a71f9ae6230",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Industry",
+            "eTag": "a9fbc4a16224ce7cfe8a944b703ddcf1",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Industry",
             "values": [
                 {
                     "attributes": null,
@@ -418,8 +372,8 @@
         "Ownership": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "329f4ba151c265a12a9b962e4aa9285e",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Ownership",
+            "eTag": "a2b54ef9ba3af5d695bc2a2aa70c03d8",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Ownership",
             "values": [
                 {
                     "attributes": null,
@@ -450,8 +404,8 @@
         "Rating": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "63af52ba1033bc91b7f3955c3d2238e2",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Rating",
+            "eTag": "c43895ec78d16b13649105643ef6f499",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Rating",
             "values": [
                 {
                     "attributes": null,
@@ -473,43 +427,11 @@
                 }
             ]
         },
-        "SLA__c": {
-            "controllerValues": {},
-            "defaultValue": null,
-            "eTag": "225caecc5df7bca2e6e09d991e045258",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/SLA__c",
-            "values": [
-                {
-                    "attributes": null,
-                    "label": "Gold",
-                    "validFor": [],
-                    "value": "Gold"
-                },
-                {
-                    "attributes": null,
-                    "label": "Silver",
-                    "validFor": [],
-                    "value": "Silver"
-                },
-                {
-                    "attributes": null,
-                    "label": "Platinum",
-                    "validFor": [],
-                    "value": "Platinum"
-                },
-                {
-                    "attributes": null,
-                    "label": "Bronze",
-                    "validFor": [],
-                    "value": "Bronze"
-                }
-            ]
-        },
         "ShippingGeocodeAccuracy": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "14304b3691a80d82b16caf8275f91ec9",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/ShippingGeocodeAccuracy",
+            "eTag": "538129bd5c4ef4c15fb365811e35c9ad",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/ShippingGeocodeAccuracy",
             "values": [
                 {
                     "attributes": null,
@@ -582,8 +504,8 @@
         "Type": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "d9f7d99534ae0ff78da5324cc393e27f",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Type",
+            "eTag": "b071f5e4a627e83c6b9628cc338d8e31",
+            "url": "/services/data/v55.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Type",
             "values": [
                 {
                     "attributes": null,
@@ -626,32 +548,6 @@
                     "label": "Other",
                     "validFor": [],
                     "value": "Other"
-                }
-            ]
-        },
-        "UpsellOpportunity__c": {
-            "controllerValues": {},
-            "defaultValue": null,
-            "eTag": "577d22bc89b75bd07f927b24db3636c4",
-            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/UpsellOpportunity__c",
-            "values": [
-                {
-                    "attributes": null,
-                    "label": "Maybe",
-                    "validFor": [],
-                    "value": "Maybe"
-                },
-                {
-                    "attributes": null,
-                    "label": "No",
-                    "validFor": [],
-                    "value": "No"
-                },
-                {
-                    "attributes": null,
-                    "label": "Yes",
-                    "validFor": [],
-                    "value": "Yes"
                 }
             ]
         }

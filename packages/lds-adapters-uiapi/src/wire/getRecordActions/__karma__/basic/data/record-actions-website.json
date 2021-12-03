@@ -24,13 +24,13 @@
                 }
             ],
             "links": [
-                "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA/record-edit",
-                "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA/related-list",
-                "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA/related-list-record/${relatedRecordId}"
+                "/services/data/v55.0/ui-api/actions/record/001R0000006je2oIAA/record-edit",
+                "/services/data/v55.0/ui-api/actions/record/001R0000006je2oIAA/related-list",
+                "/services/data/v55.0/ui-api/actions/record/001R0000006je2oIAA/related-list-record/${relatedRecordId}"
             ],
-            "url": "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA?formFactor=Large&retrievalMode=all&apiNames=WebsiteHighlightAction"
+            "url": "/services/data/v55.0/ui-api/actions/record/001R0000006je2oIAA?formFactor=Large&retrievalMode=all&apiNames=WebsiteHighlightAction"
         }
     },
     "eTag": "0e2f37e1593c757d2df4b553e09d71d3",
-    "url": "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA?formFactor=Large&retrievalMode=all&apiNames=WebsiteHighlightAction"
+    "url": "/services/data/v55.0/ui-api/actions/record/001R0000006je2oIAA?formFactor=Large&retrievalMode=all&apiNames=WebsiteHighlightAction"
 }

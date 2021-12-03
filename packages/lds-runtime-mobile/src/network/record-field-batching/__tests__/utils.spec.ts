@@ -589,7 +589,7 @@ describe('record-field-batching utils', () => {
             });
             const actualUrl = buildAggregateUiUrl(params, resourceRequest);
             expect(actualUrl).toEqual(
-                '/services/data/v54.0/ui-api/records?modes=Create,Edit&fields=Name&optionalFields=SomeField'
+                '/services/data/v55.0/ui-api/records?modes=Create,Edit&fields=Name&optionalFields=SomeField'
             );
         });
     });

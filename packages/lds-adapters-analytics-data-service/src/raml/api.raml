@@ -390,20 +390,23 @@ types:
     description: The synchronization status of a synchronized object
     type: object
     properties:
-      errors:
+      errorCount:
         description: The number of errors during the last synchronization
         format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         type: number
+        required: false # TODO Hand-rolled W-9314597
       frequency:
         description: The frequency of synchronization in seconds
         type: integer
       lastSync:
         description: The date and time of the last successful synchronization
         type: string
+        required: false # TODO Hand-rolled W-9314597
       sourceRecordCount:
         description: The number of records in the source object
         format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         type: number
+        required: false # TODO Hand-rolled W-9314597
       state:
         description: The actual synchronization state
         type: string
@@ -417,6 +420,7 @@ types:
         description: The number of records in the target table
         format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         type: number
+        required: false # TODO Hand-rolled W-9314597
 
   DatabaseCollectionRepresentation:
     description: Representation of a collection of Analytics Data Service Databases

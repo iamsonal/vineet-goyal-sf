@@ -28,7 +28,7 @@
         "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account"
     },
     "status": {
-        "errors": 4,
+        "errorCount": 4,
         "frequency": 120,
         "lastSync": "2021-10-19T21:07:51.000Z",
         "sourceRecordCount": 2,

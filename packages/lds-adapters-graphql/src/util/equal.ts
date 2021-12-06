@@ -4,7 +4,7 @@ import {
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { render as renderFieldNode } from '../type/Field';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { GraphQLVariables } from '../type/Variable';

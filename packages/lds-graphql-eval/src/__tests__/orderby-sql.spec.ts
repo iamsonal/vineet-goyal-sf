@@ -1,6 +1,6 @@
 import { unwrappedValue } from '../Result';
 import infoJson from './mockData/objectInfos.json';
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import { transform } from '../ast-parser';
 import { ObjectInfoMap } from '../info-types';
 import { sql } from '../ast-to-sql';
@@ -37,7 +37,7 @@ export function makeOrderByGraphQL(orderBy: string | undefined): string {
 
 function testOperatorResult(orderBy: string | undefined, expectedValue: string) {
     const graphqlSource = makeOrderByGraphQL(orderBy);
-    const result = transform(parser.default(graphqlSource), { userId: 'MyId', objectInfoMap });
+    const result = transform(parseAndVisit(graphqlSource), { userId: 'MyId', objectInfoMap });
     expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expectedValue);
 }
 

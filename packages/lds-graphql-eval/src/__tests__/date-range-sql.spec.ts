@@ -1,6 +1,6 @@
 import { unwrappedValue } from '../Result';
 import infoJson from './mockData/objectInfos.json';
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import { transform } from '../ast-parser';
 import { ComparisonOperator } from '../Predicate';
 import { ObjectInfoMap } from '../info-types';
@@ -48,7 +48,7 @@ function makeGraphQL(where: string): string {
 
 function testOperatorResult(source: string, expectedValue: string) {
     const graphqlSource = makeGraphQL(source);
-    const result = transform(parser.default(graphqlSource), { userId: 'MyId', objectInfoMap });
+    const result = transform(parseAndVisit(graphqlSource), { userId: 'MyId', objectInfoMap });
     expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expectedValue);
 }
 

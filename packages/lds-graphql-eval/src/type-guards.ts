@@ -8,7 +8,7 @@ import {
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
-} from '@salesforce/lds-graphql-parser/dist/ast';
+} from '@luvio/graphql-parser';
 import { DataType, FieldInfo } from './info-types';
 import { ComparisonOperator, CompoundOperator } from './Predicate';
 

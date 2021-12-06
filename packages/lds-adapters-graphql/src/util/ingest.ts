@@ -3,7 +3,7 @@ import {
     LuvioOperationDefinitionNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { render as renderField } from '../type/Field';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { createIngest as customFieldCreateIngest } from '../type/CustomField';

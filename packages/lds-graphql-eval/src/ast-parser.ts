@@ -1,10 +1,10 @@
-import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import {
     LuvioArgumentNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser/dist/ast';
+    LuvioDocumentNode,
+} from '@luvio/graphql-parser';
 import { removeDuplicateFields } from './comparison';
 import { message, missingObjectInfo, PredicateError } from './Error';
 

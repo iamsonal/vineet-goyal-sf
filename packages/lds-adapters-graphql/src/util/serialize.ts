@@ -5,7 +5,7 @@ import {
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { serialize as serializeCustomFieldConnection } from '../custom/connection';
 import {

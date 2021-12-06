@@ -1,5 +1,5 @@
 import { transform } from '../ast-parser';
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import infoJson from './mockData/objectInfos.json';
 import { unwrappedError, unwrappedValue } from '../Result';
 import { ObjectInfoMap } from '../info-types';
@@ -121,7 +121,7 @@ describe('ast-parser', () => {
                 ],
             };
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedValue(result)).toEqual(expected);
         });
 
@@ -144,7 +144,7 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([
                 message('Scope MINE requires the entity type to have an OwnerId field.'),
             ]);
@@ -171,7 +171,7 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([
                 message('Scope type should be an EnumValueNode.'),
             ]);
@@ -196,7 +196,7 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([message("Scope 'UNKNOWN is not supported.")]);
         });
     });
@@ -275,7 +275,7 @@ describe('ast-parser', () => {
                 ],
             };
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedValue(result)).toEqual(expected);
         });
     });
@@ -374,7 +374,7 @@ describe('ast-parser', () => {
             ],
         };
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
 
@@ -508,7 +508,7 @@ describe('ast-parser', () => {
             ],
         };
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
 
@@ -641,7 +641,7 @@ describe('ast-parser', () => {
             ],
         };
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
 
@@ -889,7 +889,7 @@ describe('ast-parser', () => {
             ],
         };
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
 
@@ -987,7 +987,7 @@ describe('ast-parser', () => {
             ],
         };
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
 
@@ -1144,7 +1144,7 @@ describe('ast-parser', () => {
             ],
         };
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
 
@@ -1308,7 +1308,7 @@ describe('ast-parser', () => {
             ],
         };
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
     });
 
@@ -1331,7 +1331,7 @@ describe('ast-parser', () => {
             `;
 
             const expected = [message('first type should be an IntValue.')];
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual(expected);
         });
 
@@ -1408,7 +1408,7 @@ describe('ast-parser', () => {
                 ],
             };
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedValue(result)).toEqual(expected);
         });
     });
@@ -1571,7 +1571,7 @@ describe('ast-parser', () => {
                 ],
             };
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedValue(result)).toEqual(expected);
         });
 
@@ -1594,7 +1594,7 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([
                 message('ASSIGNEDTOME can only be used with ServiceAppointment'),
             ]);

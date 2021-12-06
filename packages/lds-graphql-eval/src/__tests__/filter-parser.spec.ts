@@ -3,7 +3,7 @@ import {
     LuvioListValueNode,
     LuvioObjectValueNode,
     LuvioValueNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { recordFilter } from '../filter-parser';
 import { ObjectInfoMap } from '../info-types';
 import {

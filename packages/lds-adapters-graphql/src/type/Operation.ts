@@ -1,4 +1,4 @@
-import { LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
+import { LuvioOperationDefinitionNode } from '@luvio/graphql-parser';
 import { GraphQLVariables, validateVariableDefinitions } from './Variable';
 
 export { createRead } from '../util/read';

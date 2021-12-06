@@ -1,6 +1,6 @@
 import { Environment, FulfilledSnapshot, Luvio, Store } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionCustomFieldNode } from '@luvio/graphql-parser';
 import { GqlRecord, createIngest, convertToRecordRepresentation, createRead } from '../record';
 
 describe('GQL Record', () => {

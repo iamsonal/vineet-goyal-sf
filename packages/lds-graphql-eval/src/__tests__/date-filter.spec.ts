@@ -3,9 +3,9 @@ import { unwrappedError, unwrappedValue } from '../Result';
 import infoJson from './mockData/objectInfos.json';
 const infoMap = infoJson as ObjectInfoMap;
 
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import { findRecordSelections } from '../ast-parser';
-import { LuvioArgumentNode, LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioArgumentNode, LuvioDocumentNode } from '@luvio/graphql-parser';
 import {
     ComparisonOperator,
     DateArray,
@@ -40,7 +40,7 @@ function testOperatorResult(
     expectedValue: DateInput | DateTimeInput | DateArray | DateTimeArray
 ) {
     const graphqlSource = makeGraphQL(source);
-    const where = findWhereArg(parser.default(graphqlSource));
+    const where = findWhereArg(parseAndVisit(graphqlSource));
     const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(filter.isSuccess).toEqual(true);
@@ -51,7 +51,7 @@ function testOperatorResult(
 
 function testExpectedError(source: string, expectedError: PredicateError[]) {
     const graphqlSource = makeGraphQL(source);
-    const where = findWhereArg(parser.default(graphqlSource));
+    const where = findWhereArg(parseAndVisit(graphqlSource));
     const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(filter.isSuccess).toEqual(false);
@@ -97,7 +97,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS for null date value', () => {
             const graphqlSource = makeGraphQL(`{ EndDate: { eq: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,
@@ -117,7 +117,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS NOT for null date value', () => {
             const graphqlSource = makeGraphQL(`{ EndDate: { ne: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,
@@ -234,7 +234,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS for null date time value', () => {
             const graphqlSource = makeGraphQL(`{ CreatedDate: { eq: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,
@@ -254,7 +254,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS NOT for null date time value', () => {
             const graphqlSource = makeGraphQL(`{ CreatedDate: { ne: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,

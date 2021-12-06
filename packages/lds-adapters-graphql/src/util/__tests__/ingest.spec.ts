@@ -1,5 +1,5 @@
 import { Environment, Luvio, Store } from '@luvio/engine';
-import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionObjectFieldNode } from '@luvio/graphql-parser';
 import { createIngest } from '../ingest';
 import timekeeper from 'timekeeper';
 

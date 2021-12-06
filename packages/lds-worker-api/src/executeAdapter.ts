@@ -1,5 +1,5 @@
 import { AdapterRequestContext, FetchResponse } from '@luvio/engine';
-import gqlParse from '@salesforce/lds-graphql-parser';
+import { parseAndVisit as gqlParse } from '@luvio/graphql-parser';
 import * as gqlApi from 'force/ldsAdaptersGraphql';
 import { getInstrumentation } from 'o11y/client';
 

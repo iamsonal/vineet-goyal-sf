@@ -1,6 +1,6 @@
 import { Reader, StoreLink, StoreResolveResultFound } from '@luvio/engine';
-import { LuvioSelectionNode } from '@salesforce/lds-graphql-parser';
-import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionNode } from '@luvio/graphql-parser';
+import { LuvioFieldNode } from '@luvio/graphql-parser';
 import { createRead } from '../util/read';
 import { StoreResolveResult, StoreResolveResultStale } from '@luvio/engine';
 import { GraphQLVariables } from './Variable';

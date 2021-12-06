@@ -12,7 +12,7 @@ import {
     SnapshotRefresh,
     StoreLookup,
 } from '@luvio/engine';
-import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { astToString } from './util/ast-to-string';
 import { deepFreeze, namespace, representationName, untrustedIsObject } from './util/adapter';
 import { ObjectKeys, ObjectCreate } from './util/language';

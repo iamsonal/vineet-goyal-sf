@@ -1,7 +1,7 @@
 import { Environment, Luvio, Store, CachePolicyNoCache } from '@luvio/engine';
 
 import { graphQLAdapterFactory } from '../../../main';
-import parseAndVisit from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,

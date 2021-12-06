@@ -4,7 +4,7 @@ import {
     MockPayload,
 } from '@luvio/adapter-test-library';
 import { Environment, Luvio, Store } from '@luvio/engine';
-import parseAndVisit from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import { graphQLAdapterFactory } from '../../../main';
 import { namespace, representationName } from '../../../util/adapter';
 import timekeeper from 'timekeeper';

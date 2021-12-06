@@ -12,7 +12,7 @@ import {
     testDurableHitDoesNotHitNetwork,
 } from '@salesforce/lds-jest';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
-import parseAndVisit from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 
 import { graphQLAdapterFactory } from '../../../main';
 import { flushPromises } from './test-utils';

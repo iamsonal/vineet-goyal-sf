@@ -4,7 +4,7 @@ import {
     LuvioSelectionCustomFieldNode,
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { followLink, getLuvioFieldNodeSelection } from '../type/Selection';
 import { createRead as connectionCreateRead } from '../custom/connection';
 import { createRead as recordCreateRead } from '../custom/record';

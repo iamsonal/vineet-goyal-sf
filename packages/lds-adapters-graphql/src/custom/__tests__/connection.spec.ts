@@ -1,5 +1,5 @@
 import { Environment, Luvio, Store, UnfulfilledSnapshot } from '@luvio/engine';
-import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionCustomFieldNode } from '@luvio/graphql-parser';
 import { createIngest, createRead, keyBuilder, serialize } from '../connection';
 
 describe('GQL Connection', () => {

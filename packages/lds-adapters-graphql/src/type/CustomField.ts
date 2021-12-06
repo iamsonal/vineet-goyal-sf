@@ -1,5 +1,5 @@
 import { ResourceIngest } from '@luvio/engine';
-import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionCustomFieldNode } from '@luvio/graphql-parser';
 import { createIngest as recordCreateIngest, CUSTOM_FIELD_NODE_TYPE } from '../custom/record';
 import {
     keyBuilder as connectionKeyBuilder,

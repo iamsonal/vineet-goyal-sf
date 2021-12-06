@@ -11,7 +11,7 @@ import {
     LuvioFieldNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { followLink, getLuvioFieldNodeSelection, resolveLink } from '../type/Selection';
 import { GqlRecord } from './record';
 import { render as renderArguments } from '../type/Argument';

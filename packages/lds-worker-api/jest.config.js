@@ -5,7 +5,7 @@ const nodeModulesNeedingTransformed = [
     '@salesforce/lds-adapters-uiapi/sfdc',
     '@salesforce/lds-adapters-graphql/sfdc',
     '@salesforce/lds-bindings',
-    '@salesforce/lds-graphql-parser',
+    '@luvio/graphql-parser',
     '@mobileplatform/nimbus-plugin-lds',
 ];
 

@@ -1,4 +1,4 @@
-import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioDocumentNode } from '@luvio/graphql-parser';
 import {
     BooleanValueNode,
     FloatValueNode,
@@ -14,7 +14,7 @@ import {
     LuvioListTypeNode,
     LuvioListValueNode,
     LuvioTypeNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { SerializeState, TYPENAME_FIELD, serializeSelections } from './serialize';
 import { ObjectKeys } from './language';
 

@@ -1,5 +1,5 @@
 import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
-import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { validate as operationValidate } from './Operation';
 import { GraphQLVariables } from './Variable';
 import { createIngest as genericCreateIngest } from '../util/ingest';

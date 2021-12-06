@@ -1,4 +1,4 @@
-import parseAndVisit from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import { JSONStringify } from '../../../utils/language';

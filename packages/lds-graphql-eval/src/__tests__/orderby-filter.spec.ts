@@ -2,9 +2,9 @@ import { unwrappedError, unwrappedValue } from '../Result';
 import infoJson from './mockData/objectInfos.json';
 const infoMap = infoJson as ObjectInfoMap;
 
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import { findRecordSelections, transform } from '../ast-parser';
-import { LuvioArgumentNode, LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioArgumentNode, LuvioDocumentNode } from '@luvio/graphql-parser';
 import {
     ComparisonOperator,
     CompoundOperator,
@@ -48,7 +48,7 @@ export function makeOrderByGraphQL(orderBy: string | undefined, edges: string = 
 
 function operatorResult(source: string | undefined): OrderByContainer | undefined {
     const graphqlSource = makeOrderByGraphQL(source);
-    const orderByArg = findOrderByArg(parser.default(graphqlSource));
+    const orderByArg = findOrderByArg(parseAndVisit(graphqlSource));
     const orderBy = parseOrderBy(orderByArg, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(orderBy.isSuccess).toEqual(true);
@@ -58,7 +58,7 @@ function operatorResult(source: string | undefined): OrderByContainer | undefine
 
 function testExpectedError(source: string, expectedError: string) {
     const graphqlSource = makeOrderByGraphQL(source);
-    const orderByArg = findOrderByArg(parser.default(graphqlSource));
+    const orderByArg = findOrderByArg(parseAndVisit(graphqlSource));
     const orderBy = parseOrderBy(orderByArg, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(orderBy.isSuccess).toEqual(false);
@@ -210,7 +210,7 @@ describe('order by filter parser', () => {
             const source = `{CreatedBy: {Email: {order: ASC, nulls: LAST}}}`;
             const graphqlSource = makeOrderByGraphQL(source);
 
-            const result = transform(parser.default(graphqlSource), {
+            const result = transform(parseAndVisit(graphqlSource), {
                 userId: 'MyId',
                 objectInfoMap: infoMap,
             });

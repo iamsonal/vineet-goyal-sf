@@ -4,7 +4,7 @@ import {
     LuvioObjectValueNode,
     LuvioValueNode,
     LuvioVariableNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { serializeValueNode } from '../util/ast-to-string';
 import { ObjectKeys } from '../util/language';
 import { sortAndCopyUsingObjectKey } from '../util/sortUsingKey';

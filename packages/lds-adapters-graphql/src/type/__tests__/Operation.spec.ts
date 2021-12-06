@@ -1,5 +1,5 @@
 import { Environment, Luvio, Store } from '@luvio/engine';
-import { LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
+import { LuvioOperationDefinitionNode } from '@luvio/graphql-parser';
 import { createIngest, createRead } from '../Operation';
 
 describe('Operation', () => {

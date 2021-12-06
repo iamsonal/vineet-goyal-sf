@@ -1,9 +1,5 @@
 import { EnumValueNode } from 'graphql/language';
-import {
-    LuvioArgumentNode,
-    LuvioObjectValueNode,
-    LuvioValueNode,
-} from 'packages/lds-graphql-parser/dist/ast';
+import { LuvioArgumentNode, LuvioObjectValueNode, LuvioValueNode } from '@luvio/graphql-parser';
 import { message, PredicateError } from './Error';
 import { ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
 import { ComparisonOperator, JsonExtract, OrderBy, OrderByContainer, ValueType } from './Predicate';

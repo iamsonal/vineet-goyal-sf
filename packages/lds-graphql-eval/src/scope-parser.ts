@@ -1,4 +1,4 @@
-import { LuvioArgumentNode } from 'packages/lds-graphql-parser/dist/ast';
+import { LuvioArgumentNode } from '@luvio/graphql-parser';
 import { ParserInput } from './ast-parser';
 import { message, PredicateError } from './Error';
 import {

@@ -1,11 +1,12 @@
 import { astToString, serializeOperationDefinition } from '../ast-to-string';
 import { serializeCustomFieldRecord, serializeArguments } from '../serialize';
-import parse, {
+import {
+    parseAndVisit,
     LuvioArgumentNode,
     LuvioDocumentNode,
     LuvioOperationDefinitionNode,
     LuvioSelectionCustomFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 
 describe('AST to string', () => {
     it('should create correct graphql query', () => {
@@ -328,7 +329,7 @@ describe('AST to string', () => {
                 }
             }
         `;
-        const parsed = parse(query);
+        const parsed = parseAndVisit(query);
         const string = astToString(parsed);
         expect(string).toEqual(
             'query { __typename uiapi { __typename query { __typename Opportunity { __typename edges { __typename Partners { __typename edges { __typename node { __typename Id,  } cursor } pageInfo { hasNextPage, hasPreviousPage } totalCount } } } } } }'

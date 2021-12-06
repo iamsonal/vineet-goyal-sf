@@ -1,4 +1,4 @@
-import { LuvioArgumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioArgumentNode } from '@luvio/graphql-parser';
 import { serialize, render } from '../Argument';
 
 describe('Arguments', () => {

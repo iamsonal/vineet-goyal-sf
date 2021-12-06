@@ -1,4 +1,4 @@
-import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioFieldNode } from '@luvio/graphql-parser';
 import {
     serialize as serializeArgument,
     render as renderArguments,

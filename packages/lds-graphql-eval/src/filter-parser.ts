@@ -4,7 +4,7 @@ import {
     LuvioObjectValueNode,
     LuvioValueNode,
     StringValueNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import {
     BooleanValueNode,
     EnumValueNode,

@@ -6,7 +6,7 @@ import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkSequence } from 'test-util';
 import { parse, print } from 'graphql';
 
-import parseAndVisit from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 
 const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;

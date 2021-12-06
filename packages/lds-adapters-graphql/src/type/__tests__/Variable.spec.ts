@@ -1,4 +1,4 @@
-import { LuvioVariableDefinitionNode } from '@salesforce/lds-graphql-parser';
+import { LuvioVariableDefinitionNode } from '@luvio/graphql-parser';
 import { GraphQLVariables, validateVariableDefinitions } from '../Variable';
 
 describe('validateVariableDefinitions', () => {

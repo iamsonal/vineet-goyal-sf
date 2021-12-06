@@ -6,9 +6,9 @@
             "lastUpdatedDate": null,
             "location": null,
             "name": "testTable01",
-            "tableUrl": "/services/data/v54.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables/testTable01"
+            "tableUrl": "/services/data/v55.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables/testTable01"
         }
     ],
     "totalSize": 1,
-    "url": "/services/data/v54.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables?page=1&pageSize=25"
+    "url": "/services/data/v55.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables?page=1&pageSize=25"
 }

@@ -29,7 +29,7 @@
                 "lastModifiedDate": "2021-01-26T02:13:10.000Z",
                 "name": "SFDC_LOCAL",
                 "type": "dataconnector",
-                "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004CKKCA2"
+                "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004CKKCA2"
             },
             "createdBy": {
                 "id": "",
@@ -39,7 +39,7 @@
             "createdDate": "2021-01-26T02:13:10.000Z",
             "datasetId": "0Fbxx0000004CKLCA2",
             "fieldCount": 7,
-            "fieldsUrl": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM/fields",
+            "fieldsUrl": "/services/data/v55.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM/fields",
             "filterApplied": false,
             "id": "0Iuxx0000004CAfCAM",
             "label": "Case",
@@ -61,5 +61,5 @@
             "uuid": "0Iuxx0000004CAfCAM"
         }
     ],
-    "url": "/services/data/v54.0/wave/replicatedDatasets"
+    "url": "/services/data/v55.0/wave/replicatedDatasets"
 }

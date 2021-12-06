@@ -147,7 +147,7 @@ describe('isContinuation Header', () => {
 
         const expectedRequest = {
             basePath: '/wkdw__TestController/getString',
-            baseUri: '/lwr/apex/v54.0',
+            baseUri: '/lwr/apex/v55.0',
             body: null,
             headers: {
                 'X-SFDC-Allow-Continuation': 'true',

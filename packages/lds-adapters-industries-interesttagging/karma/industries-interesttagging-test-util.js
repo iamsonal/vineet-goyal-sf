@@ -4,7 +4,7 @@ import { mockNetworkOnce, mockNetworkErrorOnce, mockNetworkSequence } from 'test
 import sinon from 'sinon';
 import timekeeper from 'timekeeper';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const CONNECT_BASE_URI = `/services/data/${API_VERSION}`;
 const PROPERTIES_TTL = 3600000;
 

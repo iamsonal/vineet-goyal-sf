@@ -7,9 +7,9 @@
     },
     "createdDate": "2021-03-04T00:14:24.000Z",
     "dataflowLastUpdate": "2021-10-19T23:32:44.000Z",
-    "fileUrl": "/services/data/v54.0/wave/recipes/05vxx0000004EiiAAE/file",
+    "fileUrl": "/services/data/v55.0/wave/recipes/05vxx0000004EiiAAE/file",
     "format": "R3",
-    "historiesUrl": "/services/data/v54.0/wave/recipes/05vxx0000004EiiAAE/histories",
+    "historiesUrl": "/services/data/v55.0/wave/recipes/05vxx0000004EiiAAE/histories",
     "id": "05vxx0000004EiiAAE",
     "label": "recipe 1_4",
     "lastModifiedBy": {
@@ -86,6 +86,6 @@
     "status": "New",
     "targetDataflowId": "02Kxx0000004JR9EAM",
     "type": "recipe",
-    "url": "/services/data/v54.0/wave/recipes/05vxx0000004EiiAAE?format=R3",
+    "url": "/services/data/v55.0/wave/recipes/05vxx0000004EiiAAE?format=R3",
     "validationDetails": []
 }

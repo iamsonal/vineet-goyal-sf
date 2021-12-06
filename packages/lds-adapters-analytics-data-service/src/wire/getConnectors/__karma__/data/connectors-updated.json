@@ -4,15 +4,15 @@
             "id": "SALESFORCE_ADS",
             "label": "Salesforce ADS",
             "name": "SALESFORCE_ADS",
-            "url": "/services/data/v54.0/analytics/data-service/sync/connectors/SALESFORCE_ADS"
+            "url": "/services/data/v55.0/analytics/data-service/sync/connectors/SALESFORCE_ADS"
         },
         {
             "id": "AmazonS3Connector",
             "label": "Amazon S3 Connector",
             "name": "AmazonS3Connector",
-            "url": "/services/data/v54.0/analytics/data-service/sync/connectors/AmazonS3Connector"
+            "url": "/services/data/v55.0/analytics/data-service/sync/connectors/AmazonS3Connector"
         }
     ],
     "totalSize": 2,
-    "url": "/services/data/v54.0/analytics/data-service/sync/connectors"
+    "url": "/services/data/v55.0/analytics/data-service/sync/connectors"
 }

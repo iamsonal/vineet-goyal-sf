@@ -3,9 +3,9 @@
         {
             "description": "a description",
             "name": "testSchema01",
-            "tablesUrl": "/services/data/v54.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables"
+            "tablesUrl": "/services/data/v55.0/analytics/data-service/databases/testDatabase01/schemas/testSchema01/tables"
         }
     ],
     "totalSize": 1,
-    "url": "/services/data/v54.0/analytics/data-service/databases/testDatabase01/schemas?page=1&pageSize=25"
+    "url": "/services/data/v55.0/analytics/data-service/databases/testDatabase01/schemas?page=1&pageSize=25"
 }

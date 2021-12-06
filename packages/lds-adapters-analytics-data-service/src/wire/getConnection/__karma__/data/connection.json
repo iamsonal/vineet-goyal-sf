@@ -4,14 +4,14 @@
     "name": "Salesforce ADS",
     "targetSchema": {
         "name": "salesforce.schema",
-        "url": "/services/data/v54.0/analytics/data-service/databases/salesforce/schemas/schema"
+        "url": "/services/data/v55.0/analytics/data-service/databases/salesforce/schemas/schema"
     },
     "connector": {
         "name": "SALESFORCE_ADS",
-        "url": "/services/data/v54.0/analytics/data-service/sync/connectors/SALESFORCE_ADS"
+        "url": "/services/data/v55.0/analytics/data-service/sync/connectors/SALESFORCE_ADS"
     },
     "sourceObjectsUrl": "",
     "state": "Active",
     "targetsUrl": "",
-    "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
+    "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
 }

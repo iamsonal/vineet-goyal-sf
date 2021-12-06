@@ -5,7 +5,7 @@
                 "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c4",
                 "label": "Salesforce ADS",
                 "name": "Salesforce ADS",
-                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
+                "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4"
             },
             "fields": [
                 {
@@ -27,7 +27,7 @@
                 "id": "Account",
                 "label": "Account",
                 "name": "Account",
-                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account"
+                "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account"
             },
             "status": {
                 "errors": 4,
@@ -42,14 +42,14 @@
                 "label": "Account",
                 "name": "Account"
             },
-            "url": "/services/data/v54.0/analytics/data-service/sync/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5"
+            "url": "/services/data/v55.0/analytics/data-service/sync/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5"
         },
         {
             "connection": {
                 "id": "c08fdb87-a196-46aa-8b44-5ad6e9e253c8",
                 "label": "Salesforce ADS 2",
                 "name": "Salesforce ADS 2",
-                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c8"
+                "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c8"
             },
             "fields": [
                 {
@@ -71,7 +71,7 @@
                 "id": "Opportunity",
                 "label": "Opportunity",
                 "name": "Opportunity",
-                "url": "/services/data/v54.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c8/sourceObjects/Opportunity"
+                "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c8/sourceObjects/Opportunity"
             },
             "status": {
                 "errors": 4,
@@ -86,9 +86,9 @@
                 "label": "Opportunity",
                 "name": "Opportunity"
             },
-            "url": "/services/data/v54.0/analytics/data-service/sync/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c6"
+            "url": "/services/data/v55.0/analytics/data-service/sync/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c6"
         }
     ],
     "totalSize": 2,
-    "url": "/services/data/v54.0/analytics/data-service/sync/targets"
+    "url": "/services/data/v55.0/analytics/data-service/sync/targets"
 }

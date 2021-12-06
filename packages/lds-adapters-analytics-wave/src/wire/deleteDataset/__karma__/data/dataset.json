@@ -11,7 +11,7 @@
         "id": "00lxx000000j9TBAAY",
         "label": "Learning Adventure",
         "name": "Learning_Adventure",
-        "url": "/services/data/v54.0/wave/folders/00lxx000000j9TBAAY"
+        "url": "/services/data/v55.0/wave/folders/00lxx000000j9TBAAY"
     },
     "id": "0Fbxx0000004Cx3CAE",
     "label": "DTC_Opportunity_SAMPLE",
@@ -30,7 +30,7 @@
         "view": true
     },
     "type": "dataset",
-    "url": "/services/data/v54.0/wave/datasets/0Fbxx0000004Cx3CAE",
-    "versionsUrl": "/services/data/v54.0/wave/datasets/0Fbxx0000004Cx3CAE/versions",
+    "url": "/services/data/v55.0/wave/datasets/0Fbxx0000004Cx3CAE",
+    "versionsUrl": "/services/data/v55.0/wave/datasets/0Fbxx0000004Cx3CAE/versions",
     "visibility": "All"
 }

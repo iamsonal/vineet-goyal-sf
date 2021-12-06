@@ -4,7 +4,7 @@ import timekeeper from 'timekeeper';
 
 import sinon from 'sinon';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/wave`;
 const ASSET_TTL = 5000;

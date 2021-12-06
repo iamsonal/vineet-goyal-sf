@@ -94,7 +94,7 @@ describe('isContinuation Header', () => {
         expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledTimes(1);
 
         const expectedRequest = {
-            baseUri: '/lwr/apex/v54.0',
+            baseUri: '/lwr/apex/v55.0',
             basePath: '/wkdw__TestController/getString',
             method: 'post',
             body: {

@@ -41,10 +41,10 @@
             "templateValues": {},
             "templateVersion": "6.0",
             "type": "folder",
-            "url": "/services/data/v54.0/wave/folders/00lRM000000n755YAA"
+            "url": "/services/data/v55.0/wave/folders/00lRM000000n755YAA"
         }
     ],
     "nextPageUrl": null,
     "totalSize": 1,
-    "url": "/services/data/v54.0/wave/folders?q=Learning"
+    "url": "/services/data/v55.0/wave/folders?q=Learning"
 }

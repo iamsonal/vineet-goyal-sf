@@ -10,9 +10,9 @@
             },
             "createdDate": "2020-12-02T21:05:15.000Z",
             "dataflowLastUpdate": "2020-12-02T21:05:15.000Z",
-            "fileUrl": "/services/data/v54.0/wave/recipes/05vRM00000003QnYAI/file",
+            "fileUrl": "/services/data/v55.0/wave/recipes/05vRM00000003QnYAI/file",
             "format": "R3",
-            "historiesUrl": "/services/data/v54.0/wave/recipes/05vRM00000003QnYAI/histories",
+            "historiesUrl": "/services/data/v55.0/wave/recipes/05vRM00000003QnYAI/histories",
             "id": "05vRM00000003QnYAI",
             "label": "r3y EA 1",
             "lastModifiedBy": {
@@ -29,7 +29,7 @@
             },
             "targetDataflowId": "02KRM0000002YXg2AM",
             "type": "recipe",
-            "url": "/services/data/v54.0/wave/recipes/05vRM00000003QnYAI?format=R3",
+            "url": "/services/data/v55.0/wave/recipes/05vRM00000003QnYAI?format=R3",
             "validationDetails": []
         },
         {
@@ -41,9 +41,9 @@
             },
             "createdDate": "2020-11-25T00:09:23.000Z",
             "dataflowLastUpdate": "2020-11-27T16:52:34.000Z",
-            "fileUrl": "/services/data/v54.0/wave/recipes/05vRM00000003O3YAI/file",
+            "fileUrl": "/services/data/v55.0/wave/recipes/05vRM00000003O3YAI/file",
             "format": "R3",
-            "historiesUrl": "/services/data/v54.0/wave/recipes/05vRM00000003O3YAI/histories",
+            "historiesUrl": "/services/data/v55.0/wave/recipes/05vRM00000003O3YAI/histories",
             "id": "05vRM00000003O3YAI",
             "label": "r3y_basic_sonic",
             "lastModifiedBy": {
@@ -60,10 +60,10 @@
             },
             "targetDataflowId": "02KRM0000002X9s2AE",
             "type": "recipe",
-            "url": "/services/data/v54.0/wave/recipes/05vRM00000003O3YAI?format=R3",
+            "url": "/services/data/v55.0/wave/recipes/05vRM00000003O3YAI?format=R3",
             "validationDetails": []
         }
     ],
     "totalSize": 2,
-    "url": "/services/data/v54.0/wave/recipes?q=r3y&sort=Name"
+    "url": "/services/data/v55.0/wave/recipes?q=r3y&sort=Name"
 }

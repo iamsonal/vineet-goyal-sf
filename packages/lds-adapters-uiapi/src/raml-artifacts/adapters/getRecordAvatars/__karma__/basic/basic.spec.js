@@ -11,7 +11,7 @@ import { karmaNetworkAdapter } from 'lds-engine';
 import GetRecordAvatars from '../lwc/get-record-avatars';
 import sinon from 'sinon';
 
-const MOCK_PREFIX = 'wire/getRecordAvatars/__karma__/basic/data/';
+const MOCK_PREFIX = 'raml-artifacts/adapters/getRecordAvatars/__karma__/basic/data/';
 
 const FAKE_RESPONSE = {
     statusCode: 200,

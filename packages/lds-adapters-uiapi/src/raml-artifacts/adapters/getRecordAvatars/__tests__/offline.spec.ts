@@ -1,5 +1,5 @@
 import { testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
-import { factory as getRecordAvatarsFactory } from '../index';
+import { getRecordAvatarsAdapterFactory as getRecordAvatarsFactory } from '../../../../generated/adapters/getRecordAvatars';
 
 import data from './data/avatar-001xx0000000003AAA-001xx0000000004AAA-001xx0000000005AAA.json';
 import { MockPayload, buildSuccessMockPayload } from '@luvio/adapter-test-library';

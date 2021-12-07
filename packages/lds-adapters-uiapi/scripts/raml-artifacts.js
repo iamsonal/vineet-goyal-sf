@@ -77,7 +77,7 @@ const RAML_ARTIFACTS = {
         {
             identifier: 'getRecordAdapterFactory',
             path: path.join('src', 'wire', 'getRecord', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
+            //targetIdentifier added to point to the overridden export name
             targetIdentifier: 'factory',
         },
     ],
@@ -139,10 +139,44 @@ const RAML_ARTIFACTS = {
     ],
     '/adapters/getRecordAvatars': [
         {
-            identifier: 'getRecordAvatarsAdapterFactory',
-            path: path.join('src', 'wire', 'getRecordAvatars', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'buildNetworkSnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildNetworkSnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'buildNetworkSnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildNetworkSnapshotCachePolicy.ts'
+            ),
+        },
+        {
+            identifier: 'buildInMemorySnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildInMemorySnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'buildInMemorySnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildInMemorySnapshotCachePolicy.ts'
+            ),
         },
     ],
     '/adapters/getRecordCreateDefaults': [
@@ -196,6 +230,18 @@ const RAML_ARTIFACTS = {
                 'resources',
                 'getUiApiRecordsByRecordId',
                 'createResourceRequest.ts'
+            ),
+        },
+    ],
+    '/resources/getUiApiRecordAvatarsBatchByRecordIds': [
+        {
+            identifier: 'ingestSuccess',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'resources',
+                'getUiApiRecordAvatarsBatchByRecordIds',
+                'ingestSuccess.ts'
             ),
         },
     ],

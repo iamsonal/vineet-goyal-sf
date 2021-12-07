@@ -10,7 +10,7 @@ import {
 import { URL_BASE } from 'uiapi-test-util';
 import sinon from 'sinon';
 
-import GetRecordAvatars from '../../../getRecordAvatars/__karma__/lwc/get-record-avatars';
+import GetRecordAvatars from '../../../../raml-artifacts/adapters/getRecordAvatars/__karma__/lwc/get-record-avatars';
 
 const MOCK_PREFIX = 'wire/updateRecordAvatar/__karma__/basic/data/';
 const recordId = '001xx0000000005AAA';

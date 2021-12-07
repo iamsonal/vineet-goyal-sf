@@ -80,6 +80,27 @@ function onDraftEntriesChanged(
     return resolveDrafts(recordKeys, durableStore, getDraftActionsForRecords, userId);
 }
 
+function getDraftResolutionInfo(
+    recordKeys: string[],
+    durableStore: DurableStore,
+    getDraftActionsForRecords: GetDraftActionsForRecords
+) {
+    return durableStore
+        .getEntries<DurableRecordEntry>(recordKeys, DefaultDurableSegment)
+        .then((entries) => {
+            if (entries === undefined) {
+                return;
+            }
+
+            // get object infos and drafts so we can replay the drafts on the merged result
+            return getDraftResolutionInfoForRecordSet(
+                entries,
+                durableStore,
+                getDraftActionsForRecords
+            );
+        });
+}
+
 /**
  * Resolves the current state of the draft queue on a passed in set of record keys and
  * re-writes the updated value to the durable store
@@ -94,62 +115,64 @@ function resolveDrafts(
     getDraftActionsForRecords: GetDraftActionsForRecords,
     userId: string
 ) {
-    return durableStore
-        .getEntries<DurableRecordEntry>(recordKeys, DefaultDurableSegment)
-        .then((entries) => {
-            if (entries === undefined) {
+    return getDraftResolutionInfo(recordKeys, durableStore, getDraftActionsForRecords).then(
+        (draftResolutionInfo) => {
+            if (draftResolutionInfo === undefined) {
                 return;
             }
-            // get object infos and drafts so we can replay the drafts on the merged result
-            return getDraftResolutionInfoForRecordSet(
-                entries,
-                durableStore,
-                getDraftActionsForRecords
-            ).then((draftResolutionInfo) => {
-                const updatedRecords: {
-                    [key: string]: DurableStoreEntry<DurableRecordEntry>;
-                } = {};
-
-                let keys = ObjectKeys(entries);
-                for (let i = 0, len = keys.length; i < len; i++) {
-                    const recordKey = keys[i];
-                    const entry = entries[recordKey];
-
-                    const { data: record, metadata } = entry;
-
-                    // cannot apply drafts to an error
-                    if (isStoreRecordError(record)) {
-                        continue;
+            return durableStore
+                .getEntries<DurableRecordEntry>(recordKeys, DefaultDurableSegment)
+                .then((entries) => {
+                    if (entries === undefined) {
+                        return;
                     }
+                    // get object infos and drafts so we can replay the drafts on the merged result
 
-                    const { objectInfo, drafts } = draftResolutionInfo[recordKey];
+                    const updatedRecords: {
+                        [key: string]: DurableStoreEntry<DurableRecordEntry>;
+                    } = {};
 
-                    const baseRecord = removeDrafts(record);
+                    let keys = ObjectKeys(entries);
+                    for (let i = 0, len = keys.length; i < len; i++) {
+                        const recordKey = keys[i];
+                        const entry = entries[recordKey];
 
-                    if (drafts === undefined || drafts.length === 0) {
-                        if (baseRecord === undefined) {
-                            // baseRecord doesn't exist and there's no drafts to apply
+                        const { data: record, metadata } = entry;
+
+                        // cannot apply drafts to an error
+                        if (isStoreRecordError(record)) {
                             continue;
                         }
-                        updatedRecords[recordKey] = { data: baseRecord, metadata };
-                    } else {
-                        const replayDrafts = [...drafts];
 
-                        const resolvedRecord = replayDraftsOnRecord(
-                            baseRecord,
-                            replayDrafts,
-                            objectInfo,
-                            userId
-                        );
-                        updatedRecords[recordKey] = { data: resolvedRecord, metadata };
+                        const { objectInfo, drafts } = draftResolutionInfo[recordKey];
+
+                        const baseRecord = removeDrafts(record);
+
+                        if (drafts === undefined || drafts.length === 0) {
+                            if (baseRecord === undefined) {
+                                // baseRecord doesn't exist and there's no drafts to apply
+                                continue;
+                            }
+                            updatedRecords[recordKey] = { data: baseRecord, metadata };
+                        } else {
+                            const replayDrafts = [...drafts];
+
+                            const resolvedRecord = replayDraftsOnRecord(
+                                baseRecord,
+                                replayDrafts,
+                                objectInfo,
+                                userId
+                            );
+                            updatedRecords[recordKey] = { data: resolvedRecord, metadata };
+                        }
                     }
-                }
 
-                if (ObjectKeys(updatedRecords).length > 0) {
-                    return durableStore.setEntries(updatedRecords, DefaultDurableSegment);
-                }
-            });
-        });
+                    if (ObjectKeys(updatedRecords).length > 0) {
+                        return durableStore.setEntries(updatedRecords, DefaultDurableSegment);
+                    }
+                });
+        }
+    );
 }
 
 function isEntryDraftAction(

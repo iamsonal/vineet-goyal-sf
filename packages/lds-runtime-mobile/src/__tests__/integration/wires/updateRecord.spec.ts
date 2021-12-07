@@ -422,9 +422,7 @@ describe('mobile runtime integration tests', () => {
             });
         });
 
-        // TODO [W-10065081]: a race condition exists where the missing field gets overwritten
-        // by makeDurableStoreDraftAware. re-enable this test when fixed
-        xit('properly merges missing fields', async () => {
+        it('properly merges missing fields', async () => {
             networkAdapter.setMockResponse({
                 status: 200,
                 headers: {},

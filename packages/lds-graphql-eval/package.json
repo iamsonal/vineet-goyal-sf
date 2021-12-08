@@ -17,6 +17,6 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@luvio/graphql-parser": "0.62.3"
+        "@luvio/graphql-parser": "0.62.4"
     }
 }

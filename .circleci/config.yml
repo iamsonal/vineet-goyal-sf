@@ -113,23 +113,31 @@ add_tunnelhost_hosts_entry: &add_tunnelhost_hosts_entry
 setup_best_environment: &setup_best_environment
   run:
     name: Setup BEST environment
-    command: echo '
-      export PULL_REQUEST=${CIRCLE_PULL_REQUEST}
-      export REPO_NAME=${CIRCLE_PROJECT_REPONAME}
-      export TARGET_COMMIT=${CIRCLE_SHA1}
-      export BASE_COMMIT=`git rev-parse origin/main`' >> $BASH_ENV
+    command: |
+      curl checkip.amazonaws.com # Used for debugging purposes.
+
+      echo '
+        export PULL_REQUEST=${CIRCLE_PULL_REQUEST}
+        export REPO_NAME=${CIRCLE_PROJECT_REPONAME}
+        export TARGET_COMMIT=${CIRCLE_SHA1}
+        export BASE_COMMIT=`git rev-parse origin/main`' >> $BASH_ENV
 
       echo -e "$GIT_APP_CERT" | base64 -d >> ~/lds-lp/git_app.pem
 
 run_best: &run_best
   run:
     name: Run performance Test
-    command: yarn test:perf --externalStorage=@best/store-aws --runner remote --dbAdapter=sql/postgres --dbURI=${BEST_HUB_DATABASE_URL} || true
+    command: |
+      yarn test:perf \
+        --runner remote \
+        --dbToken="${BEST_FRONTEND_CLIENT_TOKEN}" \
+        --dbAdapter=rest/frontend \
+        --dbURI="${BEST_FRONTEND_HOSTNAME}" || true
 
-compare_best_results: &compare_best_results
-  run:
-    name: Comparing perf examples
-    command: yarn test:perf --compareStats ${BASE_COMMIT} ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration || true
+# compare_best_results: &compare_best_results
+#   run:
+#     name: Comparing perf examples
+#     command: yarn test:perf --compareStats ${BASE_COMMIT} ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration || true
 
 store_best_artifacts: &store_best_artifacts
   store_artifacts:

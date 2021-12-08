@@ -16,11 +16,11 @@ function buildLuvio() {
     return luvio;
 }
 
-describe('postApex adapter calls luvio.applyCachePolicy', () => {
+describe('postApex adapter', () => {
     const mockReturnedData = jest.fn() as unknown as FulfilledSnapshot<any>;
 
     describe('calls luvio.applyCachePolicy', () => {
-        it('when caller supplies cache policy', async () => {
+        it('when caller supplies requestContext', async () => {
             const luvio = buildLuvio();
             const invoker = postApexInvokerFactory(luvio, invokerParams);
             const applyCachePolicySpy = jest
@@ -37,29 +37,19 @@ describe('postApex adapter calls luvio.applyCachePolicy', () => {
             // ensure the first parameter was the cache policy
             expect(applyCachePolicySpy.mock.calls[0][0]).toEqual(adapterRequestContext);
         });
-    });
 
-    // TODO [W-10164140]: this test will go away and a new test should be added to ensure
-    // the network-only cache policy is passed in when a request is not cacheable
-    describe('does NOT call luvio.applyCachePolicy', () => {
-        it('when caller DOES NOT supply cache policy', async () => {
+        it('when caller DOES NOT supply requestContext', async () => {
             const luvio = buildLuvio();
             const invoker = postApexInvokerFactory(luvio, invokerParams);
-            const applyCachePolicySpy = jest.spyOn(luvio, 'applyCachePolicy');
-            const dispatchResourceRequestSpy = jest
-                .spyOn(luvio, 'dispatchResourceRequest')
-                .mockResolvedValue({
-                    body: {},
-                    headers: {},
-                    ok: true,
-                    status: 200,
-                    statusText: '',
-                });
+            const applyCachePolicySpy = jest
+                .spyOn(luvio, 'applyCachePolicy')
+                .mockResolvedValue({ data: mockReturnedData } as FulfilledSnapshot<any>);
 
-            await invoker({});
+            const data = await invoker({});
 
-            expect(applyCachePolicySpy).toHaveBeenCalledTimes(0);
-            expect(dispatchResourceRequestSpy).toHaveBeenCalledTimes(1);
+            expect(data).toBe(mockReturnedData);
+
+            expect(applyCachePolicySpy).toHaveBeenCalledTimes(1);
         });
     });
 });

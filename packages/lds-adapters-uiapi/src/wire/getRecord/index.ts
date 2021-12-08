@@ -17,9 +17,8 @@ import {
 } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
-import { getRecordByFields, getRecordByFields_requestContext } from './GetRecordFields';
+import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
-import { getRecordLayoutType as getRecordLayoutType_requestContext } from './GetRecordLayoutTypeRequestContext';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 import { instrumentation } from '../../instrumentation';
@@ -155,13 +154,9 @@ export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (l
         }
 
         if (hasLayoutTypes(config)) {
-            return requestContext
-                ? getRecordLayoutType_requestContext(luvio, config, requestContext)
-                : getRecordLayoutType(luvio, config);
+            return getRecordLayoutType(luvio, config, requestContext);
         } else if (hasFieldsOrOptionalFields(config)) {
-            return requestContext
-                ? getRecordByFields_requestContext(luvio, config, requestContext)
-                : getRecordByFields(luvio, config);
+            return getRecordByFields(luvio, config, requestContext);
         }
 
         return null;

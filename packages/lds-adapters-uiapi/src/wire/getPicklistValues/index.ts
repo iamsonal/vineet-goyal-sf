@@ -180,23 +180,13 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
             return null;
         }
 
-        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
-        if (requestContext !== undefined) {
-            return luvio.applyCachePolicy(
-                requestContext || {},
-                {
-                    luvio,
-                    config,
-                },
-                buildInMemorySnapshotCachePolicy,
-                buildNetworkSnapshotCachePolicy
-            );
-        }
-
-        const snapshot = buildInMemorySnapshot(luvio, config);
-        if (luvio.snapshotAvailable(snapshot)) {
-            return snapshot;
-        }
-
-        return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, config));
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+            },
+            buildInMemorySnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
     };

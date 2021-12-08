@@ -147,13 +147,14 @@ export function buildNetworkSnapshot(
 type BuildSnapshotContext = {
     config: GetListViewSummaryCollectionConfig;
     luvio: Luvio;
+    snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>;
 };
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext
 ): Promise<Snapshot<ListViewSummaryCollectionRepresentation, any>> {
-    const { config, luvio } = context;
-    return buildNetworkSnapshot(luvio, config);
+    const { config, luvio, snapshot } = context;
+    return buildNetworkSnapshot(luvio, config, snapshot);
 }
 
 function buildInMemorySnapshotCachePolicy(
@@ -167,7 +168,14 @@ function buildInMemorySnapshotCachePolicy(
         variables: {},
     };
 
-    return storeLookup(selector, buildRefreshSnapshot(luvio, config));
+    const snapshot = storeLookup(selector, buildRefreshSnapshot(luvio, config));
+
+    // if unfulfilled we save the snapshot so buildNetworkSnapshot can use it
+    if (snapshot.state === 'Unfulfilled') {
+        context.snapshot = snapshot;
+    }
+
+    return snapshot;
 }
 
 export const factory: AdapterFactory<
@@ -191,28 +199,13 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
-        if (requestContext !== undefined) {
-            return luvio.applyCachePolicy(
-                requestContext,
-                {
-                    luvio,
-                    config,
-                },
-                buildInMemorySnapshotCachePolicy,
-                buildNetworkSnapshotCachePolicy
-            );
-        }
-
-        const cacheSnapshot = buildInMemorySnapshot(luvio, config);
-
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot)) {
-            return cacheSnapshot;
-        }
-
-        return luvio.resolveSnapshot(
-            cacheSnapshot,
-            buildRefreshSnapshot(luvio, config, cacheSnapshot)
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+            },
+            buildInMemorySnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
         );
     };

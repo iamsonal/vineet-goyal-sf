@@ -1,36 +1,46 @@
-import { Luvio, PathSelection, Snapshot, SnapshotRefresh } from '@luvio/engine';
-import { buildInMemorySnapshot as getObjectInfoCache } from '../../generated/adapters/getObjectInfo';
-import { GetRecordUiConfig } from '../../generated/adapters/getRecordUi';
+import {
+    AdapterRequestContext,
+    Luvio,
+    PathSelection,
+    Snapshot,
+    SnapshotRefresh,
+    StoreLookup,
+} from '@luvio/engine';
+import {
+    buildInMemorySnapshot as buildInMemorySnapshot_GetRecordFields,
+    buildNetworkSnapshot as buildNetworkSnapshot_GetRecordFields,
+    buildRecordSelector,
+    getRecordByFields,
+} from './GetRecordFields';
+import { buildInMemorySnapshotCachePolicy as buildInMemorySnapshotCachePolicy_getObjectInfo } from '../../generated/adapters/getObjectInfo';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import {
-    keyBuilder as recordLayoutRepresentationKeyBuilder,
+    keyBuilder as keyBuilder_RecordLayoutRepresentation,
     RecordLayoutRepresentation,
-    select as recordLayoutRepresentationSelect,
+    select as select_RecordLayoutRepresentation,
 } from '../../generated/types/RecordLayoutRepresentation';
 import {
-    keyBuilder as recordRepresentationKeyBuilder,
+    keyBuilder as keyBuilder_RecordRepresentation,
     RecordRepresentation,
 } from '../../generated/types/RecordRepresentation';
 import { RecordUiRepresentation } from '../../generated/types/RecordUiRepresentation';
+import { buildNetworkSnapshot as buildNetworkSnapshot_getRecordUi } from '../getRecordUi';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { LayoutType } from '../../primitives/LayoutType';
-import { RecordLayoutFragment, getRecordTypeId } from '../../util/records';
-import { getQualifiedFieldApiNamesFromLayout } from '../../util/layouts';
-import { isErrorSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
-import { dedupe } from '../../validation/utils';
-import {
-    factory as getRecordUiFactory,
-    buildNetworkSnapshot as getRecordUiNetwork,
-} from '../getRecordUi';
-import {
-    buildInMemorySnapshot as getRecordByFieldsCache,
-    getRecordByFields,
-} from './GetRecordFields';
 import { ObjectKeys } from '../../util/language';
+import { getQualifiedFieldApiNamesFromLayout } from '../../util/layouts';
+import { getRecordTypeId, RecordLayoutFragment } from '../../util/records';
+import {
+    isErrorSnapshot,
+    isFulfilledSnapshot,
+    isStaleSnapshot,
+    isUnfulfilledSnapshot,
+} from '../../util/snapshot';
+import { dedupe } from '../../validation/utils';
 
 const DEFAULT_MODE = LayoutMode.View;
 
-const layoutSelections = recordLayoutRepresentationSelect();
+const layoutSelections = select_RecordLayoutRepresentation();
 
 export interface GetRecordLayoutTypeConfig {
     recordId: string;
@@ -68,10 +78,10 @@ function refresh(
         optionalFields,
     };
 
-    return getRecordUiNetwork(luvio, recordUiConfig).then((snapshot) => {
+    return buildNetworkSnapshot_getRecordUi(luvio, recordUiConfig).then((snapshot) => {
         const refresh = buildSnapshotRefresh(luvio, config);
         if (isErrorSnapshot(snapshot)) {
-            var recordKey = recordRepresentationKeyBuilder({ recordId });
+            var recordKey = keyBuilder_RecordRepresentation({ recordId });
             luvio.storeIngestError(recordKey, snapshot);
             luvio.storeBroadcast();
             return luvio.errorSnapshot(snapshot.error, refresh);
@@ -96,62 +106,16 @@ function refresh(
         }
         const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, data);
         const fields = getFieldsFromLayoutMap(layoutMap, objectInfo);
-        return getRecordByFieldsCache(
+        return buildInMemorySnapshot_GetRecordFields(
             luvio,
             {
                 recordId,
                 fields,
-                modes,
+                optionalFields,
             },
             refresh
         );
     });
-}
-
-// Makes a request directly to /record-ui/{recordIds}
-function fetchRecordLayout(
-    luvio: Luvio,
-    refresh: SnapshotRefresh<RecordRepresentation>,
-    recordId: string,
-    layoutTypes: LayoutType[],
-    modes: LayoutMode[],
-    optionalFields?: string[]
-) {
-    const recordUiConfig: GetRecordUiConfig = {
-        recordIds: [recordId],
-        layoutTypes,
-        modes,
-        optionalFields,
-    };
-    const recordUiAdapter = getRecordUiFactory(luvio);
-    const recordUiSnapshotOrPromise = recordUiAdapter(recordUiConfig);
-    if (isPromise(recordUiSnapshotOrPromise)) {
-        return recordUiSnapshotOrPromise.then((snapshot) => {
-            return processRecordUiRepresentation(
-                luvio,
-                refresh,
-                recordId,
-                modes,
-                snapshot,
-                optionalFields
-            );
-        });
-    }
-
-    if (process.env.NODE_ENV !== 'production') {
-        if (recordUiSnapshotOrPromise === null) {
-            throw new Error('RecordUi adapter synchronously resolved with a null snapshot');
-        }
-    }
-
-    return processRecordUiRepresentation(
-        luvio,
-        refresh,
-        recordId,
-        modes,
-        recordUiSnapshotOrPromise!,
-        optionalFields
-    );
 }
 
 function getLayoutMapAndObjectInfo(recordId: string, data: RecordUiRepresentation) {
@@ -207,30 +171,28 @@ function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
     return value !== null && (value as any).then !== undefined;
 }
 
-function lookupObjectInfo(luvio: Luvio, apiName: string): ObjectInfoRepresentation | null {
-    const snapshot = getObjectInfoCache(luvio, { objectApiName: apiName });
-    if (luvio.snapshotAvailable(snapshot)) {
-        if (!isErrorSnapshot(snapshot) && snapshot.data !== undefined) {
-            return snapshot.data;
-        }
-    }
-    return null;
-}
-
 interface RecordLayoutRepresentationMap {
     [layoutType: string]: {
         [mode: string]: RecordLayoutRepresentation;
     };
 }
 
+/**
+ * Given a set of layout types & modes, construct:
+ *
+ *    { <type> => { <mode> => RecordLayoutRepresentation }}
+ *
+ * Returns null if storeLookup cannot locate any of the layouts.
+ */
 function lookupLayouts(
-    luvio: Luvio,
+    storeLookup: StoreLookup<RecordLayoutRepresentation>,
     apiName: string,
     recordTypeId: string,
     layoutTypes: LayoutType[],
     modes: LayoutMode[]
-): RecordLayoutRepresentationMap | null {
+): [RecordLayoutRepresentationMap | null, boolean] {
     const map: RecordLayoutRepresentationMap = {};
+    let stale = false;
 
     for (let i = 0; i < layoutTypes.length; i += 1) {
         const layoutType = layoutTypes[i];
@@ -242,29 +204,31 @@ function lookupLayouts(
         for (let m = 0; m < modes.length; m += 1) {
             const mode = modes[m];
 
-            const key = recordLayoutRepresentationKeyBuilder({
+            const key = keyBuilder_RecordLayoutRepresentation({
                 objectApiName: apiName,
                 recordTypeId,
                 layoutType,
                 mode,
             });
 
-            const snapshot = luvio.storeLookup<RecordLayoutRepresentation>({
+            const snapshot = storeLookup({
                 recordId: key,
                 node: layoutSelections,
                 variables: {},
             });
 
             // Cache hit
-            if (luvio.snapshotAvailable(snapshot) && !isErrorSnapshot(snapshot)) {
-                layoutMap[mode] = snapshot.data!;
-            } else {
-                return null;
+            if (snapshot.data === undefined) {
+                return [null, false];
             }
+
+            stale = stale || isStaleSnapshot(snapshot);
+
+            layoutMap[mode] = snapshot.data!;
         }
     }
 
-    return map;
+    return [map, stale];
 }
 
 const recordLayoutFragmentSelector: PathSelection[] = [
@@ -330,14 +294,30 @@ function getRecord(
     return recordSnapshotOrPromise;
 }
 
-export function getRecordLayoutType(
-    luvio: Luvio,
-    config: GetRecordLayoutTypeConfig
-): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
-    const { recordId, layoutTypes, modes: configModes, optionalFields } = config;
-    const modes = configModes === undefined ? [DEFAULT_MODE] : configModes;
-    const storeKey = recordRepresentationKeyBuilder({ recordId });
-    const recordSnapshot = luvio.storeLookup<RecordLayoutFragment>({
+type BuildSnapshotContext = {
+    config: GetRecordLayoutTypeConfig;
+    luvio: Luvio;
+    fields?: string[];
+};
+
+/**
+ * Attempts to construct the requested RecordRepresentation from the L1 store using
+ * the record's type, layouts, and object info to generate the set of fields that
+ * need to be included.
+ *
+ * @returns Snapshot (possibly incomplete) for the record, undefined if the prerequisite
+ *     information was not found in L1
+ */
+function buildInMemorySnapshot(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<any>
+): Snapshot<RecordRepresentation> | undefined {
+    const { config, luvio } = context;
+
+    // get cached copy of the record
+    const { recordId } = config;
+    const storeKey = keyBuilder_RecordRepresentation({ recordId });
+    const recordSnapshot = (storeLookup as StoreLookup<RecordLayoutFragment>)({
         recordId: storeKey,
         node: {
             kind: 'Fragment',
@@ -346,27 +326,125 @@ export function getRecordLayoutType(
         },
         variables: {},
     });
-    const refresh = buildSnapshotRefresh(luvio, config);
-    // If we haven't seen the record then go to the server
-    if (!luvio.snapshotAvailable(recordSnapshot) || recordSnapshot.data === undefined) {
-        return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
+
+    // bail if we don't have the record
+    if (recordSnapshot.data === undefined) {
+        return;
     }
 
     const record = recordSnapshot.data;
     const { apiName } = record;
-    const objectInfo = lookupObjectInfo(luvio, apiName);
-    // If we do not have object info in cache, call record-ui endpoint directly
-    if (objectInfo === null) {
-        return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
+
+    // lookup object info for the record
+    const objectInfoSnapshot = buildInMemorySnapshotCachePolicy_getObjectInfo(
+        {
+            config: {
+                objectApiName: apiName,
+            },
+            luvio,
+        },
+        storeLookup
+    );
+
+    // bail if we don't have object info that matches this record
+    if (!objectInfoSnapshot || !objectInfoSnapshot.data) {
+        return;
     }
 
+    // try to load all the requested layouts from cache
     const recordTypeId = getRecordTypeId(record);
-    const layoutMap = lookupLayouts(luvio, apiName, recordTypeId, layoutTypes, modes);
-    // It takes one xhr per layout to load so if there are missing layouts
-    // give up and call record-ui endpoint directly
+    const modes = config.modes === undefined ? [DEFAULT_MODE] : config.modes;
+    const [layoutMap, layoutMapIsStale] = lookupLayouts(
+        storeLookup,
+        apiName,
+        recordTypeId,
+        config.layoutTypes,
+        modes
+    );
+
+    // bail if any of the layouts were missing
     if (layoutMap === null) {
-        return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
+        return;
     }
 
-    return getRecord(luvio, refresh, recordId, layoutMap, objectInfo, optionalFields);
+    // transform the layouts & object info into a set of fields
+    const fields = getFieldsFromLayoutMap(layoutMap, objectInfoSnapshot.data);
+    const optionalFields =
+        config.optionalFields === undefined ? [] : dedupe(config.optionalFields).sort();
+
+    // borrow GetRecordFields' logic to construct the RecordRepresentation with the necessary fields
+    const sel = buildRecordSelector(recordId, fields, optionalFields);
+    const recordRepSnapshot = storeLookup(sel, buildSnapshotRefresh(luvio, config));
+
+    if (isFulfilledSnapshot(recordRepSnapshot)) {
+        // mark snapshot as stale if any of the information used to construct it was stale
+        if (
+            isStaleSnapshot(recordSnapshot) ||
+            isStaleSnapshot(objectInfoSnapshot) ||
+            layoutMapIsStale
+        ) {
+            recordRepSnapshot.state = 'Stale' as typeof recordRepSnapshot.state;
+        }
+    }
+    // allow buildNetworkSnappsho() to use GetRecordFields if we were just missing some fields in L1
+    else if (isUnfulfilledSnapshot(recordRepSnapshot)) {
+        context.fields = fields;
+    }
+
+    // return however much of the record we were able to find in L1; cache policy decides if we
+    // should consult L2 or go to network
+    return recordRepSnapshot;
+}
+
+function buildNetworkSnapshot(
+    context: BuildSnapshotContext
+): Promise<Snapshot<RecordRepresentation>> {
+    const { config, luvio } = context;
+    const { recordId } = config;
+    const optionalFields =
+        config.optionalFields === undefined ? [] : dedupe(config.optionalFields).sort();
+
+    const refresh = buildSnapshotRefresh(luvio, config);
+
+    // if we were able to map the layouts to a set of fields then use GetRecordFields
+    // to send a request for just those fields
+    if (context.fields !== undefined) {
+        const recordConfig = {
+            recordId,
+            fields: context.fields,
+            optionalFields,
+        };
+
+        return buildNetworkSnapshot_GetRecordFields(luvio, recordConfig).then((snapshot) => {
+            snapshot.refresh = refresh;
+            return snapshot;
+        });
+    }
+
+    // otherwise fallback to getRecordUi to get the full set of information
+    const modes = config.modes !== undefined ? config.modes : [DEFAULT_MODE];
+
+    const recordUiConfig = {
+        recordIds: [recordId],
+        layoutTypes: config.layoutTypes,
+        modes,
+        optionalFields,
+    };
+
+    return buildNetworkSnapshot_getRecordUi(luvio, recordUiConfig).then((snapshot) =>
+        processRecordUiRepresentation(luvio, refresh, recordId, modes, snapshot, optionalFields)
+    );
+}
+
+export function getRecordLayoutType(
+    luvio: Luvio,
+    config: GetRecordLayoutTypeConfig,
+    requestContext?: AdapterRequestContext
+): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
+    return luvio.applyCachePolicy(
+        requestContext || {},
+        { config, luvio },
+        buildInMemorySnapshot,
+        buildNetworkSnapshot
+    );
 }

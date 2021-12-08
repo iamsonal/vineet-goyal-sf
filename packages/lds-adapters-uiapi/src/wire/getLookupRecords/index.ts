@@ -9,11 +9,7 @@ import {
 } from '@luvio/engine';
 
 import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
-import {
-    AdapterValidationConfig,
-    untrustedIsObject,
-    refreshable,
-} from '../../generated/adapters/adapter-utils';
+import { AdapterValidationConfig, untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
     validateAdapterConfig,
     GetLookupRecordsConfig,
@@ -197,24 +193,6 @@ function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
 export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRepresentation> = (
     luvio: Luvio
 ) => {
-    const refreshableImplementation = refreshable(
-        function (untrusted: unknown) {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                return null;
-            }
-            return buildNetworkSnapshot(luvio, config);
-        },
-        (untrusted: unknown) => {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                // eslint-disable-next-line @salesforce/lds/no-error-in-production
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-            return buildNetworkSnapshot(luvio, config);
-        }
-    );
-
     return (
         untrustedConfig: unknown,
         requestContext?: AdapterRequestContext
@@ -222,35 +200,31 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
         | Promise<Snapshot<RecordCollectionRepresentation>>
         | Snapshot<RecordCollectionRepresentation>
         | null => {
-        if (requestContext) {
-            const config = coerceConfigWithDefaults(untrustedConfig);
-            if (config === null) {
-                return null;
-            }
-
-            const refresh = {
-                config,
-                resolve: () => buildNetworkSnapshot(luvio, config),
-            };
-
-            const promiseOrSnapshot = luvio.applyCachePolicy(
-                requestContext || {},
-                { config, luvio },
-                buildInMemorySnapshot,
-                buildNetworkSnapshotCachePolicy
-            );
-
-            if (isPromise(promiseOrSnapshot)) {
-                return promiseOrSnapshot.then((snapshot) => {
-                    snapshot.refresh = refresh;
-                    return snapshot;
-                });
-            }
-
-            promiseOrSnapshot.refresh = refresh;
-            return promiseOrSnapshot;
+        const config = coerceConfigWithDefaults(untrustedConfig);
+        if (config === null) {
+            return null;
         }
 
-        return refreshableImplementation(untrustedConfig);
+        const refresh = {
+            config,
+            resolve: () => buildNetworkSnapshot(luvio, config),
+        };
+
+        const promiseOrSnapshot = luvio.applyCachePolicy(
+            requestContext || {},
+            { config, luvio },
+            buildInMemorySnapshot,
+            buildNetworkSnapshotCachePolicy
+        );
+
+        if (isPromise(promiseOrSnapshot)) {
+            return promiseOrSnapshot.then((snapshot) => {
+                snapshot.refresh = refresh;
+                return snapshot;
+            });
+        }
+
+        promiseOrSnapshot.refresh = refresh;
+        return promiseOrSnapshot;
     };
 };

@@ -58,34 +58,28 @@ describe('graphql adapter calls luvio.applyCachePolicy', () => {
     };
 
     describe('calls luvio.applyCachePolicy', () => {
-        it('when caller supplies cache policy', async () => {
+        it('when caller supplies requestContext', async () => {
             const { adapter, luvio, config } = setup();
 
             const applyCachePolicySpy = jest.spyOn(luvio, 'applyCachePolicy');
 
             const cachePolicy: CachePolicyNoCache = { type: 'no-cache' };
-            const adapterRequestConext = { cachePolicy };
-            await adapter(config, adapterRequestConext);
+            const adapterRequestContext = { cachePolicy };
+            await adapter(config, adapterRequestContext);
 
             expect(applyCachePolicySpy).toHaveBeenCalledTimes(1);
             // ensure the first parameter was the cache policy
-            expect(applyCachePolicySpy.mock.calls[0][0]).toEqual(adapterRequestConext);
+            expect(applyCachePolicySpy.mock.calls[0][0]).toEqual(adapterRequestContext);
         });
-    });
 
-    // TODO [W-10164140]: this test will go away and a new test should be added to ensure
-    // applyCachePolicy is called even when caller does not provide a cache policy
-    describe('does NOT call luvio.applyCachePolicy', () => {
-        it('when caller DOES NOT supply cache policy', async () => {
+        it('when caller DOES NOT supply requestContext', async () => {
             const { adapter, luvio, config } = setup();
 
             const applyCachePolicySpy = jest.spyOn(luvio, 'applyCachePolicy');
-            const resolveSnapshot = jest.spyOn(luvio, 'resolveSnapshot');
 
             await adapter(config);
 
-            expect(applyCachePolicySpy).toHaveBeenCalledTimes(0);
-            expect(resolveSnapshot).toHaveBeenCalledTimes(1);
+            expect(applyCachePolicySpy).toHaveBeenCalledTimes(1);
         });
     });
 });

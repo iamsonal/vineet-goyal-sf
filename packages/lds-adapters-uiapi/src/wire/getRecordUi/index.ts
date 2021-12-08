@@ -4,15 +4,12 @@ import {
     CacheKeySet,
     ErrorSnapshot,
     FetchResponse,
-    FulfilledSnapshot,
     GraphNode,
     Luvio,
     Selector,
     Snapshot,
     SnapshotRefresh,
-    StaleSnapshot,
     StoreLookup,
-    UnAvailableSnapshot,
     UnfulfilledSnapshot,
 } from '@luvio/engine';
 import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
@@ -443,15 +440,6 @@ function onResourceResponseError(
     return errorSnapshot;
 }
 
-function isSelectorSnapshotWithData(
-    snapshot: Snapshot<Selector | RecordUiRepresentation>
-): snapshot is FulfilledSnapshot<Selector> | StaleSnapshot<Selector> {
-    return (
-        (snapshot.state === 'Fulfilled' || snapshot.state === 'Stale') &&
-        'node' in (snapshot.data as Selector)
-    );
-}
-
 export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetRecordUiConfigWithDefaults
@@ -582,85 +570,30 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
             return null;
         }
 
-        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
-        if (requestContext !== undefined) {
-            const cachePolicy = requestContext || {};
+        const definedRequestContext = requestContext || {};
 
-            const selectorPromiseOrSnapshot = luvio.applyCachePolicy(
-                cachePolicy,
-                { config, luvio },
-                buildInMemorySelectorSnapshot,
-                buildNotFetchableNetworkSnapshot(luvio)
+        const selectorPromiseOrSnapshot = luvio.applyCachePolicy(
+            definedRequestContext,
+            { config, luvio },
+            buildInMemorySelectorSnapshot,
+            buildNotFetchableNetworkSnapshot(luvio)
+        );
+
+        const resolveSelector = (selectorSnapshot: Snapshot<Selector<RecordUiRepresentation>>) => {
+            const selector =
+                isFulfilledSnapshot(selectorSnapshot) || isStaleSnapshot(selectorSnapshot)
+                    ? selectorSnapshot.data
+                    : undefined;
+
+            return luvio.applyCachePolicy(
+                definedRequestContext,
+                { config, luvio, selector },
+                buildInMemoryRecordUiRepresentationSnapshot,
+                buildNetworkRecordUiRepresentationSnapshot
             );
+        };
 
-            const resolveSelector = (
-                selectorSnapshot: Snapshot<Selector<RecordUiRepresentation>>
-            ) => {
-                const selector =
-                    isFulfilledSnapshot(selectorSnapshot) || isStaleSnapshot(selectorSnapshot)
-                        ? selectorSnapshot.data
-                        : undefined;
-
-                return luvio.applyCachePolicy(
-                    cachePolicy,
-                    { config, luvio, selector },
-                    buildInMemoryRecordUiRepresentationSnapshot,
-                    buildNetworkRecordUiRepresentationSnapshot
-                );
-            };
-
-            return isPromise(selectorPromiseOrSnapshot)
-                ? selectorPromiseOrSnapshot.then(resolveSelector)
-                : resolveSelector(selectorPromiseOrSnapshot);
-        }
-
-        const cacheSnapshot = buildInMemorySnapshot(luvio, config);
-
-        // if snapshot is null go right to network
-        if (cacheSnapshot === null) {
-            return buildNetworkSnapshot(luvio, config);
-        }
-
-        if (isUnfulfilledSnapshot(cacheSnapshot)) {
-            const snapshotRefresh = buildSnapshotRefresh(luvio, config);
-
-            return luvio
-                .resolveSnapshot(
-                    cacheSnapshot as UnAvailableSnapshot<RecordUiRepresentation | Selector>,
-                    snapshotRefresh
-                )
-                .then((resolvedSnapshot) => {
-                    // In default environment resolving a snapshot is just hitting the network
-                    // with the given SnapshotRefresh (so record-ui in this case).  In durable environment
-                    // resolving a snapshot will first attempt to read the missing cache keys
-                    // from the given UnAvailable snapshot (a record-ui snapshot or selector snapshot in this
-                    // case) and build a Fulfilled snapshot from that if those cache keys are present, otherwise
-                    // it hits the network with the given resource request.  Usually the SnapshotRefresh and the
-                    // UnAvailable snapshot are for the same response Type, but this adapter is special (it
-                    // stores its own selectors in the store), and so our use of resolveSnapshot
-                    // is special (polymorphic response, could either be a record-ui representation or a
-                    // selector).
-
-                    // if the response is a selector then we can attempt to build a snapshot
-                    // with that selector
-                    if (isSelectorSnapshotWithData(resolvedSnapshot)) {
-                        const dataSnapshot = luvio.storeLookup<RecordUiRepresentation>(
-                            resolvedSnapshot.data,
-                            snapshotRefresh
-                        );
-
-                        if (luvio.snapshotAvailable(dataSnapshot)) {
-                            return dataSnapshot;
-                        }
-
-                        return luvio.resolveSnapshot(dataSnapshot, snapshotRefresh);
-                    }
-
-                    // otherwise it's a record-ui response
-                    return resolvedSnapshot as Snapshot<RecordUiRepresentation>;
-                });
-        }
-
-        // if we got here then we can just return the in-memory snapshot
-        return cacheSnapshot;
+        return isPromise(selectorPromiseOrSnapshot)
+            ? selectorPromiseOrSnapshot.then(resolveSelector)
+            : resolveSelector(selectorPromiseOrSnapshot);
     };

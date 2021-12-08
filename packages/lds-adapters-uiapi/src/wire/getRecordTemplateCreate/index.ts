@@ -298,34 +298,16 @@ export const factory: AdapterFactory<
 
         const recordTypeId = getRecordTypeId(adapterContext, config);
 
-        // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
-        if (requestContext !== undefined) {
-            return luvio.applyCachePolicy(
-                requestContext || {},
-                {
-                    luvio,
-                    config,
-                    recordTypeId,
-                    adapterContext,
-                },
-                buildInMemorySnapshotCachePolicy,
-                buildNetworkSnapshotCachePolicy
-            );
-        }
-
-        const cacheSnapshot = buildInMemorySnapshot(luvio, adapterContext, {
-            ...config,
-            recordTypeId,
-        });
-
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot)) {
-            return cacheSnapshot;
-        }
-
-        return luvio.resolveSnapshot(
-            cacheSnapshot,
-            buildSnapshotRefresh(luvio, adapterContext, config)
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+                recordTypeId,
+                adapterContext,
+            },
+            buildInMemorySnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
         );
     });
 };

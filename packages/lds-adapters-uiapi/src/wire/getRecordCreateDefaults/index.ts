@@ -218,32 +218,16 @@ export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaul
              */
             const cachedSelector = adapterContext.get<Selector>(selectorKey);
 
-            // TODO [W-10164140]: get rid of this if check and always use luvio.applyCachePolicy
-            if (requestContext !== undefined) {
-                return luvio.applyCachePolicy(
-                    requestContext,
-                    {
-                        luvio,
-                        config,
-                        adapterContext,
-                        cachedSelector,
-                    },
-                    buildInMemorySnapshotCachePolicy,
-                    buildNetworkSnapshotCachePolicy
-                );
-            }
-
-            if (cachedSelector === undefined) {
-                return buildNetworkSnapshot(luvio, adapterContext, config);
-            }
-
-            const snapshot = buildInMemorySnapshot(cachedSelector, luvio, adapterContext, config);
-            if (luvio.snapshotAvailable(snapshot)) {
-                return snapshot;
-            }
-            return luvio.resolveSnapshot(
-                snapshot,
-                buildSnapshotRefresh(luvio, adapterContext, config)
+            return luvio.applyCachePolicy(
+                requestContext || {},
+                {
+                    luvio,
+                    config,
+                    adapterContext,
+                    cachedSelector,
+                },
+                buildInMemorySnapshotCachePolicy,
+                buildNetworkSnapshotCachePolicy
             );
         });
     };

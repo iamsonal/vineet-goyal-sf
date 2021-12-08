@@ -195,18 +195,6 @@ export function buildInMemorySnapshot(
     );
 }
 
-export function getRecordByFields(
-    luvio: Luvio,
-    config: GetRecordConfig
-): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
-    const snapshot = buildInMemorySnapshot(luvio, config);
-    if (luvio.snapshotAvailable(snapshot)) {
-        return snapshot;
-    }
-
-    return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, config));
-}
-
 export type BuildSnapshotContext = {
     config: GetRecordConfig;
     luvio: Luvio;
@@ -233,7 +221,7 @@ function buildNetworkSnapshotCachePolicy(
     return buildNetworkSnapshot(luvio, config);
 }
 
-export function getRecordByFields_requestContext(
+export function getRecordByFields(
     luvio: Luvio,
     config: GetRecordConfig,
     requestContext?: AdapterRequestContext

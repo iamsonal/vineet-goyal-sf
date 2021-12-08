@@ -285,26 +285,10 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
         const fragment: ReaderFragment = createFragment(query, variables);
         const context = { config: validatedConfig, fragment, luvio };
 
-        //TODO [W-10164140]: remove this if block and always call applyCachePolicy
-        if (requestContext !== undefined) {
-            return luvio.applyCachePolicy(
-                requestContext || {},
-                context,
-                buildInMemorySnapshot,
-                buildNetworkSnapshotCachePolicy
-            );
-        }
-
-        const storeLookup = (sel: Selector<unknown>, refresh?: SnapshotRefresh<unknown>) =>
-            luvio.storeLookup(sel, refresh);
-        const cacheSnapshot = buildInMemorySnapshot(context, storeLookup);
-
-        if (luvio.snapshotAvailable(cacheSnapshot)) {
-            return cacheSnapshot;
-        }
-
-        return luvio.resolveSnapshot(
-            cacheSnapshot,
-            buildSnapshotRefresh(luvio, validatedConfig, fragment)
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            context,
+            buildInMemorySnapshot,
+            buildNetworkSnapshotCachePolicy
         );
     };

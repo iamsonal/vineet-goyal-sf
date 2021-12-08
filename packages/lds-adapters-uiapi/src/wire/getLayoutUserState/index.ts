@@ -223,23 +223,13 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        if (requestContext !== undefined) {
-            return luvio.applyCachePolicy(
-                requestContext,
-                {
-                    luvio,
-                    config,
-                },
-                buildInMemorySnapshotCachePolicy,
-                buildNetworkSnapshotCachePolicy
-            );
-        }
-
-        const cacheSnapshot = buildInMemorySnapshot(luvio, config);
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot)) {
-            return cacheSnapshot;
-        }
-
-        return luvio.resolveSnapshot(cacheSnapshot, buildSnapshotRefresh(luvio, config));
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+            },
+            buildInMemorySnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
     };

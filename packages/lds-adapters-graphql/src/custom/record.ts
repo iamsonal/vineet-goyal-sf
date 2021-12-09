@@ -269,7 +269,6 @@ export const createIngest: (
                         existing: undefined,
                     },
                     fullPath: fullPath,
-                    state: path.state,
                     propertyName: propertyName,
                 },
                 luvio,

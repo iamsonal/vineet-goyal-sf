@@ -66,9 +66,6 @@ export function resolveKey<D>(builder: Reader<any>, key: string) {
         case StoreResolveResultState.Stale:
             builder.markStale();
             return lookup;
-        case StoreResolveResultState.Locked:
-            builder.markLocked();
-            return;
         case StoreResolveResultState.Error:
             if (process.env.NODE_ENV !== 'production') {
                 throw new Error('TODO: Implement error links');

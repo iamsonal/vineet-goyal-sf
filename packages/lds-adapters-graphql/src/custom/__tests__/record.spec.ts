@@ -1079,7 +1079,6 @@ describe('GQL Record', () => {
                 data,
                 {
                     parent: null,
-                    state: null,
                     propertyName: null,
                     fullPath: '',
                 },
@@ -2222,7 +2221,6 @@ describe('GQL Record', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -2238,7 +2236,6 @@ describe('GQL Record', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,

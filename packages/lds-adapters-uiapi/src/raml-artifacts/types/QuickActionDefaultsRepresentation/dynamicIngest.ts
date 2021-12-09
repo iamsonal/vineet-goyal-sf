@@ -55,11 +55,6 @@ export const dynamicIngest: typeof generatedDynamicIngest = (ingestParams: Dynam
 
         const key = keyBuilderFromType(input);
         const existingRecord = store.records[key];
-        // do not ingest locked records
-        if (existingRecord !== undefined && existingRecord.__type === 'locked') {
-            path.state.result.type = 'locked';
-            return createLink(key);
-        }
 
         let incomingRecord = dynamicNormalize(ingestParams)(
             input,
@@ -68,7 +63,6 @@ export const dynamicIngest: typeof generatedDynamicIngest = (ingestParams: Dynam
                 fullPath: key,
                 parent: path.parent,
                 propertyName: path.propertyName,
-                state: path.state,
             } as IngestPath,
             luvio,
             store,

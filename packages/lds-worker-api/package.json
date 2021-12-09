@@ -17,10 +17,10 @@
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-worker-api"
     },
     "devDependencies": {
-        "@luvio/adapter-test-library": "0.62.4",
-        "@luvio/engine": "0.62.4",
-        "@luvio/environments": "0.62.4",
-        "@luvio/graphql-parser": "0.62.4",
+        "@luvio/adapter-test-library": "0.63.0",
+        "@luvio/engine": "0.63.0",
+        "@luvio/environments": "0.63.0",
+        "@luvio/graphql-parser": "0.63.0",
         "@mobileplatform/nimbus-plugin-lds": "1.37.2",
         "@oat-sa/rollup-plugin-wildcard-external": "^0.1.0",
         "@salesforce/lds-adapters-graphql": "1.37.2",

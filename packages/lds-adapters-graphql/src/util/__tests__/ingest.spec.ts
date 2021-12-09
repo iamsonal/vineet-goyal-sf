@@ -68,7 +68,6 @@ describe('ingest', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: { result: { type: 'success' } },
                 },
                 luvio,
                 store,

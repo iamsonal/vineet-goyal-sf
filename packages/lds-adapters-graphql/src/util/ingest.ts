@@ -75,7 +75,6 @@ function genericCreateIngest(ast: LuvioIngestableNode, variables: GraphQLVariabl
                 },
                 propertyName: readPropertyName,
                 fullPath: propertyFullPath,
-                state: path.state,
             };
             data[writePropertyName] = createIngest(sel, variables)(
                 data[readPropertyName],

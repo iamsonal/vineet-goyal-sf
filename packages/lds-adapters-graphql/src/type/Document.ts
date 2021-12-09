@@ -76,7 +76,6 @@ export function createIngest(ast: LuvioDocumentNode, variables: GraphQLVariables
                     parent: null,
                     fullPath: key,
                     propertyName: null,
-                    state: path.state,
                 },
                 luvio,
                 store,

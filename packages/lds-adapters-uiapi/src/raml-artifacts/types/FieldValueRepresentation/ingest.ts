@@ -32,11 +32,6 @@ export function makeIngest(
         const key = path.fullPath;
 
         let existingRecord = store.records[key];
-        // do not ingest locked records
-        if (existingRecord !== undefined && existingRecord.__type === 'locked') {
-            path.state.result.type = 'locked';
-            return createLink(key);
-        }
 
         let incomingRecord = helpers_FieldValueRepresentation_normalize_default(
             input,
@@ -45,7 +40,6 @@ export function makeIngest(
                 fullPath: key,
                 parent: path.parent,
                 propertyName: path.propertyName,
-                state: path.state,
             } as IngestPath,
             luvio,
             store,

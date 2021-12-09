@@ -25,11 +25,6 @@ export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepres
 
     const key = path.fullPath;
     const existingRecord = store.records[key];
-    // do not ingest locked records
-    if (existingRecord !== undefined && existingRecord.__type === 'locked') {
-        path.state.result.type = 'locked';
-        return createLink(key);
-    }
 
     let incomingRecord = normalize(
         input,
@@ -38,7 +33,6 @@ export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepres
             fullPath: key,
             propertyName: path.propertyName,
             parent: path.parent,
-            state: path.state,
         } as IngestPath,
         luvio,
         store,

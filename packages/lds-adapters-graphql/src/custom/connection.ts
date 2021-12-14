@@ -26,7 +26,6 @@ import {
     serializeFieldNode,
     serializeFieldNodeName,
     SerializeState,
-    TYPENAME_FIELD,
 } from '../util/serialize';
 
 interface GqlEdge {
@@ -38,6 +37,8 @@ export type GqlConnection = {
 };
 
 export const CUSTOM_FIELD_NODE_TYPE = 'Connection';
+
+const TYPENAME_FIELD = '__typename';
 
 const PAGE_INFO_REQUIRED_FIELDS = ['hasNextPage', 'hasPreviousPage'];
 const EDGE_REQUIRED_FIELDS = ['cursor'];
@@ -273,9 +274,7 @@ export function serialize(def: LuvioSelectionCustomFieldNode, state: SerializeSt
 
     appendRequiredConnectionFields(seenFields, serializedFields);
 
-    return `${serializeFieldNodeName(def)}${argsString} { ${TYPENAME_FIELD} ${serializedFields.join(
-        ' '
-    )} }`;
+    return `${serializeFieldNodeName(def)}${argsString} { ${serializedFields.join(' ')} }`;
 }
 
 function serializeEdges(node: LuvioFieldNode, state: SerializeState): string {
@@ -300,8 +299,9 @@ function serializeEdges(node: LuvioFieldNode, state: SerializeState): string {
     }
 
     appendRequiredFields(EDGE_REQUIRED_FIELDS, seenFields, serializedFields);
+    insertTypeName(seenFields, serializedFields);
 
-    return `${serializeFieldNodeName(node)} { ${TYPENAME_FIELD} ${serializedFields.join(' ')} }`;
+    return `${serializeFieldNodeName(node)} { ${serializedFields.join(' ')} }`;
 }
 
 function serializePageInfo(node: LuvioFieldNode, state: SerializeState): string {
@@ -345,10 +345,18 @@ function appendRequiredFields(
 
 function appendRequiredConnectionFields(seenFields: Record<string, true>, result: string[]) {
     if (seenFields[PROPERTY_NAME_PAGE_INFO] !== true) {
-        result.push('pageInfo { hasNextPage, hasPreviousPage }');
+        result.push('pageInfo { hasNextPage hasPreviousPage }');
     }
 
     if (seenFields[PROPERTY_NAME_TOTAL_COUNT] !== true) {
         result.push(PROPERTY_NAME_TOTAL_COUNT);
+    }
+
+    insertTypeName(seenFields, result);
+}
+
+function insertTypeName(seenFields: Record<string, true>, result: string[]) {
+    if (seenFields[TYPENAME_FIELD] !== true) {
+        result.unshift(TYPENAME_FIELD);
     }
 }

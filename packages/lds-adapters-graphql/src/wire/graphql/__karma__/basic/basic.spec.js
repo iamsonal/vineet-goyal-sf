@@ -166,7 +166,6 @@ describe('graphql', () => {
                             __typename
                             Account(where: { Name: { like: "Account1" } }) {
                                 __typename
-                                __typename
                                 edges {
                                     __typename
                                     node {

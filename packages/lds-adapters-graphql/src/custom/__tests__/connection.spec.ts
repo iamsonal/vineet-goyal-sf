@@ -1172,7 +1172,7 @@ describe('GQL Connection', () => {
 
             const result = serialize(ast, state);
             expect(result).toEqual(
-                'Account { __typename edges { __typename node { Name { __typename value, displayValue,  } ...defaultRecordFields } cursor } pageInfo { hasNextPage, hasPreviousPage } totalCount }'
+                'Account { __typename edges { __typename node { Name { __typename value, displayValue,  } ...defaultRecordFields } cursor } pageInfo { hasNextPage hasPreviousPage } totalCount }'
             );
         });
 

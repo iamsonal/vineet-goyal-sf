@@ -6,28 +6,25 @@ import {
     Luvio,
     Snapshot,
 } from '@luvio/engine';
-import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
+import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
 import { GetRecordConfig, validateAdapterConfig } from '../../generated/adapters/getRecord';
 import { createResourceRequest as getUiApiRecordsByRecordId } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
 import {
     keyBuilder,
     KeyParams,
     RecordRepresentation,
-    TTL as RecordRepresentationTTL,
 } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
-import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
+import {
+    getTrackedFields,
+    convertFieldsToTrie,
+    RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS,
+} from '../../util/records';
 import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 import { instrumentation } from '../../instrumentation';
-
-export const RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS = {
-    representationName: '', // empty string for unknown representation
-    namespace: keyPrefix,
-    ttl: RecordRepresentationTTL,
-};
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {

@@ -4,12 +4,14 @@ import {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
 } from '../generated/types/FieldValueRepresentation';
+import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
 import { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
 import { RecordInputRepresentation } from '../generated/types/RecordInputRepresentation';
 import {
     keyBuilder as recordRepresentationKeyBuilder,
     RecordRepresentation,
     RecordRepresentationNormalized,
+    TTL as RecordRepresentationTTL,
 } from '../generated/types/RecordRepresentation';
 import {
     ArrayPrototypeConcat,
@@ -27,8 +29,7 @@ import { dedupe } from '../validation/utils';
 import { MASTER_RECORD_TYPE_ID } from './layout';
 import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
 import { isSpanningRecord } from '../selectors/record';
-import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
-import { ObjectFreeze } from '../generated/adapters/adapter-utils';
+import { keyPrefix, ObjectFreeze } from '../generated/adapters/adapter-utils';
 import {
     FieldMapRepresentation,
     insertFieldsIntoTrie,
@@ -41,6 +42,12 @@ type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 const CUSTOM_API_NAME_SUFFIX = '__c';
 const DMO_API_NAME_SUFFIX = '__dlm';
 const CUSTOM_EXTERNAL_OBJECT_FIELD_SUFFIX = '__x';
+
+export const RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS = {
+    representationName: '', // empty string for unknown representation
+    namespace: keyPrefix,
+    ttl: RecordRepresentationTTL,
+};
 
 export interface FieldValueRepresentationLinkState {
     fields: string[];

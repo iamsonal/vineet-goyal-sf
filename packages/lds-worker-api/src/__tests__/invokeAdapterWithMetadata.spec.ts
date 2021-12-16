@@ -1,12 +1,6 @@
 import timekeeper from 'timekeeper';
 import { addMockNetworkResponse, resetMockNetworkAdapter } from './mocks/mockNimbusNetwork';
-import { draftManager } from '../draftQueueImplementation';
-import {
-    subscribeToAdapter,
-    invokeAdapter,
-    invokeAdapterWithMetadata,
-    OnResponse,
-} from '../executeAdapter';
+import { OnResponse } from '../executeAdapter';
 import objectInfo_Account from './mockData/objectInfo-Account.json';
 import recordRep_Account from './mockData/RecordRepresentation-Account.json';
 import recordRep_Account_Edited from './mockData/RecordRepresentation-Account-Edited.json';
@@ -14,9 +8,20 @@ import userId from '../standalone-stubs/salesforce-user-id';
 import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi';
 import { stripProperties } from '@luvio/adapter-test-library';
 import { recordEndpointPath, objectInfoAccountPath } from './urlPaths';
+import { flushPromises } from './utils';
 
 describe('invokeAdapterWithMetadata', () => {
+    let invokeAdapter, subscribeToAdapter, draftManager, invokeAdapterWithMetadata;
+
     beforeEach(async () => {
+        await flushPromises();
+        jest.resetModules();
+        ({
+            invokeAdapter,
+            subscribeToAdapter,
+            invokeAdapterWithMetadata,
+        } = require('../executeAdapter'));
+        ({ draftManager } = require('../draftQueueImplementation'));
         resetMockNetworkAdapter();
         timekeeper.reset();
         expect(draftManager).toBeDefined();
@@ -158,6 +163,60 @@ describe('invokeAdapterWithMetadata', () => {
         };
 
         invokeAdapterWithMetadata('updateRecord', JSON.stringify(config), theMetadata, onResponse);
+    });
+
+    it('creates a draft with the correct metadata with deleteRecord', async (done) => {
+        // setup mock responses
+        addMockNetworkResponse('GET', recordEndpointPath(recordRep_Account.id), {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(recordRep_Account),
+        });
+        addMockNetworkResponse('PATCH', recordEndpointPath(recordRep_Account_Edited.id), {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(recordRep_Account_Edited),
+        });
+        addMockNetworkResponse('GET', objectInfoAccountPath(), {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(objectInfo_Account),
+        });
+
+        // ensure DS has object info
+        await new Promise((resolve) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({ objectApiName: 'Account' }), () => {
+                resolve(undefined);
+            });
+        });
+
+        await flushPromises();
+
+        const theMetadata = { theMetadata: 'that is expected' };
+        const onResponse: OnResponse = (value) => {
+            const { data, error } = value;
+            // currently drafts response doesn't get all fields, just the modified ones
+            expect(data).toBeUndefined();
+            expect(error).toBeUndefined();
+
+            draftManager.getQueue().then((drafts) => {
+                expect(drafts.items.length).toBe(1);
+                const firstDraft = drafts.items[0];
+                expect(firstDraft).toBeDefined();
+                const expectedMetadata = {
+                    LDS_ACTION_METADATA_API_NAME: 'Account',
+                    ...theMetadata,
+                };
+                expect(firstDraft.metadata).toEqual(expectedMetadata);
+                done();
+            });
+        };
+        invokeAdapterWithMetadata(
+            'deleteRecord',
+            JSON.stringify(recordRep_Account.id),
+            theMetadata,
+            onResponse
+        );
     });
 
     it('errors when calling with an adapter that is not mutating', async (done) => {

@@ -199,23 +199,32 @@ export function invokeAdapterWithDraftToReplace(
             throw Error(`adapter ${adapterId} not recognized`);
         }
 
-        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-            const draftIds = draftIdsForResponseValue(responseValue);
-            if (
-                responseValue.error === undefined &&
-                draftIds !== undefined &&
-                draftIds.length > 0
-            ) {
-                const draftId = draftIds[draftIds.length - 1];
-                draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
-                    onResponse(responseValue);
-                });
-            } else {
-                let response: CallbackValue = responseValue;
-                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                onResponse(response);
-            }
-        });
+        if (adapterId === 'deleteRecord') {
+            invokeAdapterWithDraftToReplaceDeleteRecord(
+                adapter,
+                config,
+                draftIdToReplace,
+                onResponse
+            );
+        } else {
+            invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
+                const draftIds = draftIdsForResponseValue(responseValue);
+                if (
+                    responseValue.error === undefined &&
+                    draftIds !== undefined &&
+                    draftIds.length > 0
+                ) {
+                    const draftId = draftIds[draftIds.length - 1];
+                    draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
+                        onResponse(responseValue);
+                    });
+                } else {
+                    let response: CallbackValue = responseValue;
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                    onResponse(response);
+                }
+            });
+        }
     });
 }
 
@@ -248,18 +257,120 @@ export function invokeAdapterWithMetadata(
         throw Error(`adapter ${adapterId} not recognized`);
     }
 
-    invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-        const draftIds = draftIdsForResponseValue(responseValue);
-        if (responseValue.error === undefined && draftIds !== undefined && draftIds.length > 0) {
-            const draftId = draftIds[draftIds.length - 1];
-            draftManager.setMetadata(draftId, metadata).then(() => {
-                onResponse(responseValue);
-            });
-        } else {
-            let response: CallbackValue = responseValue;
-            response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-            onResponse(response);
-        }
+    if (adapterId === 'deleteRecord') {
+        invokeAdapterWithMetadataDeleteRecord(adapter, config, metadata, onResponse);
+    } else {
+        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
+            const draftIds = draftIdsForResponseValue(responseValue);
+            if (
+                responseValue.error === undefined &&
+                draftIds !== undefined &&
+                draftIds.length > 0
+            ) {
+                const draftId = draftIds[draftIds.length - 1];
+                draftManager.setMetadata(draftId, metadata).then(() => {
+                    onResponse(responseValue);
+                });
+            } else {
+                let response: CallbackValue = responseValue;
+                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                onResponse(response);
+            }
+        });
+    }
+}
+
+/*
+//TODO W-10284305: Remove this function in 238
+This is a special case version of the invokeAdapterWithMetadata function
+which should only be used for the deleteRecord wire adapter, since it does not
+contain record data in the result and has to do special querying of the draft queue
+*/
+function invokeAdapterWithMetadataDeleteRecord(
+    adapter: any,
+    config: string,
+    metadata: DraftQueueItemMetadata,
+    onResponse: OnResponse
+) {
+    const targetedRecordId = JSONParse(config);
+    let priorDraftIds: string[] | undefined;
+    draftManager.getQueue().then((draftState) => {
+        priorDraftIds = draftState.items.map((item) => {
+            return item.id;
+        });
+        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
+            if (responseValue.error === undefined && responseValue.data === undefined) {
+                draftManager.getQueue().then((newState) => {
+                    const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
+                    const newDrafts = newState.items;
+                    const addedDrafts = newDrafts.filter((item) => {
+                        const isNew = draftIdsToFilter.indexOf(item.id) < 0;
+                        const targetIdMatches = item.targetId === targetedRecordId;
+                        return isNew && targetIdMatches;
+                    });
+                    if (addedDrafts.length !== 1) {
+                        let response: CallbackValue = responseValue;
+                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                        onResponse(response);
+                    } else {
+                        draftManager.setMetadata(addedDrafts[0].id, metadata).then(() => {
+                            onResponse(responseValue);
+                        });
+                    }
+                });
+            } else {
+                let response: CallbackValue = responseValue;
+                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                onResponse(response);
+            }
+        });
+    });
+}
+
+/*
+//TODO W-10284305: Remove this function in 238
+This is a special case version of the invokeAdapterWithDraftToReplace function
+which should only be used for the deleteRecord wire adapter, since it does not
+contain record data in the result and has to do special querying of the draft queue
+*/
+function invokeAdapterWithDraftToReplaceDeleteRecord(
+    adapter: any,
+    config: string,
+    draftIdToReplace: string,
+    onResponse: OnResponse
+) {
+    const targetedRecordId = JSONParse(config);
+    let priorDraftIds: string[] | undefined;
+    draftManager.getQueue().then((draftState) => {
+        priorDraftIds = draftState.items.map((item) => {
+            return item.id;
+        });
+        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
+            if (responseValue.error === undefined && responseValue.data === undefined) {
+                draftManager.getQueue().then((newState) => {
+                    const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
+                    const newDrafts = newState.items;
+                    const addedDrafts = newDrafts.filter((item) => {
+                        const isNew = draftIdsToFilter.indexOf(item.id) < 0;
+                        const targetIdMatches = item.targetId === targetedRecordId;
+                        return isNew && targetIdMatches;
+                    });
+                    if (addedDrafts.length !== 1) {
+                        let response: CallbackValue = responseValue;
+                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                        onResponse(response);
+                    } else {
+                        draftManager.replaceAction(draftIdToReplace, addedDrafts[0].id).then(() => {
+                            onResponse(responseValue);
+                        });
+                    }
+                });
+            } else {
+                let response: CallbackValue = responseValue;
+                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                onResponse(response);
+            }
+        });
     });
 }
 

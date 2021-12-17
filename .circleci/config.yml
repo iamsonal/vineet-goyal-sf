@@ -1,5 +1,7 @@
-# Environment configuration
-# =========================
+version: 2.1
+
+orbs:
+  build-tools: circleci/build-tools@3.0.0
 
 env_default: &env_default
   working_directory: ~/lds-lp
@@ -12,218 +14,243 @@ env_perf: &env_perf
   environment:
     - GIT_APP_CERT_PATH: ~/lds-lp/git_app.pem
 
-# Commands definitions
-# ====================
+commands:
+  restore_yarn_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - yarn-v4-{{ checksum "yarn.lock" }}-{{ arch }}
 
-# Yarn cache
-restore_yarn_cache: &restore_yarn_cache
-  restore_cache:
-    keys:
-      - yarn-v4-{{ checksum "yarn.lock" }}
+  save_yarn_cache:
+    steps:
+      - save_cache:
+          key: yarn-v4-{{ checksum "yarn.lock" }}-{{ arch }}
+          paths:
+            - ~/.cache/yarn
+            - node_modules
 
-save_yarn_cache: &save_yarn_cache
-  save_cache:
-    key: yarn-v4-{{ checksum "yarn.lock" }}
-    paths:
-      - ~/.cache/yarn
+  save_workspace:
+    steps:
+      - persist_to_workspace:
+          root: .
+          paths: .
 
-# Workspace
-save_workspace: &save_workspace
-  persist_to_workspace:
-    root: .
-    paths: .
+  load_workspace:
+    steps:
+      - attach_workspace:
+          at: ~/lds-lp
 
-load_workspace: &load_workspace
-  attach_workspace:
-    at: ~/lds-lp
+  install:
+    steps:
+      - run:
+          name: Install dependencies
+          command: yarn install --prefer-offline --frozen-lockfile --cache-folder ~/.cache/yarn
 
-# Build
-install: &install
-  run:
-    name: Install dependencies
-    command: yarn install --frozen-lockfile
+  build:
+    steps:
+      - run:
+          name: Build
+          command: yarn build:ci
 
-build: &build
-  run:
-    name: Build
-    command: yarn build:ci
+  run_format:
+    steps:
+      - run:
+          name: Run format
+          command: yarn format:check
 
-# Checks
-run_format: &run_format
-  run:
-    name: Run format
-    command: yarn format:check
+  run_linting:
+    steps:
+      - run:
+          name: Run linting
+          command: yarn lint
 
-run_linting: &run_linting
-  run:
-    name: Run linting
-    command: yarn lint
+  run_version_check:
+    steps:
+      - run:
+          name: Check luvio version match
+          command: yarn test:versions
 
-# Test
-run_unit_tests: &run_unit_tests
-  run:
-    name: Run unit tests with coverage
-    # Jest should run sequentially instead of parallel on the CI to avoid running out of memory and
-    # reduce run duration.
-    # https://jestjs.io/docs/en/troubleshooting#tests-are-extremely-slow-on-docker-and-or-continuous-integration-ci-server
-    command: yarn test:unit:coverage:ci
+  run_unit_tests:
+    steps:
+      - run:
+          name: Run unit tests with coverage
+          # Jest should run sequentially instead of parallel on the CI to avoid running out of memory and
+          # reduce run duration.
+          # https://jestjs.io/docs/en/troubleshooting#tests-are-extremely-slow-on-docker-and-or-continuous-integration-ci-server
+          command: yarn test:unit:coverage:ci
 
-run_integration_tests: &run_integration_tests
-  run:
-    name: Run integration tests
-    command: yarn test:integration:ci
+  run_integration_tests:
+    steps:
+      - run:
+          name: Run integration tests
+          command: yarn test:integration:ci
 
-run_integration_tests_compat: &run_integration_tests_compat
-  run:
-    name: Run integration tests (compat)
-    command: yarn test:integration:compat:ci
+  run_integration_tests_compat:
+    steps:
+      - run:
+          name: Run integration tests (compat)
+          command: yarn test:integration:compat:ci
 
-# Sauce Labs
-setup_sauce_env_variables: &setup_sauce_env_variables
-  run:
-    name: Setup sauce connect environnement variables
-    command: echo 'export SAUCE_TUNNEL_ID="lds-${CIRCLE_BUILD_NUM}"' >> $BASH_ENV
+  setup_sauce_env_variables:
+    steps:
+      - run:
+          name: Setup sauce connect environnement variables
+          command: echo 'export SAUCE_TUNNEL_ID="lds-${CIRCLE_BUILD_NUM}"' >> $BASH_ENV
 
-start_sauce_connect: &start_sauce_connect
-  run:
-    name: Install and start sauce connect
-    background: true
-    command: |
-      curl https://saucelabs.com/downloads/sc-4.7.0-linux.tar.gz -o saucelabs.tar.gz
-      tar -xzf saucelabs.tar.gz
-      cd sc-*
-      bin/sc -u ${SAUCE_USERNAME} -k ${SAUCE_KEY} -i ${SAUCE_TUNNEL_ID} --tunnel-domains tunnelhost -P ${CIRCLE_BUILD_NUM}
+  start_sauce_connect:
+    steps:
+      - run:
+          name: Install and start sauce connect
+          background: true
+          command: |
+            curl https://saucelabs.com/downloads/sc-4.7.0-linux.tar.gz -o saucelabs.tar.gz
+            tar -xzf saucelabs.tar.gz
+            cd sc-*
+            bin/sc -u ${SAUCE_USERNAME} -k ${SAUCE_KEY} -i ${SAUCE_TUNNEL_ID} --tunnel-domains tunnelhost -P ${CIRCLE_BUILD_NUM}
 
-wait_for_sauce_connect: &wait_for_sauce_connect
-  run:
-    name: Wait for sauce connect to be up
-    command: wget --retry-connrefused --no-check-certificate -T 60 localhost:${CIRCLE_BUILD_NUM}
+  wait_for_sauce_connect:
+    steps:
+      - run:
+          name: Wait for sauce connect to be up
+          command: wget --retry-connrefused --no-check-certificate -T 60 localhost:${CIRCLE_BUILD_NUM}
 
-stop_sauce_connect: &stop_sauce_connect
-  run:
-    name: Stop sauce connect
-    command: kill -9 `cat /tmp/sc_client-${SAUCE_TUNNEL_ID}.pid`
+  stop_sauce_connect:
+    steps:
+      - run:
+          name: Stop sauce connect
+          command: kill -9 `cat /tmp/sc_client-${SAUCE_TUNNEL_ID}.pid`
 
-add_tunnelhost_hosts_entry: &add_tunnelhost_hosts_entry
-  run:
-    name: add tunnelhost entry to hosts file
-    command: echo 127.0.0.1 tunnelhost | sudo tee -a /etc/hosts
+  add_tunnelhost_hosts_entry:
+    steps:
+      - run:
+          name: add tunnelhost entry to hosts file
+          command: echo 127.0.0.1 tunnelhost | sudo tee -a /etc/hosts
 
-# Best
-setup_best_environment: &setup_best_environment
-  run:
-    name: Setup BEST environment
-    command: |
-      curl checkip.amazonaws.com # Used for debugging purposes.
+  setup_best_environment:
+    steps:
+      - run:
+          name: Setup BEST environment
+          command: |
+            curl checkip.amazonaws.com # Used for debugging purposes.
 
-      echo '
-        export PULL_REQUEST=${CIRCLE_PULL_REQUEST}
-        export REPO_NAME=${CIRCLE_PROJECT_REPONAME}
-        export TARGET_COMMIT=${CIRCLE_SHA1}
-        export BASE_COMMIT=`git rev-parse origin/main`' >> $BASH_ENV
+            echo '
+              export PULL_REQUEST=${CIRCLE_PULL_REQUEST}
+              export REPO_NAME=${CIRCLE_PROJECT_REPONAME}
+              export TARGET_COMMIT=${CIRCLE_SHA1}
+              export BASE_COMMIT=`git rev-parse origin/main`' >> $BASH_ENV
 
-      echo -e "$GIT_APP_CERT" | base64 -d >> ~/lds-lp/git_app.pem
+            echo -e "$GIT_APP_CERT" | base64 -d >> ~/lds-lp/git_app.pem
 
-run_best: &run_best
-  run:
-    name: Run performance Test
-    command: |
-      yarn test:perf \
-        --runner remote \
-        --dbToken="${BEST_FRONTEND_CLIENT_TOKEN}" \
-        --dbAdapter=rest/frontend \
-        --dbURI="${BEST_FRONTEND_HOSTNAME}" || true
+  run_best:
+    steps:
+      - run:
+          name: Run performance Test
+          command: |
+            yarn test:perf \
+              --runner remote \
+              --dbToken="${BEST_FRONTEND_CLIENT_TOKEN}" \
+              --dbAdapter=rest/frontend \
+              --dbURI="${BEST_FRONTEND_HOSTNAME}" || true
 
-# compare_best_results: &compare_best_results
-#   run:
-#     name: Comparing perf examples
-#     command: yarn test:perf --compareStats ${BASE_COMMIT} ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration || true
+  # compare_best_results:
+  #   steps:
+  #     - run:
+  #         name: Comparing perf examples
+  #         command: yarn test:perf --compareStats ${BASE_COMMIT} ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration || true
 
-store_best_artifacts: &store_best_artifacts
-  store_artifacts:
-    path: ~/lds-lp/__benchmarks_results__/
-    destination: benchmarks
+  store_best_artifacts:
+    steps:
+      - store_artifacts:
+          path: ~/lds-lp/__benchmarks_results__/
+          destination: benchmarks
 
-test_size: &test_size
-  run:
-    name: Run bundle size check
-    command: yarn test:size
+  test_size:
+    steps:
+      - run:
+          name: Run bundle size check
+          command: yarn test:size
 
-test_memory: &test_memory
-  run:
-    name: Run memory perf test
-    command: yarn test:memory
+  test_memory:
+    steps:
+      - run:
+          name: Run memory perf test
+          command: yarn test:memory
 
-# Jobs definition
-# ===============
-
-version: 2
 jobs:
   build:
     <<: *env_default
     steps:
       - checkout
 
-      - *restore_yarn_cache
-      - *install
-      - *save_yarn_cache
+      - restore_yarn_cache
+      - install
+      - save_yarn_cache
 
-      - *build
+      - build
 
-      - *save_workspace
+      - save_workspace
 
-      - *run_linting
-      - *run_format
+      - run_linting
+      - run_format
+
+  test_versions:
+    <<: *env_default
+    steps:
+      - checkout
+      - build-tools/merge-with-parent
+      - restore_yarn_cache
+      - install
+      - run_version_check
 
   test_unit:
     <<: *env_default
     parallelism: 4
     steps:
-      - *load_workspace
+      - load_workspace
 
-      - *run_unit_tests
+      - run_unit_tests
 
-      - *save_workspace
+      - save_workspace
 
   test_integration:
     <<: *env_default
     steps:
-      - *load_workspace
+      - load_workspace
 
-      - *setup_sauce_env_variables
-      - *start_sauce_connect
-      - *wait_for_sauce_connect
+      - setup_sauce_env_variables
+      - start_sauce_connect
+      - wait_for_sauce_connect
 
-      - *run_integration_tests
+      - run_integration_tests
 
-      - *stop_sauce_connect
+      - stop_sauce_connect
 
   test_integration_compat:
     <<: *env_default
     steps:
-      - *load_workspace
+      - load_workspace
 
-      - *setup_sauce_env_variables
-      - *start_sauce_connect
-      - *wait_for_sauce_connect
+      - setup_sauce_env_variables
+      - start_sauce_connect
+      - wait_for_sauce_connect
 
-      - *run_integration_tests_compat
+      - run_integration_tests_compat
 
-      - *stop_sauce_connect
+      - stop_sauce_connect
 
   perf_and_compare:
     circleci_ip_ranges: true
     <<: *env_perf
     steps:
-      - *load_workspace
+      - load_workspace
 
-      - *test_size
-      - *test_memory
+      - test_size
+      - test_memory
 
-      - *setup_best_environment
-      - *run_best
-      # - *compare_best_results
-      - *store_best_artifacts
+      - setup_best_environment
+      - run_best
+      # - compare_best_results
+      - store_best_artifacts
 
 # Workflows definition
 # ====================
@@ -233,6 +260,10 @@ workflows:
   build_and_test:
     jobs:
       - build
+      - test_versions:
+          filters:
+            branches:
+              ignore: main
       - test_integration:
           requires:
             - build

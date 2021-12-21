@@ -91,10 +91,39 @@ const RAML_ARTIFACTS = {
     ],
     '/adapters/getLayout': [
         {
-            identifier: 'getLayoutAdapterFactory',
-            path: path.join('src', 'wire', 'getLayout', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'validateAdapterConfig',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayout',
+                'validateAdapterConfig.ts'
+            ),
+        },
+        {
+            identifier: 'onResourceResponseSuccess',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayout',
+                'onResourceResponseSuccess.ts'
+            ),
+        },
+        {
+            identifier: 'GetLayoutConfig',
+            path: path.join('src', 'raml-artifacts', 'adapters', 'getLayout', 'utils.ts'),
+            targetIdentifier: 'GetLayoutConfigWithDefaults',
+        },
+        {
+            identifier: 'buildInMemorySnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayout',
+                'buildInMemorySnapshotCachePolicy.ts'
+            ),
         },
     ],
     '/adapters/getLayoutUserState': [

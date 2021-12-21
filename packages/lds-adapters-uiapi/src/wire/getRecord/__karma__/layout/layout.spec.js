@@ -11,8 +11,8 @@ import {
 
 import RecordFields from '../lwc/record-fields';
 import RecordLayoutTypes from '../lwc/record-layout-types';
-import GetLayout from './../../../getLayout/__karma__/lwc/get-layout';
-import GetObjectInfo from './../../../getObjectInfo/__karma__/lwc/object-basic';
+import GetLayout from '../../../../raml-artifacts/adapters/getLayout/__karma__/lwc/get-layout';
+import GetObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';
 
 const MOCK_PREFIX = 'wire/getRecord/__karma__/layout/data/';
 

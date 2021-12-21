@@ -1,4 +1,4 @@
-import { factory as getLayout } from '../index';
+import { getLayoutAdapterFactory } from '../../../../generated/adapters/getLayout';
 
 const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 
@@ -10,7 +10,7 @@ describe('factory', () => {
             recordTypeId: MASTER_RECORD_TYPE_ID,
         };
 
-        expect(() => getLayout({} as any)(config)).toThrowError(
+        expect(() => getLayoutAdapterFactory({} as any)(config)).toThrowError(
             'adapter getLayout configuration must specify layoutType, mode, objectApiName'
         );
     });
@@ -22,7 +22,7 @@ describe('factory', () => {
             recordTypeId: MASTER_RECORD_TYPE_ID,
         };
 
-        expect(() => getLayout({} as any)(config)).toThrowError(
+        expect(() => getLayoutAdapterFactory({} as any)(config)).toThrowError(
             'adapter getLayout configuration must specify layoutType, mode, objectApiName'
         );
     });
@@ -39,7 +39,7 @@ describe('factory', () => {
             layoutType,
         };
 
-        expect(getLayout({} as any)(config)).toBeNull();
+        expect(getLayoutAdapterFactory({} as any)(config)).toBeNull();
     });
 
     it.each([
@@ -54,6 +54,6 @@ describe('factory', () => {
             mode,
         };
 
-        expect(getLayout({} as any)(config)).toBeNull();
+        expect(getLayoutAdapterFactory({} as any)(config)).toBeNull();
     });
 });

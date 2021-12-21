@@ -15,7 +15,7 @@ import {
     mockGetRecordCreateDefaultsNetwork,
 } from 'uiapi-test-util';
 
-import GetLayout from '../../../getLayout/__karma__/lwc/get-layout';
+import GetLayout from '../../../../raml-artifacts/adapters/getLayout/__karma__/lwc/get-layout';
 import GetObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';
 import GetRecordCreateDefaults from '../lwc/get-record-create-defaults';
 

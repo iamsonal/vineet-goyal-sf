@@ -8,7 +8,7 @@ import {
 
 import GetLayout from '../lwc/get-layout';
 
-const MOCK_PREFIX = 'wire/getLayout/__karma__/config/data/';
+const MOCK_PREFIX = 'raml-artifacts/adapters/getLayout/__karma__/config/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);

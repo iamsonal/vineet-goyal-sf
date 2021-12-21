@@ -21,7 +21,7 @@ import {
 import { updateRecord } from 'lds-adapters-uiapi';
 import { karmaNetworkAdapter } from 'lds-engine';
 
-import GetLayout from '../../../getLayout/__karma__/lwc/get-layout';
+import GetLayout from '../../../../raml-artifacts/adapters/getLayout/__karma__/lwc/get-layout';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import ObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';
 import RecordUi from '../lwc/record-ui';

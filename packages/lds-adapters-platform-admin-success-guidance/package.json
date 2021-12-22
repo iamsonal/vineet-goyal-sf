@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-platform-admin-success-guidance",
-    "version": "1.37.3",
+    "version": "1.37.4",
     "description": "Guidance Center Questionnaire and Assistant APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/platform-admin-success-guidance.js",
@@ -32,9 +32,9 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-platform-admin-success-guidance"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.37.3"
+        "@salesforce/lds-bindings": "1.37.4"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.37.3"
+        "@salesforce/lds-karma": "1.37.4"
     }
 }

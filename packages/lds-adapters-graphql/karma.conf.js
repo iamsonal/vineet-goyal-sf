@@ -27,6 +27,7 @@ module.exports = (config) => {
     const files = [
         ...config.files.slice(0, index + 1),
         ...(compat ? COMPAT_FILES : FILES),
+        '**/__karma__/**/query-data/**/*.json',
         ...config.files.slice(index + 1),
     ];
 

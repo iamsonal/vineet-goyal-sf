@@ -1,33 +1,37 @@
 {
     "data": {
         "__typename": "Query",
-        "uiapi": {
+        "ApiOne": {
             "__typename": "UIAPI",
             "query": {
                 "__typename": "RecordQuery",
-                "Account": {
+                "AccountOne": {
                     "__typename": "AccountConnection",
                     "edges": [
                         {
                             "__typename": "AccountEdge",
                             "node": {
-                                "Parent": null,
+                                "NameOne": {
+                                    "__typename": "StringValue",
+                                    "value": "Account1",
+                                    "displayValue": null
+                                },
                                 "__typename": "Account",
                                 "ApiName": "Account",
-                                "WeakEtag": 1619829082000,
-                                "Id": "001RM000005BJPTYA4",
-                                "DisplayValue": "Add One More Account",
+                                "WeakEtag": 1639808083000,
+                                "Id": "001T1000001p7SuIAI",
+                                "DisplayValue": "Account1",
                                 "SystemModstamp": {
-                                    "value": "2021-05-01T00:31:22.000Z"
+                                    "value": "2021-12-18T06:14:43.000Z"
                                 },
                                 "LastModifiedById": {
-                                    "value": "005RM000002492xYAA"
+                                    "value": "005T1000000IJpMIAW"
                                 },
                                 "LastModifiedDate": {
-                                    "value": "2021-05-01T00:31:22.000Z"
+                                    "value": "2021-12-18T06:14:43.000Z"
                                 },
                                 "RecordTypeId": {
-                                    "value": "012RM000000E79WYAS"
+                                    "value": "012000000000000AAA"
                                 }
                             },
                             "cursor": "djE6MA=="
@@ -37,7 +41,7 @@
                         "hasNextPage": false,
                         "hasPreviousPage": false
                     },
-                    "totalCount": 1
+                    "totalCount": 2
                 }
             }
         }

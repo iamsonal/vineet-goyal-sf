@@ -1,7 +1,7 @@
 import {
     ingestSuccess as generatedIngestSuccess,
     ResourceRequestConfig,
-    select as generatedSelect,
+    select,
     keyBuilder as generatedKeyBuilder,
     keyBuilder,
     ingestError,
@@ -12,18 +12,14 @@ import {
 import {
     Luvio,
     SnapshotRefresh,
-    Fragment,
     FulfilledSnapshot,
     ResourceResponse,
     StoreLink,
 } from '@luvio/engine';
-import { buildSelectionFromFields } from '../../selectors/record';
 import { markMissingOptionalFields, isGraphNode } from '../../util/records';
 import {
     RelatedListRecordCollectionRepresentation,
     ingest as types_RelatedListRecordCollectionRepresentation_ingest,
-    dynamicSelect as types_RelatedListRecordCollectionRepresentation_dynamicSelect,
-    DynamicSelectParams as types_RelatedListRecordCollectionRepresentation_DynamicSelectParams,
 } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import {
@@ -36,31 +32,9 @@ export {
     ingestError,
     ResourceRequestConfig,
     createResourceRequest,
+    createPaginationParams,
     getResponseCacheKeys,
-};
-
-export const select: typeof generatedSelect = (
-    _luvio: Luvio,
-    params: ResourceRequestConfig
-): Fragment => {
-    const { fields = [], optionalFields = [] } = params.body;
-
-    const selectParams: types_RelatedListRecordCollectionRepresentation_DynamicSelectParams = {
-        records: {
-            name: 'records',
-            kind: 'Link',
-            fragment: {
-                kind: 'Fragment',
-                private: ['eTag', 'weakEtag'],
-                selections: buildSelectionFromFields(fields, optionalFields),
-            },
-        },
-    };
-
-    return types_RelatedListRecordCollectionRepresentation_dynamicSelect(
-        selectParams,
-        createPaginationParams(params)
-    );
+    select,
 };
 
 export const ingestSuccess: typeof generatedIngestSuccess = (

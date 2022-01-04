@@ -17,11 +17,13 @@ import {
 import {
     ResourceRequestConfig as singleWireResourceRequestConfig,
     keyBuilder as singleWireKeyBuilder,
-    select as singleWireSelect,
-    ingestSuccess as sinlgeWireIngestSuccess,
     ingestError as singleWireIngestError,
     getResponseCacheKeys as singleWireGetResponseCacheKeys,
-} from './postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
+} from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
+import {
+    select as singleWireSelect,
+    ingestSuccess as sinlgeWireIngestSuccess,
+} from '../../generated/uiapi/record-collection/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 
 // Generated Types
 import { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';

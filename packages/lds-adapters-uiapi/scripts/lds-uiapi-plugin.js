@@ -10,6 +10,7 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const dedent = require('dedent');
 const fieldsPlugin = require('./plugin/fields-support');
+const recordCollectionPlugin = require('./plugin/record-collection-plugin');
 
 const SFDC_PRIVATE_ADAPTERS = require('./sfdc-private-adapters');
 
@@ -221,19 +222,22 @@ function generateAdapterInfoExport(artifactsDir, generatedAdapterInfos, imperati
     );
 }
 
+function addImportOverride(artifactSuffix, path, identifier, targetIdentifier) {
+    let entry = RAML_ARTIFACTS[artifactSuffix];
+    if (entry === undefined) {
+        entry = RAML_ARTIFACTS[artifactSuffix] = [];
+    }
+    entry.push({
+        path,
+        identifier,
+        targetIdentifier,
+    });
+}
+
 module.exports = {
     validate: (modelInfo) => {
-        fieldsPlugin.validate(modelInfo, (artifactSuffix, path, identifier, targetIdentifier) => {
-            let entry = RAML_ARTIFACTS[artifactSuffix];
-            if (entry === undefined) {
-                entry = RAML_ARTIFACTS[artifactSuffix] = [];
-            }
-            entry.push({
-                path,
-                identifier,
-                targetIdentifier,
-            });
-        });
+        fieldsPlugin.validate(modelInfo, addImportOverride);
+        recordCollectionPlugin.validate(modelInfo, addImportOverride);
         return plugin.validate(modelInfo);
     },
     /**
@@ -304,6 +308,7 @@ module.exports = {
         generateAdapterInfoExport(artifactsDir, generatedAdapters, imperativeAdapters);
 
         fieldsPlugin.afterGenerate(compilerConfig, modelInfo, createGenerationContext);
+        recordCollectionPlugin.afterGenerate(compilerConfig, modelInfo, createGenerationContext);
     },
     /**
      * @param {string} ramlId

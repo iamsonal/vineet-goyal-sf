@@ -718,6 +718,10 @@ types:
           objectApiName: urlParams.objectApiName
           type: '"listView"'
           sortBy: queryParams.sortBy || null
+        (luvio.paginationParams):
+          queryParameters:
+            token: pageToken
+            pageSize: pageSize
     '/{listViewId}':
       # NOTE: we aren't setting key for the '/{listViewId}' Resource because
       # we have to use custom code to construct that key from the cached
@@ -729,6 +733,10 @@ types:
             fields: SalesforceFieldIdArray
             optionalFields: SalesforceFieldIdArray
             sortBy: SalesforceFieldIdArray
+        (luvio.paginationParams):
+          queryParameters:
+            token: pageToken
+            pageSize: pageSize
   '/lookups/{objectApiName}/{fieldApiName}/{targetApiName}':
     uriParameters:
       objectApiName:
@@ -1030,6 +1038,10 @@ types:
         objectApiName: urlParams.objectApiName
         type: '"mru"'
         sortBy: queryParams.sortBy || null
+      (luvio.paginationParams):
+        queryParameters:
+          token: pageToken
+          pageSize: pageSize
   '/record-defaults':
     '/create/{objectApiName}':
       uriParameters:

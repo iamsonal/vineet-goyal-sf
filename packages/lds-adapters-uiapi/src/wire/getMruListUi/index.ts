@@ -13,43 +13,35 @@ import {
     GetMruListUiConfig,
     getMruListUi_ConfigPropertyNames,
     validateAdapterConfig,
+    createResourceParams,
 } from '../../generated/adapters/getMruListUi';
 import { createResourceRequest as createMruListRecordsResourceRequest } from '../../generated/resources/getUiApiMruListRecordsByObjectApiName';
 import {
     createResourceRequest as createMruListUiResourceRequest,
+    createPaginationParams as getUiApiMruListUiByObjectApiName_createPaginationParams,
     keyBuilder,
 } from '../../generated/resources/getUiApiMruListUiByObjectApiName';
 import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
 import { createResourceParams as createMruListUiResourceParams } from '../../generated/adapters/getMruListUi';
 import {
-    keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
+    DynamicSelectParams as types_ListRecordCollectionRepresentation_DynamicSelectParams,
     ListRecordCollectionRepresentation,
+    keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
     ingest as types_ListRecordCollectionRepresentation_ingest,
+    dynamicSelect as types_ListRecordCollectionRepresentation_dynamicSelect,
 } from '../../generated/types/ListRecordCollectionRepresentation';
 import {
-    keyBuilder as listUiRepresentation_keyBuilder,
+    DynamicSelectParams as types_ListUiRepresentation_DynamicSelectParams,
     ListUiRepresentation,
+    keyBuilder as listUiRepresentation_keyBuilder,
     ingest as types_ListUiRepresentation_ingest,
+    dynamicSelect as types_ListUiRepresentation_dynamicSelect,
 } from '../../generated/types/ListUiRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
-import {
-    getListInfo,
-    LIST_INFO_SELECTIONS,
-    ListFields,
-    listFields,
-    LIST_INFO_PRIVATES,
-    isListInfoSnapshotWithData,
-} from '../../util/lists';
-import {
-    minimizeRequest,
-    pathSelectionsFor,
-    staticValuePathSelection,
-} from '../../util/pagination';
-import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
+import { getListInfo, ListFields, listFields, isListInfoSnapshotWithData } from '../../util/lists';
+import { minimizeRequest } from '../../util/pagination';
 import { isFulfilledSnapshot } from '../../util/snapshot';
-
-const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
 // eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
@@ -69,79 +61,38 @@ const getMruListUi_ConfigPropertyNames_augmented = {
     },
 };
 
-function buildListUiFragment(
-    config: GetMruListUiConfig,
-    listInfo: ListInfoRepresentation,
-    fields: ListFields
-): Fragment {
-    return {
-        kind: 'Fragment',
-        private: ['eTag'],
-        selections: [
-            {
-                kind: 'Link',
-                name: 'info',
-                fragment: {
-                    kind: 'Fragment',
-                    private: LIST_INFO_PRIVATES,
-                    selections: LIST_INFO_SELECTIONS,
-                },
+function buildListUiFragment(config: GetMruListUiConfig, fields: ListFields): Fragment {
+    const resourceParams = createResourceParams(config);
+    const paginationParams =
+        getUiApiMruListUiByObjectApiName_createPaginationParams(resourceParams);
+
+    const recordSelectParams: types_ListRecordCollectionRepresentation_DynamicSelectParams = {
+        records: {
+            name: 'records',
+            kind: 'Link',
+            fragment: {
+                kind: 'Fragment',
+                private: ['eTag', 'weakEtag'],
+                selections: buildSelectionFromFields(...fields.getRecordSelectionFieldSets()),
             },
-            {
-                kind: 'Link',
-                name: 'records',
-                fragment: {
-                    kind: 'Fragment',
-                    private: [],
-                    selections: [
-                        ...pathSelectionsFor({
-                            name: 'records',
-                            pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
-                            pageToken: config.pageToken,
-                            private: ['eTag', 'weakEtag'],
-                            selections: buildSelectionFromFields(
-                                ...fields.getRecordSelectionFieldSets()
-                            ),
-                            tokenDataKey: ListRecordCollection_paginationKeyBuilder({
-                                listViewId: listInfo.eTag,
-                                sortBy: config.sortBy === undefined ? null : config.sortBy,
-                            }),
-                        }),
-                        {
-                            kind: 'Scalar',
-                            name: 'fields',
-                            plural: true,
-                        },
-                        {
-                            kind: 'Scalar',
-                            name: 'listInfoETag',
-                        },
-                        {
-                            kind: 'Link',
-                            name: 'listReference',
-                            fragment: LIST_REFERENCE_SELECTIONS,
-                        },
-                        {
-                            kind: 'Scalar',
-                            name: 'optionalFields',
-                            plural: true,
-                        },
-                        staticValuePathSelection({
-                            name: 'pageSize',
-                            value:
-                                config.pageSize === undefined ? DEFAULT_PAGE_SIZE : config.pageSize,
-                        }),
-                        {
-                            // eslint-disable-next-line @salesforce/lds/no-invalid-todo
-                            // TODO - check type; re-verify after sortBy added to key
-                            kind: 'Scalar',
-                            name: 'sortBy',
-                        },
-                    ],
-                },
-            },
-        ],
+        },
     };
+    const listRecordCollectionSelect = types_ListRecordCollectionRepresentation_dynamicSelect(
+        recordSelectParams,
+        paginationParams
+    );
+
+    const listRecordCollectionSelectParams: types_ListUiRepresentation_DynamicSelectParams = {
+        records: {
+            name: 'records',
+            kind: 'Link',
+            fragment: listRecordCollectionSelect,
+        },
+    };
+    return types_ListUiRepresentation_dynamicSelect(
+        listRecordCollectionSelectParams,
+        paginationParams
+    );
 }
 
 function buildSnapshotRefresh_getMruListUi(
@@ -190,7 +141,7 @@ function onResourceSuccess_getMruListUi(
     fields.processRecords(body.records.records);
 
     // build the selector while the list info is still easily accessible
-    const fragment = buildListUiFragment(config, listInfo, fields);
+    const fragment = buildListUiFragment(config, fields);
 
     luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
 
@@ -226,7 +177,7 @@ export function buildInMemorySnapshot(
     const resourceParams = createMruListUiResourceParams(config);
     const selector: Selector = {
         recordId: keyBuilder(resourceParams),
-        node: buildListUiFragment(config, listInfo, listFields_),
+        node: buildListUiFragment(config, listFields_),
         variables: {},
     };
 

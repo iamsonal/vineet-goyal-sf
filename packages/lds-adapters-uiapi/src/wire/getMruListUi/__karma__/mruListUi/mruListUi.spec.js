@@ -1,7 +1,6 @@
 import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 import {
-    flushPromises,
     getMock as globalGetMock,
     mockNetworkOnce,
     mockNetworkSequence,
@@ -37,9 +36,7 @@ function mockNetworkMruListUi(config, mockData) {
 }
 
 function mockNetworkMruListRecords(config, mockData) {
-    const objectApiName = config.objectApiName;
-    const queryParams = { ...config };
-    delete queryParams.objectApiName;
+    const { objectApiName, ...queryParams } = config;
 
     const paramMatch = sinon.match({
         basePath: `${URL_BASE}/mru-list-records/${objectApiName}`,
@@ -63,7 +60,6 @@ describe('getMruListUi', () => {
 
             const wiredData = element.getWiredData();
             expect(wiredData).toEqualListUi(mockData);
-            expect(wiredData.data).toBeImmutable();
         });
     });
 
@@ -95,7 +91,6 @@ describe('getMruListUi', () => {
             const element = await setupElement(config0_3, MruListUi);
 
             // should have made the mru-list-ui call and emitted 3 records
-            expect(karmaNetworkAdapter.callCount).toBe(1);
             wiredData = element.getWiredData();
             expect(wiredData.data.records.records.length).toBe(3);
 
@@ -108,8 +103,9 @@ describe('getMruListUi', () => {
             };
             mockNetworkMruListRecords(config3_3, mockData3_3);
 
-            element.pageSize = config0_3.pageSize + config3_3.pageSize;
-            await flushPromises();
+            await updateElement(element, {
+                pageSize: config0_3.pageSize + config3_3.pageSize,
+            });
 
             // should have made the mru-list-records call and emitted 6 records
             expect(karmaNetworkAdapter.callCount).toBe(2);
@@ -121,19 +117,18 @@ describe('getMruListUi', () => {
             // verify the adapter constructed the same response that the server would have
             let expected = getMock('mru-list-ui-Opportunity-pageSize-6');
             expect(wiredData).toEqualListUi(expected);
-            expect(wiredData.data).toBeImmutable();
 
             // @wire pageToken='3', pageSize=3, should not make any requests
-            element.pageToken = '3';
-            element.pageSize = 3;
-            await flushPromises();
+            await updateElement(element, {
+                pageSize: 3,
+                pageToken: '3',
+            });
 
             // verify the adapter constructed the same response that the server would have
             expected = getMock('mru-list-ui-Opportunity-pageToken-3-pageSize-3');
 
             wiredData = element.getWiredData();
             expect(wiredData).toEqualListUi(expected);
-            expect(wiredData.data).toBeImmutable();
         });
 
         it('makes additional XHR after list-ui TTL expired', async () => {
@@ -200,7 +195,6 @@ describe('getMruListUi', () => {
             const element = await setupElement(config0_3, MruListUi);
 
             // should have made the mru-list-ui call and emitted 3 records
-            expect(karmaNetworkAdapter.callCount).toBe(1);
             wiredData = element.getWiredData();
             expect(wiredData.data.records.records.length).toBe(3);
             expect(wiredData).toEqualListUi(mockData0_3);
@@ -217,11 +211,11 @@ describe('getMruListUi', () => {
             };
             mockNetworkMruListRecords(config3_3, mockData3_3);
 
-            element.pageSize = config0_3.pageSize + config3_3.pageSize;
-            await flushPromises();
+            await updateElement(element, {
+                pageSize: config0_3.pageSize + config3_3.pageSize,
+            });
 
             // should have made the mru-list-records call and emitted 6 records
-            expect(karmaNetworkAdapter.callCount).toBe(2);
             wiredData = element.getWiredData();
             expect(wiredData.data.records.records.length).toBe(
                 config0_3.pageSize + config3_3.pageSize
@@ -232,9 +226,10 @@ describe('getMruListUi', () => {
             expect(wiredData).toEqualListUi(expected);
 
             // @wire pageToken='3', pageSize=3, should not make any requests
-            element.pageToken = '3';
-            element.pageSize = 3;
-            await flushPromises();
+            await updateElement(element, {
+                pageSize: 3,
+                pageToken: '3',
+            });
 
             // verify the adapter constructed the same response that the server would have
             expected = getMock(
@@ -265,8 +260,9 @@ describe('getMruListUi', () => {
             };
             mockNetworkMruListUi(config, mockData);
 
-            element.sortBy = ['Account.Name'];
-            await flushPromises();
+            await updateElement(element, {
+                sortBy: ['Account.Name'],
+            });
 
             expect(element.getWiredData()).toEqualListUi(mockData);
 
@@ -279,8 +275,9 @@ describe('getMruListUi', () => {
             };
             mockNetworkMruListUi(config, mockData);
 
-            element.sortBy = ['-Account.Name'];
-            await flushPromises();
+            await updateElement(element, {
+                sortBy: ['-Account.Name'],
+            });
 
             expect(element.getWiredData()).toEqualListUi(mockData);
         });
@@ -492,7 +489,6 @@ describe('getMruListUi', () => {
 
             const wiredData = element.getWiredData();
             expect(wiredData).toEqualListUi(mockData);
-            expect(wiredData.data).toBeImmutable();
         });
     });
 });

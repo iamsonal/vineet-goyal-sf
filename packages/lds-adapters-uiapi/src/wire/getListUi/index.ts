@@ -19,30 +19,43 @@ import {
     GetListUiByApiNameConfig,
     getListUiByApiName_ConfigPropertyNames,
     validateAdapterConfig as getListUiByApiName_validateAdapterConfig,
+    createResourceParams as getListUiByApiName_createResourceParams,
 } from '../../generated/adapters/getListUiByApiName';
 import {
     GetListUiByListViewIdConfig,
     getListUiByListViewId_ConfigPropertyNames,
     validateAdapterConfig as getListUiByListViewId_validateAdapterConfig,
+    createResourceParams as getListUiByListViewId_createResourceParams,
 } from '../../generated/adapters/getListUiByListViewId';
 import { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
 import { GetMruListUiConfig } from '../../generated/adapters/getMruListUi';
 import getUiApiListRecordsByListViewId from '../../generated/resources/getUiApiListRecordsByListViewId';
 import getUiApiListRecordsByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListRecordsByListViewApiNameAndObjectApiName';
-import getUiApiListUiByListViewId from '../../generated/resources/getUiApiListUiByListViewId';
-import getUiApiListUiByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListUiByListViewApiNameAndObjectApiName';
+
+import {
+    createResourceRequest as getUiApiListUiByObjectApiNameAndListViewApiName_createResourceRequest,
+    createPaginationParams as getUiApiListUiByObjectApiNameAndListViewApiName_createPaginationParams,
+} from '../../generated/resources/getUiApiListUiByListViewApiNameAndObjectApiName';
+import {
+    createResourceRequest as getUiApiListUiByListViewId_createResourceRequest,
+    createPaginationParams as getUiApiListUiByListViewId_createPaginationParams,
+} from '../../generated/resources/getUiApiListUiByListViewId';
+
 import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
 import {
-    keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
+    DynamicSelectParams as types_ListRecordCollectionRepresentation_DynamicSelectParams,
     ListRecordCollectionRepresentation,
+    keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
     ingest as types_ListRecordCollectionRepresentation_ingest,
+    dynamicSelect as types_ListRecordCollectionRepresentation_dynamicSelect,
 } from '../../generated/types/ListRecordCollectionRepresentation';
-import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
 import {
-    keyBuilder as listUiRepresentation_keyBuilder,
+    DynamicSelectParams as types_ListUiRepresentation_DynamicSelectParams,
     ListUiRepresentation,
+    keyBuilder as listUiRepresentation_keyBuilder,
     ingest as types_ListUiRepresentation_ingest,
+    dynamicSelect as types_ListUiRepresentation_dynamicSelect,
 } from '../../generated/types/ListUiRepresentation';
 import { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
@@ -54,21 +67,15 @@ import {
     getServerDefaults,
     listFields,
     ListFields,
-    LIST_INFO_SELECTIONS,
-    LIST_INFO_PRIVATES,
     isListInfoSnapshotWithData,
 } from '../../util/lists';
-import {
-    minimizeRequest,
-    pathSelectionsFor,
-    staticValuePathSelection,
-} from '../../util/pagination';
+import { minimizeRequest } from '../../util/pagination';
+import { isFulfilledSnapshot } from '../../util/snapshot';
+import { ObjectKeys, ObjectFreeze } from '../../util/language';
+import { isString } from '../../validation/utils';
+
 import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
-import { isFulfilledSnapshot } from '../../util/snapshot';
-import { ObjectKeys } from '../../util/language';
-
-const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
 // eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
@@ -115,83 +122,47 @@ function getSortBy(config: GetListUiConfig, context: AdapterContext): string[] |
 function buildListUiFragment(
     config: GetListUiConfig,
     context: AdapterContext,
-    listInfo: ListInfoRepresentation,
     fields: ListFields
 ): Fragment {
     const defaultedConfig = { ...getServerDefaults(config, context), ...config };
 
-    return {
-        kind: 'Fragment',
-        private: ['eTag'],
-        selections: [
-            {
-                kind: 'Link',
-                name: 'info',
-                fragment: {
-                    kind: 'Fragment',
-                    private: LIST_INFO_PRIVATES,
-                    selections: LIST_INFO_SELECTIONS,
-                },
+    let paginationParams;
+    if (isGetListUiByListViewIdConfig(defaultedConfig)) {
+        const resourceParams = getListUiByListViewId_createResourceParams(defaultedConfig);
+        paginationParams = getUiApiListUiByListViewId_createPaginationParams(resourceParams);
+    } else if (isGetListUiByApiNameConfig(defaultedConfig)) {
+        const resourceParams = getListUiByApiName_createResourceParams(defaultedConfig);
+        paginationParams =
+            getUiApiListUiByObjectApiNameAndListViewApiName_createPaginationParams(resourceParams);
+    }
+
+    const recordSelectParams: types_ListRecordCollectionRepresentation_DynamicSelectParams = {
+        records: {
+            name: 'records',
+            kind: 'Link',
+            fragment: {
+                kind: 'Fragment',
+                private: ['eTag', 'weakEtag'],
+                selections: buildSelectionFromFields(...fields.getRecordSelectionFieldSets()),
             },
-            {
-                kind: 'Link',
-                name: 'records',
-                fragment: {
-                    kind: 'Fragment',
-                    private: [],
-                    selections: [
-                        ...pathSelectionsFor({
-                            name: 'records',
-                            pageSize: defaultedConfig.pageSize || DEFAULT_PAGE_SIZE,
-                            pageToken: defaultedConfig.pageToken,
-                            private: ['eTag', 'weakEtag'],
-                            selections: buildSelectionFromFields(
-                                ...fields.getRecordSelectionFieldSets()
-                            ),
-                            tokenDataKey: ListRecordCollection_paginationKeyBuilder({
-                                listViewId: listInfo.eTag,
-                                sortBy:
-                                    defaultedConfig.sortBy === undefined
-                                        ? null
-                                        : defaultedConfig.sortBy,
-                            }),
-                        }),
-                        {
-                            kind: 'Scalar',
-                            name: 'fields',
-                            plural: true,
-                        },
-                        {
-                            kind: 'Scalar',
-                            name: 'listInfoETag',
-                        },
-                        {
-                            kind: 'Link',
-                            name: 'listReference',
-                            fragment: LIST_REFERENCE_SELECTIONS,
-                        },
-                        {
-                            kind: 'Scalar',
-                            name: 'optionalFields',
-                            plural: true,
-                        },
-                        staticValuePathSelection({
-                            name: 'pageSize',
-                            value:
-                                defaultedConfig.pageSize === undefined
-                                    ? DEFAULT_PAGE_SIZE
-                                    : defaultedConfig.pageSize,
-                        }),
-                        {
-                            kind: 'Scalar',
-                            name: 'sortBy',
-                            plural: true,
-                        },
-                    ],
-                },
-            },
-        ],
+        },
     };
+    const listRecordCollectionSelect = types_ListRecordCollectionRepresentation_dynamicSelect(
+        recordSelectParams,
+        paginationParams
+    );
+
+    const listRecordCollectionSelectParams: types_ListUiRepresentation_DynamicSelectParams = {
+        records: {
+            name: 'records',
+            kind: 'Link',
+            fragment: listRecordCollectionSelect,
+        },
+    };
+    return types_ListUiRepresentation_dynamicSelect(
+        listRecordCollectionSelectParams,
+        paginationParams
+    );
 }
 
 function buildInMemorySnapshot(
@@ -209,7 +180,7 @@ function buildInMemorySnapshot(
 
     const selector = {
         recordId: listUiKey,
-        node: buildListUiFragment(config, context, listInfo, listFields_),
+        node: buildListUiFragment(config, context, listFields_),
         variables: {},
     };
 
@@ -242,7 +213,7 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
 
     let request: ResourceRequest;
     if (isGetListUiByApiNameConfig(config)) {
-        request = getUiApiListUiByObjectApiNameAndListViewApiName({
+        request = getUiApiListUiByObjectApiNameAndListViewApiName_createResourceRequest({
             urlParams: {
                 listViewApiName: config.listViewApiName,
                 objectApiName: config.objectApiName,
@@ -250,7 +221,7 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
             queryParams,
         });
     } else if (isGetListUiByListViewIdConfig(config)) {
-        request = getUiApiListUiByListViewId({
+        request = getUiApiListUiByListViewId_createResourceRequest({
             urlParams: { listViewId: config.listViewId },
             queryParams,
         });
@@ -279,8 +250,8 @@ function getResponseCacheKeys_getListUi(
 
     // response might have records.sortBy in csv format
     const sortBy = body.records.sortBy;
-    if (sortBy && typeof sortBy === 'string') {
-        body.records.sortBy = (sortBy as unknown as string).split(',');
+    if (isString(sortBy)) {
+        body.records.sortBy = ObjectFreeze(sortBy.split(','));
     }
 
     const listUiKey = listUiRepresentation_keyBuilder({
@@ -389,7 +360,7 @@ function onResourceSuccess_getListUi(
     addServerDefaults(config, body, context);
 
     // build the selector while the list info is still easily accessible
-    const fragment = buildListUiFragment(config, context, listInfo, fields);
+    const fragment = buildListUiFragment(config, context, fields);
 
     luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
 

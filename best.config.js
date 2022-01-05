@@ -6,7 +6,7 @@ module.exports = {
         '<rootDir>/best/rollup-plugin-mocks/index.js',
         ['rollup-plugin-replace', { 'process.env.NODE_ENV': JSON.stringify('production') }],
     ],
-    specs: { name: 'chrome.headless', version: 80 },
+    specs: { name: 'chrome.headless', version: 97 },
     mainBranch: 'main',
     runners: [
         {

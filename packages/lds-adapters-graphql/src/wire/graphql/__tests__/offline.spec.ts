@@ -285,9 +285,9 @@ describe('graphQL adapter offline', () => {
             // populate it
             await adapter(config);
 
-            const expirationTimestamp =
-                durableStore.segments[DefaultDurableSegment][recordKey].metadata
-                    .expirationTimestamp;
+            const expirationTimestamp = (await durableStore.persistence.get(DefaultDurableSegment))[
+                recordKey
+            ].metadata.expirationTimestamp;
             timekeeper.travel(expirationTimestamp + 10);
             const result = await adapter(config);
 

@@ -57,7 +57,7 @@ describe('updateRecord offline tests', () => {
         expect(snapshot.state).toBe('Fulfilled');
         const recordKey = recordKeyBuilder({ recordId: RECORD_ID });
         const nameKey = `${recordKey}__fields__Name`;
-        const recordSegment = durableStore.segments[DefaultDurableSegment];
+        const recordSegment = await durableStore.persistence.get(DefaultDurableSegment);
         const fieldEntry = recordSegment[nameKey];
         expect((fieldEntry.data as FieldValueRepresentation).value).toBe(UPDATED_NAME);
     });

@@ -382,9 +382,11 @@ describe('draft environment tests', () => {
             // wait for flush to finish before reading L2 values
             await flushPromises();
 
-            const record = (durableStore as unknown as MockDurableStore).segments[
-                DefaultDurableSegment
-            ][STORE_KEY_DRAFT_RECORD];
+            const record = (
+                await (durableStore as unknown as MockDurableStore).persistence.get(
+                    DefaultDurableSegment
+                )
+            )[STORE_KEY_DRAFT_RECORD];
             const metadata = record.metadata;
             expect(metadata.expirationTimestamp).toBe(Number.MAX_SAFE_INTEGER);
             expect(metadata.staleTimestamp).toBe(Number.MAX_SAFE_INTEGER);

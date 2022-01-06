@@ -95,10 +95,9 @@ describe('getRecordUi adapter offline', () => {
     describe('singleRecordResponse', () => {
         it('selector gets stored in durable store', async () => {
             const { durableStore } = await populateDurableStore([single_recordId]);
-            const selector =
-                durableStore.segments[DefaultDurableSegment][
-                    `UiApi::RecordUiRepresentation:${single_recordId}:Full:View:__selector`
-                ];
+            const selector = (await durableStore.persistence.get(DefaultDurableSegment))[
+                `UiApi::RecordUiRepresentation:${single_recordId}:Full:View:__selector`
+            ];
             expect(selector).toBeDefined();
         });
 
@@ -125,10 +124,9 @@ describe('getRecordUi adapter offline', () => {
                 recordId_Account1,
                 recordId_Account2,
             ]);
-            const selector =
-                durableStore.segments[DefaultDurableSegment][
-                    `UiApi::RecordUiRepresentation:${sortedRecordIdCSV}:Full:View:__selector`
-                ];
+            const selector = (await durableStore.persistence.get(DefaultDurableSegment))[
+                `UiApi::RecordUiRepresentation:${sortedRecordIdCSV}:Full:View:__selector`
+            ];
             expect(selector).toBeDefined();
         });
 

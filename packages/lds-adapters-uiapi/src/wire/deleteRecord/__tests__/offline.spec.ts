@@ -42,6 +42,6 @@ describe('deleteRecord offline tests', () => {
         await (adapter(RECORD_ID) as Promise<void>);
         await flushPromises();
         const key = recordKeyBuilder({ recordId: RECORD_ID });
-        expect(durableStore.segments[DefaultDurableSegment][key]).toBeUndefined();
+        expect((await durableStore.persistence.get(DefaultDurableSegment))[key]).toBeUndefined();
     });
 });

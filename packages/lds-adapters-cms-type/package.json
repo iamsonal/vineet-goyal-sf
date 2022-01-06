@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-cms-type",
-    "version": "1.37.4",
+    "version": "1.37.5",
     "description": "Wire adapters for cms content type",
     "license": "MIT",
     "main": "dist/umd/es2018/cms-type.js",
@@ -30,9 +30,9 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.37.4"
+        "@salesforce/lds-bindings": "1.37.5"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.37.4"
+        "@salesforce/lds-karma": "1.37.5"
     }
 }

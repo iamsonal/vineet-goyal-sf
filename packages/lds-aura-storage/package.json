@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-aura-storage",
-    "version": "1.37.4",
+    "version": "1.37.5",
     "description": "LDS Network Adapter for Aura Runtime",
     "private": true,
     "license": "MIT",

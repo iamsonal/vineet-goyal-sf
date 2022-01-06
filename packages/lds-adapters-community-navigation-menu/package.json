@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-community-navigation-menu",
-    "version": "1.37.4",
+    "version": "1.37.5",
     "description": "Wire adapters Community Navigation Menu",
     "license": "MIT",
     "main": "dist/umd/es2018/community-navigation-menu.js",
@@ -27,9 +27,9 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-community-navigation-menu"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.37.4"
+        "@salesforce/lds-bindings": "1.37.5"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.37.4"
+        "@salesforce/lds-karma": "1.37.5"
     }
 }

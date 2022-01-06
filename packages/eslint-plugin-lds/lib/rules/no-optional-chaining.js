@@ -19,13 +19,11 @@ module.exports = {
 
     create(context) {
         return {
-            OptionalMemberExpression: function(node) {
-                if (node.optional === true) {
-                    context.report({
-                        node,
-                        message: 'Optional chaining isn\'t allowed.',
-                    });
-                }
+            ChainExpression: function(node) {
+                context.report({
+                    node,
+                    message: 'Optional chaining isn\'t allowed.',
+                });
             }
         };
     },

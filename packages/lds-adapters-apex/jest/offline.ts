@@ -49,7 +49,7 @@ export function buildOfflineLuvio(
 }
 
 // populates the durable store with a provided payload
-export async function populateDurableStore<Config, DataType>(
+export async function populateDurableStore<Config>(
     adapterFactory: any,
     invokerParams: ApexInvokerParams,
     config: Config,
@@ -84,7 +84,7 @@ export async function populateDurableStore<Config, DataType>(
     return durableStore;
 }
 
-export async function testDataEmittedWhenStale<Config, DataType>(
+export async function testDataEmittedWhenStale<Config>(
     adapterFactory: any,
     invokerParams: ApexInvokerParams,
     config: Config,

@@ -23,7 +23,7 @@ export interface BaseAction<Data> {
 }
 
 export type DraftActionMetadata = { [key: string]: string };
-interface BaseDraftAction<Response, Data> {
+interface BaseDraftAction<_Response, Data> {
     status: DraftActionStatus;
     id: string;
     targetId: string;

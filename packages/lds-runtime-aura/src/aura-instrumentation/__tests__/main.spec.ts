@@ -1,9 +1,12 @@
 /**
  * @jest-environment jsdom
+ *
+ * Note: Aura code is only running in browser
  */
-
-import { Adapter } from '@luvio/engine';
 import timekeeper from 'timekeeper';
+
+import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
+import { Adapter } from '@luvio/engine';
 
 import {
     log,
@@ -16,7 +19,6 @@ import {
     SUPPORTED_KEY,
     UNSUPPORTED_KEY,
 } from '../main';
-import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
 
 import * as ldsInstrumentation from '@salesforce/lds-instrumentation';

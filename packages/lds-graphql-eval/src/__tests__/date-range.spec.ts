@@ -1,6 +1,7 @@
 import { recordFilter } from '../filter-parser';
 import { unwrappedValue } from '../Result';
 import infoJson from './mockData/objectInfos.json';
+// eslint-disable-next-line no-undef
 const infoMap = infoJson as ObjectInfoMap;
 
 import { parseAndVisit } from '@luvio/graphql-parser';

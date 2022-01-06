@@ -1,5 +1,6 @@
 // NOTE: do not remove this import, even though it looks unused it is necessary
 // for TS module merging to work properly
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NimbusPlugins } from 'nimbus-types';
 declare module 'nimbus-types' {
     export interface NimbusPlugins {

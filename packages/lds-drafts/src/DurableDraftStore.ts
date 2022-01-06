@@ -54,7 +54,7 @@ export class DurableDraftStore implements DraftStore {
 
         return this.enqueueAction(addAction);
     }
-    getAllDrafts<R, D>(): Promise<DraftAction<unknown, unknown>[]> {
+    getAllDrafts<_R, _D>(): Promise<DraftAction<unknown, unknown>[]> {
         const waitForOngoingSync = this.syncPromise || Promise.resolve();
 
         return waitForOngoingSync.then(() => {

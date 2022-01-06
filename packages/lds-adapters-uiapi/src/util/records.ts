@@ -109,12 +109,11 @@ export function extractTrackedFields(
 
     for (let i = 0, len = keys.length; i < len; i += 1) {
         const key = keys[i];
-        const fieldValueRep =
-            fields.link<
-                FieldValueRepresentationNormalized,
-                FieldValueRepresentation,
-                FieldValueRepresentationLinkState
-            >(key);
+        const fieldValueRep = fields.link<
+            FieldValueRepresentationNormalized,
+            FieldValueRepresentation,
+            FieldValueRepresentationLinkState
+        >(key);
 
         const fieldName = `${parentFieldName}.${key}`;
         if (fieldValueRep.isMissing()) {
@@ -202,12 +201,11 @@ export function extractTrackedFieldsToTrie(
     let current = root;
     for (let i = 0, len = keys.length; i < len; i += 1) {
         const key = keys[i] as string;
-        const fieldValueRep =
-            fields.link<
-                FieldValueRepresentationNormalized,
-                FieldValueRepresentation,
-                FieldValueRepresentationLinkState
-            >(key);
+        const fieldValueRep = fields.link<
+            FieldValueRepresentationNormalized,
+            FieldValueRepresentation,
+            FieldValueRepresentationLinkState
+        >(key);
 
         let next: RecordFieldTrie = current.children[key];
         if (next === undefined) {
@@ -236,8 +234,10 @@ export function extractTrackedFieldsToTrie(
                     continue;
                 }
 
-                const spanningLink =
-                    field.link<RecordRepresentationNormalized, RecordRepresentation>('value');
+                const spanningLink = field.link<
+                    RecordRepresentationNormalized,
+                    RecordRepresentation
+                >('value');
 
                 const spanning = spanningLink.follow();
 
@@ -690,12 +690,11 @@ function markNulledOutPath(
         return;
     }
 
-    const link =
-        fieldValueRepresentation.link<
-            FieldValueRepresentationNormalized,
-            FieldValueRepresentation,
-            FieldValueRepresentationLinkState
-        >(fieldName);
+    const link = fieldValueRepresentation.link<
+        FieldValueRepresentationNormalized,
+        FieldValueRepresentation,
+        FieldValueRepresentationLinkState
+    >(fieldName);
     const resolved = link.follow();
 
     if (isGraphNode(resolved) && resolved.isScalar('value') && path.length > 0) {
@@ -746,10 +745,10 @@ function _markMissingPath(
         return;
     }
 
-    const link =
-        fieldValueRepresentation.link<FieldValueRepresentationNormalized, FieldValueRepresentation>(
-            fieldName
-        );
+    const link = fieldValueRepresentation.link<
+        FieldValueRepresentationNormalized,
+        FieldValueRepresentation
+    >(fieldName);
 
     if (link.isPending()) {
         // TODO [W-6900046]: remove cast, make RecordRepresentationNormalized['fields'] accept

@@ -18,6 +18,8 @@ import {
 import { SerializeState, TYPENAME_FIELD, serializeSelections } from './serialize';
 import { ObjectKeys } from './language';
 
+type LiteralValueNode = BooleanValueNode | FloatValueNode | IntValueNode;
+
 export function serializeValueNode(valueDefinition: LuvioValueNode) {
     const { kind } = valueDefinition;
     switch (kind) {
@@ -30,19 +32,12 @@ export function serializeValueNode(valueDefinition: LuvioValueNode) {
         case 'FloatValue':
         case 'IntValue':
         case 'BooleanValue':
-            return (valueDefinition as BooleanValueNode).value;
+        case 'EnumValue':
+            return (valueDefinition as LiteralValueNode).value;
         case 'Variable':
             return serializeVariableNode(valueDefinition as LuvioVariableNode);
         case 'ListValue':
             return serializeListValueNode(valueDefinition as LuvioListValueNode);
-        case 'EnumValue':
-            return (
-                valueDefinition as
-                    | BooleanValueNode
-                    | FloatValueNode
-                    | IntValueNode
-                    | BooleanValueNode
-            ).value;
     }
 
     if (process.env.NODE_ENV !== 'production') {

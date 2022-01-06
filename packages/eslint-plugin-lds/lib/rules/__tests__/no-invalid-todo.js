@@ -7,9 +7,11 @@
 'use strict';
 
 const rule = require("../no-invalid-todo");
-const RuleTester = require("eslint").RuleTester;
+const { RuleTester } = require("eslint");
 
-const ruleTester = new RuleTester();
+const ruleTester = new RuleTester({
+    parser: require.resolve('@typescript-eslint/parser')
+});
 
 ruleTester.run("no-invalid-todo", rule, {
     valid: [

@@ -7,23 +7,21 @@
 'use strict';
 
 const rule = require("../no-optional-chaining");
-const RuleTester = require("eslint").RuleTester;
+const { RuleTester } = require("eslint");
 
-const ruleTester = new RuleTester();
+const ruleTester = new RuleTester({
+    parser: require.resolve('@typescript-eslint/parser')
+});
 
 ruleTester.run("no-optional-chaining", rule, {
     valid: [
-        {
-            code: "var foo = bar.value;"
-        },
-        {
-            code: "if (foo.bar.value == 'some_value') { test = foo.bar.value; }"
-        }
+        "const foo = bar.value;",
+        "if (foo.bar.value == 'some_value') { test = foo.bar.value; }"
     ],
 
     invalid: [
         {
-            code: "var foo = bar?.value;",
+            code: "const foo = bar?.value;",
             errors: 1
         },
         {

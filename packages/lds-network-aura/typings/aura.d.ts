@@ -12,9 +12,9 @@ declare module 'aura' {
     }
 }
 
-interface $A {
-    get(value: string): any;
-}
-
 // In some containers like Talon, "$A" is not globally available.
-declare var $A: $A | undefined;
+declare var $A:
+    | {
+          get(value: string): any;
+      }
+    | undefined;

@@ -9,6 +9,11 @@ import { instrumentation } from './instrumentation';
 interface RequestHandlers {
     resolve: (response: any) => void;
     reject: (error: Error) => void;
+    resourceRequest: ResourceRequest;
+}
+
+interface InflightRequests {
+    [key: string]: RequestHandlers[];
 }
 
 function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerInvoker {
@@ -24,15 +29,6 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
     }
 
     return ret;
-}
-
-interface RequestHandlers {
-    resolve: (response: any) => void;
-    reject: (error: Error) => void;
-    resourceRequest: ResourceRequest;
-}
-interface InflightRequests {
-    [key: string]: RequestHandlers[];
 }
 
 function getFulfillingRequest(

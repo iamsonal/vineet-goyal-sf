@@ -1,10 +1,7 @@
-/**
- * @jest-environment jsdom
- */
-
-import { Adapter, Store } from '@luvio/engine';
 import timekeeper from 'timekeeper';
+
 import { flushPromises } from '@salesforce/lds-jest';
+import { Adapter, Store } from '@luvio/engine';
 
 import {
     setupInstrumentation,

@@ -369,13 +369,13 @@ describe('DraftManager', () => {
     describe('swap action', () => {
         it('successfully swaps actions', async () => {
             const editAction = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
-            const swapSpy = jest.fn((actionId, forActionId): Promise<
-                DraftAction<unknown, unknown>
-            > => {
-                expect(actionId).toBe('mockIdOne');
-                expect(forActionId).toBe('mockIdTwo');
-                return Promise.resolve(editAction);
-            });
+            const swapSpy = jest.fn(
+                (actionId, forActionId): Promise<DraftAction<unknown, unknown>> => {
+                    expect(actionId).toBe('mockIdOne');
+                    expect(forActionId).toBe('mockIdTwo');
+                    return Promise.resolve(editAction);
+                }
+            );
             mockDraftQueue.replaceAction = swapSpy;
             const result = await manager.replaceAction('mockIdOne', 'mockIdTwo');
             expect(result.id).toBe(editAction.id);
@@ -385,17 +385,17 @@ describe('DraftManager', () => {
 
     describe('metadata', () => {
         it('calls draft queue metadata when saving', async (done) => {
-            const metadataSpy = jest.fn((actionId, metadata): Promise<
-                DraftAction<unknown, unknown>
-            > => {
-                expect(actionId).toBe('foo');
-                expect(metadata).toEqual({ bar: 'baz' });
-                done();
-                let action = createPostDraftAction('blah', 'target');
-                action.id = 'foo';
-                action.metadata = metadata;
-                return Promise.resolve(action);
-            });
+            const metadataSpy = jest.fn(
+                (actionId, metadata): Promise<DraftAction<unknown, unknown>> => {
+                    expect(actionId).toBe('foo');
+                    expect(metadata).toEqual({ bar: 'baz' });
+                    done();
+                    let action = createPostDraftAction('blah', 'target');
+                    action.id = 'foo';
+                    action.metadata = metadata;
+                    return Promise.resolve(action);
+                }
+            );
             mockDraftQueue.setMetadata = metadataSpy;
             const updatedItem = await manager.setMetadata('foo', { bar: 'baz' });
             expect(metadataSpy).toBeCalledTimes(1);

@@ -7,6 +7,7 @@ import {
     getMockNetworkAdapterCallCount,
     MockPayload,
 } from '@luvio/adapter-test-library';
+import { flushPromises } from './utils';
 
 export type CustomEnvironmentFactory = (
     environment: Environment,
@@ -16,10 +17,6 @@ export type CustomEnvironmentFactory = (
 
 export interface OfflineOptions {
     customEnvironment?: CustomEnvironmentFactory;
-}
-
-function flushPromises() {
-    return new Promise((resolve) => setImmediate(resolve));
 }
 
 export function buildOfflineLuvio(

@@ -78,7 +78,7 @@ export function createRecordDraftEnvironment(
     // TODO [W-8909393]: can remove this when metadata is stored separately from data
     const synthesizedIds: Record<string, true> = {};
 
-    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
+    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <_T>(
         request: ResourceRequest
     ) {
         if (isRequestCreateRecord(request) === false) {

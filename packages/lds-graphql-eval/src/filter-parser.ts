@@ -316,7 +316,6 @@ type ScalarOperatorType =
 type SetOperatorType = ComparisonOperator.in | ComparisonOperator.nin;
 type StringOperatorType = ScalarOperatorType | ComparisonOperator.like;
 type BooleanOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
-type NullOperatorType = NullComparisonOperator;
 
 interface Operator<Operator, ValueType, OperatorType> {
     operator: Operator;
@@ -372,37 +371,36 @@ function dateFunctions(
         return success([]);
     }
 
-    const results = Object.entries(operatorNode.fields).map(([key, valueNode]): Result<
-        DateFunctionPredicate[],
-        PredicateError[]
-    > => {
-        if (isFilterFunction(key) === false) {
-            return success([]);
+    const results = Object.entries(operatorNode.fields).map(
+        ([key, valueNode]): Result<DateFunctionPredicate[], PredicateError[]> => {
+            if (isFilterFunction(key) === false) {
+                return success([]);
+            }
+            if (!isObjectValueNode(valueNode)) {
+                return failure([message('Date function expects an object node.')]);
+            }
+
+            const [opKey, opValue] = Object.entries(valueNode.fields)[0];
+            const result = operatorWithValue(opKey, opValue, 'Int')
+                .flatMap((op): Result<DateFunctionPredicate, PredicateError[]> => {
+                    if (op.type !== 'IntOperator') {
+                        return failure([message('Date function expects Int values')]);
+                    }
+
+                    const predicate: DateFunctionPredicate = {
+                        type: PredicateType.dateFunction,
+                        operator: op.operator,
+                        function: DateFunction.dayOfMonth,
+                        value: op.value.value,
+                        extract,
+                    };
+                    return success(predicate);
+                })
+                .map((r) => [r]);
+
+            return result;
         }
-        if (!isObjectValueNode(valueNode)) {
-            return failure([message('Date function expects an object node.')]);
-        }
-
-        const [opKey, opValue] = Object.entries(valueNode.fields)[0];
-        const result = operatorWithValue(opKey, opValue, 'Int')
-            .flatMap((op): Result<DateFunctionPredicate, PredicateError[]> => {
-                if (op.type !== 'IntOperator') {
-                    return failure([message('Date function expects Int values')]);
-                }
-
-                const predicate: DateFunctionPredicate = {
-                    type: PredicateType.dateFunction,
-                    operator: op.operator,
-                    function: DateFunction.dayOfMonth,
-                    value: op.value.value,
-                    extract,
-                };
-                return success(predicate);
-            })
-            .map((r) => [r]);
-
-        return result;
-    });
+    );
 
     const fails = results.filter(isFailure).reduce(flatMap(errors), []);
     if (fails.length > 0) {

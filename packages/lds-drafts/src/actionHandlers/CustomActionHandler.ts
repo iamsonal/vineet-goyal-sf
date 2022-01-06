@@ -132,7 +132,7 @@ export function customActionHandler(
         return queueOperations;
     };
 
-    const replaceAction = <Response>(
+    const replaceAction = <_Response>(
         actionId: string,
         _withActionId: string,
         _uploadingActionId: String | undefined,

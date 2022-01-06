@@ -13,7 +13,7 @@ export function buildNotFetchableNetworkSnapshot<C, D>(
     status: number = 400,
     statusText: string = 'data is not fetchable'
 ): BuildNetworkSnapshot<C, D> {
-    return <C, D>(_context: C) =>
+    return <C, _D>(_context: C) =>
         Promise.resolve(
             luvio.errorSnapshot({
                 status,

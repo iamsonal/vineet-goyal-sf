@@ -132,14 +132,14 @@ function mergeRecordConflict(
     existing: RecordRepresentationNormalized,
     recordConflictMap: RecordConflictMap
 ) {
-    const incomingNode =
-        luvio.wrapNormalizedGraphNode<RecordRepresentationNormalized, RecordRepresentation>(
-            incoming
-        );
-    const existingNode =
-        luvio.wrapNormalizedGraphNode<RecordRepresentationNormalized, RecordRepresentation>(
-            existing
-        );
+    const incomingNode = luvio.wrapNormalizedGraphNode<
+        RecordRepresentationNormalized,
+        RecordRepresentation
+    >(incoming);
+    const existingNode = luvio.wrapNormalizedGraphNode<
+        RecordRepresentationNormalized,
+        RecordRepresentation
+    >(existing);
     const incomingTrackedFieldsTrieRoot = {
         name: incoming.apiName,
         children: {},

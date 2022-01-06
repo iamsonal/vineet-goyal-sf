@@ -36,12 +36,6 @@ const UIAPI_RELATED_LIST_COUNT_PATH = `${UI_API_BASE_URI}/related-list-count`;
 
 let crudInstrumentationCallbacks: RelatedListInstrumentationCallbacks | null = null;
 
-interface GetRelatedListRecordsCrudMetadata {
-    recordIds: string[];
-    recordType: string | null;
-    recordTypes: string[];
-}
-
 if (forceRecordTransactionsDisabled === false) {
     crudInstrumentationCallbacks = {
         getRelatedListRecordsRejectFunction: (config: InstrumentationRejectConfig) => {
@@ -292,11 +286,11 @@ function logGetRelatedListRecordsInteraction(
         return record.id;
     });
 
-    /** 
+    /**
      *  In almost every case - the relatedList records will all be of the same apiName, but there is an edge case for
         Activities entity that could return Events & Tasks- so handle that case by returning a joined string.
         ADS Implementation only looks at the first record returned to determine the apiName.
-        See force/recordLibrary/recordMetricsPlugin.js _getRecordType method. 
+        See force/recordLibrary/recordMetricsPlugin.js _getRecordType method.
      */
     instrumentation.logCrud(CrudEventType.READS, {
         parentRecordId: body.listReference.inContextOfRecordId,

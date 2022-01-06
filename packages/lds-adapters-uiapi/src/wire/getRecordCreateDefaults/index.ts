@@ -190,44 +190,46 @@ function buildNetworkSnapshotCachePolicy(
     return buildNetworkSnapshot(luvio, adapterContext, config);
 }
 
-export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaultsRepresentation> =
-    (luvio: Luvio) => {
-        return luvio.withContext(function UiApi__getRecordCreateDefaults(
-            untrusted: unknown,
-            adapterContext: AdapterContext,
-            requestContext?: AdapterRequestContext
-        ):
-            | Promise<Snapshot<RecordDefaultsRepresentation, any>>
-            | Snapshot<RecordDefaultsRepresentation, any>
-            | null {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                return null;
-            }
+export const factory: AdapterFactory<
+    GetRecordCreateDefaultsConfig,
+    RecordDefaultsRepresentation
+> = (luvio: Luvio) => {
+    return luvio.withContext(function UiApi__getRecordCreateDefaults(
+        untrusted: unknown,
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
+    ):
+        | Promise<Snapshot<RecordDefaultsRepresentation, any>>
+        | Snapshot<RecordDefaultsRepresentation, any>
+        | null {
+        const config = coerceConfigWithDefaults(untrusted);
+        if (config === null) {
+            return null;
+        }
 
-            const selectorKey = buildSelectorKey(config);
-            /**
-             * getRecordCreateDefaults returns a value that includes a map of ObjectInfos,
-             * a layout and a record. The returned record includes fields that are not
-             * known to the client. Because we don't know what the return shape will be,
-             * we have to store a selector from a previous response and see if we can
-             * extract those values back out.
-             *
-             * store cached selector in the adapter context and if it does not exist
-             * we need to fetch it from the network and set it.
-             */
-            const cachedSelector = adapterContext.get<Selector>(selectorKey);
+        const selectorKey = buildSelectorKey(config);
+        /**
+         * getRecordCreateDefaults returns a value that includes a map of ObjectInfos,
+         * a layout and a record. The returned record includes fields that are not
+         * known to the client. Because we don't know what the return shape will be,
+         * we have to store a selector from a previous response and see if we can
+         * extract those values back out.
+         *
+         * store cached selector in the adapter context and if it does not exist
+         * we need to fetch it from the network and set it.
+         */
+        const cachedSelector = adapterContext.get<Selector>(selectorKey);
 
-            return luvio.applyCachePolicy(
-                requestContext || {},
-                {
-                    luvio,
-                    config,
-                    adapterContext,
-                    cachedSelector,
-                },
-                buildInMemorySnapshotCachePolicy,
-                buildNetworkSnapshotCachePolicy
-            );
-        });
-    };
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+                adapterContext,
+                cachedSelector,
+            },
+            buildInMemorySnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
+    });
+};

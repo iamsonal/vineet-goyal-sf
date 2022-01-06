@@ -106,8 +106,8 @@ function coerceConfigWithDefaults(untrusted: unknown): GetLookupRecordsConfig | 
 function removeEtags(recordRep: RecordRepresentation) {
     const { fields } = recordRep;
 
-    delete recordRep.eTag;
-    delete recordRep.weakEtag;
+    delete (recordRep as Partial<RecordRepresentation>).eTag;
+    delete (recordRep as Partial<RecordRepresentation>).weakEtag;
 
     Object.keys(fields).forEach((fieldName) => {
         const { value: nestedValue } = fields[fieldName];

@@ -247,7 +247,7 @@ export function makeDurableStoreDraftAware(
         });
     };
 
-    const evictEntries: typeof durableStore['evictEntries'] = function <T>(
+    const evictEntries: typeof durableStore['evictEntries'] = function <_T>(
         entryIds: string[],
         segment: string
     ) {

@@ -127,7 +127,7 @@ export function mergeAggregateUiResponse<T>(
             status: HttpStatusCode.ServerError,
             statusText: 'Server Error',
             body: {
-                error: error.toString(),
+                error: (error as Error).toString(),
             },
         };
     }

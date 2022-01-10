@@ -263,7 +263,9 @@ workflows:
       - test_versions:
           filters:
             branches:
-              ignore: main
+              ignore:
+                - main
+                - /core*/
       - test_integration:
           requires:
             - build

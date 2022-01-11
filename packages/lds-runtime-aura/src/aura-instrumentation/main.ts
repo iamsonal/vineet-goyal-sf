@@ -1,5 +1,5 @@
 import { Luvio, Store, Adapter, UnfulfilledSnapshot } from '@luvio/engine';
-import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
+import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@salesforce/lds-bindings';
 import {
     CacheStatsLogger,
     Counter,

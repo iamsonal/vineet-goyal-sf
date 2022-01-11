@@ -17,6 +17,7 @@
         "clean": "rm -rf dist",
         "test:unit": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand",
+        "test:size": "bundlesize",
         "release:corejar": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-aura"
     },
     "devDependencies": {
@@ -27,5 +28,12 @@
         "@salesforce/lds-instrumentation": "1.37.5",
         "@salesforce/lds-network-aura": "1.37.5",
         "@salesforce/lds-runtime-web": "1.37.5"
-    }
+    },
+    "bundlesize": [
+        {
+            "path": "./dist/ldsEngineCreator.js",
+            "maxSize": "10 kB",
+            "compression": "brotli"
+        }
+    ]
 }

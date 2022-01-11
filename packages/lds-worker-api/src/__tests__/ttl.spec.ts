@@ -48,7 +48,7 @@ describe('Configurable TTL', () => {
 
                 const TTL_VALUE = 1000;
 
-                setUiApiRecordTTL(TTL_VALUE);
+                await setUiApiRecordTTL(TTL_VALUE);
                 expect(storeSetTTLOverrideSpy).not.toHaveBeenCalled();
                 mockProvideLuvio(mockLuvio);
                 expect(storeSetTTLOverrideSpy).toHaveBeenCalledTimes(1);
@@ -65,8 +65,8 @@ describe('Configurable TTL', () => {
 
                 const TTL_VALUE = 1000;
 
-                setUiApiRecordTTL(344);
-                setUiApiRecordTTL(TTL_VALUE);
+                await setUiApiRecordTTL(344);
+                await setUiApiRecordTTL(TTL_VALUE);
                 expect(storeSetTTLOverrideSpy).not.toHaveBeenCalled();
                 mockProvideLuvio(mockLuvio);
                 expect(storeSetTTLOverrideSpy).toHaveBeenCalledTimes(1);
@@ -88,7 +88,7 @@ describe('Configurable TTL', () => {
                 } = await mockImportChain();
 
                 const TTL_VALUE = 1000;
-                setMetadataTTL(TTL_VALUE);
+                await setMetadataTTL(TTL_VALUE);
                 expect(storeSetDefaultTTLOverrideSpy).not.toHaveBeenCalled();
                 mockProvideLuvio(mockLuvio);
                 expect(storeSetDefaultTTLOverrideSpy).toHaveBeenCalledTimes(1);
@@ -105,8 +105,8 @@ describe('Configurable TTL', () => {
 
                 const TTL_VALUE = 1000;
 
-                setMetadataTTL(344);
-                setMetadataTTL(TTL_VALUE);
+                await setMetadataTTL(344);
+                await setMetadataTTL(TTL_VALUE);
                 expect(storeSetDefaultTTLOverrideSpy).not.toHaveBeenCalled();
                 mockProvideLuvio(mockLuvio);
                 expect(storeSetDefaultTTLOverrideSpy).toHaveBeenCalledTimes(1);
@@ -116,11 +116,11 @@ describe('Configurable TTL', () => {
     });
     describe('After default luvio has been provided', () => {
         describe('setUiApiRecordTTL', () => {
-            it('calls luvio.storeSetTTLOverride with the right params', () => {
+            it('calls luvio.storeSetTTLOverride with the right params', async () => {
                 const TTL_VALUE = 1000;
                 const storeSetDefaultTTLOverrideSpy = jest.spyOn(luvio, 'storeSetTTLOverride');
 
-                setUiApiRecordTTL(TTL_VALUE);
+                await setUiApiRecordTTL(TTL_VALUE);
                 expect(storeSetDefaultTTLOverrideSpy).toHaveBeenCalledTimes(1);
                 expect(storeSetDefaultTTLOverrideSpy).toHaveBeenCalledWith(
                     API_NAMESPACE,
@@ -131,14 +131,14 @@ describe('Configurable TTL', () => {
         });
 
         describe('setMetadataTTL', () => {
-            it('calls luvio.storeSetDefaultTTLOverride with the right params', () => {
+            it('calls luvio.storeSetDefaultTTLOverride with the right params', async () => {
                 const TTL_VALUE = 1000;
                 const storeSetDefaultTTLOverrideSpy = jest.spyOn(
                     luvio,
                     'storeSetDefaultTTLOverride'
                 );
 
-                setMetadataTTL(TTL_VALUE);
+                await setMetadataTTL(TTL_VALUE);
                 expect(storeSetDefaultTTLOverrideSpy).toHaveBeenCalledTimes(1);
                 expect(storeSetDefaultTTLOverrideSpy).toHaveBeenCalledWith(TTL_VALUE);
             });

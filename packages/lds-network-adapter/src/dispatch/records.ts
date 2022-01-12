@@ -48,6 +48,7 @@ function buildAndDispatchGetRecordAggregateUi(
         baseUri: UI_API_BASE_URI,
         basePath: '/aggregate-ui',
         method: 'post',
+        priority: resourceRequest.priority,
         urlParams: {},
         body: aggregateUiParams,
         queryParams: {},

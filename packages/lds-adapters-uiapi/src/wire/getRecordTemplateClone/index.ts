@@ -9,6 +9,7 @@ import {
     AdapterContext,
     StoreLookup,
     AdapterRequestContext,
+    CoercedAdapterRequestContext,
 } from '@luvio/engine';
 import {
     validateAdapterConfig,
@@ -203,10 +204,18 @@ type BuildSnapshotContext = {
 };
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext
+    context: BuildSnapshotContext,
+    requestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordDefaultsTemplateCloneRepresentation, any>> {
     const { config, adapterContext, luvio } = context;
-    return buildNetworkSnapshot(luvio, adapterContext, config);
+    let override = undefined;
+    const { networkPriority } = requestContext;
+    if (networkPriority !== 'normal') {
+        override = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, adapterContext, config, override);
 }
 
 function buildInMemorySnapshotCachePolicy(

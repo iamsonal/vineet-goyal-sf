@@ -51,6 +51,7 @@ export interface NetworkAdapter {
  */
 export interface Request {
     method: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE';
+    priority: 'background' | 'normal' | 'high';
     path: string;
     headers: { [key: string]: string };
     queryParams: { [key: string]: string };

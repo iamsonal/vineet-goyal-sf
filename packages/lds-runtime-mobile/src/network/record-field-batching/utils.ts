@@ -284,6 +284,7 @@ export function createAggregateUiRequest(
         baseUri: resourceRequest.baseUri,
         basePath: '/ui-api/aggregate-ui',
         body: aggregateUiPostBody,
+        priority: resourceRequest.priority,
         queryParams: {},
         headers: {},
         urlParams: {},

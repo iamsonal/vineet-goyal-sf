@@ -93,6 +93,7 @@ describe('isContinuation Header', () => {
             baseUri: '/lwr/apex/v55.0',
             basePath: '/wkdw__TestController/getString',
             method: 'post',
+            priority: 'normal',
             body: {
                 apexMethod: 'getString',
                 apexClass: 'TestController',

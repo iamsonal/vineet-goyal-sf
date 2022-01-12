@@ -6,6 +6,8 @@ import {
     StoreLookup,
     Snapshot,
     AdapterRequestContext,
+    ResourceRequestOverride,
+    CoercedAdapterRequestContext,
 } from '@luvio/engine';
 
 import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
@@ -117,7 +119,11 @@ function removeEtags(recordRep: RecordRepresentation) {
     });
 }
 
-export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfig) {
+export function buildNetworkSnapshot(
+    luvio: Luvio,
+    config: GetLookupRecordsConfig,
+    override?: ResourceRequestOverride
+) {
     const { objectApiName, fieldApiName, targetApiName } = config;
     const resourceParams: ResourceRequestConfig = {
         urlParams: {
@@ -136,7 +142,7 @@ export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfi
     };
     const request = getLookupRecordsResourceRequest(resourceParams);
 
-    return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request, override).then(
         (response) => {
             // TODO [W-7235112]: remove this hack to never ingest lookup responses that
             // avoids issues caused by them not being real RecordRepresentations
@@ -181,9 +187,17 @@ function buildInMemorySnapshot(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext
+    context: BuildSnapshotContext,
+    requestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordCollectionRepresentation>> {
-    return buildNetworkSnapshot(context.luvio, context.config);
+    let override = undefined;
+    const { networkPriority } = requestContext;
+    if (networkPriority !== 'normal') {
+        override = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(context.luvio, context.config, override);
 }
 
 function isPromise<T>(value: Promise<T> | T): value is Promise<T> {

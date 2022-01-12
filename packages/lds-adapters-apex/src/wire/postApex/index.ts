@@ -2,6 +2,7 @@ import {
     Adapter,
     AdapterContext,
     AdapterRequestContext,
+    CoercedAdapterRequestContext,
     FetchResponse,
     FulfilledSnapshot,
     Luvio,
@@ -172,10 +173,18 @@ export function buildNetworkSnapshot(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext
+    context: BuildSnapshotContext,
+    requestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<any, any>> {
     const { luvio, config, adapterContext } = context;
-    return buildNetworkSnapshot(luvio, adapterContext, config);
+    let override = undefined;
+    const { networkPriority } = requestContext;
+    if (networkPriority !== 'normal') {
+        override = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, adapterContext, config, override);
 }
 
 export const invoker = (luvio: Luvio, invokerParams: ApexInvokerParams) => {

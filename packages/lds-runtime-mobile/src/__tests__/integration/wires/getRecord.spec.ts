@@ -3,6 +3,7 @@ import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { CompositeResponseEnvelope } from '../../../network/record-field-batching/utils';
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
+import recordResponse from './data/record-User-fields-User.Id,User.City.json';
 import { generateMockedRecordFields } from '../../../network/record-field-batching/__tests__/testUtils';
 import { JSONStringify } from '../../../utils/language';
 import { clone, flushPromises } from '../../testUtils';
@@ -94,6 +95,26 @@ describe('mobile runtime integration tests', () => {
             expect(record.error.body.message).toEqual(
                 'Required field is missing from draft created record'
             );
+        });
+
+        it('calls get record with background priority', async () => {
+            networkAdapter.setMockResponse({
+                body: JSONStringify(recordResponse),
+                status: 200,
+                headers: {},
+            });
+
+            const record = await getRecord(
+                {
+                    recordId: recordResponse.id,
+                    optionalFields: ['User.Id'],
+                },
+                { priority: 'background' }
+            );
+
+            expect(record.state).toBe('Fulfilled');
+            expect(networkAdapter.sentRequests.length).toBe(1);
+            expect(networkAdapter.sentRequests[0].priority).toBe('background');
         });
     });
 });

@@ -10,6 +10,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo/123',
                 method: 'get',
+                priority: 'normal',
                 body: {},
                 headers: { 'Foo-Header': 'Bar' },
                 queryParams: { q1: 'q1Value', q2: 'q2Value' },
@@ -23,6 +24,7 @@ describe('networkUtils', () => {
                 body: '{}',
                 headers: { 'Foo-Header': 'Bar' },
                 path: '/base/uri/foo/123',
+                priority: 'normal',
                 queryParams: { q1: 'q1Value', q2: 'q2Value' },
             });
         });
@@ -32,6 +34,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'get',
+                priority: 'normal',
                 body: null,
                 headers: {},
                 queryParams: { qArray: ['test1', 'test2'] },
@@ -45,6 +48,7 @@ describe('networkUtils', () => {
                 body: null,
                 headers: {},
                 path: '/base/uri/foo',
+                priority: 'normal',
                 queryParams: { qArray: 'test1,test2' },
             });
         });
@@ -54,6 +58,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'get',
+                priority: 'normal',
                 body: null,
                 headers: {},
                 queryParams: { qObject: { test1: 1, test2: 2 } },
@@ -67,6 +72,7 @@ describe('networkUtils', () => {
                 body: null,
                 headers: {},
                 path: '/base/uri/foo',
+                priority: 'normal',
                 queryParams: { qObject: '{"test1":1,"test2":2}' },
             });
         });
@@ -76,6 +82,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'get',
+                priority: 'normal',
                 body: null,
                 headers: {},
                 queryParams: { qArray: ['test1', 'test2'], uValue: undefined },
@@ -88,6 +95,7 @@ describe('networkUtils', () => {
                 method: 'GET',
                 body: null,
                 headers: {},
+                priority: 'normal',
                 path: '/base/uri/foo',
                 queryParams: { qArray: 'test1,test2' },
             });
@@ -99,6 +107,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'post',
+                priority: 'normal',
                 body,
                 headers: {},
                 queryParams: {},
@@ -112,6 +121,7 @@ describe('networkUtils', () => {
                 body: JSON.stringify(body),
                 headers: {},
                 path: '/base/uri/foo',
+                priority: 'normal',
                 queryParams: {},
             });
         });

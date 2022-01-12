@@ -384,6 +384,7 @@ export function createResourceRequest(config: ResourceRequestConfig): ResourceRe
             config.urlParams.relatedListIds +
             '',
         method: 'get',
+        priority: 'normal',
         body: null,
         urlParams: config.urlParams,
         queryParams: config.queryParams,

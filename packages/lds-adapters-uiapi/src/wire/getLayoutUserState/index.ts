@@ -7,6 +7,8 @@ import {
     ResourceResponse,
     AdapterRequestContext,
     StoreLookup,
+    ResourceRequestOverride,
+    CoercedAdapterRequestContext,
 } from '@luvio/engine';
 import {
     GetLayoutUserStateConfig,
@@ -108,18 +110,21 @@ export function buildInMemorySnapshot(luvio: Luvio, config: GetLayoutUserStateCo
 
 export function buildNetworkSnapshot(
     luvio: Luvio,
-    config: GetLayoutUserStateConfigWithDefaults
+    config: GetLayoutUserStateConfigWithDefaults,
+    override?: ResourceRequestOverride
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation>> {
     const { request, key } = prepareRequest(config);
 
-    return luvio.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request).then(
-        (response) => {
-            return onResourceResponseSuccess(luvio, config, key, response);
-        },
-        (error: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, config, key, error);
-        }
-    );
+    return luvio
+        .dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request, override)
+        .then(
+            (response) => {
+                return onResourceResponseSuccess(luvio, config, key, response);
+            },
+            (error: FetchResponse<unknown>) => {
+                return onResourceResponseError(luvio, config, key, error);
+            }
+        );
 }
 
 type BuildSnapshotContext = {
@@ -128,10 +133,18 @@ type BuildSnapshotContext = {
 };
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext
+    context: BuildSnapshotContext,
+    requestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation, any>> {
     const { config, luvio } = context;
-    return buildNetworkSnapshot(luvio, config);
+    let override = undefined;
+    const { networkPriority } = requestContext;
+    if (networkPriority !== 'normal') {
+        override = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, config, override);
 }
 
 function buildInMemorySnapshotCachePolicy(

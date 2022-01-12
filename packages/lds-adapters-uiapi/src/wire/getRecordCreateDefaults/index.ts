@@ -9,6 +9,8 @@ import {
     AdapterContext,
     AdapterRequestContext,
     StoreLookup,
+    ResourceRequestOverride,
+    CoercedAdapterRequestContext,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
@@ -77,7 +79,8 @@ function buildSnapshotRefresh(
 export function buildNetworkSnapshot(
     luvio: Luvio,
     context: AdapterContext,
-    config: GetRecordCreateDefaultsConfigWithDefaults
+    config: GetRecordCreateDefaultsConfigWithDefaults,
+    override?: ResourceRequestOverride
 ) {
     const params: ResourceRequestConfig = createResourceParams(config);
     const request = getUiApiRecordDefaultsCreateByObjectApiName(params);
@@ -85,7 +88,7 @@ export function buildNetworkSnapshot(
     const key = keyBuilder(params);
     const selectorKey = buildSelectorKey(config);
 
-    return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request, override).then(
         (response) => {
             const { body } = response;
             const cacheSelector: Selector = {
@@ -184,10 +187,18 @@ function buildInMemorySnapshotCachePolicy(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext
+    context: BuildSnapshotContext,
+    requestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordDefaultsRepresentation, any>> {
     const { config, adapterContext, luvio } = context;
-    return buildNetworkSnapshot(luvio, adapterContext, config);
+    let override = undefined;
+    const { networkPriority } = requestContext;
+    if (networkPriority !== 'normal') {
+        override = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, adapterContext, config, override);
 }
 
 export const factory: AdapterFactory<

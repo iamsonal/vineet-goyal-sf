@@ -72,6 +72,18 @@ function methodFromResourceRequestMethod(method: string) {
     }
 }
 
+function priorityFromResourceRequest(request: ResourceRequest) {
+    switch (request.priority) {
+        case 'background':
+            return 'background';
+        case 'high':
+            return 'high';
+        case 'normal':
+        default:
+            return 'normal';
+    }
+}
+
 function isStatusOk(status: number): boolean {
     return status >= 200 && status <= 299;
 }
@@ -103,6 +115,7 @@ export function buildNimbusNetworkPluginRequest(resourceRequest: ResourceRequest
         headers,
         queryParams: ldsParamsToString(queryParams),
         path: `${baseUri}${basePath}`,
+        priority: priorityFromResourceRequest(resourceRequest),
     };
 }
 

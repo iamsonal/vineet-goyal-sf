@@ -119,7 +119,9 @@ describe('isContinuation Header', () => {
                     (_cachePolicy, buildSnapshotContext, _buildInMemoryFunc, buildNetworkFunc) => {
                         // have mock implementation call buildNetworkSnapshot so we can
                         // validate dispatchResourceRequest is called with correct params
-                        return buildNetworkFunc(buildSnapshotContext);
+                        return buildNetworkFunc(buildSnapshotContext, {
+                            networkPriority: 'normal',
+                        });
                     }
                 ),
             dispatchResourceRequest: jest.fn().mockReturnValue(Promise.resolve({})),
@@ -153,6 +155,7 @@ describe('isContinuation Header', () => {
                 'X-SFDC-Allow-Continuation': 'true',
             },
             method: 'get',
+            priority: 'normal',
             queryParams: {
                 methodParams: {
                     apexClass: 'TestController',

@@ -7,6 +7,8 @@ import {
     ResourceResponse,
     AdapterRequestContext,
     StoreLookup,
+    ResourceRequestOverride,
+    CoercedAdapterRequestContext,
 } from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
 import {
@@ -157,11 +159,12 @@ function onResourceError(
 export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetRecordConfig,
-    serverRequestCount: number = 0
+    serverRequestCount: number = 0,
+    override?: ResourceRequestOverride
 ) {
     const { request, key, allTrackedFields, resourceParams } = prepareRequest(luvio, config);
 
-    return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordRepresentation>(request, override).then(
         (response) => {
             return luvio.handleSuccessResponse(
                 () =>
@@ -217,11 +220,18 @@ export function buildInMemorySnapshotCachePolicy(
 }
 
 function buildNetworkSnapshotCachePolicy(
-    context: BuildSnapshotContext
+    context: BuildSnapshotContext,
+    requestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordRepresentation>> {
     const { config, luvio } = context;
-
-    return buildNetworkSnapshot(luvio, config);
+    let override = undefined;
+    const { networkPriority } = requestContext;
+    if (networkPriority !== 'normal') {
+        override = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, config, 0, override);
 }
 
 export function getRecordByFields(

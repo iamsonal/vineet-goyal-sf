@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-bindings",
-    "version": "1.37.6",
+    "version": "1.37.7",
     "description": "LDS Bindings for SFDC",
     "license": "MIT",
     "main": "dist/ldsBindings.js",

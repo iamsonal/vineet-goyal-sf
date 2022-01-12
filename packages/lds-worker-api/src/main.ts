@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-undef
     withDefaultLuvio((luvio: Luvio) => {
         // eslint-disable-next-line no-undef
-        const global = globalThis as any;
+        const global = typeof globalThis === 'undefined' ? {} : (globalThis as any);
         global.luvio = luvio;
     });
 }

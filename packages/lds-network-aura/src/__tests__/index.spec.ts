@@ -8512,6 +8512,30 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/health/uhs/actions', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhs/actions`,
+            },
+            [
+                'HolisticPatientIndexController.getActionsDetails',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhs/actions`,
+            },
+            {}
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map((key) => key.split(':')))(
         '%s %s route tested',

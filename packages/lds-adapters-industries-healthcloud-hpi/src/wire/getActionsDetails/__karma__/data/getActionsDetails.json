@@ -1,0 +1,14 @@
+{
+    "hpiActionsOutputRepresentationElements": [
+        {
+            "iconUrl": "https://uhicom-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/action/fallback_120.png",
+            "apiName": "Account.TestAddMed",
+            "description": "TestAddMed Description - I am some Description New"
+        },
+        {
+            "iconUrl": "https://uhicom-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/action/fallback_120.png",
+            "apiName": "Account.healthcloud__ProgramEnrollment",
+            "description": "Enroll in Program"
+        }
+    ]
+}

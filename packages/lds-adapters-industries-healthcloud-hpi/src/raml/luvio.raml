@@ -1,0 +1,14 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'healthcloud-hpi'
+(luvio.ttl): 60000
+
+/connect:
+  /health/uhs/actions:
+    get:
+      (luvio.adapter):
+        name: getActionsDetails

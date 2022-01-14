@@ -1,0 +1,74 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  HpiActionsOutputRepresentationElement:
+    description: Hpi Actionable item
+    type: object
+    properties:
+      apiName:
+        description: apiName
+        type: string
+      description:
+        description: description
+        type: string
+      iconUrl:
+        description: icon url
+        type: string
+  HpiActionsOutputRepresentationList:
+    description: Hpi Actionable list of items
+    type: object
+    properties:
+      hpiActionsOutputRepresentationElements:
+        description: list of actions
+        type: array
+        items:
+          type: HpiActionsOutputRepresentationElement
+/connect:
+  /health:
+    /uhs:
+      /actions:
+        get:
+          description: API to get Actions Details
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: HpiActionsOutputRepresentationList
+          queryParameters:
+            actions:
+              type: array
+              required: false
+              items:
+                type: string
+                (oas-collectionFormat): csv
+            formFactor:
+              type: string
+              required: false
+            recordId:
+              type: string
+              required: false

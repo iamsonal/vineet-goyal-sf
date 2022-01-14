@@ -352,6 +352,8 @@ const JOIN_CHIME_MEETING_PATH = new RegExp(
     'i'
 );
 
+const HPI_SCORE_PATH = new RegExp(`${CONNECT_BASE_URI}/health/uhs/actions`, 'i');
+
 const GET_TAGS_BY_RECORD_PATH = new RegExp(
     `${CONNECT_BASE_URI}/interest-tags/assignments/entity/([A-Z0-9_]){1,80}$`,
     'i'
@@ -1438,6 +1440,16 @@ const videovisits: ApiFamily = {
     },
 };
 
+const hpiscore: ApiFamily = {
+    getActionsDetails: {
+        method: 'get',
+        transport: {
+            controller: 'HolisticPatientIndexController.getActionsDetails',
+        },
+        predicate: (path: string) => path.startsWith(CONNECT_BASE_URI) && HPI_SCORE_PATH.test(path),
+    },
+};
+
 const interesttagging: ApiFamily = {
     getTagsByRecordId: {
         method: 'get',
@@ -1496,3 +1508,4 @@ registerApiFamilyRoutes(marketingIntegration);
 registerApiFamilyRoutes(videovisits);
 registerApiFamilyRoutes(interesttagging);
 registerApiFamilyRoutes(identityVerification);
+registerApiFamilyRoutes(hpiscore);

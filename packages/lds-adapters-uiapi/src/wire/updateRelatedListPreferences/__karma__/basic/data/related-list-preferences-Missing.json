@@ -1,0 +1,10 @@
+{
+    "status": 404,
+    "statusText": "Not Found",
+    "ok": false,
+    "reject": true,
+    "data": {
+        "errorCode": "NOT_FOUND",
+        "message": "The requested resource does not exist"
+    }
+}

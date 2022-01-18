@@ -1,0 +1,29 @@
+{
+    "results": [
+        {
+            "result": {
+                "columnWidths": {
+                    "column1_random2": 17,
+                    "column2_random2": 42,
+                    "column3_random2": -1,
+                    "column4_random2": -1
+                },
+                "columnWrap": {
+                    "column1_random2": false,
+                    "column2_random2": false,
+                    "column3_random2": true,
+                    "column4_random2": true
+                },
+                "orderedBy": [
+                    {
+                        "fieldApiName": "column2_random2",
+                        "isAscending": false,
+                        "label": "column2 random"
+                    }
+                ],
+                "preferencesId": "Random2"
+            },
+            "statusCode": 200
+        }
+    ]
+}

@@ -272,6 +272,11 @@ types:
   BatchRelatedListCountRepresentation:
     examples:
       mockGetRelatedListsCountResponse: !include ../mocks/types/BatchRelatedListCountRepresentation/related-lists-count-Cases-Contacts.json
+  RelatedListUserPreferencesRepresentation:
+    (luvio.key):
+      preferencesId: preferencesId
+    (luvio.ttl): 900000
+    (luvio.opaque): true
   PicklistValuesRepresentation:
     examples:
       mockGetPicklistValuesResponse: !include ../mocks/types/PicklistValuesRepresentation/picklist-Account-MasterRecordTypeId-fieldApiName-Type.json
@@ -1315,6 +1320,28 @@ types:
       patch:
         (luvio.adapter):
           name: updateRelatedListInfo
+  '/related-list-preferences':
+    '/batch/{preferencesIds}':
+      get:
+        (luvio.adapter):
+          name: getRelatedListPreferencesBatch
+        (luvio.composite):
+          resource: /ui-api/related-list-preferences/{preferencesId}
+          uriParameters:
+            preferencesId: preferencesIds
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
+    '/{preferencesId}':
+      get:
+        (luvio.adapter):
+          name: getRelatedListPreferences
+        (luvio.key):
+          preferencesId: urlParams.preferencesId
+      patch:
+        (luvio.adapter):
+          name: updateRelatedListPreferences
   '/related-list-records/{parentRecordId}/{relatedListId}':
     uriParameters:
       parentRecordId:

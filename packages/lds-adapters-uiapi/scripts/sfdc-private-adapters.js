@@ -12,4 +12,5 @@ module.exports = {
     // custom adapters
     updateLayoutUserState: true,
     updateRelatedListInfo: true,
+    updateRelatedListPreferences: true,
 };

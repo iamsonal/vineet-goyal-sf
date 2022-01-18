@@ -31,6 +31,7 @@ import {
     DUPLICATE_CONFIGURATION_TTL,
     DUPLICATES_TTL,
     RELATED_LIST_RECORD_COLLECTION_TTL,
+    RELATED_LIST_USER_PREFERENCES_TTL,
 } from './dist/uiapi-constants';
 
 const API_VERSION = 'v55.0';
@@ -489,6 +490,39 @@ function mockGetRelatedListRecordsBatchNetwork(config, mockData) {
     }
 }
 
+function mockGetRelatedListPreferencesNetwork(config, mockData) {
+    const { preferencesId } = config;
+    const queryParams = { ...config };
+    delete queryParams.preferencesId;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-preferences/${preferencesId}`,
+        queryParams,
+    });
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRelatedListPreferencesBatchNetwork(config, mockData) {
+    const preferencesIds = config.preferencesIds;
+    const queryParams = { ...config };
+    delete queryParams.preferencesIds;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-preferences/batch/${preferencesIds}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetObjectInfoNetwork(config, mockData) {
     let { objectApiName, ...queryParams } = config;
 
@@ -813,6 +847,14 @@ function expireRelatedListRecordCollection() {
     timekeeper.travel(Date.now() + RELATED_LIST_RECORD_COLLECTION_TTL + 1);
 }
 
+/**
+ * Force a cache expiration for related-list-preferencs by fast-forwarding time past the
+ * standard related list user preferences TTL.
+ */
+function expireRelatedListUserPreferences() {
+    timekeeper.travel(Date.now() + RELATED_LIST_USER_PREFERENCES_TTL + 1);
+}
+
 function isSpanningRecord(value) {
     return value !== null && typeof value === 'object';
 }
@@ -976,6 +1018,7 @@ export {
     expireDuplicateConfiguration,
     expireDuplicatesRepresentation,
     expireRelatedListRecordCollection,
+    expireRelatedListUserPreferences,
     // network mock utils
     mockCreateRecordNetwork,
     mockDeleteRecordNetwork,
@@ -1003,6 +1046,8 @@ export {
     mockGetRelatedListRecordsNetwork,
     mockGetRelatedListRecordsNetworkPost,
     mockGetRelatedListRecordsBatchNetwork,
+    mockGetRelatedListPreferencesNetwork,
+    mockGetRelatedListPreferencesBatchNetwork,
     mockUpdateRecordNetwork,
     mockUpdateLayoutUserStateNetwork,
     mockGetRelatedListInfoNetwork,

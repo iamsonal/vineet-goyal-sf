@@ -45,3 +45,5 @@ export { TTL as DUPLICATES_TTL } from '../src/generated/types/DuplicatesRepresen
 export { TTL as DUPLICATE_CONFIGURATION_TTL } from '../src/generated/types/DuplicatesConfigurationRepresentation';
 
 export { TTL as RELATED_LIST_RECORD_COLLECTION_TTL } from '../src/generated/types/RelatedListRecordCollectionRepresentation';
+
+export { TTL as RELATED_LIST_USER_PREFERENCES_TTL } from '../src/generated/types/RelatedListUserPreferencesRepresentation';

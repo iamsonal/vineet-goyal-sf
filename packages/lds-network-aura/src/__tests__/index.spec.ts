@@ -3523,6 +3523,213 @@ describe('routes', () => {
             }
         );
     });
+
+    describe('get /related-list-preferences/{preferencesId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+            },
+            [
+                'RelatedListUiController.getRelatedListPreferences',
+                {
+                    preferencesId: 'Random',
+                },
+                undefined,
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-preferences/Random`,
+            urlParams: {
+                preferencesId: 'Random',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+            },
+            null
+        );
+    });
+
+    describe('patch /related-list-preferences/{preferencesId}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+                body: {
+                    columnWidths: {
+                        testSetPreferences_agfgq: 17,
+                    },
+                    columnWrap: {
+                        testSetPreferences_agfgq: false,
+                    },
+                    orderedBy: [
+                        {
+                            fieldApiName: 'testSetPreferences_agfgq',
+                            isAscending: false,
+                            label: 'some label',
+                        },
+                    ],
+                },
+            },
+            [
+                'RelatedListUiController.updateRelatedListPreferences',
+                {
+                    preferencesId: 'Random',
+                    relatedListUserPreferencesInput: {
+                        columnWidths: {
+                            testSetPreferences_agfgq: 17,
+                        },
+                        columnWrap: {
+                            testSetPreferences_agfgq: false,
+                        },
+                        orderedBy: [
+                            {
+                                fieldApiName: 'testSetPreferences_agfgq',
+                                isAscending: false,
+                                label: 'some label',
+                            },
+                        ],
+                    },
+                },
+                undefined,
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'patch',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-preferences/Rnadom`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+                body: {
+                    columnWidths: {
+                        testSetPreferences_agfgq: 17,
+                    },
+                    columnWrap: {
+                        testSetPreferences_agfgq: false,
+                    },
+                    orderedBy: [
+                        {
+                            fieldApiName: 'testSetPreferences_agfgq',
+                            isAscending: false,
+                            label: 'some label',
+                        },
+                    ],
+                },
+            },
+            null
+        );
+    });
+
+    describe('get /related-list-preferences/batch/{preferencesIds}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/batch/Random,Random2`,
+                urlParams: {
+                    preferencesIds: ['Random', 'Random2'],
+                },
+            },
+            [
+                'RelatedListUiController.getRelatedListPreferencesBatch',
+                {
+                    preferencesIds: ['Random', 'Random2'],
+                },
+                undefined,
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-preferences/batch/Random,Random2`,
+            urlParams: {
+                preferencesIds: ['Random', 'Random2'],
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/batch/Random,Random2`,
+                urlParams: {
+                    preferencesIds: ['Random', 'Random2'],
+                },
+            },
+            {
+                results: [
+                    {
+                        result: {
+                            columnWidths: {
+                                column1_random: 17,
+                            },
+                            columnWrap: {
+                                column1_random: false,
+                            },
+                            orderedBy: [
+                                {
+                                    fieldApiName: 'column1_random',
+                                    isAscending: false,
+                                    label: 'column1 random',
+                                },
+                            ],
+                            preferencesId: 'Random',
+                        },
+                        statusCode: 200,
+                    },
+                    {
+                        result: {
+                            columnWidths: {
+                                column1_random2: 17,
+                            },
+                            columnWrap: {
+                                column1_random2: false,
+                            },
+                            orderedBy: [
+                                {
+                                    fieldApiName: 'column1_random2',
+                                    isAscending: false,
+                                    label: 'column1 random',
+                                },
+                            ],
+                            preferencesId: 'Random2',
+                        },
+                        statusCode: 200,
+                    },
+                ],
+            }
+        );
+    });
+
     describe('get /list-records/{objectApiName}/{listViewApiName}', () => {
         testControllerInput(
             {

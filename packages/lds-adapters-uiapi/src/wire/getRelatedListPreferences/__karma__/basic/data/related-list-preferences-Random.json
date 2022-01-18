@@ -1,0 +1,22 @@
+{
+    "columnWidths": {
+        "testSetPreferences_agfgq": 17,
+        "testSetPreferences_mysuv": 42,
+        "testSetPreferences_ultpt": -1,
+        "testSetPreferences_rfeiy": -1
+    },
+    "columnWrap": {
+        "testSetPreferences_agfgq": false,
+        "testSetPreferences_mysuv": false,
+        "testSetPreferences_ultpt": true,
+        "testSetPreferences_rfeiy": true
+    },
+    "orderedBy": [
+        {
+            "fieldApiName": "testSetPreferences_jczgz__c",
+            "isAscending": false,
+            "label": "some label"
+        }
+    ],
+    "preferencesId": "Random"
+}

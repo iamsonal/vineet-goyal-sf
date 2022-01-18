@@ -26,6 +26,9 @@ enum UiApiRecordController {
     GetRelatedListCounts = 'RelatedListUiController.getRelatedListsRecordCount',
     GetRelatedListInfoBatch = 'RelatedListUiController.getRelatedListInfoBatch',
     GetRelatedListRecordsBatch = 'RelatedListUiController.getRelatedListRecordsBatch',
+    GetRelatedListPreferences = 'RelatedListUiController.getRelatedListPreferences',
+    UpdateRelatedListPreferences = 'RelatedListUiController.updateRelatedListPreferences',
+    GetRelatedListPreferencesBatch = 'RelatedListUiController.getRelatedListPreferencesBatch',
 }
 
 const UIAPI_RELATED_LIST_INFO_PATH = `${UI_API_BASE_URI}/related-list-info`;
@@ -33,6 +36,8 @@ const UIAPI_RELATED_LIST_INFO_BATCH_PATH = `${UI_API_BASE_URI}/related-list-info
 const UIAPI_RELATED_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/related-list-records`;
 const UIAPI_RELATED_LIST_RECORDS_BATCH_PATH = `${UI_API_BASE_URI}/related-list-records/batch`;
 const UIAPI_RELATED_LIST_COUNT_PATH = `${UI_API_BASE_URI}/related-list-count`;
+const UIAPI_RELATED_LIST_PREFERENCES_PATH = `${UI_API_BASE_URI}/related-list-preferences`;
+const UIAPI_RELATED_LIST_PREFERENCES_BATCH_PATH = `${UI_API_BASE_URI}/related-list-preferences/batch`;
 
 let crudInstrumentationCallbacks: RelatedListInstrumentationCallbacks | null = null;
 
@@ -226,6 +231,50 @@ function getRelatedListInfoBatch(resourceRequest: ResourceRequest): Promise<any>
     return dispatchAction(UiApiRecordController.GetRelatedListInfoBatch, params);
 }
 
+function getRelatedListPreferences(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            preferencesId: urlParams.preferencesId,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetRelatedListPreferences, params);
+}
+
+function updateRelatedListPreferences(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams, body } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            preferencesId: urlParams.preferencesId,
+            relatedListUserPreferencesInput: {
+                columnWidths: body.columnWidths,
+                columnWrap: body.columnWrap,
+                orderedBy: body.orderedBy,
+            },
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.UpdateRelatedListPreferences, params);
+}
+
+function getRelatedListPreferencesBatch(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            preferencesIds: urlParams.preferencesIds,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetRelatedListPreferencesBatch, params);
+}
+
 appRouter.patch(
     (path: string) => path.startsWith(UIAPI_RELATED_LIST_INFO_PATH),
     updateRelatedListInfo
@@ -271,6 +320,26 @@ appRouter.get(
         path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH) &&
         path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH + '/batch') === false,
     getRelatedListCount
+);
+
+// related-list-preferences/preferencesId
+appRouter.patch(
+    (path: string) =>
+        path.startsWith(UIAPI_RELATED_LIST_PREFERENCES_PATH) &&
+        path.startsWith(UIAPI_RELATED_LIST_PREFERENCES_BATCH_PATH) === false,
+    updateRelatedListPreferences
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_RELATED_LIST_PREFERENCES_PATH) &&
+        path.startsWith(UIAPI_RELATED_LIST_PREFERENCES_BATCH_PATH) === false,
+    getRelatedListPreferences
+);
+
+// related-list-preferences/batch/preferencesIds
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_RELATED_LIST_PREFERENCES_BATCH_PATH),
+    getRelatedListPreferencesBatch
 );
 
 function logGetRelatedListRecordsInteraction(

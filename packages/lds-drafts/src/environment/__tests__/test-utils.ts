@@ -1,6 +1,6 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { Adapter, Environment, FulfilledSnapshot, Luvio, Store } from '@luvio/engine';
-import { DefaultDurableSegment, DurableStore, makeDurable, makeOffline } from '@luvio/environments';
+import { DefaultDurableSegment, DurableStore, makeDurable } from '@luvio/environments';
 import {
     getRecordAdapterFactory,
     keyBuilderObjectInfo,
@@ -76,7 +76,7 @@ export async function setupDraftEnvironment(
         () => store.metadata
     );
 
-    const baseEnvironment = makeDurable(makeOffline(new Environment(store, network)), {
+    const baseEnvironment = makeDurable(new Environment(store, network), {
         durableStore,
     });
 

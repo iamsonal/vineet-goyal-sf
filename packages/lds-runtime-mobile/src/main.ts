@@ -1,5 +1,5 @@
 import { Luvio, Store, Environment, RecordSource } from '@luvio/engine';
-import { makeOffline, makeDurable } from '@luvio/environments';
+import { makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
 import {
@@ -155,8 +155,7 @@ const recordDenormingStore = makeRecordDenormalizingDurableStore(
 );
 
 const baseEnv = new Environment(store, networkAdapter);
-const offlineEnv = makeOffline(baseEnv);
-const durableEnv = makeDurable(offlineEnv, {
+const durableEnv = makeDurable(baseEnv, {
     durableStore: recordDenormingStore,
 });
 getIngestRecords = durableEnv.getIngestStagingStoreRecords;

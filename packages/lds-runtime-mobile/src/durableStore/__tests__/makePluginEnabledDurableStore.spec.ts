@@ -4,7 +4,6 @@ import {
     DurableStoreEntries,
     DurableStoreOperationType,
     makeDurable,
-    makeOffline,
 } from '@luvio/environments';
 import { flushPromises } from '../../__tests__/testUtils';
 import { makePluginEnabledDurableStore } from '../makePluginEnabledDurableStore';
@@ -121,7 +120,7 @@ describe('makePluginEnableDurableStore tests', () => {
             };
             const networkAdapter = jest.fn().mockResolvedValue(response);
             const store = new Store();
-            const env = makeDurable(makeOffline(new Environment(store, networkAdapter)), {
+            const env = makeDurable(new Environment(store, networkAdapter), {
                 durableStore: baseDurableStore,
             });
             const luvio = new Luvio(env);
@@ -206,7 +205,7 @@ describe('makePluginEnableDurableStore tests', () => {
             };
             const networkAdapter = jest.fn().mockResolvedValue(response);
             const store = new Store();
-            const env = makeDurable(makeOffline(new Environment(store, networkAdapter)), {
+            const env = makeDurable(new Environment(store, networkAdapter), {
                 durableStore: baseDurableStore,
             });
             const luvio = new Luvio(env);

@@ -8,7 +8,7 @@ import {
 /**
 Builds adapter instances for environments that have cross-adapter dependencies.
 These are only to be used internally in this module and not exported.
-They do not use draft environments or makeOffline, just the makeDurable environment.
+They do not use draft environments, just the makeDurable environment.
 */
 export function buildInternalAdapters(
     store: Store,

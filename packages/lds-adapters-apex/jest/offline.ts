@@ -1,6 +1,6 @@
 import timekeeper from 'timekeeper';
 import { Luvio, Store, Environment, NetworkAdapter, Snapshot } from '@luvio/engine';
-import { makeDurable, makeOffline, DurableEnvironment } from '@luvio/environments';
+import { makeDurable, DurableEnvironment } from '@luvio/environments';
 import {
     buildMockNetworkAdapter,
     MockDurableStore,
@@ -32,7 +32,7 @@ export function buildOfflineLuvio(
     // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: use default scheduler
     const store = new Store({ scheduler: () => {} });
-    let env = makeDurable(makeOffline(new Environment(store, network)), {
+    let env = makeDurable(new Environment(store, network), {
         durableStore,
     });
     if (customEnvironment !== undefined) {
@@ -114,8 +114,8 @@ export async function testDataEmittedWhenStale<Config>(
     }
     expect(staleResult.state).toBe('Stale');
 
-    // makeOffline will kick off a refresh, wait for that to ensure it doesn't
-    // throw any errors
+    // default makeDurable cache policy (stale-while-revalidate) will kick off a
+    // refresh, wait for that to ensure it doesn't throw any errors
     await flushPromises();
 }
 

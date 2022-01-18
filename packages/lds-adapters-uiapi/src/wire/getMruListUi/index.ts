@@ -7,7 +7,8 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
-    UnAvailableSnapshot,
+    AdapterRequestContext,
+    StoreLookup,
 } from '@luvio/engine';
 import {
     GetMruListUiConfig,
@@ -39,9 +40,11 @@ import {
     dynamicSelect as types_ListUiRepresentation_dynamicSelect,
 } from '../../generated/types/ListUiRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
-import { getListInfo, ListFields, listFields, isListInfoSnapshotWithData } from '../../util/lists';
+import { getListInfo, ListFields, listFields } from '../../util/lists';
 import { minimizeRequest } from '../../util/pagination';
-import { isFulfilledSnapshot } from '../../util/snapshot';
+import { isFulfilledSnapshot, isStaleSnapshot } from '../../util/snapshot';
+import { buildNotFetchableNetworkSnapshot } from '../../util/cache-policy';
+import { isPromise } from '../../util/promise';
 
 // eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
@@ -105,18 +108,6 @@ function buildSnapshotRefresh_getMruListUi(
     };
 }
 
-function buildSnapshotRefresh_getMruListRecords(
-    luvio: Luvio,
-    config: GetMruListUiConfig,
-    listInfo: ListInfoRepresentation,
-    snapshot?: Snapshot<ListUiRepresentation>
-): SnapshotRefresh<ListUiRepresentation> {
-    return {
-        config,
-        resolve: () => buildNetworkSnapshot_getMruListRecords(luvio, config, listInfo, snapshot),
-    };
-}
-
 function onResourceSuccess_getMruListUi(
     luvio: Luvio,
     config: GetMruListUiConfig,
@@ -169,6 +160,7 @@ function onResourceError_getMruListUi(
 
 export function buildInMemorySnapshot(
     luvio: Luvio,
+    storeLookup: StoreLookup<ListUiRepresentation>,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     fields?: ListFields
@@ -181,10 +173,7 @@ export function buildInMemorySnapshot(
         variables: {},
     };
 
-    return luvio.storeLookup<ListUiRepresentation>(
-        selector,
-        buildSnapshotRefresh_getMruListUi(luvio, config)
-    );
+    return storeLookup(selector, buildSnapshotRefresh_getMruListUi(luvio, config));
 }
 
 /**
@@ -290,7 +279,13 @@ function onResourceSuccess_getMruListRecords(
         body
     );
 
-    const snapshot = buildInMemorySnapshot(luvio, config, listInfo, fields);
+    const snapshot = buildInMemorySnapshot(
+        luvio,
+        luvio.storeLookup.bind(luvio),
+        config,
+        listInfo,
+        fields
+    );
 
     luvio.storeBroadcast();
 
@@ -336,36 +331,81 @@ function buildNetworkSnapshot_getMruListRecords(
     );
 }
 
-function getMruListUiSnapshotFromListInfo(
-    luvio: Luvio,
-    config: GetMruListUiConfig,
-    listInfo: ListInfoRepresentation
-) {
-    // with the list info we can construct the full selector and try to get the
-    // list ui from the store
-    const snapshot = buildInMemorySnapshot(luvio, config, listInfo);
+// functions to retrieve a ListInfoRepresentation
 
-    if (luvio.snapshotAvailable(snapshot)) {
-        // cache hit :partyparrot:
-        return snapshot;
+type BuildListInfoSnapshotContext = {
+    config: GetMruListUiConfig;
+    luvio: Luvio;
+};
+
+function buildInMemoryListInfoSnapshot(
+    context: BuildListInfoSnapshotContext,
+    storeLookup: StoreLookup<ListInfoRepresentation>
+): Snapshot<ListInfoRepresentation> {
+    const { config } = context;
+
+    // try to get a list reference and a list info for the list; this should come back
+    // non-null if we have the list info cached
+    return getListInfo(
+        {
+            id: null,
+            listViewApiName: null,
+            objectApiName: config.objectApiName,
+            type: 'mru',
+        },
+        storeLookup
+    );
+}
+
+// functions to retrieve a ListUiRepresentation
+
+type BuildListUiSnapshotContext = {
+    config: GetMruListUiConfig;
+    listInfo: ListInfoRepresentation | undefined;
+    listUi?: Snapshot<ListUiRepresentation>;
+    luvio: Luvio;
+};
+
+function buildInMemoryListUiSnapshot(
+    context: BuildListUiSnapshotContext,
+    storeLookup: StoreLookup<ListUiRepresentation>
+): Snapshot<ListUiRepresentation> | undefined {
+    const { config, listInfo, luvio } = context;
+
+    if (listInfo !== undefined) {
+        context.listUi = buildInMemorySnapshot(luvio, storeLookup, config, listInfo);
+        return context.listUi;
     }
+}
 
-    // if the list ui was not found in the store then
-    // make a full list-ui request
-    if (!snapshot.data) {
-        return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh_getMruListUi(luvio, config));
+function buildNetworkListUiSnapshot(
+    context: BuildListUiSnapshotContext
+): Promise<Snapshot<ListUiRepresentation>> {
+    const { config, listInfo, listUi, luvio } = context;
+
+    // make the full list ui request if any of the following is true:
+    //
+    // - the list info was not found
+    // - we couldn't build enough of the list ui to locate any record data
+    // - we found the complete cached list ui; this is somewhat counterintuitive,
+    //   but it happens when the cache policy has decided to refetch cached data
+    if (
+        !listInfo ||
+        !listUi ||
+        !listUi.data ||
+        isFulfilledSnapshot(listUi) ||
+        isStaleSnapshot(listUi)
+    ) {
+        return buildNetworkSnapshot_getMruListUi(luvio, config);
     }
 
     // we *should* only be missing records and/or tokens at this point; send a list-records
     // request to fill them in
-    return luvio.resolveSnapshot(
-        snapshot,
-        buildSnapshotRefresh_getMruListRecords(luvio, config, listInfo, snapshot)
-    );
+    return buildNetworkSnapshot_getMruListRecords(luvio, config, listInfo, listUi);
 }
 
 export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> = (luvio: Luvio) =>
-    function getMruListUi(untrustedConfig: unknown) {
+    function getMruListUi(untrustedConfig: unknown, requestContext?: AdapterRequestContext) {
         const config = validateAdapterConfig(
             untrustedConfig,
             getMruListUi_ConfigPropertyNames_augmented
@@ -375,48 +415,32 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
             return null;
         }
 
-        // try to get a list reference and a list info for the list; this should come back
-        // non-null if we have the list info cached
-        const listInfoSnapshot = getListInfo(
-            {
-                id: null,
-                listViewApiName: null,
-                objectApiName: config.objectApiName,
-                type: 'mru',
-            },
-            luvio
+        const definedRequestContext = requestContext || {};
+
+        // try to find a cached ListInfoRepresentation
+        const listInfoPromiseOrSnapshot = luvio.applyCachePolicy(
+            definedRequestContext,
+            { config, luvio },
+            buildInMemoryListInfoSnapshot,
+            buildNotFetchableNetworkSnapshot(luvio)
         );
 
-        // if we have list info then build a snapshot from that
-        if (isFulfilledSnapshot(listInfoSnapshot)) {
-            return getMruListUiSnapshotFromListInfo(luvio, config, listInfoSnapshot.data);
-        }
+        // build the ListUiRepresentation from the cached ListInfoRepresentation (if any)
+        const processListInfo = (listInfoSnapshot: Snapshot<ListInfoRepresentation>) => {
+            const listInfo =
+                isFulfilledSnapshot(listInfoSnapshot) || isStaleSnapshot(listInfoSnapshot)
+                    ? listInfoSnapshot.data
+                    : undefined;
 
-        // In default environment resolving a snapshot is just hitting the network
-        // using the given SnapshotRefresh (so mru-list-ui in this case).  In durable environment
-        // resolving a snapshot will first attempt to read the missing cache keys
-        // from the given UnAvailable snapshot (a list-info snapshot in this case) and build a
-        // fulfilled snapshot from that if those cache keys are present, otherwise it refreshes
-        // with the given SnapshotRefresh.  Usually the SnapshotRefresh response and the UnAvailable
-        // snapshot are for the same response Type, but this lists adapter is special (it mixes
-        // calls with list-info, list-records, and mru-list-ui), and so our use of resolveSnapshot
-        // is special (polymorphic response, could either be a list-info representation or a
-        // list-ui representation).
-        return luvio
-            .resolveSnapshot(
-                listInfoSnapshot as UnAvailableSnapshot<ListInfoRepresentation>,
-                buildSnapshotRefresh_getMruListUi(
-                    luvio,
-                    config
-                ) as unknown as SnapshotRefresh<ListInfoRepresentation>
-            )
-            .then((resolvedSnapshot) => {
-                // if result came from cache we know it's a listinfo, otherwise
-                // it's a full list-ui response
-                if (isListInfoSnapshotWithData(resolvedSnapshot)) {
-                    return getMruListUiSnapshotFromListInfo(luvio, config, resolvedSnapshot.data);
-                }
+            return luvio.applyCachePolicy(
+                definedRequestContext,
+                { config, listInfo, luvio },
+                buildInMemoryListUiSnapshot,
+                buildNetworkListUiSnapshot
+            );
+        };
 
-                return resolvedSnapshot as Snapshot<ListUiRepresentation>;
-            });
+        return isPromise(listInfoPromiseOrSnapshot)
+            ? listInfoPromiseOrSnapshot.then(processListInfo)
+            : processListInfo(listInfoPromiseOrSnapshot);
     };

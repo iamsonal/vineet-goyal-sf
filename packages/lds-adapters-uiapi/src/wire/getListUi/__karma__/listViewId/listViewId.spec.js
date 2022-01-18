@@ -1,12 +1,14 @@
+import { getListUi_imperative } from 'lds-adapters-uiapi';
 import ListViewId from '../lwc/listViewId';
 import ObjectAndListViewApiName from '../lwc/objectAndListViewApiName';
 import { beforeEach as util_beforeEach, convertToFieldIds } from '../util';
 import {
+    flushPromises,
+    getMock as globalGetMock,
     mockNetworkOnce,
     mockNetworkSequence,
     setupElement,
     updateElement,
-    getMock as globalGetMock,
 } from 'test-util';
 import { URL_BASE, expireDefaultTTL } from 'uiapi-test-util';
 import { karmaNetworkAdapter } from 'lds-engine';
@@ -452,5 +454,44 @@ describe('with listViewId', () => {
 
             expect(element.getWiredData()).toEqualListUi(mockData);
         });
+    });
+});
+
+describe('getListUi_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mockData = getMock('list-ui-All-Opportunities-pageSize-3');
+        const config = {
+            listViewId: mockData.info.listReference.id,
+            pageSize: mockData.records.pageSize,
+        };
+
+        const refreshed = getMock('list-ui-All-Opportunities-pageSize-3');
+        const record = refreshed.records.records[0];
+        record.lastModifiedDate = new Date(
+            new Date(record.lastModifiedDate).getTime() + 60 * 1000
+        ).toISOString();
+        record.weakEtag = record.weakEtag + 999;
+
+        mockNetworkListUi(config, [mockData, refreshed]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mockListUiData1
+        getListUi_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mockListUiData1 from cache, then make network call & emit mockListUiData2
+        getListUi_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)[0]).toEqualListUi(mockData);
+        expect(callback.calls.argsFor(1)[0]).toEqualListUi(refreshed);
     });
 });

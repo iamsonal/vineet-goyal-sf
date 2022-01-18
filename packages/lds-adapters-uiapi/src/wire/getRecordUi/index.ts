@@ -48,6 +48,7 @@ import { LayoutType } from '../../primitives/LayoutType';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
 import { buildNotFetchableNetworkSnapshot } from '../../util/cache-policy';
+import { isPromise } from '../../util/promise';
 
 type GetRecordUiConfigWithDefaults = Omit<
     Required<GetRecordUiConfig>,
@@ -553,10 +554,6 @@ export function coerceConfigWithDefaults(
         modes: modes as LayoutMode[],
         optionalFields: config.optionalFields === undefined ? [] : config.optionalFields,
     };
-}
-
-function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
-    return (value as any).then !== undefined;
 }
 
 export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> = (luvio: Luvio) =>

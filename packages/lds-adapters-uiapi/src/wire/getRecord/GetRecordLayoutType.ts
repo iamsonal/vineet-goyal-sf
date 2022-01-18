@@ -37,6 +37,7 @@ import {
     isUnfulfilledSnapshot,
 } from '../../util/snapshot';
 import { dedupe } from '../../validation/utils';
+import { isPromise } from '../../util/promise';
 
 const DEFAULT_MODE = LayoutMode.View;
 
@@ -164,11 +165,6 @@ function processRecordUiRepresentation(
 
     const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, data);
     return getRecord(luvio, refresh, recordId, layoutMap, objectInfo, optionalFields);
-}
-
-function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
-    // check for Thenable due to test frameworks using custom Promise impls
-    return value !== null && (value as any).then !== undefined;
 }
 
 interface RecordLayoutRepresentationMap {

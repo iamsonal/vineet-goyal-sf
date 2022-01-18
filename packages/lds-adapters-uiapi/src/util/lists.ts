@@ -5,6 +5,7 @@ import {
     Snapshot,
     FulfilledSnapshot,
     StaleSnapshot,
+    StoreLookup,
 } from '@luvio/engine';
 import {
     keyBuilder as ListInfoRepresentation_keyBuilder,
@@ -94,10 +95,10 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
  */
 export function getListInfo(
     listRef: ListReferenceRepresentation,
-    luvio: Luvio
+    storeLookup: StoreLookup<ListInfoRepresentation>
 ): Snapshot<ListInfoRepresentation> {
     const key = ListInfoRepresentation_keyBuilder(listRef);
-    return luvio.storeLookup<ListInfoRepresentation>({
+    return storeLookup({
         recordId: key,
         node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
         variables: {},

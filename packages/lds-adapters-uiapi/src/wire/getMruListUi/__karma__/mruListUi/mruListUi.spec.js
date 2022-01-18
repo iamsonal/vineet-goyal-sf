@@ -1,6 +1,8 @@
+import { getListUi_imperative, MRU } from 'lds-adapters-uiapi';
 import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 import {
+    flushPromises,
     getMock as globalGetMock,
     mockNetworkOnce,
     mockNetworkSequence,
@@ -490,5 +492,43 @@ describe('getMruListUi', () => {
             const wiredData = element.getWiredData();
             expect(wiredData).toEqualListUi(mockData);
         });
+    });
+});
+
+describe('getMruListUi_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mockData = getMock('mru-list-ui-Opportunity');
+        const config = {
+            objectApiName: mockData.info.listReference.objectApiName,
+        };
+
+        const refreshed = getMock('mru-list-ui-Opportunity');
+        const record = refreshed.records.records[0];
+        record.lastModifiedDate = new Date(
+            new Date(record.lastModifiedDate).getTime() + 60 * 1000
+        ).toISOString();
+        record.weakEtag = record.weakEtag + 999;
+
+        mockNetworkMruListUi(config, [mockData, refreshed]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mockListUiData1
+        getListUi_imperative.invoke({ ...config, listViewApiName: MRU }, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mockListUiData1 from cache, then make network call & emit mockListUiData2
+        getListUi_imperative.subscribe(
+            { ...config, listViewApiName: MRU },
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)[0]).toEqualListUi(mockData);
+        expect(callback.calls.argsFor(1)[0]).toEqualListUi(refreshed);
     });
 });

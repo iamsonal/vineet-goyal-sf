@@ -25,6 +25,7 @@ import getLookupRecordsResourceRequest, {
 } from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import { deepFreeze } from '../../util/deep-freeze';
 import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { isPromise } from '../../util/promise';
 
 interface GetLookupRecordsConfigRequestParams {
     q?: string;
@@ -198,10 +199,6 @@ function buildNetworkSnapshotCachePolicy(
         };
     }
     return buildNetworkSnapshot(context.luvio, context.config, override);
-}
-
-function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
-    return (value as any).then !== undefined;
 }
 
 export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRepresentation> = (

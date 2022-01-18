@@ -7456,27 +7456,28 @@ describe('routes', () => {
                 body: {
                     PaymentsBatchSchedulerInput: {
                         schedulerName: 'Batch Scheduler',
-                        startDate: '2021-05-11T05:01:06.000Z',
-                        endDate: '2021-05-15T05:01:06.000Z',
+                        startDate: '2021-05-11',
+                        endDate: '2025-05-15',
                         preferredTime: '10:00 AM',
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
-                        criteriaExpression: '1 AND 2',
+                        criteriaMatchType: 'MatchAny',
+                        criteriaExpression: '1 OR 2',
                         status: 'Active',
                         filterCriteria: [
                             {
-                                objectName: 'PaymentSchedule',
-                                fieldName: 'ReferenceEntityAccount',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'PaymentRunBatch',
                                 operation: 'Equals',
-                                value: '001xx000003GiznAAC',
+                                value: 'Batch1',
                                 criteriaSequence: 1,
                             },
                             {
-                                objectName: 'PaymentGateway',
-                                fieldName: 'Id',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'PaymentRunBatch',
                                 operation: 'Equals',
-                                value: '0b0xx000000035xAAA',
-                                criteriaSequence: 2,
+                                value: 'Batch2',
+                                criteriaSequence: 1,
                             },
                         ],
                     },
@@ -7487,27 +7488,28 @@ describe('routes', () => {
                 {
                     PaymentsBatchSchedulerInput: {
                         schedulerName: 'Batch Scheduler',
-                        startDate: '2021-05-11T05:01:06.000Z',
-                        endDate: '2021-05-15T05:01:06.000Z',
+                        startDate: '2021-05-11',
+                        endDate: '2025-05-15',
                         preferredTime: '10:00 AM',
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
-                        criteriaExpression: '1 AND 2',
+                        criteriaMatchType: 'MatchAny',
+                        criteriaExpression: '1 OR 2',
                         status: 'Active',
                         filterCriteria: [
                             {
-                                objectName: 'PaymentSchedule',
-                                fieldName: 'ReferenceEntityAccount',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'PaymentRunBatch',
                                 operation: 'Equals',
-                                value: '001xx000003GiznAAC',
+                                value: 'Batch1',
                                 criteriaSequence: 1,
                             },
                             {
-                                objectName: 'PaymentGateway',
-                                fieldName: 'Id',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'PaymentRunBatch',
                                 operation: 'Equals',
-                                value: '0b0xx000000035xAAA',
-                                criteriaSequence: 2,
+                                value: 'Batch2',
+                                criteriaSequence: 1,
                             },
                         ],
                     },
@@ -7515,11 +7517,9 @@ describe('routes', () => {
                 { background: false, hotspot: true, longRunning: false },
             ],
             {
-                schedulerDetails: {
-                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
-                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
                 },
-                paymentBatchRunCriteriaId: '5PCR000000000HvOAI',
             }
         );
 
@@ -7536,11 +7536,9 @@ describe('routes', () => {
                 basePath: `/batch/payments/schedulers`,
             },
             {
-                schedulerDetails: {
-                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
-                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
                 },
-                paymentBatchRunCriteriaId: '5PCR000000000HvOAI',
             }
         );
     });

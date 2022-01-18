@@ -1,7 +1,5 @@
 {
-    "schedulerDetails": {
-        "billingBatchFilterCriteriaId": ["5BCR000000000K2OAI", "5BCR000000000KCOAY"],
-        "billingBatchSchedulerId": "5BSR00000000030OAA"
-    },
-    "paymentBatchRunCriteriaId": "5PCR000000000HvOAI"
+    "billingBatchScheduler": {
+        "id": "5BSR00000000030OAB"
+    }
 }

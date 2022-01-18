@@ -4096,9 +4096,21 @@ types:
                   - QuickAction
                   - StandardButton
                 (oas-collectionFormat): csv
+            apiNames:
+              type: array
+              required: false
+              items:
+                type: string
+                (oas-collectionFormat): csv
             formFactor:
               type: string
               required: false
+            retrievalMode:
+              type: string
+              required: false
+              enum:
+                - All
+                - PageLayout
             sections:
               type: array
               required: false
@@ -4193,9 +4205,21 @@ types:
                     - QuickAction
                     - StandardButton
                   (oas-collectionFormat): csv
+              apiNames:
+                type: array
+                required: false
+                items:
+                  type: string
+                  (oas-collectionFormat): csv
               formFactor:
                 type: string
                 required: false
+              retrievalMode:
+                type: string
+                required: false
+                enum:
+                  - All
+                  - PageLayout
               sections:
                 type: array
                 required: false

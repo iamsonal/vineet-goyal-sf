@@ -43,7 +43,7 @@ types:
       - id # This id is transient and changes on each request; let's not surface it to consumers since it is not consistent
     (luvio.key):
       # The externalId contains: the orgId, the sourceObject, the actionListContext, the formFactor (which is
-      # not otherwise in the response), the type, and the apiName. This makes up the bulk of what is needed
+      # not otherwise in the response), the type, the retrieval mode, and the apiName. This makes up the bulk of what is needed
       # to uniquely identify this action.
       externalId: externalId
       relatedSourceObject: relatedSourceObject # Used in Related List, Related List Record Actions
@@ -557,6 +557,7 @@ types:
             name: getRelatedListActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
+              apiNames: SortedStringArrayAllowEmpty
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
             tests:

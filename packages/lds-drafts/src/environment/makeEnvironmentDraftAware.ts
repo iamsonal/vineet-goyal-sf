@@ -164,10 +164,14 @@ export function makeEnvironmentDraftAware(
         return synthesizer(environment, options);
     }, env);
 
-    const handleSuccessResponse: typeof env['handleSuccessResponse'] = function <ResponseType>(
-        ingestAndBroadcastFunc: () => Snapshot<ResponseType>,
+    const handleSuccessResponse: typeof env['handleSuccessResponse'] = function <
+        IngestionReturnType extends Snapshot<D, V> | undefined,
+        D,
+        V = unknown
+    >(
+        ingestAndBroadcastFunc: () => IngestionReturnType,
         getResponseCacheKeysFunc: () => CacheKeySet
-    ): Snapshot<ResponseType> | Promise<Snapshot<ResponseType>> {
+    ): IngestionReturnType | Promise<IngestionReturnType> {
         const cacheKeySet = getResponseCacheKeysFunc();
         const cacheKeys = ObjectKeys(cacheKeySet);
         const recordKeysToPrime: Record<string, true> = {};

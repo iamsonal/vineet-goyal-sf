@@ -220,7 +220,7 @@ export interface RecordQuery {
     alias: string;
     apiName: string;
     first: number | undefined;
-    orderBy: OrderBy | undefined;
+    orderBy: OrderBy[];
     joinNames: string[];
 }
 

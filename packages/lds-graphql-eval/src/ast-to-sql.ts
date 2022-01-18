@@ -49,9 +49,9 @@ function cteSql(mappingInput: SqlMappingInput): string {
 export function sql(rootQuery: RootQuery, mappingInput: SqlMappingInput): string {
     const fields = rootQuery.connections
         .map(
-            (conn) =>
-                `'${recordPrefix}.${conn.alias}.${recordSuffix}', (${recordQueryToSql(
-                    conn,
+            (connection) =>
+                `'${recordPrefix}.${connection.alias}.${recordSuffix}', (${recordQueryToSql(
+                    connection,
                     mappingInput
                 )})`
         )
@@ -83,7 +83,7 @@ function selectSql(
     predicate: Predicate | undefined,
     name: string,
     first: number | undefined,
-    orderBy: OrderBy | undefined,
+    orderBy: OrderBy[] | undefined,
     joinNames: string[],
     mappingInput: SqlMappingInput
 ) {
@@ -92,22 +92,30 @@ function selectSql(
     const predicateString =
         predicate !== undefined ? `WHERE ${predicateToSql(predicate, mappingInput)}` : '';
     const limitString = first !== undefined ? `LIMIT ${first}` : '';
-    const orderByString = orderBy !== undefined ? orderbyToSql(orderBy) : '';
 
     return (
         `(SELECT ${columns} FROM ${recordsCTE} as '${name}' ` +
-        `${joinString} ${predicateString} ${orderByString}${limitString})`
+        `${joinString} ${predicateString} ${orderbyToSql(orderBy)}${limitString})`
     );
 }
 
-function orderbyToSql(orderBy: OrderBy): string {
-    const extract = expressionToSql(orderBy.extract);
-    const order = orderBy.asc ? 'ASC' : 'DESC';
-    const nullsOrder = orderBy.nullsFirst ? 'DESC' : 'ASC';
+function orderbyToSql(orderBy: OrderBy[] = []): string {
+    if (orderBy.length === 0) {
+        return '';
+    }
+    const clauses = orderBy
+        .map((clause) => {
+            const extract = expressionToSql(clause.extract);
+            const order = clause.asc ? 'ASC' : 'DESC';
+            const nullsOrder = clause.nullsFirst ? 'DESC' : 'ASC';
 
-    //As of fall 2021 most devices don't have NULLS FIRST|LAST support which was added to sqlite in 2019,
-    //so we use a CASE expression and sort by an "is null" column and then by the actual column order.
-    return `ORDER BY CASE WHEN ${extract} IS NULL THEN 1 ELSE 0 END ${nullsOrder}, ${extract} ${order} `;
+            //As of fall 2021 most devices don't have NULLS FIRST|LAST support which was added to sqlite in 2019,
+            //so we use a CASE expression and sort by an "is null" column and then by the actual column order.
+            return `CASE WHEN ${extract} IS NULL THEN 1 ELSE 0 END ${nullsOrder}, ${extract} ${order} `;
+        })
+        .join(', ');
+
+    return `ORDER BY ${clauses}`;
 }
 
 function columnsSql(names: string[], mappingInput: SqlMappingInput) {

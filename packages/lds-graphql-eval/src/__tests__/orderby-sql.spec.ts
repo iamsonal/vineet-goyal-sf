@@ -78,3 +78,135 @@ describe('order by sql', () => {
         return testOperatorResult(source, expected);
     });
 });
+
+describe('multiple order by', () => {
+    it('should return the correct sql with 2 order by predicates', () => {
+        const multiOrderByQuery = /* GraphQL */ `
+            query multiOrderBy {
+                uiapi {
+                    query {
+                        Account(orderBy: { Name: { order: ASC }, CreatedDate: { order: DESC } })
+                            @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    Name {
+                                        value
+                                    }
+                                    CreatedDate {
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+        const result = transform(parseAndVisit(multiOrderByQuery), {
+            userId: 'MyId',
+            objectInfoMap,
+        });
+
+        const expected =
+            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `SELECT json_set('{}', '$.data.uiapi.query.Account.edges', (SELECT json_group_array(json_set('{}', '$.node.Name.value', ` +
+            `(json_extract("Account.JSON", '$.data.fields.Name.value')), '$.node.CreatedDate.value', (json_extract("Account.JSON", '$.data.fields.CreatedDate.value')), ` +
+            `'$.node._drafts', (json_extract("Account.JSON", '$.data.drafts')), '$.node.Id', (json_extract("Account.JSON", '$.data.id')), '$.node._metadata', ` +
+            `(json_extract("Account.JSON", '$.metadata')) )) FROM (SELECT 'Account'.TABLE_1_1 as 'Account.JSON' FROM recordsCTE as 'Account'  ` +
+            `WHERE json_extract("Account.JSON", '$.data.apiName') = 'Account' ORDER BY CASE WHEN json_extract("Account.JSON", '$.data.fields.Name.value') ` +
+            `IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.Name.value') ASC , CASE WHEN json_extract("Account.JSON", ` +
+            `'$.data.fields.CreatedDate.value') IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.CreatedDate.value') DESC )) ) as json`;
+
+        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+    });
+
+    it('should return the correct sql with multiple order by predicates with null orders specified', () => {
+        const multiOrderByQuery = /* GraphQL */ `
+            query multiOrderBy {
+                uiapi {
+                    query {
+                        Account(
+                            orderBy: {
+                                Name: { order: ASC, nulls: FIRST }
+                                CreatedDate: { order: DESC, nulls: LAST }
+                            }
+                        ) @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    Name {
+                                        value
+                                    }
+                                    CreatedDate {
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+        const result = transform(parseAndVisit(multiOrderByQuery), {
+            userId: 'MyId',
+            objectInfoMap,
+        });
+
+        const expected =
+            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `SELECT json_set('{}', '$.data.uiapi.query.Account.edges', (SELECT json_group_array(json_set('{}', '$.node.Name.value', ` +
+            `(json_extract("Account.JSON", '$.data.fields.Name.value')), '$.node.CreatedDate.value', (json_extract("Account.JSON", '$.data.fields.CreatedDate.value')), ` +
+            `'$.node._drafts', (json_extract("Account.JSON", '$.data.drafts')), '$.node.Id', (json_extract("Account.JSON", '$.data.id')), '$.node._metadata', ` +
+            `(json_extract("Account.JSON", '$.metadata')) )) FROM (SELECT 'Account'.TABLE_1_1 as 'Account.JSON' FROM recordsCTE as 'Account'  ` +
+            `WHERE json_extract("Account.JSON", '$.data.apiName') = 'Account' ORDER BY CASE WHEN json_extract("Account.JSON", '$.data.fields.Name.value') ` +
+            `IS NULL THEN 1 ELSE 0 END DESC, json_extract("Account.JSON", '$.data.fields.Name.value') ASC , CASE WHEN json_extract("Account.JSON", ` +
+            `'$.data.fields.CreatedDate.value') IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.CreatedDate.value') DESC )) ) as json`;
+
+        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+    });
+
+    it('should return the correct sql with duplicate order by predicates', () => {
+        const multiOrderByQuery = /* GraphQL */ `
+            query multiOrderBy {
+                uiapi {
+                    query {
+                        Account(
+                            orderBy: {
+                                # Last one wins (Name: ASC)
+                                Name: { order: DESC }
+                                CreatedDate: { order: DESC }
+                                Name: { order: ASC }
+                            }
+                        ) @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    Name {
+                                        value
+                                    }
+                                    CreatedDate {
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+        const result = transform(parseAndVisit(multiOrderByQuery), {
+            userId: 'MyId',
+            objectInfoMap,
+        });
+
+        const expected =
+            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `SELECT json_set('{}', '$.data.uiapi.query.Account.edges', (SELECT json_group_array(json_set('{}', '$.node.Name.value', ` +
+            `(json_extract("Account.JSON", '$.data.fields.Name.value')), '$.node.CreatedDate.value', (json_extract("Account.JSON", '$.data.fields.CreatedDate.value')), ` +
+            `'$.node._drafts', (json_extract("Account.JSON", '$.data.drafts')), '$.node.Id', (json_extract("Account.JSON", '$.data.id')), '$.node._metadata', ` +
+            `(json_extract("Account.JSON", '$.metadata')) )) FROM (SELECT 'Account'.TABLE_1_1 as 'Account.JSON' FROM recordsCTE as 'Account'  ` +
+            `WHERE json_extract("Account.JSON", '$.data.apiName') = 'Account' ORDER BY CASE WHEN json_extract("Account.JSON", '$.data.fields.Name.value') ` +
+            `IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.Name.value') ASC , CASE WHEN json_extract("Account.JSON", ` +
+            `'$.data.fields.CreatedDate.value') IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.CreatedDate.value') DESC )) ) as json`;
+
+        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+    });
+});

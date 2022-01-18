@@ -3,7 +3,7 @@ import { LuvioArgumentNode, LuvioObjectValueNode, LuvioValueNode } from '@luvio/
 import { message, PredicateError } from './Error';
 import { ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
 import { ComparisonOperator, JsonExtract, OrderBy, OrderByContainer, ValueType } from './Predicate';
-import { failure, Result, success } from './Result';
+import { failure, isSuccess, Result, success } from './Result';
 import { is, isObjectValueNode } from './type-guards';
 import { comparison, extractPath, getFieldInfo, referencePredicate, stringLiteral } from './util';
 
@@ -12,18 +12,33 @@ function fieldsToOrderBy(
     joinAlias: string,
     apiName: string,
     input: { [name: string]: ObjectInfo }
-): Result<OrderByContainer, PredicateError> {
-    const firstObject = fieldValues[0];
+): Result<OrderByContainer[], PredicateError[]> {
+    const [node] = fieldValues;
 
-    if (!isObjectValueNode(firstObject)) {
-        return failure<OrderByContainer, PredicateError>(
-            message('Parent OrderBy node should be an object.')
-        );
+    if (!isObjectValueNode(node)) {
+        return failure<OrderByContainer[], PredicateError[]>([
+            message('Parent OrderBy node should be an object.'),
+        ]);
     }
 
-    return Object.entries(firstObject.fields).map(([key, value]) =>
+    const orderByContainers: OrderByContainer[] = [];
+    const errors: PredicateError[] = [];
+
+    const orderByResults = Object.entries(node.fields).map(([key, value]) =>
         orderBy(key, value, joinAlias, apiName, input)
-    )[0];
+    );
+    for (const result of orderByResults) {
+        if (isSuccess(result)) {
+            orderByContainers.push(result.value);
+        } else {
+            errors.push(result.error);
+        }
+    }
+
+    if (errors.length) {
+        return failure<OrderByContainer[], PredicateError[]>(errors);
+    }
+    return success(orderByContainers);
 }
 
 function orderBy<T extends LuvioValueNode>(
@@ -61,13 +76,17 @@ function spanningOrderBy(
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path };
     const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName));
 
-    return fieldsToOrderBy([fieldNode], jsonAlias, apiName, input).map((container) => {
-        const { orderBy, joinNames: names, joinPredicates: predicates } = container;
-        const joinPredicates = predicates.concat(joinPredicate, typePredicate);
-        const joinNames = names.concat(jsonAlias);
+    const result = fieldsToOrderBy([fieldNode], jsonAlias, apiName, input);
+    if (!result.isSuccess) {
+        return failure(result.error[0]);
+    }
 
-        return { orderBy, joinNames, joinPredicates };
-    });
+    const [container] = result.value;
+    const { orderBy, joinNames: names, joinPredicates: predicates } = container;
+    const joinPredicates = predicates.concat(joinPredicate, typePredicate);
+    const joinNames = names.concat(jsonAlias);
+
+    return success({ orderBy, joinNames, joinPredicates });
 }
 
 function fieldsOrderBy(
@@ -91,9 +110,12 @@ function fieldsOrderBy(
         return spanningOrderBy(fieldInfo, fieldNode, alias, input);
     }
 
-    return orderByDetails(fieldNode, alias, fieldName).map((orderBy) => {
-        return { orderBy, joinNames: [], joinPredicates: [] };
-    });
+    const result = orderByDetails(fieldNode, alias, fieldName);
+    if (!result.isSuccess) {
+        return failure(result.error);
+    }
+
+    return success({ orderBy: result.value, joinNames: [], joinPredicates: [] });
 }
 
 function orderByDetails(
@@ -163,9 +185,9 @@ export function parseOrderBy(
     joinAlias: string,
     apiName: string,
     input: { [name: string]: ObjectInfo }
-): Result<OrderByContainer | undefined, PredicateError> {
+): Result<OrderByContainer[], PredicateError[]> {
     if (orderByArg === undefined) {
-        return success(undefined);
+        return success([]);
     }
 
     return fieldsToOrderBy([orderByArg.value], joinAlias, apiName, input);

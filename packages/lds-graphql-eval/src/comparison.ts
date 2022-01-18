@@ -182,7 +182,7 @@ function isRecordQueryEqual(lh: RecordQuery, rh: RecordQuery): boolean {
         isArrayEqual(lh.fields, rh.fields, isFieldEqual) &&
         lh.first === rh.first &&
         isArrayEqual(lh.joinNames, rh.joinNames, isStrictEqual) &&
-        isOrderByEqual(lh.orderBy, rh.orderBy) &&
+        isArrayEqual(lh.orderBy, rh.orderBy, isOrderByEqual) &&
         isPredicateEqual(lh.predicate, rh.predicate)
     );
 }

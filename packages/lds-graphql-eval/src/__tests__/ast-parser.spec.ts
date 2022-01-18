@@ -44,7 +44,7 @@ describe('ast-parser', () => {
                         alias: 'TimeSheet',
                         apiName: 'TimeSheet',
                         first: undefined,
-                        orderBy: undefined,
+                        orderBy: [],
                         joinNames: [],
 
                         fields: [
@@ -226,7 +226,7 @@ describe('ast-parser', () => {
                         alias: 'TimeSheet',
                         apiName: 'TimeSheet',
                         first: undefined,
-                        orderBy: undefined,
+                        orderBy: [],
                         joinNames: [],
 
                         fields: [
@@ -307,7 +307,7 @@ describe('ast-parser', () => {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
                     joinNames: [],
 
                     fields: [
@@ -414,7 +414,7 @@ describe('ast-parser', () => {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
                     joinNames: [],
 
                     fields: [
@@ -541,7 +541,7 @@ describe('ast-parser', () => {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
                     joinNames: ['TimeSheet.CreatedBy'],
 
                     fields: [
@@ -687,7 +687,7 @@ describe('ast-parser', () => {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
                     joinNames: ['TimeSheet.CreatedBy'],
 
                     fields: [
@@ -788,7 +788,7 @@ describe('ast-parser', () => {
                     alias: 'User',
                     apiName: 'User',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
 
                     joinNames: ['User.CreatedBy'],
 
@@ -920,7 +920,7 @@ describe('ast-parser', () => {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
                     joinNames: [],
 
                     fields: [
@@ -1021,7 +1021,7 @@ describe('ast-parser', () => {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
 
                     joinNames: [],
                     fields: [
@@ -1032,7 +1032,7 @@ describe('ast-parser', () => {
                                 alias: 'TimeSheet.TimeSheetEntries',
                                 apiName: 'TimeSheetEntry',
                                 first: undefined,
-                                orderBy: undefined,
+                                orderBy: [],
 
                                 joinNames: [],
                                 fields: [
@@ -1175,7 +1175,7 @@ describe('ast-parser', () => {
                     alias: 'TimeSheet',
                     apiName: 'TimeSheet',
                     first: undefined,
-                    orderBy: undefined,
+                    orderBy: [],
 
                     joinNames: ['TimeSheet.CreatedBy.CreatedBy', 'TimeSheet.CreatedBy'],
 
@@ -1359,7 +1359,7 @@ describe('ast-parser', () => {
                         alias: 'TimeSheet',
                         apiName: 'TimeSheet',
                         first: 43,
-                        orderBy: undefined,
+                        orderBy: [],
                         joinNames: [],
 
                         fields: [
@@ -1438,7 +1438,7 @@ describe('ast-parser', () => {
                         alias: 'ServiceAppointment',
                         apiName: 'ServiceAppointment',
                         first: undefined,
-                        orderBy: undefined,
+                        orderBy: [],
                         joinNames: [],
 
                         fields: [

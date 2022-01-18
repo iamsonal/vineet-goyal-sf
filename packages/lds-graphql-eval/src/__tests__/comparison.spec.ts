@@ -80,7 +80,7 @@ describe('comparison', () => {
                             fields: [],
                             alias: 'Alias1',
                             first: undefined,
-                            orderBy: undefined,
+                            orderBy: [],
                             joinNames: [],
                             apiName: 'TimeSheet',
                         },
@@ -93,7 +93,7 @@ describe('comparison', () => {
                             fields: [],
                             alias: 'Alias1',
                             first: undefined,
-                            orderBy: undefined,
+                            orderBy: [],
                             joinNames: [],
                             apiName: 'TimeSheet',
                         },
@@ -106,15 +106,17 @@ describe('comparison', () => {
                             fields: [],
                             alias: 'Alias2',
                             first: 10,
-                            orderBy: {
-                                asc: true,
-                                extract: {
-                                    type: ValueType.Extract,
-                                    path: 'Name',
-                                    jsonAlias: 'TimeSheet',
+                            orderBy: [
+                                {
+                                    asc: true,
+                                    extract: {
+                                        type: ValueType.Extract,
+                                        path: 'Name',
+                                        jsonAlias: 'TimeSheet',
+                                    },
+                                    nullsFirst: false,
                                 },
-                                nullsFirst: false,
-                            },
+                            ],
                             joinNames: [],
                             apiName: 'TimeSheet',
                         },
@@ -127,15 +129,17 @@ describe('comparison', () => {
                             fields: [],
                             alias: 'Alias2',
                             first: 10,
-                            orderBy: {
-                                asc: true,
-                                extract: {
-                                    type: ValueType.Extract,
-                                    path: 'Name',
-                                    jsonAlias: 'TimeSheet',
+                            orderBy: [
+                                {
+                                    asc: true,
+                                    extract: {
+                                        type: ValueType.Extract,
+                                        path: 'Name',
+                                        jsonAlias: 'TimeSheet',
+                                    },
+                                    nullsFirst: false,
                                 },
-                                nullsFirst: false,
-                            },
+                            ],
                             joinNames: [],
                             apiName: 'TimeSheet',
                         },

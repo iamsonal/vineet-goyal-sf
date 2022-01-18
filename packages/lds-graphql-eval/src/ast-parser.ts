@@ -366,7 +366,7 @@ function recordQuery(
     let orderByJoins: string[] = [];
 
     if (orderByResult.isSuccess === false) {
-        return failure([orderByResult.error]);
+        return failure(orderByResult.error);
     }
 
     if (whereResult.isSuccess === false) {
@@ -392,11 +392,10 @@ function recordQuery(
         filterJoins = joinNames;
     }
 
-    if (orderByResult.value !== undefined) {
-        const { joinPredicates, joinNames } = orderByResult.value;
-
-        additionalPredicates.push(...joinPredicates);
-        orderByJoins = joinNames;
+    for (const orderBy of orderByResult.value) {
+        const { joinPredicates, joinNames } = orderBy;
+        additionalPredicates = additionalPredicates.concat(joinPredicates);
+        orderByJoins = orderByJoins.concat(joinNames);
     }
 
     //make our way down to the field-containing ast node
@@ -450,7 +449,10 @@ function recordQuery(
             CompoundOperator.and
         );
         const first = firstResult.value;
-        const orderBy = orderByResult.value === undefined ? undefined : orderByResult.value.orderBy;
+        const orderBy =
+            orderByResult.value === undefined
+                ? []
+                : orderByResult.value.map((result) => result.orderBy);
 
         return { joinNames, fields: allFields, first, orderBy, apiName, alias, predicate };
     });

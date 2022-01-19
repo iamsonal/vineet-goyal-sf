@@ -1,5 +1,6 @@
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
+    createInfiniteScrollingWireAdapterConstructor as lwcLdsCreateInfiniteScrollingWireAdapterConstructor,
     bindWireRefresh as lwcLdsBindWireRefresh,
 } from '@luvio/lwc-luvio';
 import { createImperativeAdapter as ldsBindingsCreateImperativeAdapter } from '@salesforce/lds-bindings';
@@ -7,6 +8,15 @@ import { createImperativeAdapter as ldsBindingsCreateImperativeAdapter } from '@
 export function createWireAdapterConstructor(luvio, adapter, metadata) {
     const { apiFamily, name } = metadata;
     return lwcLdsCreateWireAdapterConstructor(adapter, `${apiFamily}.${name}`, luvio);
+}
+
+export function createInfiniteScrollingWireAdapterConstructor(luvio, adapter, metadata) {
+    const { apiFamily, name } = metadata;
+    return lwcLdsCreateInfiniteScrollingWireAdapterConstructor(
+        adapter,
+        `${apiFamily}.${name}`,
+        luvio
+    );
 }
 
 export function createLDSAdapter(luvio, name, factory) {

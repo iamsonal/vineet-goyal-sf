@@ -12,7 +12,10 @@ const dedent = require('dedent');
 const fieldsPlugin = require('./plugin/fields-support');
 const recordCollectionPlugin = require('./plugin/record-collection-plugin');
 
-const SFDC_PRIVATE_ADAPTERS = require('./sfdc-private-adapters');
+const {
+    PRIVATE_ADAPTERS: SFDC_PRIVATE_ADAPTERS,
+    INFINITE_SCROLLING_ADAPTERS,
+} = require('./sfdc-custom-adapters');
 
 const { RAML_ARTIFACTS } = require('./raml-artifacts');
 
@@ -25,6 +28,8 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
 ];
 
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor';
+const CREATE_INFINITE_SCROLLING_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER =
+    'createInfiniteScrollingWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const CREATE_INSTRUMENTED_ADAPTER = 'createInstrumentedAdapter';
 const CREATE_IMPERATIVE_ADAPTER = 'createImperativeAdapter';
@@ -59,8 +64,10 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
             metadata = `const ${adapterMetadataIdentifier} = { ${metadataInfo.join(', ')} };`;
 
             ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
-            bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
             imperativeGetBind = `${imperativeAdapterNameIdentifier}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
+            bind = `${name}: ${getWireConstructorName(
+                name
+            )}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
         } else {
             bind = `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier})`;
         }
@@ -117,8 +124,14 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
 
     const code = dedent`
         import { Luvio, Snapshot } from '@luvio/engine';
-        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER}, ${CREATE_INSTRUMENTED_ADAPTER}, ${CREATE_IMPERATIVE_ADAPTER} } from '@salesforce/lds-bindings';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
+        import {
+            ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER},
+            ${CREATE_INFINITE_SCROLLING_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER},
+            ${CREATE_LDS_ADAPTER},
+            ${CREATE_INSTRUMENTED_ADAPTER},
+            ${CREATE_IMPERATIVE_ADAPTER}
+        } from '@salesforce/lds-bindings';
 
         import { keyPrefix as ${API_FAMILY_IDENTIFIER} } from '../adapters/adapter-utils';
 
@@ -176,6 +189,15 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
         `;
 
     fs.writeFileSync(path.join(artifactsDir, 'sfdc.ts'), code);
+}
+
+function getWireConstructorName(adapterName) {
+    if (INFINITE_SCROLLING_ADAPTERS[adapterName] === true) {
+        return CREATE_INFINITE_SCROLLING_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER;
+    }
+
+    // using the basic wire adapter constructor by default
+    return CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER;
 }
 
 /**

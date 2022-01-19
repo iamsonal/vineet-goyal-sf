@@ -1,55 +1,69 @@
 import { Adapter, Luvio } from '@luvio/engine';
+import { WireAdapterConstructor } from '@lwc/engine-core';
+
 import {
     createWireAdapterConstructor,
+    createInfiniteScrollingWireAdapterConstructor,
     createLDSAdapter,
     createInstrumentedAdapter,
     bindWireRefresh,
     refresh,
 } from '../main';
-
-jest.mock('@luvio/lwc-luvio', () => {
-    const spies = {
-        createWireAdapterConstructor: jest.fn(),
-        bindWireRefreshSpy: jest.fn(),
-    };
-    return {
-        createWireAdapterConstructor: spies.createWireAdapterConstructor,
-        bindWireRefresh: () => spies.bindWireRefreshSpy,
-        __spies: spies,
-    };
-});
-
-import {
-    createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
-    __spies as lwcLuvioSpies,
-} from '@luvio/lwc-luvio';
-
 import { instrumentation } from '../instrumentation';
+
+import * as lwcLuvio from '@luvio/lwc-luvio';
 
 const instrumentationSpies = {
     instrumentAdapter: jest.spyOn(instrumentation, 'instrumentAdapter'),
     refreshCalled: jest.spyOn(instrumentation, 'refreshCalled'),
 };
 
-beforeEach(() => {
-    instrumentationSpies.refreshCalled.mockClear();
-    instrumentationSpies.instrumentAdapter.mockClear();
-    (lwcLdsCreateWireAdapterConstructor as any).mockClear();
+afterEach(() => {
+    jest.clearAllMocks();
 });
 
 describe('createWireAdapterConstructor', () => {
-    it('should invoke adapter factory', () => {
+    it('should call lwc-luvio createWireAdapterConstructor', () => {
         const luvio = {} as Luvio;
         const adapter = jest.fn();
-        const mockWire = {};
-        (lwcLdsCreateWireAdapterConstructor as any).mockReturnValue(mockWire);
+        const mockWire = {} as WireAdapterConstructor;
+        const spyCreateWireAdapterConstructor = jest.spyOn(
+            lwcLuvio,
+            'createWireAdapterConstructor'
+        );
+        spyCreateWireAdapterConstructor.mockReturnValue(mockWire);
 
         const value = createWireAdapterConstructor(luvio, adapter, {
             apiFamily: 'bar',
             name: 'foo',
         });
 
-        expect(lwcLdsCreateWireAdapterConstructor).toHaveBeenCalledWith(adapter, 'bar.foo', luvio);
+        expect(spyCreateWireAdapterConstructor).toHaveBeenCalledWith(adapter, 'bar.foo', luvio);
+        expect(value).toBe(mockWire);
+    });
+});
+
+describe('createInfiniteScrollingWireAdapterConstructor', () => {
+    it('should call lwc-luvio createInfiniteScrollingWireAdapterConstructor', () => {
+        const luvio = {} as Luvio;
+        const adapter = jest.fn();
+        const mockWire = {} as WireAdapterConstructor;
+        const spyCreateInfiniteScrollingWireAdapterConstructor = jest.spyOn(
+            lwcLuvio,
+            'createInfiniteScrollingWireAdapterConstructor'
+        );
+        spyCreateInfiniteScrollingWireAdapterConstructor.mockReturnValue(mockWire);
+
+        const value = createInfiniteScrollingWireAdapterConstructor(luvio, adapter, {
+            apiFamily: 'bar',
+            name: 'foo',
+        });
+
+        expect(spyCreateInfiniteScrollingWireAdapterConstructor).toHaveBeenCalledWith(
+            adapter,
+            'bar.foo',
+            luvio
+        );
         expect(value).toBe(mockWire);
     });
 });
@@ -86,14 +100,15 @@ describe('createLDSAdapter', () => {
 
 describe('refresh', () => {
     it('should call function returned by bindWireRefresh', async () => {
-        const luvio = {
-            instrument: jest.fn(),
-        } as unknown as Luvio;
         const data = {};
-        bindWireRefresh(luvio);
 
+        const mockWireRefreh = jest.fn();
+        const spyBindWireRefresh = jest.spyOn(lwcLuvio, 'bindWireRefresh');
+        spyBindWireRefresh.mockReturnValue(mockWireRefreh);
+
+        bindWireRefresh({} as Luvio);
         await refresh(data, 'refreshUiApi');
 
-        expect(lwcLuvioSpies.bindWireRefreshSpy).toHaveBeenCalledWith(data);
+        expect(mockWireRefreh).toHaveBeenCalledWith(data);
     });
 });

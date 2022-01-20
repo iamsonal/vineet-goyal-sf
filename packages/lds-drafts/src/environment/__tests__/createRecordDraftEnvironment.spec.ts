@@ -367,7 +367,6 @@ describe('draft environment tests', () => {
             draftEnvironment.storePublish(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_DATA);
             draftEnvironment.publishStoreMetadata(STORE_KEY_DRAFT_RECORD, {
                 expirationTimestamp: 1,
-                staleTimestamp: 1,
                 namespace: 'UiApi',
                 representationName: 'RecordRepresentation',
                 ingestionTimestamp: 1,
@@ -389,7 +388,6 @@ describe('draft environment tests', () => {
             )[STORE_KEY_DRAFT_RECORD];
             const metadata = record.metadata;
             expect(metadata.expirationTimestamp).toBe(Number.MAX_SAFE_INTEGER);
-            expect(metadata.staleTimestamp).toBe(Number.MAX_SAFE_INTEGER);
         });
 
         describe('assertDraftPrerequisitesSatisfied', () => {

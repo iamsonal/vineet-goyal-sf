@@ -130,7 +130,6 @@ export function createRecordDraftEnvironment(
         return env.publishStoreMetadata(recordKey, {
             ...storeMetadata,
             expirationTimestamp: Number.MAX_SAFE_INTEGER,
-            staleTimestamp: Number.MAX_SAFE_INTEGER,
         });
     };
 

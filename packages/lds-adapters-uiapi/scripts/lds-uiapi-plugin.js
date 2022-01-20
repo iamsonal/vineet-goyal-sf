@@ -2,6 +2,8 @@
  * @typedef {import("@luvio/compiler").CompilerConfig} CompilerConfig
  * @typedef {import("@luvio/compiler").ModelInfo} ModelInfo
  * @typedef { { apiFamily: string, name: string, method: string, ttl?: number } } AdapterInfo
+ * @typedef { { importPath: string, identifier: string } } ModulePath
+ * @typedef { { prime: ModulePath, batch?: { prime: ModulePath, batch: ModulePath } } } KomaciMapping
  */
 
 const plugin = require('@salesforce/lds-compiler-plugins');
@@ -18,6 +20,7 @@ const {
 } = require('./sfdc-custom-adapters');
 
 const { RAML_ARTIFACTS } = require('./raml-artifacts');
+const SFDC_MODULES = require('../src/sfdc-module.json');
 
 const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
     {
@@ -256,6 +259,59 @@ function addImportOverride(artifactSuffix, path, identifier, targetIdentifier) {
     });
 }
 
+/**
+ *
+ * @param {string} namespace
+ * @param {string} module
+ * @param {string} adapterName
+ * @returns { { prime: ModulePath } }
+ */
+function getPrimeEntryObject(namespace, module, adapterName) {
+    return {
+        prime: {
+            importPath: `${namespace}/unstable_${module}`,
+            identifier: `unstable_${adapterName}_imperative`,
+        },
+    };
+}
+/**
+ *
+ * @param { KomaciMapping } adapterMap
+ * @param { string } adapterName
+ */
+function generateKomaciMappings(adapterMap, adapterName) {
+    if (SFDC_MODULES[adapterName]) {
+        const { namespace, module, batch, includeUnstable } = SFDC_MODULES[adapterName];
+        const moduleKey = `${namespace}/${module}`;
+        const entry = getPrimeEntryObject(namespace, module, adapterName);
+        let batchEntry;
+        if (batch) {
+            const { namespace: batchNamespace, module: batchModule } =
+                SFDC_MODULES[batch.adapterName];
+            const { reducer } = batch;
+            batchEntry = {
+                batch: {
+                    ...getPrimeEntryObject(batchNamespace, batchModule, batch.adapterName),
+                    reducer,
+                },
+            };
+        }
+
+        if (adapterMap[moduleKey]) adapterMap[moduleKey][adapterName] = { ...entry, ...batchEntry };
+        else adapterMap[moduleKey] = { [adapterName]: { ...entry, ...batchEntry } };
+
+        // several of the relatedListAPI adapters were originally exported from the unstable module
+        // currenly, supporting both mappings until all dependent packages have updated their references to these previously unstable adapters
+        // See: https://github.com/salesforce/lightning-components/commit/8a3835f96a233613ee5f5b3ce33882a07e6de22b
+        if (includeUnstable) {
+            const unstableModule = `${namespace}/unstable_${module}`;
+            if (adapterMap[unstableModule])
+                adapterMap[unstableModule][`unstable_${adapterName}`] = { ...entry };
+            else adapterMap[unstableModule] = { [`unstable_${adapterName}`]: { ...entry } };
+        }
+    }
+}
+
 module.exports = {
     validate: (modelInfo) => {
         fieldsPlugin.validate(modelInfo, addImportOverride);
@@ -308,9 +364,11 @@ module.exports = {
             });
         const imperativeAdapters = [...ADAPTERS_NOT_DEFINED_IN_OVERLAY];
         const generatedAdapters = [];
+        const adapterMapping = {};
 
         adapters.forEach((adapter) => {
             const { name } = adapter;
+            generateKomaciMappings(adapterMapping, name);
             const fullPath = path.resolve(path.join('src', 'wire', name, 'index.ts'));
             if (fs.existsSync(fullPath)) {
                 imperativeAdapters.push(adapter);
@@ -321,6 +379,10 @@ module.exports = {
 
         const artifactsDir = path.join(compilerConfig.outputDir, 'artifacts');
         mkdirp.sync(artifactsDir);
+        fs.writeFileSync(
+            path.join(artifactsDir, 'komaci-mapping.json'),
+            JSON.stringify(adapterMapping, null, 4)
+        );
         generateAdapterFactoryExport(artifactsDir, generatedAdapters, imperativeAdapters);
         generateWireBindingsExport(
             artifactsDir,

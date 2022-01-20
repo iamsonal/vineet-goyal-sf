@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-graphql-eval",
-    "version": "1.37.8",
+    "version": "1.37.9",
     "description": "Offline GraphQL eval",
     "license": "MIT",
     "main": "dist/umd/es2018/graphql-eval.js",

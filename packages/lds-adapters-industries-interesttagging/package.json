@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-interesttagging",
-    "version": "1.37.8",
+    "version": "1.37.9",
     "description": "Connect family for interest tags APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-interesttagging.js",
@@ -27,13 +27,13 @@
         "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.37.8"
+        "@salesforce/lds-bindings": "1.37.9"
     },
     "devDependencies": {
         "@luvio/cli": "0.69.0",
         "@luvio/compiler": "0.69.0",
         "@luvio/engine": "0.69.0",
         "@luvio/lwc-luvio": "0.69.0",
-        "@salesforce/lds-karma": "1.37.8"
+        "@salesforce/lds-karma": "1.37.9"
     }
 }

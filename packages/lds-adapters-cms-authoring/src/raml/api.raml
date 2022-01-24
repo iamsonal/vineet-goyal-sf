@@ -567,7 +567,7 @@ types:
           type: string
         required: false # TODO handrolled W-9314597
       contentIds:
-        description: '[Optional] The content to publish.'
+        description: '[Optional] The contents to publish. Not valid to have both contentIds and variantIds.'
         type: array
         items:
           type: string
@@ -583,10 +583,20 @@ types:
         description: '[Optional] Execute all staged deployments.'
         type: boolean
         required: false # TODO handrolled W-9314597
+      includeContentReferences:
+        description: '[Optional] Include Content References for deployment.'
+        type: boolean
+        required: false # TODO handrolled W-10340822
       scheduledDate:
         description: '[Optional] Scheduled date for deployment.'
         type: string
         required: false # TODO handrolled W-9314597
+      variantIds:
+        description: '[Optional] The variants to publish. Not valid to have both contentIds and variantIds'
+        type: array
+        items:
+          type: string
+        required: false # TODO handrolled W-10340822
   ManagedContentDeploymentInputWrapperRepresentation: # TODO Hand-rolled W-8334626
     description: wrapper for Input required for creating a deployment
     type: object

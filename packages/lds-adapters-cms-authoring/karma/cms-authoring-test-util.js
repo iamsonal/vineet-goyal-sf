@@ -53,7 +53,9 @@ function getCreateDeploymentsMatcher(config) {
         description,
         contentIds,
         executeStagedDeployments,
+        includeContentReferences,
         scheduledDate,
+        variantIds,
     } = config;
     return sinon.match({
         body: {
@@ -62,7 +64,9 @@ function getCreateDeploymentsMatcher(config) {
             description,
             contentIds,
             executeStagedDeployments,
+            includeContentReferences,
             scheduledDate,
+            variantIds,
         },
         headers: {},
         method: 'post',

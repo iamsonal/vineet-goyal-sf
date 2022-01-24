@@ -1379,15 +1379,17 @@ types:
         body:
           token: pageToken
           pageSize: pageSize
-  '/related-list-records/batch/{parentRecordId}/{relatedListIds}':
+  '/related-list-records/batch/{parentRecordId}':
     uriParameters:
       parentRecordId:
         examples:
           mockGetRelatedListRecordsBatchResponse: a00RM0000004aVwYAI
-      relatedListIds:
-        examples:
-          mockGetRelatedListRecordsBatchResponse: ['CwcCustom02s__r', 'CwcCustom01s__r']
-    get:
+    post:
+      body:
+        application/json:
+          examples:
+            mockGetRelatedListRecordsBatchResponse: !include ../mocks/types/RelatedListRecordCollectionBatchRepresentation/related-list-records-standard-defaults-Custom.json
+      (luvio.method): get
       (luvio.adapter):
         name: getRelatedListRecordsBatch
         # TODO: W-9927409 uncomment when getRelatedListRecordsBatch supports offline
@@ -1414,12 +1416,7 @@ types:
           body: result
         uriParameters:
           parentRecordId: parentRecordId
-          relatedListId: relatedListIds
-        queryParameters:
-          fields: fields
-          optionalFields: optionalFields
-          sortBy: sortBy
-          pageSize: pageSize
+          relatedListId: relatedListParameters # this mapping is handrolled in the resource override
   /predupe:
     post:
       (luvio.method): get

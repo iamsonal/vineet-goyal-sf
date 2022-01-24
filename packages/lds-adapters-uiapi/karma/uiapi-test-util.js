@@ -471,16 +471,13 @@ function mockGetRelatedListRecordsNetworkPost(config, mockData) {
 }
 
 function mockGetRelatedListRecordsBatchNetwork(config, mockData) {
-    const { parentRecordId, relatedListIds } = config;
-    const queryParams = { ...config };
-    delete queryParams.parentRecordId;
-    delete queryParams.relatedListIds;
-
-    const csvRelatedListIds = relatedListIds.join();
+    const { parentRecordId, relatedListParameters } = config;
 
     const paramMatch = sinon.match({
-        basePath: `${URL_BASE}/related-list-records/batch/${parentRecordId}/${csvRelatedListIds}`,
-        queryParams,
+        basePath: `${URL_BASE}/related-list-records/batch/${parentRecordId}`,
+        body: {
+            relatedListParameters,
+        },
     });
 
     if (Array.isArray(mockData)) {
@@ -916,49 +913,11 @@ function extractRecordFields(record, options) {
     return fields;
 }
 
-function convertRelatedListsBatchParamsToResourceParams(parameters) {
-    var relatedListIds = [];
-    var fields = [];
-    var optionalFields = [];
-    var pageSize = [];
-    var sortBy = [];
-    parameters.relatedLists.forEach((relatedList) => {
-        relatedListIds.push(relatedList.relatedListId);
-        if (relatedList.fields && relatedList.fields.length) {
-            fields.push(relatedList.relatedListId + ':' + relatedList.fields.join());
-        }
-        if (relatedList.optionalFields && relatedList.optionalFields.length) {
-            optionalFields.push(
-                relatedList.relatedListId + ':' + relatedList.optionalFields.join()
-            );
-        }
-        if (relatedList.pageSize) {
-            pageSize.push(relatedList.relatedListId + ':' + relatedList.pageSize);
-        }
-        if (!!relatedList.sortBy && relatedList.sortBy.length) {
-            sortBy.push(relatedList.relatedListId + ':' + relatedList.sortBy.join());
-        }
-    });
-    const fieldsParam = fields.join(';');
-    const optionalFieldsParam = optionalFields.join(';');
-    const pageSizeParam = pageSize.join(';');
-    const sortByParam = sortBy.join(';');
-
-    return {
-        parentRecordId: parameters.parentRecordId,
-        relatedListIds: relatedListIds,
-        fields: fieldsParam,
-        optionalFields: optionalFieldsParam,
-        pageSize: pageSizeParam,
-        sortBy: sortByParam,
-    };
-}
-
 function extractRelatedListsBatchParamsFromMockData(mockData) {
     if (mockData.results && mockData.results.length > 0) {
         const parentRecordId = mockData.results.find((item) => item.result.listReference).result
             .listReference.inContextOfRecordId;
-        const relatedLists = mockData.results
+        const relatedListParameters = mockData.results
             .filter((result) => result.result.listReference)
             .map((item) => {
                 return {
@@ -970,8 +929,8 @@ function extractRelatedListsBatchParamsFromMockData(mockData) {
                 };
             });
         return {
-            parentRecordId: parentRecordId,
-            relatedLists: relatedLists,
+            parentRecordId,
+            relatedListParameters,
         };
     } else {
         return {};
@@ -1057,7 +1016,6 @@ export {
     mockGetDuplicatesNetwork,
     // mock data utils
     extractRecordFields,
-    convertRelatedListsBatchParamsToResourceParams,
     extractRelatedListsBatchParamsFromMockData,
     setTrackedFieldsConfig,
 };

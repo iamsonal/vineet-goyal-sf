@@ -25,10 +25,10 @@ enum UiApiRecordController {
     GetRelatedListCount = 'RelatedListUiController.getRelatedListRecordCount',
     GetRelatedListCounts = 'RelatedListUiController.getRelatedListsRecordCount',
     GetRelatedListInfoBatch = 'RelatedListUiController.getRelatedListInfoBatch',
-    GetRelatedListRecordsBatch = 'RelatedListUiController.getRelatedListRecordsBatch',
     GetRelatedListPreferences = 'RelatedListUiController.getRelatedListPreferences',
     UpdateRelatedListPreferences = 'RelatedListUiController.updateRelatedListPreferences',
     GetRelatedListPreferencesBatch = 'RelatedListUiController.getRelatedListPreferencesBatch',
+    PostRelatedListRecordsBatch = 'RelatedListUiController.postRelatedListRecordsBatch',
 }
 
 const UIAPI_RELATED_LIST_INFO_PATH = `${UI_API_BASE_URI}/related-list-info`;
@@ -58,7 +58,9 @@ if (forceRecordTransactionsDisabled === false) {
         getRelatedListRecordsBatchRejectFunction: (config: InstrumentationRejectConfig) => {
             instrumentation.logCrud(CrudEventType.READS, {
                 parentRecordId: config.params.parentRecordId,
-                relatedListIds: config.params.relatedListIds,
+                relatedListIds: config.params.listRecordsQuery.relatedListParameters.map(
+                    (entry: { relatedListId: any }) => entry.relatedListId
+                ),
                 state: CrudEventState.ERROR,
             });
         },
@@ -154,20 +156,16 @@ function postRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> 
     );
 }
 
-function getRelatedListRecordsBatch(resourceRequest: ResourceRequest): Promise<any> {
+function postRelatedListRecordsBatch(resourceRequest: ResourceRequest): Promise<any> {
     const {
-        urlParams: { parentRecordId, relatedListIds },
-        queryParams: { fields, optionalFields, pageSize, sortBy },
+        urlParams: { parentRecordId },
+        body,
     } = resourceRequest;
 
     const params = buildUiApiParams(
         {
             parentRecordId: parentRecordId,
-            relatedListIds: relatedListIds,
-            fields,
-            optionalFields,
-            pageSize,
-            sortBy,
+            listRecordsQuery: body,
         },
         resourceRequest
     );
@@ -181,7 +179,7 @@ function getRelatedListRecordsBatch(resourceRequest: ResourceRequest): Promise<a
             : {};
 
     return dispatchAction(
-        UiApiRecordController.GetRelatedListRecordsBatch,
+        UiApiRecordController.PostRelatedListRecordsBatch,
         params,
         undefined,
         instrumentationCallbacks
@@ -305,9 +303,9 @@ appRouter.post(
         path.startsWith(UIAPI_RELATED_LIST_RECORDS_BATCH_PATH) === false,
     postRelatedListRecords
 );
-appRouter.get(
+appRouter.post(
     (path: string) => path.startsWith(UIAPI_RELATED_LIST_RECORDS_BATCH_PATH),
-    getRelatedListRecordsBatch
+    postRelatedListRecordsBatch
 );
 // related-list-count/batch/parentRecordId/relatedListNames
 appRouter.get(

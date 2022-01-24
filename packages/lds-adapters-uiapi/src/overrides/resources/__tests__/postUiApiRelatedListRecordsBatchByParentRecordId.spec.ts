@@ -1,27 +1,52 @@
 import {
     createChildResourceParams,
     ResourceRequestConfig,
-} from '../getUiApiRelatedListRecordsBatchByParentRecordIdAndRelatedListIds';
+} from '../postUiApiRelatedListRecordsBatchByParentRecordId';
 
 const basicResourceRequestConfig: ResourceRequestConfig = {
     urlParams: {
         parentRecordId: 'aParentRecordId',
-        relatedListIds: ['relatedList1', 'relatedList2'],
     },
-    queryParams: {},
+    body: {
+        relatedListParameters: [
+            {
+                relatedListId: 'relatedList1',
+            },
+            {
+                relatedListId: 'relatedList2',
+            },
+        ],
+    },
 };
 
 const standardResourceRequestConfig: ResourceRequestConfig = {
     urlParams: {
         parentRecordId: 'aParentRecordId',
-        relatedListIds: ['relatedList1__r', 'relatedList2', 'relatedList1'],
     },
-    queryParams: {
-        fields: 'relatedList1__r:Opportunity.Name,Opportunity.Id;relatedList2:Account.Name,Account.Revenue;relatedList1:Account.Name',
-        optionalFields:
-            'relatedList1__r:Opportunity.AccountName;relatedList2:Account.Id;relatedList1:Account.Id',
-        pageSize: 'relatedList1__r:10;relatedList2:10;relatedList1:15',
-        sortBy: 'relatedList1__r:Name;relatedList2:Id;relatedList1:Account.Name',
+    body: {
+        relatedListParameters: [
+            {
+                relatedListId: 'relatedList1__r',
+                fields: ['Opportunity.Name', 'Opportunity.Id'],
+                optionalFields: ['Opportunity.AccountName'],
+                pageSize: 10,
+                sortBy: ['Name'],
+            },
+            {
+                relatedListId: 'relatedList1',
+                fields: ['Account.Name'],
+                optionalFields: ['Account.Id'],
+                pageSize: 15,
+                sortBy: ['Account.Name'],
+            },
+            {
+                relatedListId: 'relatedList2',
+                fields: ['Account.Name', 'Account.Revenue'],
+                optionalFields: ['Account.Id'],
+                pageSize: 10,
+                sortBy: ['Id'],
+            },
+        ],
     },
 };
 
@@ -62,18 +87,6 @@ describe('createChildResourceParams', () => {
             {
                 urlParams: {
                     parentRecordId: 'aParentRecordId',
-                    relatedListId: 'relatedList2',
-                },
-                body: {
-                    fields: ['Account.Name', 'Account.Revenue'],
-                    optionalFields: ['Account.Id'],
-                    pageSize: 10,
-                    sortBy: ['Id'],
-                },
-            },
-            {
-                urlParams: {
-                    parentRecordId: 'aParentRecordId',
                     relatedListId: 'relatedList1',
                 },
                 body: {
@@ -81,6 +94,18 @@ describe('createChildResourceParams', () => {
                     optionalFields: ['Account.Id'],
                     pageSize: 15,
                     sortBy: ['Account.Name'],
+                },
+            },
+            {
+                urlParams: {
+                    parentRecordId: 'aParentRecordId',
+                    relatedListId: 'relatedList2',
+                },
+                body: {
+                    fields: ['Account.Name', 'Account.Revenue'],
+                    optionalFields: ['Account.Id'],
+                    pageSize: 10,
+                    sortBy: ['Id'],
                 },
             },
         ]);

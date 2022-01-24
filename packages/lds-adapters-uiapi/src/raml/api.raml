@@ -2933,7 +2933,7 @@ types:
         description: Parameters for each of the related lists in this batch request.
         type: array
         items:
-          type: object
+          type: RelatedListRecordsSingleBatchInputRepresentation #TODO: hand rolled
   RelatedListRecordsInputRepresentation:
     description: Query (using POST) for records in a related list.
     type: object
@@ -2979,6 +2979,7 @@ types:
         description: Additional fields queried for the records returned.  If the field
           is not available to the user, an error occurs.
         type: array
+        required: false #TODO: handrolled
         items:
           type: string
       optionalFields:
@@ -2986,12 +2987,14 @@ types:
           is not available to the user, no error occurs and the field isn’t included
           in the records.
         type: array
+        required: false #TODO: handrolled
         items:
           type: string
       pageSize:
         description: The number of list records viewed at one time.  The default value
           is 50. Value can be 1–2000.
         type: integer
+        required: false #TODO: handrolled
       relatedListId:
         description: The identifier for this related list.
         type: string
@@ -2999,6 +3002,7 @@ types:
         description: The API name of the field the related list is sorted by.  If
           the name is preceded with -, the sort order is descending.
         type: array
+        required: false #TODO: handrolled
         items:
           type: string
   RelatedListReferenceRepresentation:
@@ -5943,29 +5947,7 @@ types:
           type: string
           required: true
   /related-list-records:
-    /batch/{parentRecordId}/{relatedListIds}:
-      get:
-        description: Returns a batch of record data to populate several related
-          list.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: RelatedListRecordCollectionBatchRepresentation # TODO: hand rolled
-        queryParameters:
-          fields:
-            type: string
-            required: false
-          optionalFields:
-            type: string
-            required: false
-          pageSize:
-            type: string
-            required: false
-          sortBy:
-            type: string
-            required: false
+    /batch/{parentRecordId}:
       post:
         description: Returns record data to populate a related list.
         responses:
@@ -5973,7 +5955,7 @@ types:
             description: Success
             body:
               application/json:
-                type: SimplifiedBatchRepresentation
+                type: RelatedListRecordCollectionBatchRepresentation # TODO: hand rolled
         body:
           application/json:
             type: RelatedListRecordsBatchInputRepresentation
@@ -5983,12 +5965,6 @@ types:
         parentRecordId:
           type: string
           required: true
-        relatedListIds:
-          type: array
-          required: true
-          items:
-            type: string
-            (oas-collectionFormat): csv
     /{parentRecordId}/{relatedListId}:
       # TODO: this breaks the ResourceRequestConfig of getRelatedListRecordsBatch
       # get:

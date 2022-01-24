@@ -5,7 +5,6 @@ import {
     expireRelatedListRecordCollection,
     mockGetRelatedListRecordsBatchNetwork,
     mockGetRelatedListRecordsNetworkPost,
-    convertRelatedListsBatchParamsToResourceParams,
     extractRelatedListsBatchParamsFromMockData,
 } from 'uiapi-test-util';
 
@@ -54,9 +53,8 @@ describe('basic', () => {
     it('gets data with valid parentRecordId and relatedListIds', async () => {
         const mockData = getMock('related-list-records-standard-defaults-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
 
         const element = await setupElement(params, RelatedListRecordsBatch);
 
@@ -66,9 +64,8 @@ describe('basic', () => {
     it('gets data with valid parameters', async () => {
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
         const element = await setupElement(params, RelatedListRecordsBatch);
 
         const wireData = element.getWiredData();
@@ -80,8 +77,7 @@ describe('batching', () => {
     it('returns cached result when cached data is available', async () => {
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
 
         // populate cache
         await setupElement(params, RelatedListRecordsBatch);
@@ -94,11 +90,10 @@ describe('batching', () => {
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const updatedMockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
         Object.assign(updatedMockData.results[0].result.records[0], {
             eTag: 'e7c7f7e02c57bdcfa9d751b5a508f907',
         });
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mockData, updatedMockData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [mockData, updatedMockData]);
 
         // populate cache
         await setupElement(params, RelatedListRecordsBatch);
@@ -114,9 +109,8 @@ describe('batching', () => {
         const noRecordsMockData = getMock('related-list-no-records-Custom');
 
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [noRecordsMockData, mockData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [noRecordsMockData, mockData]);
 
         // populate cache
         await setupElement(params, RelatedListRecordsBatch);
@@ -152,10 +146,8 @@ describe('batching', () => {
 
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const batchComponentParams = extractRelatedListsBatchParamsFromMockData(mockData);
-        const batchResourceConfig =
-            convertRelatedListsBatchParamsToResourceParams(batchComponentParams);
 
-        mockGetRelatedListRecordsBatchNetwork(batchResourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(batchComponentParams, mockData);
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
@@ -165,12 +157,11 @@ describe('error cases', () => {
     it('adapter handles error responses.', async () => {
         const mockData = getMock('related-list-records-standard-error-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        params.relatedLists.push({
+        params.relatedListParameters.push({
             relatedListId: 'missingRelatedList',
         });
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
         const element = await setupElement(params, RelatedListRecordsBatch);
 
         expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
@@ -180,8 +171,7 @@ describe('error cases', () => {
         const mockErrorData = getMock('related-list-records-standard-error-Custom');
         const mockFullData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockFullData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mockErrorData, mockFullData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [mockErrorData, mockFullData]);
 
         // Get data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
@@ -196,8 +186,7 @@ describe('error cases', () => {
         const mockError = getMock('related-list-records-standard-error-Custom');
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mockError, mockData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [mockError, mockData]);
 
         // Get error data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
@@ -215,9 +204,8 @@ describe('error cases', () => {
         it('gets data with valid parameters', async () => {
             const mockData = getMock('related-list-records-pagination');
             const params = extractRelatedListsBatchParamsFromMockData(mockData);
-            const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-            mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+            mockGetRelatedListRecordsBatchNetwork(params, mockData);
             const element = await setupElement(params, RelatedListRecordsBatch);
 
             const wireData = element.getWiredData();
@@ -233,9 +221,8 @@ describe('error cases', () => {
             mock2.results[0].result.records[0].eTag = '33f99fd969583cd3a1b31ed8b5121e62';
 
             const config = extractRelatedListsBatchParamsFromMockData(mock1);
-            const resourceConfig = convertRelatedListsBatchParamsToResourceParams(config);
 
-            mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mock1, mock2]);
+            mockGetRelatedListRecordsBatchNetwork(config, [mock1, mock2]);
 
             const callback = jasmine.createSpy();
 

@@ -12,7 +12,7 @@ import {
 import {
     ResourceRequestConfig,
     createChildResourceParams as generatedCreateChildResourceParams,
-} from '../../generated/resources/getUiApiRelatedListRecordsBatchByParentRecordIdAndRelatedListIds';
+} from '../../generated/resources/postUiApiRelatedListRecordsBatchByParentRecordId';
 // Single Wire Imports
 import {
     ResourceRequestConfig as singleWireResourceRequestConfig,
@@ -44,61 +44,41 @@ export const createChildResourceParams: typeof generatedCreateChildResourceParam
 ) => {
     const childConfigs: singleWireResourceRequestConfig[] = [];
     for (
-        let index = 0, len = resourceParams.urlParams.relatedListIds.length;
+        let index = 0, len = resourceParams.body.relatedListParameters.length;
         index < len;
         index += 1
     ) {
-        const relatedListId = resourceParams.urlParams.relatedListIds[index];
-        const fieldsString = extractSingleResourceParamsFromBatchParamString(
-            relatedListId,
-            resourceParams.queryParams.fields
-        );
-        const fields = fieldsString === undefined ? undefined : fieldsString.split(',');
-        const optionalFieldsString = extractSingleResourceParamsFromBatchParamString(
-            relatedListId,
-            resourceParams.queryParams.optionalFields
-        );
-        const optionalFields =
-            optionalFieldsString === undefined ? undefined : optionalFieldsString.split(',');
-        const sortByString = extractSingleResourceParamsFromBatchParamString(
-            relatedListId,
-            resourceParams.queryParams.sortBy
-        );
-        const sortBy = sortByString === undefined ? undefined : sortByString.split(',');
-        const pageSize = extractSingleResourceParamsFromBatchParamString(
-            relatedListId,
-            resourceParams.queryParams.pageSize
-        );
-
-        childConfigs.push({
+        let childConfig: singleWireResourceRequestConfig = {
             urlParams: {
                 parentRecordId: resourceParams.urlParams.parentRecordId,
-                relatedListId: relatedListId,
+                relatedListId: resourceParams.body.relatedListParameters[index].relatedListId,
             },
-            body: {
-                fields: fields,
-                optionalFields: optionalFields,
-                sortBy: sortBy,
-                pageSize: pageSize ? Number(pageSize) : undefined,
-            },
-        });
+            body: {},
+        };
+
+        let relatedListConfig = resourceParams.body.relatedListParameters[index];
+
+        // manually populate childConfig body
+        if ('fields' in relatedListConfig) {
+            childConfig.body.fields = relatedListConfig.fields;
+        }
+
+        if ('optionalFields' in relatedListConfig) {
+            childConfig.body.optionalFields = relatedListConfig.optionalFields;
+        }
+
+        if ('pageSize' in relatedListConfig) {
+            childConfig.body.pageSize = relatedListConfig.pageSize;
+        }
+
+        if ('sortBy' in relatedListConfig) {
+            childConfig.body.sortBy = relatedListConfig.sortBy;
+        }
+
+        childConfigs.push(childConfig);
     }
     return childConfigs;
 };
-
-function extractSingleResourceParamsFromBatchParamString(
-    relatedListId: string,
-    batchParamString?: string
-): string | undefined {
-    if (batchParamString === undefined) {
-        return undefined;
-    }
-
-    const match = batchParamString
-        .split(';')
-        .find((fieldString) => fieldString.split(':')[0] === relatedListId);
-    return match === undefined ? undefined : match.slice(relatedListId.length + 1);
-}
 
 // HUGE BLOCK OF COPY PASTED CODE:
 // WE NEED TO DO THIS SO THAT THE ADAPTER CAN USE ONLY OUR OVERRIDE FILE
@@ -187,23 +167,8 @@ export function keyBuilder(params: ResourceRequestConfig): string {
         keyPrefix +
         '::' +
         'RelatedListRecordCollectionBatchRepresentation(' +
-        'fields:' +
-        params.queryParams.fields +
-        ',' +
-        'optionalFields:' +
-        params.queryParams.optionalFields +
-        ',' +
-        'pageSize:' +
-        params.queryParams.pageSize +
-        ',' +
-        'sortBy:' +
-        params.queryParams.sortBy +
-        ',' +
-        'parentRecordId:' +
-        params.urlParams.parentRecordId +
-        ',' +
-        'relatedListIds:' +
-        params.urlParams.relatedListIds +
+        'relatedListParameters:' +
+        params.body.relatedListParameters +
         ')'
     );
 }
@@ -377,17 +342,12 @@ export function createResourceRequest(config: ResourceRequestConfig): ResourceRe
 
     return {
         baseUri: '/services/data/v55.0',
-        basePath:
-            '/ui-api/related-list-records/batch/' +
-            config.urlParams.parentRecordId +
-            '/' +
-            config.urlParams.relatedListIds +
-            '',
-        method: 'get',
+        basePath: '/ui-api/related-list-records/batch/' + config.urlParams.parentRecordId + '',
+        method: 'post',
         priority: 'normal',
-        body: null,
+        body: config.body,
         urlParams: config.urlParams,
-        queryParams: config.queryParams,
+        queryParams: {},
         headers,
     };
 }

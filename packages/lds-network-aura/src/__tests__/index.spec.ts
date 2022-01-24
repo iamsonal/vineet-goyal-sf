@@ -3335,44 +3335,67 @@ describe('routes', () => {
         });
     });
 
-    describe('get /related-list-records/batch/{parentRecordId}/{relatedListIds}', () => {
+    describe('post /related-list-records/batch/{parentRecordId}', () => {
         testControllerInput(
             {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/{parentRecordId}/{relatedListIds}`,
+                basePath: `/related-list-records/batch/{parentRecordId}`,
                 urlParams: {
                     parentRecordId: '012T00000004MUHIA2',
-                    relatedListIds: ['Contact__r', 'Opportunity__r'],
                 },
-                queryParams: {
-                    fields: 'Contact__r:Name,Id;Opportunity__r:Name',
-                    optionalFields: 'Contact__r:Account.Name;Opportunity__r:Account.Name',
-                    pageSize: 'Contact__r:5;Opportunity__r:7',
-                    sortBy: 'Contact__r:Name,Id;Opportunity__r:Name',
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'Contact__r',
+                            fields: ['Account.Name'],
+                            optionalFields: ['Account.Name'],
+                            pageSize: 5,
+                            sortBy: ['Name', 'Id'],
+                        },
+                        {
+                            relatedListId: 'Opportunity__r',
+                            fields: ['Account.Name'],
+                            optionalFields: ['Account.Name'],
+                            pageSize: 7,
+                            sortBy: ['Name'],
+                        },
+                    ],
                 },
             },
             [
-                'RelatedListUiController.getRelatedListRecordsBatch',
+                'RelatedListUiController.postRelatedListRecordsBatch',
                 {
                     parentRecordId: '012T00000004MUHIA2',
-                    relatedListIds: ['Contact__r', 'Opportunity__r'],
-                    fields: 'Contact__r:Name,Id;Opportunity__r:Name',
-                    optionalFields: 'Contact__r:Account.Name;Opportunity__r:Account.Name',
-                    pageSize: 'Contact__r:5;Opportunity__r:7',
-                    sortBy: 'Contact__r:Name,Id;Opportunity__r:Name',
+                    listRecordsQuery: {
+                        relatedListParameters: [
+                            {
+                                relatedListId: 'Contact__r',
+                                fields: ['Account.Name'],
+                                optionalFields: ['Account.Name'],
+                                pageSize: 5,
+                                sortBy: ['Name', 'Id'],
+                            },
+                            {
+                                relatedListId: 'Opportunity__r',
+                                fields: ['Account.Name'],
+                                optionalFields: ['Account.Name'],
+                                pageSize: 7,
+                                sortBy: ['Name'],
+                            },
+                        ],
+                    },
                 },
                 undefined,
             ]
         );
 
         testRejectFetchResponse({
-            method: 'get',
+            method: 'post',
             baseUri: UI_API_BASE_URI,
-            basePath: `/related-list-records/batch/{parentRecordId}/{relatedListIds}`,
+            basePath: `/related-list-records/batch/{parentRecordId}`,
             urlParams: {
                 parentObjectId: '012T00000004MUHIA2',
-                relatedListIds: 'Contact__r',
             },
         });
     });

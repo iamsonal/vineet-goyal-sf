@@ -9,13 +9,13 @@ import { getRelatedListRecordsBatch, refresh } from 'lds-adapters-uiapi';
 
 export default class Basic extends LightningElement {
     @api parentRecordId;
-    @api relatedLists;
+    @api relatedListParameters;
 
     wirePushCount = -1;
 
     @wire(getRelatedListRecordsBatch, {
         parentRecordId: '$parentRecordId',
-        relatedLists: '$relatedLists',
+        relatedListParameters: '$relatedListParameters',
     })
     onGetRelatedListRecordsBatch(result) {
         this.relatedListRecordsBatchData = result;

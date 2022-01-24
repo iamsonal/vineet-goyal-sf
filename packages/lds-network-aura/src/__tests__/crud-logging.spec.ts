@@ -353,14 +353,23 @@ describe('crud logging', () => {
             }
         });
 
-        it('logs read event when getRelatedListRecordsBatch is called', async () => {
+        it('logs read event when postRelatedListRecordsBatch is called', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/a00RM0000004aVwYAI/CwcCustom02s__r,CwcCustom01s__r`,
+                basePath: `/related-list-records/batch/a00RM0000004aVwYAI`,
                 urlParams: {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                },
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'CwcCustom02s__r',
+                        },
+                        {
+                            relatedListId: 'CwcCustom01s__r',
+                        },
+                    ],
                 },
                 queryParams: {},
             };
@@ -502,14 +511,23 @@ describe('crud logging', () => {
             });
         });
 
-        it('logs read event when getRelatedListRecordsBatch is called but a result is error', async () => {
+        it('logs read event when postRelatedListRecordsBatch is called but a result is error', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/a00RM0000004aVwYAI/CwcCustom02s__r,CwcCustom01s__r`,
+                basePath: `/related-list-records/batch/a00RM0000004aVwYAI`,
                 urlParams: {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                },
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'CwcCustom02s__r',
+                        },
+                        {
+                            relatedListId: 'CwcCustom01s__r',
+                        },
+                    ],
                 },
                 queryParams: {},
             };
@@ -585,14 +603,23 @@ describe('crud logging', () => {
             });
         });
 
-        it('logs read event when getRelatedListRecordsBatch is called but returns error', async () => {
+        it('logs read event when postRelatedListRecordsBatch is called but returns error', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/a00RM0000004aVwYAI/CwcCustom02s__r,CwcCustom01s__r`,
+                basePath: `/related-list-records/batch/a00RM0000004aVwYAI`,
                 urlParams: {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                },
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'CwcCustom02s__r',
+                        },
+                        {
+                            relatedListId: 'CwcCustom01s__r',
+                        },
+                    ],
                 },
                 queryParams: {},
             };
@@ -604,7 +631,7 @@ describe('crud logging', () => {
                 expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
                 expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('reads', {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                    relatedListIds: ['CwcCustom02s__r', 'CwcCustom01s__r'],
                     state: 'ERROR',
                 });
             }

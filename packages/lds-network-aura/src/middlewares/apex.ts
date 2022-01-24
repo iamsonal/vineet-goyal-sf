@@ -81,7 +81,7 @@ function dispatchApexAction(
             );
         },
         (err) => {
-            // Handle ConnectedInJava exception shapes
+            // Handle ConnectInJava exception shapes
             if (err.data !== undefined && err.data.statusCode !== undefined) {
                 const { data } = err;
                 throw new AuraFetchResponse(data.statusCode, data);

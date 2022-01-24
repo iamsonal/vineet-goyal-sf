@@ -1,20 +1,7 @@
 import { ResourceRequest } from '@luvio/engine';
 import platformNetworkAdapter from '../../main';
-import { UI_API_BASE_URI } from '../../uiapi-base';
 import { dedupeRequest } from '../dedupe';
-
-function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
-    return {
-        method: resourceRequest.method || 'get',
-        baseUri: UI_API_BASE_URI,
-        basePath: resourceRequest.basePath || '/test',
-        body: resourceRequest.body || {},
-        queryParams: resourceRequest.queryParams || {},
-        urlParams: resourceRequest.urlParams || {},
-        headers: resourceRequest.headers || {},
-        fulfill: resourceRequest.fulfill || undefined,
-    };
-}
+import { buildResourceRequest } from './test-utils';
 
 describe('dedupeRequest', () => {
     it('should throw error if ResourceRequest is NOT a GET', () => {

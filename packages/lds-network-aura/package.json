@@ -19,6 +19,9 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand",
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-network-aura"
     },
+    "dependencies": {
+        "@salesforce/lds-network-adapter": "1.37.9"
+    },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.37.9",
         "@salesforce/lds-aura-storage": "1.37.9",

@@ -1,22 +1,11 @@
-import * as aura from 'aura';
-import networkAdapter from '../main';
-import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
+import platformNetworkAdapter from '../main';
+import { UI_API_BASE_URI } from '../uiapi-base';
 import { buildResourceRequest } from './test-utils';
-import tokenBucket from '../utils/tokenBucket';
-
-jest.mock('@salesforce/lds-instrumentation', () => {
-    return {
-        registerLdsCacheStats: () => {},
-    };
-});
+import tokenBucket from '../token-bucket';
 
 import { instrumentation } from '../instrumentation';
 
 const instrumentationSpies = {
-    logCrud: jest.spyOn(instrumentation, 'logCrud'),
-    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
-    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
-    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
     networkRateLimitExceeded: jest.spyOn(instrumentation, 'networkRateLimitExceeded'),
 };
 
@@ -43,10 +32,14 @@ describe('rate limiting event', () => {
                 fields: ['Id'],
             },
         };
+        const returnValue = {
+            status: 200,
+            body: {},
+        };
+        const fn = jest.fn().mockResolvedValue(returnValue);
 
-        jest.spyOn(aura, 'executeGlobalController').mockReturnValue(Promise.resolve());
         for (let i = 0; i < 3; i++) {
-            networkAdapter(buildResourceRequest(request));
+            await platformNetworkAdapter(fn)(buildResourceRequest(request));
         }
         expect(instrumentationSpies.networkRateLimitExceeded).toHaveBeenCalledTimes(1);
     });

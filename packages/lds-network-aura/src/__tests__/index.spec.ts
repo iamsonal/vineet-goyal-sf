@@ -1,4 +1,4 @@
-import { ResourceRequest, HttpStatusCode } from '@luvio/engine';
+import { ResourceRequest } from '@luvio/engine';
 import * as aura from 'aura';
 import auraStorage from 'aura-storage';
 import { AuraFetchResponse } from '../AuraFetchResponse';
@@ -24,7 +24,6 @@ import {
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
 import { default as appRouter, Route } from '../router';
-import { buildGetRecordByFieldsCompositeRequest } from '../middlewares/execute-aggregate-ui';
 import { buildResourceRequest } from './test-utils';
 
 jest.mock('@salesforce/lds-instrumentation', () => {
@@ -161,21 +160,6 @@ function testStorage(storageName: string, request: Partial<ResourceRequest>) {
     });
 }
 
-function generateMockedRecordFields(
-    numberOfFields: number,
-    customFieldName?: string
-): Array<string> {
-    const fields: Array<string> = new Array();
-    const fieldName =
-        customFieldName !== undefined ? customFieldName.replace(/\s+/g, '') : 'CustomField';
-
-    for (let i = 0; i < numberOfFields; i++) {
-        fields.push(`${fieldName}${i}__c`);
-    }
-
-    return fields;
-}
-
 describe('network adapter', () => {
     it('throws an error if no matching invoker is found', () => {
         const unknownRequest = buildResourceRequest({ method: 'get', basePath: '/test' });
@@ -222,6 +206,49 @@ describe('routes', () => {
 
     afterAll(() => {
         appRouter.lookup = original;
+    });
+
+    describe('post /aggregate-ui', () => {
+        const body = {
+            input: {
+                compositeRequest: [
+                    {
+                        url: '/services/data/v55.0/ui-api/records/1234?fields=CustomField0__c',
+                        referenceId: 'LDS_Records_AggregateUi_fields',
+                    },
+                ],
+            },
+        };
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: UI_API_BASE_URI,
+                basePath: '/aggregate-ui',
+                body,
+            },
+            [
+                'RecordUiController.executeAggregateUi',
+                body,
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: UI_API_BASE_URI,
+            basePath: '/aggregate-ui',
+            body,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: UI_API_BASE_URI,
+                basePath: '/aggregate-ui',
+                body,
+            },
+            {
+                body,
+            }
+        );
     });
 
     describe('get /object-info/{apiName}', () => {
@@ -472,57 +499,6 @@ describe('routes', () => {
                     },
                     { background: false, hotspot: true, longRunning: false },
                 ]
-            );
-        });
-
-        describe('with a large amount of fields', () => {
-            let generatedFields = generateMockedRecordFields(2000, 'ExtremelyLongTestFieldName');
-            let responseBody = {
-                compositeResponse: [
-                    {
-                        body: {},
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                ],
-            };
-            let resourceRequest: ResourceRequest = {
-                body: null,
-                method: 'get',
-                baseUri: UI_API_BASE_URI,
-                basePath: `/records/1234`,
-                headers: null,
-                ingest: null,
-                urlParams: {
-                    recordId: '1234',
-                },
-                queryParams: {
-                    fields: generatedFields,
-                },
-            };
-
-            let expectedRequestPayload = buildGetRecordByFieldsCompositeRequest(
-                '1234',
-                resourceRequest,
-                {
-                    fieldsArray: generatedFields,
-                    optionalFieldsArray: [],
-                    fieldsLength: generatedFields.join(',').length,
-                    optionalFieldsLength: 0,
-                }
-            );
-
-            testControllerInput(
-                resourceRequest,
-                [
-                    'RecordUiController.executeAggregateUi',
-                    {
-                        input: {
-                            compositeRequest: expectedRequestPayload,
-                        },
-                    },
-                    { background: false, hotspot: true, longRunning: false },
-                ],
-                responseBody
             );
         });
 

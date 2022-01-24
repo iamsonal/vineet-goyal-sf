@@ -1,8 +1,7 @@
 import * as aura from 'aura';
 import networkAdapter from '../main';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
-import { buildResourceRequest, ERROR_RESPONSE } from './test-utils';
-import { generateMockedRecordFields } from './execute-aggregate-ui.spec';
+import { buildResourceRequest, generateMockedRecordFields, ERROR_RESPONSE } from './test-utils';
 import { HttpStatusCode } from '@luvio/engine';
 
 jest.mock('@salesforce/lds-environment-settings', () => {
@@ -637,7 +636,9 @@ describe('crud logging', () => {
             }
         });
     });
-    describe('executeAggregateUi', () => {
+
+    // TODO[@W-10432188]: move to lds-network-adapter
+    xdescribe('executeAggregateUi', () => {
         it('logs read event when getRecord is called', async () => {
             const request = {
                 method: 'get',

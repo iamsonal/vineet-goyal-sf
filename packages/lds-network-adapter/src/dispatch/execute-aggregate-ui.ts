@@ -160,16 +160,10 @@ export function dispatchSplitRecordAggregateUiAction(
             });
             return createOkResponse(merged);
         },
-        (err) => {
+        (err: FetchResponse<any>) => {
             instrumentation.getRecordAggregateReject(() => recordId);
-            // Handle ConnectedInJava exception shapes
-            if (err.data !== undefined && err.data.statusCode !== undefined) {
-                const { data } = err;
-                throw createErrorResponse(data.statusCode, data);
-            }
 
-            // Handle all the other kind of errors
-            throw createErrorResponse(HttpStatusCode.ServerError, { error: err.message });
+            return err;
         }
     );
 }

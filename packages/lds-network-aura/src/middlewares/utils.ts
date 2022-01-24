@@ -148,7 +148,7 @@ export function dispatchAction(
                     });
                 }
 
-                // Handle ConnectedInJava exception shapes
+                // Handle ConnectInJava exception shapes
                 if (err.data !== undefined && err.data.statusCode !== undefined) {
                     const { data } = err as ConnectInJavaError;
                     throw new AuraFetchResponse(data.statusCode, data);

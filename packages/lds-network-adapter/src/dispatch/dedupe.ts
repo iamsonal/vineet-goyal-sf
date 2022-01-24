@@ -17,9 +17,9 @@ const EMPTY_STRING = '';
 function getTransactionKey(resourceRequest: ResourceRequest): string {
     const { baseUri, basePath, queryParams, headers } = resourceRequest;
     const path = `${baseUri}${basePath}`;
-    const querParamsString = queryParams ? JSONStringify(queryParams) : EMPTY_STRING;
+    const queryParamsString = queryParams ? JSONStringify(queryParams) : EMPTY_STRING;
     const headersString = JSONStringify(headers);
-    return `${path}${TRANSACTION_KEY_SEP}${headersString}${TRANSACTION_KEY_SEP}${querParamsString}`;
+    return `${path}${TRANSACTION_KEY_SEP}${headersString}${TRANSACTION_KEY_SEP}${queryParamsString}`;
 }
 
 function getFulfillingRequest(

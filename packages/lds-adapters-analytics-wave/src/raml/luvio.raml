@@ -175,10 +175,16 @@ types:
         name: getDataset
       (luvio.key):
         id: urlParams.datasetIdOrApiName
-  /datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}:
-    get:
-      (luvio.adapter):
-        name: getXmd
+    /versions/{versionId}:
+      get:
+        (luvio.adapter):
+          name: getDatasetVersion
+        (luvio.key):
+          id: urlParams.versionId
+    /versions/{versionId}/xmds/{xmdType}:
+      get:
+        (luvio.adapter):
+          name: getXmd
   /folders:
     get:
       (luvio.adapter):

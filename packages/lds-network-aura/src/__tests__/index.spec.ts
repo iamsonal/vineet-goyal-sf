@@ -5725,6 +5725,36 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            [
+                'WaveController.getDatasetVersion',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}', () => {
         describe('with dataset id', () => {
             testControllerInput(

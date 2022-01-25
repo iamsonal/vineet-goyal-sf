@@ -1152,6 +1152,64 @@ types:
         enum:
           - All
           - Limited
+  DatasetVersionRepresentation:
+    description: An instantiated version of a Wave dataset.
+    discriminatorValue: DatasetVersion
+    type: BaseWaveAssetRepresentation
+    properties:
+      dataset:
+        description: A reference to the dataset.
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      files:
+        description: Information about the data files that make up the dataset version.
+        type: array
+        items:
+          type: WaveFileMetadataRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      filesUrl:
+        description: The URL of the files resource for this dataset version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      predicate:
+        description: The row level security predicate.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      predicateVersion:
+        description: The version of the row level security predicate.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+      securityCoverageUrl:
+        description: Dataset sharing inheritance coverage information resource.
+        type: string
+      sharingSource:
+        description: Entity from which sharing rules will be inherited for this dataset
+          version
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      source:
+        description: The parent dataflow or file for this dataset version.
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      supportsNewDates:
+        description: Dataset version supports new date format
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      totalRowCount:
+        description: Total number of rows for this dataset version
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+      xmdMain:
+        description: The Extended Metadata (Xmd) for this dataset version.
+        type: XmdRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      xmdsUrl:
+        description: The URL of the Xmd Collection resource for this dataset version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   EmptyScheduleRepresentation:
     description: Represents an empty schedule on an asset
     discriminatorValue: none
@@ -2901,6 +2959,42 @@ types:
           - MaxDailySizeLowOutputCon
           - MaxDailySizeMedOutputCon
           - OutputLocalConnectorVolume
+  WaveFileMetadataRepresentation:
+    description: Information about a file.
+    type: object
+    properties:
+      createdBy:
+        description: created by user
+        type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      createdDate:
+        description: created date
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      id:
+        description: The 18 character lens file ID.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastAccessedDate:
+        description: last accessed date
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedDate:
+        description: last modified date
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      length:
+        description: size of the lens file
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: name of lens file
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: url of file.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   WaveFolderCollectionRepresentation:
     description: Representation for a collection of Wave analytics folders or applications.
     type: object
@@ -4067,6 +4161,22 @@ types:
       datasetIdOrApiName:
         type: string
         required: true
+    /versions/{versionId}:
+      get:
+        description: Get a dataset version resource representation.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatasetVersionRepresentation
+      uriParameters:
+        datasetIdOrApiName:
+          type: string
+          required: true
+        versionId:
+          type: string
+          required: true
     /versions/{versionId}/xmds/{xmdType}:
       get:
         description: Get the extended metadata of the given type for the given

@@ -17,3 +17,8 @@ steps:
     run:
       command: yarn release:corejar
     before: core-packager
+notifications:
+  email:
+    address: auradataservicescrumteam@salesforce.com
+  slack:
+    channel: lds-notifications

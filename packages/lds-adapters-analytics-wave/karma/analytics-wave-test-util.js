@@ -628,6 +628,33 @@ function deleteDatasetMatcher(config) {
     });
 }
 
+function mockUpdateDatasetNetworkOnce(config, mockData = {}) {
+    const paramMatch = updateDatasetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockUpdateDatasetNetworkErrorOnce(config, mockData = {}) {
+    const paramMatch = updateDatasetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateDatasetMatcher(config) {
+    let { datasetIdOrApiName, dataset } = config;
+    return sinon.match({
+        body: {
+            dataset,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${datasetIdOrApiName}`,
+    });
+}
+
 // Datasets
 function mockGetDatasetsNetworkOnce(config, mockData) {
     const paramMatch = getDatasetsMatcher(config);
@@ -1249,6 +1276,8 @@ export {
     mockGetDatasetNetworkErrorOnce,
     mockDeleteDatasetNetworkOnce,
     mockDeleteDatasetNetworkErrorOnce,
+    mockUpdateDatasetNetworkOnce,
+    mockUpdateDatasetNetworkErrorOnce,
     mockGetDatasetsNetworkOnce,
     mockGetDatasetsNetworkErrorOnce,
     mockGetDatasetVersionNetworkOnce,

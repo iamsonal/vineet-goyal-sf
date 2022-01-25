@@ -2689,6 +2689,168 @@ describe('routes', () => {
         );
     });
 
+    describe('get /socialcare/goal-definitions', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/goal-definitions`,
+            },
+            [
+                'PublicSectorFamilyController.searchGoalDefinitionByName',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/socialcare/goal-definitions`,
+                    queryParams: {
+                        searchKey: 'Goal1',
+                    },
+                },
+                [
+                    'PublicSectorFamilyController.searchGoalDefinitionByName',
+                    {
+                        searchKey: 'Goal1',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/goal-definitions`,
+            },
+            {}
+        );
+    });
+
+    describe('get /socialcare/benefits', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/benefits`,
+            },
+            [
+                'PublicSectorFamilyController.getActiveBenefitsByNameSearch',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/socialcare/benefits`,
+                    queryParams: {
+                        searchKey: 'bene',
+                        offset: 0,
+                    },
+                },
+                [
+                    'PublicSectorFamilyController.getActiveBenefitsByNameSearch',
+                    {
+                        searchKey: 'bene',
+                        offset: 0,
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/benefits`,
+            },
+            {}
+        );
+    });
+
+    describe('post /socialcare/serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE/actions/associate`,
+                urlParams: {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                    actionType: 'associate',
+                },
+                body: {
+                    servicePlanTemplateRecord: {
+                        servicePlanTemplateGoals: {
+                            records: [
+                                {
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        servicePlanTemplateBenefits: {
+                            records: [
+                                {
+                                    benefitId: '0jiS70000000001IAA',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+            [
+                'PublicSectorFamilyController.associateSPTChildRecords',
+                {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                    actionType: 'associate',
+                    servicePlanTemplateRecord: {
+                        servicePlanTemplateGoals: {
+                            records: [
+                                {
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        servicePlanTemplateBenefits: {
+                            records: [
+                                {
+                                    benefitId: '0jiS70000000001IAA',
+                                },
+                            ],
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                id: '1stS70000004C93IAE',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE/actions/associate`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE/actions/associate`,
+            },
+            {
+                versionId: '1stS70000004C93IAE',
+            }
+        );
+    });
+
     describe('get /action-logs', () => {
         testControllerInput(
             {

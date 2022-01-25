@@ -16,3 +16,4 @@ export const SITES_BASE_URI = `${BASE_URI}/sites`;
 export const CIB_BASE_URI = `${CONNECT_BASE_URI}/financialservices`;
 export const RCG_TENANTMANAGEMENT_BASE_URI = `${CONNECT_BASE_URI}/consumer-goods`;
 export const IDENTITY_VERIFICATION_BASE_URI = `${CONNECT_BASE_URI}/identity-verification`;
+export const PSS_SOCIAL_CARE_BASE_URI = `${CONNECT_BASE_URI}/socialcare`;

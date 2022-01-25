@@ -1,0 +1,279 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  BenefitListRepresentation:
+    description: Output Representation of Benefit List
+    type: object
+    properties:
+      benefits:
+        description: List of Benefit
+        type: array
+        required: false
+        items:
+          type: BenefitRepresentation
+      code:
+        description: API response code for failure case
+        type: string
+        required: false
+      isSuccess:
+        description: States whether API is successful or not
+        type: boolean
+        required: false
+      message:
+        description: API response message for failure case
+        type: string
+        required: false
+  BenefitRepresentation:
+    description: Output Representation of Benefit
+    type: object
+    properties:
+      goalDefinitionId:
+        description: Goal Definition Id for this Benefit
+        type: string
+        required: false
+      goalDefinitionName:
+        description: Goal Definition name for this Benefit
+        type: string
+        required: false
+      goalDefinitionStatus:
+        description: Status of the Goal Definition
+        type: string
+        required: false
+      id:
+        description: Id of the Benefit record
+        type: string
+        required: false
+      maximumAmount:
+        description: Maximum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      minimumAmount:
+        description: Minimum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      name:
+        description: Name of the Benefit
+        type: string
+        required: false
+      status:
+        description: Status of the Benefit
+        type: string
+        required: false
+      type:
+        description: Type of the Benefit
+        type: string
+        required: false
+  GenericOutputRepresentation:
+    description: Generic Output Representation
+    type: object
+    properties:
+      code:
+        description: API code
+        type: string
+        required: false
+      id:
+        description: id
+        type: string
+      isSuccess:
+        description: API success status
+        type: boolean
+        required: false
+      message:
+        description: API message
+        type: string
+        required: false
+  GoalDefinitionListRepresentation:
+    description: Output Representation of Goal Definition List
+    type: object
+    properties:
+      code:
+        description: API response code
+        type: string
+        required: false
+      goalDefinitions:
+        description: List of Goal Definition
+        type: array
+        required: false
+        items:
+          type: GoalDefinitionRepresentation
+      isSuccess:
+        description: States whether API is successful or not
+        type: boolean
+        required: false
+      message:
+        description: API response message for failure case
+        type: string
+        required: false
+  GoalDefinitionRepresentation:
+    description: Output Representation of Goal Definition
+    type: object
+    properties:
+      category:
+        description: Category for Goal Definition
+        type: string
+        required: false
+      id:
+        description: Record Id of goal Definition
+        type: string
+        required: false
+      name:
+        description: Name of Goal Definition
+        type: string
+        required: false
+      usageType:
+        description: Usage Type for Goal Definition
+        type: string
+        required: false
+  # TODO Hand-Rolled due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAMmFgP)
+  ServicePlanTemplateAssociationsInputWrapperRepresentation:
+    description: Wrapper Input Representation for associating Service Plan Template benefit
+      and Service Plan Template Goal records to Service Plan Template
+    type: object
+    properties:
+      servicePlanTemplateRecord:
+        type: ServicePlanTemplateAssociationsInputRepresentation
+        description: Service Plan Template Associations input represenation
+  ServicePlanTemplateAssociationsInputRepresentation:
+    description: Input Representation for associating Service Plan Template benefit
+      and Service Plan Template Goal records to Service Plan Template
+    type: object
+    properties:
+      servicePlanTemplateBenefits:
+        description: Object containing list of Benefits to be added to Service Plan
+          template
+        # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: ServicePlanTemplateBenefitListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      servicePlanTemplateGoals:
+        description: Object containing list of Goals to be added to Service Plan Template
+        type: ServicePlanTemplateGoalListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+  ServicePlanTemplateBenefitInputRepresentation:
+    description: Input Representation for Service Plan Template Benefit Object
+    type: object
+    properties:
+      benefitId:
+        description: Benefit ID
+        type: string
+      priority:
+        description: Priority of the Benefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+  ServicePlanTemplateBenefitListInputRepresentation:
+    description: Input Representation for list of Service Plan Template benefit records
+    type: object
+    properties:
+      records:
+        description: List of Goals to be added to Service Plan Template
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: ServicePlanTemplateBenefitInputRepresentation
+  ServicePlanTemplateGoalInputRepresentation:
+    description: Input Representation for Service Plan Template Goal Object
+    type: object
+    properties:
+      goalDefinitionId:
+        description: Goal Definition ID
+        type: string
+      priority:
+        description: Priority of the Goal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+  ServicePlanTemplateGoalListInputRepresentation:
+    description: Input Representation for list of Service Plan Template benefit records
+    type: object
+    properties:
+      records:
+        description: List of Benefits to be added to Service Plan template
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: ServicePlanTemplateGoalInputRepresentation
+/connect/socialcare:
+  /benefits:
+    get:
+      description: API to search/fetch the active benefits
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: BenefitListRepresentation
+      queryParameters:
+        offset:
+          type: integer
+          required: false
+        searchKey:
+          type: string
+          required: false
+
+  /goal-definitions:
+    get:
+      description: API to search Goal Definition
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GoalDefinitionListRepresentation
+      queryParameters:
+        offset:
+          type: integer
+          required: false
+        searchKey:
+          type: string
+          required: false
+
+  /serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}:
+    post:
+      description: Create Service Plan Template Benefit and Service Plan Template
+        Goal records for specified Service Plan Template ID
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GenericOutputRepresentation
+      body:
+        application/json:
+          # TODO Hand-Rolled due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAMmFgP)
+          type: ServicePlanTemplateAssociationsInputWrapperRepresentation
+          # TODO: Hand-rolled due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): servicePlanTemplateRecord
+    uriParameters:
+      actionType:
+        type: string
+        required: true
+      servicePlanTemplateId:
+        type: string
+        required: true

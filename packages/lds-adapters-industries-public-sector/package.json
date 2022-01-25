@@ -1,0 +1,41 @@
+{
+    "name": "@salesforce/lds-adapters-industries-public-sector",
+    "version": "1.37.9",
+    "description": "This has files related to Public Sector APIs",
+    "license": "MIT",
+    "main": "dist/umd/es2018/industries-public-sector.js",
+    "module": "dist/es/es2018/industries-public-sector.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
+    "contributors": [
+        "rjagnani@salesforce.com",
+        "aashishgoel@salesforce.com"
+    ],
+    "scripts": {
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+        "build:services": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-industries-public-sector",
+        "release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter=lds-adapters-industries-public-sector",
+        "start": "karma start",
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat",
+        "test:unit": "jest"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "1.37.9"
+    },
+    "devDependencies": {
+        "@luvio/cli": "^0.69.0",
+        "@luvio/compiler": "^0.69.0",
+        "@luvio/engine": "^0.69.0",
+        "@luvio/lwc-luvio": "^0.69.0",
+        "@salesforce/lds-karma": "1.37.9"
+    }
+}

@@ -337,6 +337,18 @@ const SEARCH_DECISION_MATRICES_PATH = new RegExp(
     'i'
 );
 
+const SEARCH_GOAL_DEFINITIONS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/socialcare/goal-definitions`,
+    'i'
+);
+
+const SEARCH_ACTIVE_BENEFITS_PATH = new RegExp(`${CONNECT_BASE_URI}/socialcare/benefits`, 'i');
+
+const POST_SERVICE_PLAN_TEMPLATE_DETAILS = new RegExp(
+    `${CONNECT_BASE_URI}/socialcare/serviceplan-templates/([A-Z0-9]){15,18}/actions/([A-Z]){1,128}`,
+    'i'
+);
+
 const MARKETING_INTEGRATION_GET_FORM_PATH = new RegExp(
     `${SITES_BASE_URI}/([A-Z0-9]){15,18}/marketing-integration/forms/([A-Z0-9]){15,18}$`,
     'i'
@@ -690,6 +702,30 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SIMULATION_EVALUATION_SERVICE_PATH.test(path),
         transport: {
             controller: 'InteractionCalculationProceduresController.getSimulationInputVariables',
+        },
+    },
+    searchGoalDefinitionByName: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && SEARCH_GOAL_DEFINITIONS_PATH.test(path),
+        transport: {
+            controller: 'PublicSectorFamilyController.searchGoalDefinitionByName',
+        },
+    },
+    searchActiveBenefitsByName: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && SEARCH_ACTIVE_BENEFITS_PATH.test(path),
+        transport: {
+            controller: 'PublicSectorFamilyController.getActiveBenefitsByNameSearch',
+        },
+    },
+    postServicePlanTemplateDetails: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && POST_SERVICE_PLAN_TEMPLATE_DETAILS.test(path),
+        transport: {
+            controller: 'PublicSectorFamilyController.associateSPTChildRecords',
         },
     },
     getProgramProcessRule: {

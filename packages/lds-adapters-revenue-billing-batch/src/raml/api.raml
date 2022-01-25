@@ -152,6 +152,49 @@ types:
           - Canceled
           - Draft
           - Inactive
+  InvoicesBatchSchedulerOutputRepresentation:
+    description: Invoices Batch Scheduler Output Representation
+    type: object
+    properties:
+      invoiceBatchRunCriteriaId:
+        description: Invoice Batch Run Criteria Id
+        type: string
+      schedulerDetails:
+        description: Billing Batch Scheduler Details
+        type: BillingBatchInvoiceSchedulerOutputRepresentation
+  BillingBatchInvoiceSchedulerOutputRepresentation:
+    description: Billing Batch Scheduler Output Representation
+    type: object
+    properties:
+      billingBatchFilterCriteriaId:
+        description: List of Billing Batch Filter Criteria IDs
+        type: array
+        items:
+          type: string
+      billingBatchSchedulerId:
+        description: Billing Batch Scheduler Id
+        type: string
+  BatchInvoiceSchedulerInputWrapperRepresentation:
+    description: Wrapper for invoice batch scheduler input representation
+    type: object
+    properties:
+      BatchInvoiceSchedulerInput:
+        type: BatchInvoiceSchedulerInputRepresentation
+        description: Invoices Batch Scheduler Input Representation
+  BatchInvoiceSchedulerInputRepresentation:
+    description: Invoices Batch Scheduler Input Representation
+    type: ScheduleOptionsInputRepresentation
+    properties:
+      criteriaExpression:
+        description: Filter Criteria Expression
+        type: string
+        required: false # TODO handrolled W-9314597
+      filterCriteria:
+        description: List of filter criteria line items
+        type: array
+        required: false # TODO handrolled W-9314597
+        items:
+          type: object
 /billing/batch/payments/schedulers:
   post:
     description: Create Payments Batch Job Scheduler
@@ -166,3 +209,17 @@ types:
         type: PaymentsBatchSchedulerInputWrapperRepresentation
         #required: false # TODO handrolled W-9314597
         (oas-body-name): PaymentsBatchSchedulerInput
+/billing/batch/invoices/schedulers:
+  post:
+    description: Create Invoices Batch Job Scheduler
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: InvoicesBatchSchedulerOutputRepresentation
+    body:
+      application/json:
+        type: BatchInvoiceSchedulerInputWrapperRepresentation
+        #required: false # TODO handrolled W-9314597
+        (oas-body-name): BatchInvoiceSchedulerInput

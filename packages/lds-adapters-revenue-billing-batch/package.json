@@ -12,7 +12,8 @@
         "src/raml/*"
     ],
     "contributors": [
-        "harshal.jain@salesforce.com"
+        "harshal.jain@salesforce.com",
+        "nvenkatesh@salesforce.com"
     ],
     "scripts": {
         "build": "yarn build:raml && yarn build:services && yarn build:karma",

@@ -14,6 +14,15 @@ function mockCreatePaymentsBatchScheduler(config, mockData) {
     }
 }
 
+function mockCreateInvoicesBatchScheduler(config, mockData) {
+    const paramMatch = getCreateInvoicesBatchSchedulerMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function getCreatePaymentsBatchSchedulerMatcher(config) {
     let {
         schedulerName,
@@ -46,13 +55,51 @@ function getCreatePaymentsBatchSchedulerMatcher(config) {
     });
 }
 
+function getCreateInvoicesBatchSchedulerMatcher(config) {
+    let {
+        schedulerName,
+        startDate,
+        endDate,
+        preferredTime,
+        frequencyCadence,
+        criteriaExpression,
+        status,
+        filterCriteria,
+    } = config;
+    return sinon.match({
+        body: {
+            schedulerName,
+            startDate,
+            endDate,
+            preferredTime,
+            frequencyCadence,
+            criteriaExpression,
+            status,
+            filterCriteria,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `/billing/batch/invoices/schedulers`,
+        queryParams: {},
+    });
+}
+
 function mockCreatePaymentsBatchSchedulerErrorOnce(config, mockData) {
     const paramMatch = getCreatePaymentsBatchSchedulerMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function mockCreateInvoicesBatchSchedulerErrorOnce(config, mockData) {
+    const paramMatch = getCreateInvoicesBatchSchedulerMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 export {
     getCreatePaymentsBatchSchedulerMatcher,
+    getCreateInvoicesBatchSchedulerMatcher,
     mockCreatePaymentsBatchScheduler,
+    mockCreateInvoicesBatchScheduler,
     mockCreatePaymentsBatchSchedulerErrorOnce,
+    mockCreateInvoicesBatchSchedulerErrorOnce,
 };

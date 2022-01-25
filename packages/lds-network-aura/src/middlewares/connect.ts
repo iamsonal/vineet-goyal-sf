@@ -288,6 +288,11 @@ const POST_BATCH_PAYMENTS_SCHEDULERS_PATH = new RegExp(
     'i'
 );
 
+const POST_BATCH_INVOICES_SCHEDULERS_PATH = new RegExp(
+    `${BILLING_BASE_URI}/batch/invoices/schedulers`,
+    'i'
+);
+
 const EXPLAINABILITY_ACTION_LOG_PATH = new RegExp(`${EXPLAINABILITY_BASE_URI}/action-logs$`, 'i');
 
 const DECISION_MATRIX_COLUMNS_PATH = new RegExp(
@@ -1462,6 +1467,14 @@ const billing: ApiFamily = {
             path.startsWith(BILLING_BASE_URI) && POST_BATCH_PAYMENTS_SCHEDULERS_PATH.test(path),
         transport: {
             controller: 'BillingBatchApplicationController.createPaymentsBatchScheduler',
+        },
+    },
+    createInvoicesBatchScheduler: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(BILLING_BASE_URI) && POST_BATCH_INVOICES_SCHEDULERS_PATH.test(path),
+        transport: {
+            controller: 'BatchInvoiceApplicationController.createBatchInvoiceScheduler',
         },
     },
 };

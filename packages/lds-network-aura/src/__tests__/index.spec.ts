@@ -7820,6 +7820,104 @@ describe('routes', () => {
         );
     });
 
+    describe('post /billing/batch/invoices/schedulers', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: BILLING_BASE_URI,
+                basePath: `/batch/invoices/schedulers`,
+                body: {
+                    InvoicesBatchSchedulerInput: {
+                        schedulerName: 'Invoice Batch Scheduler',
+                        startDate: '2021-05-11',
+                        endDate: '2021-05-15',
+                        preferredTime: '10:00 AM',
+                        frequencyCadence: 'Monthly',
+                        recursEveryMonthOnDay: '28',
+                        criteriaExpression: '1 AND 2',
+                        status: 'Active',
+                        filterCriteria: [
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'Currency_Iso_code',
+                                operation: 'Equals',
+                                value: 'USD',
+                                criteriaSequence: 1,
+                            },
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'InvoiceRunBatch',
+                                operation: 'Equals',
+                                value: 'IBR1',
+                                criteriaSequence: 2,
+                            },
+                        ],
+                    },
+                },
+            },
+            [
+                'BatchInvoiceApplicationController.createBatchInvoiceScheduler',
+                {
+                    InvoicesBatchSchedulerInput: {
+                        schedulerName: 'Invoice Batch Scheduler',
+                        startDate: '2021-05-11',
+                        endDate: '2021-05-15',
+                        preferredTime: '10:00 AM',
+                        frequencyCadence: 'Monthly',
+                        recursEveryMonthOnDay: '28',
+                        criteriaExpression: '1 AND 2',
+                        status: 'Active',
+                        filterCriteria: [
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'Currency_Iso_code',
+                                operation: 'Equals',
+                                value: 'USD',
+                                criteriaSequence: 1,
+                            },
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'InvoiceRunBatch',
+                                operation: 'Equals',
+                                value: 'IBR1',
+                                criteriaSequence: 2,
+                            },
+                        ],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                schedulerDetails: {
+                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
+                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                },
+                invoiceBatchRunCriteriaId: '5ICR000000000HvOAI',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: BILLING_BASE_URI,
+            basePath: `/batch/invoices/schedulers`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: BILLING_BASE_URI,
+                basePath: `/batch/invoices/schedulers`,
+            },
+            {
+                schedulerDetails: {
+                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
+                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                },
+                invoiceBatchRunCriteriaId: '5ICR000000000HvOAI',
+            }
+        );
+    });
+
     describe('get /sites/{siteId}/marketing-integration/forms/{formId}', () => {
         testControllerInput(
             {

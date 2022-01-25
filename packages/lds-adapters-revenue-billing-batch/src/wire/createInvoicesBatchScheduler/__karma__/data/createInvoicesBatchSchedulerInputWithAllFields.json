@@ -1,0 +1,28 @@
+{
+    "BatchInvoiceSchedulerInput": {
+        "schedulerName": "InvoiceBatchScheduler",
+        "startDate": "2021-05-11",
+        "endDate": "2021-05-15",
+        "preferredTime": "10:00 AM",
+        "frequencyCadence": "Monthly",
+        "recursEveryMonthOnDay": "28",
+        "criteriaExpression": "1 AND 2",
+        "status": "Active",
+        "filterCriteria": [
+            {
+                "objectName": "BillingSchedule",
+                "fieldName": "Currency_Iso_code",
+                "operation": "Equals",
+                "value": "USD",
+                "criteriaSequence": 1
+            },
+            {
+                "objectName": "BillingSchedule",
+                "fieldName": "InvoiceRunBatch",
+                "operation": "Equals",
+                "value": "Batch2",
+                "criteriaSequence": 2
+            }
+        ]
+    }
+}

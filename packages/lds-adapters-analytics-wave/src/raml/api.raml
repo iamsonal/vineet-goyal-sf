@@ -1287,6 +1287,96 @@ types:
       connectionName:
         description: The developer name of the connection
         type: string
+      connectionType:
+        description: The type of the connection
+        type: string
+        enum:
+          - ActCRM
+          - ActOn
+          - AdobeAnalytics
+          - AmazonAthena
+          - AmazonDynamoDB
+          - AmazonS3
+          - AmazonS3Output
+          - AwsMarketplace
+          - AwsRdsAuroraMySQL
+          - AwsRdsAuroraPostgres
+          - AwsRdsMariaDB
+          - AwsRdsMySQL
+          - AwsRdsOracle
+          - AwsRdsPostgres
+          - AwsRdsSqlServer
+          - AzureCosmosDB
+          - AzureDataLakeGen2Output
+          - AzureSqlDatabase
+          - AzureSqlDatawarehouse
+          - AzureTable
+          - Box
+          - Cassandra
+          - CdpDirect
+          - Dropbox
+          - GoogleAds
+          - GoogleAnalytics
+          - GoogleAnalyticsCoreReporting
+          - GoogleBigQuery
+          - GoogleBigQueryDirect
+          - GoogleBigQueryStandardSQL
+          - GoogleCloudStorage
+          - GoogleSheets
+          - GoogleSpanner
+          - HerokuPostgres
+          - HubSpot
+          - IbmCloudSqlQuery
+          - LinkedIn
+          - MarkLogic
+          - Marketo
+          - MarketoV2
+          - MicrosoftAdvertising
+          - MicrosoftDynamics
+          - MongoDB
+          - MulesoftAnaplan
+          - MulesoftConcur
+          - MulesoftHubSpot
+          - MulesoftMarkLogic
+          - MulesoftMongoDB
+          - MulesoftMySQL
+          - MulesoftOracle
+          - MulesoftServiceNow
+          - MulesoftSqlServer
+          - MulesoftWorkday
+          - MulesoftZuora
+          - NetSuite
+          - OracleEloqua
+          - Redshift
+          - SalesforceCPQ
+          - SalesforceCommunityCloud
+          - SalesforceEinsteinAnalytics
+          - SalesforceExternal
+          - SalesforceForceCom
+          - SalesforceMarketingCloud
+          - SalesforceMarketingCloudFull
+          - SalesforceMarketingCloudOAuth2
+          - SalesforceOutput
+          - SalesforceReport
+          - SalesforceSalesCloud
+          - SalesforceServiceCloud
+          - SapConcur
+          - SapHana
+          - SapHanaCloud
+          - SapSuccessFactors
+          - ServiceNow
+          - SfdcLocal
+          - SnowflakeComputing
+          - SnowflakeDirect
+          - SnowflakeOutput
+          - SugarCRM
+          - TableauHyperOutput
+          - Teradata
+          - VeevaVault
+          - Xactly
+          - Zendesk
+          - ZohoCRM
+          - ZuoraAQuA
       sourceObjectName:
         description: The source object name from the connection
         type: string
@@ -4135,6 +4225,7 @@ types:
           type: string
           required: false
           enum:
+            - ConnectionName
             - CreatedBy
             - CreatedDate
             - LastModified

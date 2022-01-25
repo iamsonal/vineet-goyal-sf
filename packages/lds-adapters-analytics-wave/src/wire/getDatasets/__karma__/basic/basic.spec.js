@@ -66,6 +66,28 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets datasets by sort', async () => {
+        const mock = getMock('datasets-by-sort');
+        const config = { datasetTypes: ['Live'], sort: 'ConnectionName' };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const setupConfig = { types: ['Live'], sort: 'ConnectionName' };
+        const el = await setupElement(setupConfig, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets datasets by sort and order', async () => {
+        const mock = getMock('datasets-by-sort-and-order');
+        const config = { datasetTypes: ['Live'], sort: 'ConnectionName', order: 'Descending' };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const setupConfig = { types: ['Live'], sort: 'ConnectionName', order: 'Descending' };
+        const el = await setupElement(setupConfig, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets datasets by license type', async () => {
         const mock = getMock('datasets-by-license');
         const config = { licenseType: 'EinsteinAnalytics' };

@@ -644,7 +644,7 @@ function mockGetDatasetsNetworkErrorOnce(config, mockData) {
 }
 
 function getDatasetsMatcher(config) {
-    let { datasetTypes, folderId, licenseType, page, pageSize, q, scope } = config;
+    const { datasetTypes, folderId, licenseType, page, pageSize, q, scope, sort } = config;
 
     return sinon.match({
         body: null,
@@ -659,6 +659,7 @@ function getDatasetsMatcher(config) {
             pageSize,
             q,
             scope,
+            sort,
         },
     });
 }
@@ -707,7 +708,7 @@ function mockGetRecipesNetworkErrorOnce(config, mockData) {
 }
 
 function getRecipesMatcher(config) {
-    let { format, licenseType, page, pageSize, q, sort } = config;
+    let { format, licenseType, page, pageSize, q, sort, order } = config;
     return sinon.match({
         body: null,
         headers: {},
@@ -721,6 +722,7 @@ function getRecipesMatcher(config) {
             pageSize,
             q,
             sort,
+            order,
         },
     });
 }

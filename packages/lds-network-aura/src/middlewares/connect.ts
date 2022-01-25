@@ -1175,6 +1175,14 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getDatasetVersion',
         },
     },
+    updateDatasetVersion: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATASET_VERSION_PATH.test(path),
+        transport: {
+            controller: 'WaveController.updateDatasetVersion',
+        },
+    },
     getXmd: {
         method: 'get',
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && XMD_PATH.test(path),

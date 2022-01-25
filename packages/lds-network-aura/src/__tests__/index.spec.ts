@@ -5917,6 +5917,51 @@ describe('routes', () => {
         );
     });
 
+    describe('patch /wave/datasets/{datasetIdOrApiName}/versions/{versionId}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+                urlParams: {
+                    datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                    versionId: '0Fcxx0000004CsCCAU',
+                },
+            },
+            [
+                'WaveController.updateDatasetVersion',
+                {
+                    datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                    versionId: '0Fcxx0000004CsCCAU',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'patch',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            urlParams: {
+                datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                versionId: '0Fcxx0000004CsCCAU',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+                urlParams: {
+                    datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                    versionId: '0Fcxx0000004CsCCAU',
+                },
+            },
+            null
+        );
+    });
+
     describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}', () => {
         describe('with dataset id', () => {
             testControllerInput(

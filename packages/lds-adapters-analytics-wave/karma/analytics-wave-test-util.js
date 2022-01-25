@@ -692,6 +692,31 @@ function getDatasetVersionMatcher(config) {
     });
 }
 
+function mockUpdateDatasetVersionNetworkOnce(config, mockData) {
+    const paramMatch = updateDatasetVersionMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockUpdateDatasetVersionNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateDatasetVersionMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateDatasetVersionMatcher(config) {
+    const { datasetIdOrApiName, versionId, datasetVersion } = config;
+
+    return sinon.match({
+        body: {
+            datasetVersion,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${datasetIdOrApiName}/versions/${versionId}`,
+        queryParams: {},
+    });
+}
+
 // Recipes
 function mockGetRecipesNetworkOnce(config, mockData) {
     const paramMatch = getRecipesMatcher(config);
@@ -1228,6 +1253,8 @@ export {
     mockGetDatasetsNetworkErrorOnce,
     mockGetDatasetVersionNetworkOnce,
     mockGetDatasetVersionNetworkErrorOnce,
+    mockUpdateDatasetVersionNetworkOnce,
+    mockUpdateDatasetVersionNetworkErrorOnce,
     mockGetRecipesNetworkOnce,
     mockGetRecipesNetworkErrorOnce,
     mockGetRecipeNetworkOnce,

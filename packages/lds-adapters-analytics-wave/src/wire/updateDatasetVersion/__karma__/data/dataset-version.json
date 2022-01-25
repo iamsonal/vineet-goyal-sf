@@ -1,0 +1,414 @@
+{
+    "createdBy": {
+        "id": "",
+        "name": "",
+        "profilePhotoUrl": ""
+    },
+    "createdDate": "2021-06-04T21:43:45.000Z",
+    "dataset": {
+        "id": "0Fbxx0000004CKKCA2",
+        "url": "/services/data/v55.0/wave/datasets/0Fbxx0000004CKKCA2"
+    },
+    "files": [],
+    "id": "0Fcxx0000004C92CAE",
+    "lastModifiedBy": {
+        "id": "",
+        "name": "",
+        "profilePhotoUrl": ""
+    },
+    "lastModifiedDate": "2021-06-04T21:44:03.000Z",
+    "permissions": {
+        "create": true,
+        "modify": true,
+        "view": true
+    },
+    "securityCoverageUrl": "/services/data/v55.0/wave/security/coverage/datasets/0Fbxx0000004CKKCA2/versions/0Fcxx0000004C92CAE",
+    "totalRowCount": 799,
+    "type": "datasetversion",
+    "url": "/services/data/v55.0/wave/datasets/0Fbxx0000004CKKCA2/versions/0Fcxx0000004C92CAE",
+    "xmdMain": {
+        "createdBy": {
+            "id": "",
+            "name": "",
+            "profilePhotoUrl": ""
+        },
+        "createdDate": "2022-01-11T18:27:55.000Z",
+        "dataset": {
+            "connector": "CSV",
+            "fullyQualifiedName": "basicInformation_csv"
+        },
+        "dates": [
+            {
+                "alias": "Date of Birth",
+                "fields": {
+                    "day": "Date_of_Birth_Day",
+                    "epochDay": "Date_of_Birth_day_epoch",
+                    "epochSecond": "Date_of_Birth_sec_epoch",
+                    "fullField": "Date_of_Birth",
+                    "hour": "Date_of_Birth_Hour",
+                    "minute": "Date_of_Birth_Minute",
+                    "month": "Date_of_Birth_Month",
+                    "quarter": "Date_of_Birth_Quarter",
+                    "second": "Date_of_Birth_Second",
+                    "week": "Date_of_Birth_Week",
+                    "year": "Date_of_Birth_Year"
+                },
+                "firstDayOfWeek": -1,
+                "fiscalMonthOffset": 0,
+                "format": "M/d/yy",
+                "fullyQualifiedName": "Date_of_Birth",
+                "isYearEndFiscalYear": true,
+                "label": "Date of Birth",
+                "showInExplorer": true,
+                "type": "Date"
+            }
+        ],
+        "derivedDimensions": [],
+        "derivedMeasures": [],
+        "dimensions": [
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Middle_Name",
+                "fullyQualifiedName": "Middle_Name",
+                "isMultiValue": false,
+                "label": "Middle Name",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "Middle_Name",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth",
+                "isMultiValue": false,
+                "label": "Date_of_Birth",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Year",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Year",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Quarter",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Quarter",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Month",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Month",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Week",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Week",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Day",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Day",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Hour",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Hour",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Minute",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Minute",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Date_of_Birth_Second",
+                "isMultiValue": false,
+                "label": "Date_of_Birth_Second",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Marital_Status",
+                "fullyQualifiedName": "Marital_Status",
+                "isMultiValue": false,
+                "label": "Marital Status",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "Marital_Status",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Citizenship",
+                "fullyQualifiedName": "Citizenship",
+                "isMultiValue": false,
+                "label": "Citizenship",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "Citizenship",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Education_Level",
+                "fullyQualifiedName": "Education_Level",
+                "isMultiValue": false,
+                "label": "Education Level",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "Education_Level",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Gender",
+                "fullyQualifiedName": "Gender",
+                "isMultiValue": false,
+                "label": "Gender",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "Gender",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "First_Name",
+                "fullyQualifiedName": "First_Name",
+                "isMultiValue": false,
+                "label": "First Name",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "First_Name",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Last_Name",
+                "fullyQualifiedName": "Last_Name",
+                "isMultiValue": false,
+                "label": "Last Name",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "Last_Name",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "City_of_Birth",
+                "fullyQualifiedName": "City_of_Birth",
+                "isMultiValue": false,
+                "label": "City of Birth",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "City_of_Birth",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "SIN",
+                "fullyQualifiedName": "SIN",
+                "isMultiValue": false,
+                "label": "SIN",
+                "linkTemplate": "https://google.ca",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "SIN",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": false,
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "customActions": [],
+                "customActionsEnabled": true,
+                "field": "Country_of_Birth",
+                "fullyQualifiedName": "Country_of_Birth",
+                "isMultiValue": false,
+                "label": "Country of Birth",
+                "linkTemplateEnabled": true,
+                "members": [],
+                "origin": "Country_of_Birth",
+                "recordDisplayFields": [],
+                "salesforceActions": [],
+                "salesforceActionsEnabled": true,
+                "showInExplorer": true
+            }
+        ],
+        "language": "en_US",
+        "lastModifiedBy": {
+            "id": "",
+            "name": "",
+            "profilePhotoUrl": ""
+        },
+        "lastModifiedDate": "2022-01-11T18:27:55.000Z",
+        "measures": [
+            {
+                "conditionalFormatting": {},
+                "field": "Number_of_children",
+                "format": {
+                    "decimalDigits": 0,
+                    "delimiters": {}
+                },
+                "fullyQualifiedName": "Number_of_children",
+                "label": "Number of children",
+                "origin": "Number_of_children",
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "field": "Date_of_Birth_day_epoch",
+                "format": {
+                    "delimiters": {}
+                },
+                "label": "Date_of_Birth_day_epoch",
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "field": "Date_of_Birth_sec_epoch",
+                "format": {
+                    "delimiters": {}
+                },
+                "label": "Date_of_Birth_sec_epoch",
+                "showInExplorer": true
+            },
+            {
+                "conditionalFormatting": {},
+                "field": "ID",
+                "format": {
+                    "decimalDigits": 0,
+                    "delimiters": {}
+                },
+                "fullyQualifiedName": "ID",
+                "label": "ID",
+                "origin": "ID",
+                "showInExplorer": true
+            }
+        ],
+        "organizations": [],
+        "showDetailsDefaultFields": [],
+        "type": "main",
+        "url": "/services/data/v55.0/wave/datasets/0Fbxx0000004CKKCA2/versions/0Fcxx0000004C92CAE/xmds/main"
+    },
+    "xmdsUrl": "/services/data/v55.0/wave/datasets/0Fbxx0000004CKKCA2/versions/0Fcxx0000004C92CAE/xmds"
+}

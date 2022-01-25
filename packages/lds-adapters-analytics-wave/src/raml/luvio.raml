@@ -181,6 +181,9 @@ types:
           name: getDatasetVersion
         (luvio.key):
           id: urlParams.versionId
+      patch:
+        (luvio.adapter):
+          name: updateDatasetVersion
     /versions/{versionId}/xmds/{xmdType}:
       get:
         (luvio.adapter):

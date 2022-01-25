@@ -1152,6 +1152,34 @@ types:
         enum:
           - All
           - Limited
+  DatasetVersionInputRepresentation:
+    description: Input representation for wave Dataset Version.
+    type: object
+    properties:
+      isComplete:
+        description: Indicates whether the Dataset Version is complete
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      predicate:
+        description: The row level security predicate to be applied to this Dataset
+          Version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      sharingSource:
+        description: Entity from which sharing rules should be inherited
+        type: AssetReferenceInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      totalRowCount:
+        description: The total number of rows for the dataset version
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+  DatasetVersionInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for recipe input representation
+    type: object
+    properties:
+      datasetVersion:
+        type: DatasetVersionInputRepresentation
+        description: Dataset version input representation
   DatasetVersionRepresentation:
     description: An instantiated version of a Wave dataset.
     discriminatorValue: DatasetVersion
@@ -4261,6 +4289,18 @@ types:
             body:
               application/json:
                 type: DatasetVersionRepresentation
+      patch:
+        description: Patch a dataset version resource representation.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatasetVersionRepresentation
+        body:
+          application/json:
+            type: DatasetVersionInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DatasetVersionInputRepresentation
+            (oas-body-name): datasetVersion
       uriParameters:
         datasetIdOrApiName:
           type: string

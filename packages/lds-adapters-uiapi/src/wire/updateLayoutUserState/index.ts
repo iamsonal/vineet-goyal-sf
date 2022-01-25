@@ -1,11 +1,10 @@
 import { deepFreeze } from '../../util/deep-freeze';
 import { Snapshot, Luvio, FetchResponse, ResourceRequest } from '@luvio/engine';
 import { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
-import {
-    buildInMemorySnapshot as cacheLookupGetLayoutUserState,
-    GetLayoutUserStateConfigWithDefaults,
-    coerceConfigWithDefaults as coerceGetLayoutUserStateConfigWithDefaults,
-} from '../getLayoutUserState';
+import { buildInMemorySnapshot as cacheLookupGetLayoutUserState } from '../../raml-artifacts/adapters/getLayoutUserState/buildInMemorySnapshot';
+import { GetLayoutUserStateConfig as GetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserStateConfig';
+import { validateAdapterConfig as coerceGetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/validateAdapterConfig';
+import { getLayoutUserState_ConfigPropertyNames } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserState_ConfigPropertyNames';
 import {
     RecordLayoutUserStateRepresentation,
     keyBuilder,
@@ -147,7 +146,10 @@ function coerceConfigWithDefaults(
     untrusted: unknown,
     layoutUserStateInput: unknown
 ): UpdateUserLayoutStateConfigWithDefaults {
-    const config = coerceGetLayoutUserStateConfigWithDefaults(untrusted);
+    const config = coerceGetLayoutUserStateConfigWithDefaults(
+        untrusted,
+        getLayoutUserState_ConfigPropertyNames
+    );
     if (config === null) {
         // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error(

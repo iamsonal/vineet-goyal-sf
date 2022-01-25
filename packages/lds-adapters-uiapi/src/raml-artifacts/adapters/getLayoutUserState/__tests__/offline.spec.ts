@@ -1,9 +1,9 @@
 import { buildSuccessMockPayload, MockPayload } from '@luvio/adapter-test-library';
 import { testDataEmittedWhenStale, testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
 
-import { factory as getLayoutUserState } from '../index';
+import { getLayoutUserStateAdapterFactory as getLayoutUserState } from '../../../../generated/adapters/getLayoutUserState';
 import response from './data/layoutUserState-Account-Full-View.json';
-import { TTL } from '../../../generated/types/RecordLayoutUserStateRepresentation';
+import { TTL } from '../../../../generated/types/RecordLayoutUserStateRepresentation';
 
 const requestArgs: MockPayload['networkArgs'] = {
     method: 'get',

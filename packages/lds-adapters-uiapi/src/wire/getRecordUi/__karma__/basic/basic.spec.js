@@ -20,7 +20,7 @@ import {
     mockGetRecordUiNetwork,
 } from 'uiapi-test-util';
 
-import GetLayoutUserState from '../../../getLayoutUserState/__karma__/lwc/get-layout-user-state';
+import GetLayoutUserState from '../../../../raml-artifacts/adapters/getLayoutUserState/__karma__/lwc/get-layout-user-state';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import RecordUi from '../lwc/record-ui';
 import ObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';

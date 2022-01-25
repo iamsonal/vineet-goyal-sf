@@ -128,10 +128,64 @@ const RAML_ARTIFACTS = {
     ],
     '/adapters/getLayoutUserState': [
         {
-            identifier: 'getLayoutUserStateAdapterFactory',
-            path: path.join('src', 'wire', 'getLayoutUserState', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'buildInMemorySnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'buildInMemorySnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'buildInMemorySnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'buildInMemorySnapshotCachePolicy.ts'
+            ),
+        },
+        {
+            identifier: 'buildNetworkSnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'buildNetworkSnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'getLayoutUserState_ConfigPropertyNames',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'getLayoutUserState_ConfigPropertyNames.ts'
+            ),
+        },
+        {
+            identifier: 'validateAdapterConfig',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'validateAdapterConfig.ts'
+            ),
+        },
+        {
+            identifier: 'GetLayoutUserStateConfig',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'getLayoutUserStateConfig.ts'
+            ),
         },
     ],
     '/adapters/getListViewSummaryCollection': [

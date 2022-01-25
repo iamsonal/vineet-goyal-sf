@@ -8,7 +8,7 @@ import { getMock as globalGetMock, setupElement } from 'test-util';
 
 import GetLayoutUserState from '../lwc/get-layout-user-state';
 
-const MOCK_PREFIX = 'wire/getLayoutUserState/__karma__/config/data/';
+const MOCK_PREFIX = 'raml-artifacts/adapters/getLayoutUserState/__karma__/config/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);

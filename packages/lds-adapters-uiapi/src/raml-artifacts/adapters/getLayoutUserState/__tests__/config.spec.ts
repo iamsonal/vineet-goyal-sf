@@ -1,4 +1,5 @@
-import { coerceConfigWithDefaults } from '../index';
+import { validateAdapterConfig } from '../validateAdapterConfig';
+import { getLayoutUserState_ConfigPropertyNames } from '../getLayoutUserState_ConfigPropertyNames';
 
 const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 
@@ -9,7 +10,7 @@ describe('coercion', () => {
             recordTypeId: MASTER_RECORD_TYPE_ID,
         };
 
-        expect(coerceConfigWithDefaults(config)).toEqual({
+        expect(validateAdapterConfig(config, getLayoutUserState_ConfigPropertyNames)).toEqual({
             objectApiName: 'Account',
             recordTypeId: MASTER_RECORD_TYPE_ID,
             layoutType: 'Full',
@@ -25,7 +26,7 @@ describe('coercion', () => {
             mode: undefined,
         };
 
-        expect(coerceConfigWithDefaults(config)).toEqual({
+        expect(validateAdapterConfig(config, getLayoutUserState_ConfigPropertyNames)).toEqual({
             objectApiName: 'Account',
             recordTypeId: MASTER_RECORD_TYPE_ID,
             layoutType: 'Full',
@@ -44,7 +45,7 @@ describe('coercion', () => {
             layoutType,
         };
 
-        expect(coerceConfigWithDefaults(config)).toBeNull();
+        expect(validateAdapterConfig(config, getLayoutUserState_ConfigPropertyNames)).toBeNull();
     });
 
     it.each([
@@ -58,7 +59,7 @@ describe('coercion', () => {
             mode,
         };
 
-        expect(coerceConfigWithDefaults(config)).toBeNull();
+        expect(validateAdapterConfig(config, getLayoutUserState_ConfigPropertyNames)).toBeNull();
     });
 
     it('returns same layout and mode value if they are valid', () => {
@@ -69,7 +70,7 @@ describe('coercion', () => {
             mode: 'Create',
         };
 
-        expect(coerceConfigWithDefaults(config)).toEqual({
+        expect(validateAdapterConfig(config, getLayoutUserState_ConfigPropertyNames)).toEqual({
             objectApiName: 'Account',
             recordTypeId: MASTER_RECORD_TYPE_ID,
             layoutType: 'Compact',

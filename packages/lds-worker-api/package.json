@@ -1,6 +1,6 @@
 {
     "name": "@mobileplatform/lds-worker-api",
-    "version": "1.37.9",
+    "version": "1.37.10",
     "description": "",
     "license": "MIT",
     "main": "dist/standalone/umd/lds-worker-api.js",
@@ -21,12 +21,12 @@
         "@luvio/engine": "0.70.0",
         "@luvio/environments": "0.70.0",
         "@luvio/graphql-parser": "0.70.0",
-        "@mobileplatform/nimbus-plugin-lds": "1.37.9",
+        "@mobileplatform/nimbus-plugin-lds": "1.37.10",
         "@oat-sa/rollup-plugin-wildcard-external": "^0.1.0",
-        "@salesforce/lds-adapters-graphql": "1.37.9",
-        "@salesforce/lds-adapters-uiapi": "1.37.9",
-        "@salesforce/lds-drafts": "1.37.9",
-        "@salesforce/lds-runtime-mobile": "1.37.9",
+        "@salesforce/lds-adapters-graphql": "1.37.10",
+        "@salesforce/lds-adapters-uiapi": "1.37.10",
+        "@salesforce/lds-drafts": "1.37.10",
+        "@salesforce/lds-runtime-mobile": "1.37.10",
         "nimbus-types": "^2.0.0-alpha1"
     },
     "bundlesize": [

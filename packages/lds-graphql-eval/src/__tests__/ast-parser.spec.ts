@@ -1,7 +1,7 @@
 import { transform } from '../ast-parser';
 import { parseAndVisit } from '@luvio/graphql-parser';
 import infoJson from './mockData/objectInfos.json';
-import { unwrappedError, unwrappedValue } from '../Result';
+import { Failure, unwrappedError, unwrappedValue } from '../Result';
 import { ObjectInfoMap } from '../info-types';
 import {
     FieldType,
@@ -11,7 +11,7 @@ import {
     CompoundOperator,
     ValueType,
 } from '../Predicate';
-import { message } from '../Error';
+import { message, PredicateError, MessageError } from '../Error';
 
 const objectInfoMap = infoJson as unknown as ObjectInfoMap;
 const Extract = ValueType.Extract;
@@ -1146,6 +1146,39 @@ describe('ast-parser', () => {
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         expect(unwrappedValue(result)).toEqual(expected);
+    });
+
+    it('errors for unsupported datatypes', () => {
+        const source = /* GraphQL */ `
+            query {
+                uiapi {
+                    query {
+                        ServiceResource(where: { ResourceType: { eq: "T" } }) @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    ResourceType {
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const fakeObjectInfo = Object.assign({}, objectInfoMap) as any;
+        fakeObjectInfo.ServiceResource.fields.ResourceType.dataType = 'SomeUnsupportedType';
+
+        const result = transform(parseAndVisit(source), {
+            userId: 'MyId',
+            objectInfoMap: fakeObjectInfo,
+        }) as Failure<RootQuery, PredicateError[]>;
+        expect(result.isSuccess).toEqual(false);
+        const { message } = result.error[0] as MessageError;
+        expect(message).toEqual(
+            'Comparison operator eq is not supported for type SomeUnsupportedType.'
+        );
     });
 
     it('where argument join information is reflected in connection', () => {

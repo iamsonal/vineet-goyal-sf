@@ -77,6 +77,7 @@ export function isScalarDataType(type: DataType): boolean {
         type === 'String' ||
         type === 'Double' ||
         type === 'DateTime' ||
-        type === 'Int'
+        type === 'Int' ||
+        type === 'Picklist'
     );
 }

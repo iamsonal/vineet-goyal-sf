@@ -316,6 +316,7 @@ type ScalarOperatorType =
 type SetOperatorType = ComparisonOperator.in | ComparisonOperator.nin;
 type StringOperatorType = ScalarOperatorType | ComparisonOperator.like;
 type BooleanOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
+type PicklistOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
 
 interface Operator<Operator, ValueType, OperatorType> {
     operator: Operator;
@@ -336,8 +337,10 @@ type DoubleOperator = Operator<ScalarOperatorType, DoubleLiteral, 'DoubleOperato
 type BooleanOperator = Operator<ScalarOperatorType, BooleanLiteral, 'BooleanOperator'>;
 type DateOperator = Operator<ScalarOperatorType, DateInput, 'DateOperator'>;
 type DateTimeOperator = Operator<ScalarOperatorType, DateTimeInput, 'DateTimeOperator'>;
+type PicklistOperator = Operator<PicklistOperatorType, StringLiteral, 'PicklistOperator'>;
 
 type StringSetOperator = Operator<SetOperatorType, StringArray, 'StringSetOperator'>;
+type PicklistSetOperator = Operator<SetOperatorType, StringArray, 'PicklistSetOperator'>;
 type DateSetOperator = Operator<SetOperatorType, DateArray, 'DateSetOperator'>;
 type DateTimeSetOperator = Operator<SetOperatorType, DateTimeArray, 'DateTimeSetOperator'>;
 type IntSetOperator = Operator<SetOperatorType, NumberArray, 'IntSetOperator'>;
@@ -349,14 +352,16 @@ type ScalarOperators =
     | DateTimeOperator
     | IntOperator
     | DoubleOperator
-    | BooleanOperator;
+    | BooleanOperator
+    | PicklistOperator;
 
 type SetOperators =
     | StringSetOperator
     | DateSetOperator
     | DateTimeSetOperator
     | IntSetOperator
-    | DoubleSetOperator;
+    | DoubleSetOperator
+    | PicklistSetOperator;
 
 const dateRegEx = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
 const dateTimeRegEx =
@@ -418,7 +423,7 @@ function isFilterFunction(name: string): boolean {
 function fieldOperators(
     operatorNode: LuvioObjectValueNode,
     dataType: DataType
-): Result<(ScalarOperators | SetOperators | NullOperator)[], PredicateError[]> {
+): Result<(ScalarOperators | SetOperators | NullOperator | PicklistOperator)[], PredicateError[]> {
     const results = Object.entries(operatorNode.fields)
         .filter(([key, _]) => isFilterFunction(key) === false)
         .map(([key, value]) => operatorWithValue(key, value, dataType));
@@ -458,6 +463,11 @@ function nullOperatorTypeFrom(value: string): NullComparisonOperator | undefined
 
 function isStringOperatorType(value: string): value is StringOperatorType {
     return isScalarOperatorType(value) || value === like;
+}
+
+function isPicklistOperatorType(value: string): value is PicklistOperatorType {
+    let values: PicklistOperatorType[] = [eq, ne];
+    return values.includes(value as PicklistOperatorType);
 }
 
 function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
@@ -640,6 +650,32 @@ function operatorWithValue(
             }
 
             return failure([message('Comparison value must be a date time array.')]);
+        }
+    }
+
+    if (schemaType === 'Picklist') {
+        if (isPicklistOperatorType(operator)) {
+            return is<StringValueNode>(value, 'StringValue')
+                ? success({
+                      type: 'PicklistOperator',
+                      operator,
+                      value: { type: ValueType.StringLiteral, value: value.value },
+                  })
+                : failure([message(`Comparison value must be a picklist.`)]);
+        }
+
+        if (isSetOperatorType(operator)) {
+            return is<ListValueNode>(value, 'ListValue')
+                ? listNodeToTypeArray<StringValueNode, string>(value, 'StringValue')
+                      .map((value): PicklistSetOperator => {
+                          return {
+                              operator,
+                              type: 'PicklistSetOperator',
+                              value: { type: ValueType.StringArray, value },
+                          };
+                      })
+                      .mapError((e) => [e])
+                : failure([message(`Comparison value must be a picklist array.`)]);
         }
     }
 

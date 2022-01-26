@@ -16,10 +16,10 @@ import {
 } from '../Predicate';
 import { comparison, combinePredicates, stringLiteral } from '../util';
 import infoJson from './mockData/objectInfos.json';
-import { unwrappedError, unwrappedValue } from '../Result';
-import { message } from '../Error';
+import { Failure, unwrappedError, unwrappedValue } from '../Result';
+import { message, PredicateError, MessageError } from '../Error';
 
-const infoMap = infoJson as ObjectInfoMap;
+const objectInfoMap = infoJson as ObjectInfoMap;
 const { eq, ne, gt, gte, like, lt, lte, nin } = ComparisonOperator;
 
 function jsonExtract(object: string, path: string): JsonExtract {
@@ -81,7 +81,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(true);
@@ -106,7 +106,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -159,7 +159,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -203,7 +203,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(false);
@@ -221,7 +221,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(true);
@@ -236,7 +236,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(true);
@@ -256,7 +256,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -295,7 +295,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const errors = unwrappedError(filter);
@@ -318,7 +318,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -371,7 +371,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -437,7 +437,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -460,7 +460,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -525,7 +525,7 @@ describe('filter-parser', () => {
                     },
                     'TimeSheet',
                     'TimeSheet',
-                    infoMap
+                    objectInfoMap
                 );
 
                 expect(filter.isSuccess).toEqual(true);
@@ -653,6 +653,112 @@ describe('filter-parser', () => {
 
                 [ComparisonOperator.in, nin].forEach(testWithOperator);
             });
+
+            it('returns predicate when picklist field is paired with supported scalar operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'ServiceResource',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    ResourceType: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: {
+                                                kind: 'StringValue',
+                                                value: 'T',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'ServiceResource',
+                        'ServiceResource',
+                        objectInfoMap
+                    );
+
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.ResourceType.value', {
+                            type: 'StringLiteral',
+                            value: 'T',
+                        })
+                    );
+                };
+
+                [eq, ne].forEach(testWithOperator);
+            });
+
+            it('returns predicate when picklist field is paired with supported IN, NIN operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'ServiceResource',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    ResourceType: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: listNode([stringNode('T')]),
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'ServiceResource',
+                        'ServiceResource',
+                        objectInfoMap
+                    );
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.ResourceType.value', {
+                            type: 'StringArray',
+                            value: ['T'],
+                        })
+                    );
+                };
+
+                [ComparisonOperator.in, nin].forEach(testWithOperator);
+            });
         });
 
         describe('Field operator errors', () => {
@@ -680,7 +786,7 @@ describe('filter-parser', () => {
                     },
                     'TimeSheet',
                     'TimeSheet',
-                    infoMap
+                    objectInfoMap
                 );
 
                 expect(filter.isSuccess).toEqual(false);
@@ -853,6 +959,55 @@ describe('filter-parser', () => {
                     'Field UnknownField for type TimeSheet not found.'
                 );
             });
+
+            it('returns error when picklist field is paired with unsupported operators', () => {
+                const filter = recordFilter(
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                ResourceType: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        [like]: {
+                                            kind: 'StringValue',
+                                            value: 'T',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    'ServiceResource',
+                    'ServiceResource',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                const { message } = filter.error[0] as MessageError;
+                expect(filter.isSuccess).toEqual(false);
+                expect(message).toEqual(
+                    'Comparison operator like is not supported for type Picklist.'
+                );
+            });
+
+            it('returns error when picklist operator is paired with unsupported values', () => {
+                let filter = recordFilter(
+                    where({
+                        ResourceType: objNode({
+                            [nin]: stringNode('foo'),
+                        }),
+                    }),
+                    'ServiceResource',
+                    'ServiceResource',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                expect(filter.isSuccess).toEqual(false);
+                const { message } = filter.error[0] as MessageError;
+                expect(message).toEqual('Comparison value must be a picklist array.');
+            });
         });
 
         it('returns undefined filter when "where" does not exist', () => {
@@ -882,7 +1037,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(false);

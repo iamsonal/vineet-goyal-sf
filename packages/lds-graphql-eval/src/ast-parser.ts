@@ -209,6 +209,12 @@ function selectionToQueryField(
 
             return success(scalarField(node, names, parentAlias));
         }
+
+        // If we've gotten this far, we're looking at a scalar field with a datatype
+        // that we haven't otherwise identified
+        return failure([
+            message(`Field with datatype ${fieldInfo.dataType} is not a valid scalar field type.`),
+        ]);
     }
 
     if (relationshipInfo === undefined) {

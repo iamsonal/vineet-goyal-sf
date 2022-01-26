@@ -279,11 +279,13 @@ export function instrumentAdapter<C, D>(
                             cacheMissDurationByAdapterMetric,
                             Date.now() - startTime
                         );
-                        activity.stop('cache-miss');
+                        // TODO [W-10484306]: Remove typecasting after this type bug is solved
+                        activity.stop('cache-miss' as any);
                     })
                     .catch((error) => {
                         activity.error(error);
-                        activity.stop('cache-miss');
+                        // TODO [W-10484306]: Remove typecasting after this type bug is solved
+                        activity.stop('cache-miss' as any);
                     });
                 ldsInstrumentation.incrementCounter(ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, 1);
                 ldsInstrumentation.incrementCounter(cacheMissCountByAdapterMetric, 1);

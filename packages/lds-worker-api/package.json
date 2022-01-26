@@ -27,7 +27,8 @@
         "@salesforce/lds-adapters-uiapi": "1.37.10",
         "@salesforce/lds-drafts": "1.37.10",
         "@salesforce/lds-runtime-mobile": "1.37.10",
-        "nimbus-types": "^2.0.0-alpha1"
+        "nimbus-types": "^2.0.0-alpha1",
+        "o11y": "^238.1.4"
     },
     "bundlesize": [
         {

@@ -8,7 +8,7 @@ import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-util
 import { BuildSnapshotContext } from './utils';
 import { Selector, StoreLookup, Snapshot } from '@luvio/engine';
 
-export function buildInMemorySnapshotCachePolicy(
+export function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordLayoutRepresentation>
 ): Snapshot<RecordLayoutRepresentation, any> {

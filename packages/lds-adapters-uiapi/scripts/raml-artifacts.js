@@ -116,35 +116,35 @@ const RAML_ARTIFACTS = {
             targetIdentifier: 'GetLayoutConfigWithDefaults',
         },
         {
-            identifier: 'buildInMemorySnapshotCachePolicy',
+            identifier: 'buildCachedSnapshotCachePolicy',
             path: path.join(
                 'src',
                 'raml-artifacts',
                 'adapters',
                 'getLayout',
-                'buildInMemorySnapshotCachePolicy.ts'
+                'buildCachedSnapshotCachePolicy.ts'
             ),
         },
     ],
     '/adapters/getLayoutUserState': [
         {
-            identifier: 'buildInMemorySnapshot',
+            identifier: 'buildCachedSnapshot',
             path: path.join(
                 'src',
                 'raml-artifacts',
                 'adapters',
                 'getLayoutUserState',
-                'buildInMemorySnapshot.ts'
+                'buildCachedSnapshot.ts'
             ),
         },
         {
-            identifier: 'buildInMemorySnapshotCachePolicy',
+            identifier: 'buildCachedSnapshotCachePolicy',
             path: path.join(
                 'src',
                 'raml-artifacts',
                 'adapters',
                 'getLayoutUserState',
-                'buildInMemorySnapshotCachePolicy.ts'
+                'buildCachedSnapshotCachePolicy.ts'
             ),
         },
         {
@@ -242,23 +242,23 @@ const RAML_ARTIFACTS = {
             ),
         },
         {
-            identifier: 'buildInMemorySnapshot',
+            identifier: 'buildCachedSnapshot',
             path: path.join(
                 'src',
                 'raml-artifacts',
                 'adapters',
                 'getRecordAvatars',
-                'buildInMemorySnapshot.ts'
+                'buildCachedSnapshot.ts'
             ),
         },
         {
-            identifier: 'buildInMemorySnapshotCachePolicy',
+            identifier: 'buildCachedSnapshotCachePolicy',
             path: path.join(
                 'src',
                 'raml-artifacts',
                 'adapters',
                 'getRecordAvatars',
-                'buildInMemorySnapshotCachePolicy.ts'
+                'buildCachedSnapshotCachePolicy.ts'
             ),
         },
     ],

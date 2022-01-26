@@ -1,7 +1,7 @@
 import { deepFreeze } from '../../util/deep-freeze';
 import { Snapshot, Luvio, FetchResponse, ResourceRequest } from '@luvio/engine';
 import { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
-import { buildInMemorySnapshot as cacheLookupGetLayoutUserState } from '../../raml-artifacts/adapters/getLayoutUserState/buildInMemorySnapshot';
+import { buildCachedSnapshot as cacheLookupGetLayoutUserState } from '../../raml-artifacts/adapters/getLayoutUserState/buildCachedSnapshot';
 import { GetLayoutUserStateConfig as GetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserStateConfig';
 import { validateAdapterConfig as coerceGetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/validateAdapterConfig';
 import { getLayoutUserState_ConfigPropertyNames } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserState_ConfigPropertyNames';

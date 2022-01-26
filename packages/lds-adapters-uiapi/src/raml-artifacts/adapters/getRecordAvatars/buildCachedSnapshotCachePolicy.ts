@@ -6,7 +6,7 @@ import { recordAvatarsSelector, BuildSnapshotContext } from './utils';
 import { isUnfulfilledSnapshot } from '../../../util/snapshot';
 import { ObjectKeys } from '../../../util/language';
 
-export function buildInMemorySnapshotCachePolicy(
+export function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordAvatarBulkMapRepresentation>
 ): Snapshot<RecordAvatarBulkMapRepresentation, any> {

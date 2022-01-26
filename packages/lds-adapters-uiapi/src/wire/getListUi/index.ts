@@ -166,7 +166,7 @@ function buildListUiFragment(
     );
 }
 
-function buildInMemorySnapshot(
+function buildCachedSnapshot(
     luvio: Luvio,
     storeLookup: StoreLookup<ListUiRepresentation>,
     context: AdapterContext,
@@ -508,7 +508,7 @@ function onResourceSuccess_getListRecords(
         body
     );
 
-    const snapshot = buildInMemorySnapshot(
+    const snapshot = buildCachedSnapshot(
         luvio,
         luvio.storeLookup.bind(luvio),
         context,
@@ -576,7 +576,7 @@ type BuildListInfoSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildInMemoryListInfoSnapshot(
+function buildCachedListInfoSnapshot(
     context: BuildListInfoSnapshotContext,
     storeLookup: StoreLookup<ListInfoRepresentation>
 ): Snapshot<ListInfoRepresentation> | undefined {
@@ -586,7 +586,7 @@ function buildInMemoryListInfoSnapshot(
     // non-null if we have the list info cached
     const listRef = getListReference(config, adapterContext);
 
-    // no listRef means we can't even attempt to build an in-memory snapshot
+    // no listRef means we can't even attempt to build a cached snapshot
     // so make a full list-ui request
     if (listRef === undefined) {
         return;
@@ -605,20 +605,14 @@ type BuildListUiSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildInMemoryListUiSnapshot(
+function buildCachedListUiSnapshot(
     context: BuildListUiSnapshotContext,
     storeLookup: StoreLookup<ListUiRepresentation>
 ): Snapshot<ListUiRepresentation> | undefined {
     const { adapterContext, config, listInfo, luvio } = context;
 
     if (listInfo !== undefined) {
-        context.listUi = buildInMemorySnapshot(
-            luvio,
-            storeLookup,
-            adapterContext,
-            config,
-            listInfo
-        );
+        context.listUi = buildCachedSnapshot(luvio, storeLookup, adapterContext, config, listInfo);
         return context.listUi;
     }
 }
@@ -735,7 +729,7 @@ export const factory: AdapterFactory<
         const listInfoPromiseOrSnapshot = luvio.applyCachePolicy(
             definedRequestContext,
             { adapterContext, config, luvio },
-            buildInMemoryListInfoSnapshot,
+            buildCachedListInfoSnapshot,
             buildNotFetchableNetworkSnapshot(luvio)
         );
 
@@ -749,7 +743,7 @@ export const factory: AdapterFactory<
             return luvio.applyCachePolicy(
                 definedRequestContext,
                 { adapterContext, config, listInfo, luvio },
-                buildInMemoryListUiSnapshot,
+                buildCachedListUiSnapshot,
                 buildNetworkListUiSnapshot
             );
         };

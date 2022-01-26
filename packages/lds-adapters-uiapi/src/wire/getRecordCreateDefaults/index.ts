@@ -157,7 +157,7 @@ function buildSelectorKey(config: GetRecordCreateDefaultsConfigWithDefaults) {
     return `${key}__selector`;
 }
 
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     sel: Selector,
     luvio: Luvio,
     context: AdapterContext,
@@ -176,7 +176,7 @@ type BuildSnapshotContext = {
     cachedSelector?: Selector;
 };
 
-function buildInMemorySnapshotCachePolicy(
+function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordDefaultsRepresentation>
 ): Snapshot<RecordDefaultsRepresentation, any> | undefined {
@@ -239,7 +239,7 @@ export const factory: AdapterFactory<
                 adapterContext,
                 cachedSelector,
             },
-            buildInMemorySnapshotCachePolicy,
+            buildCachedSnapshotCachePolicy,
             buildNetworkSnapshotCachePolicy
         );
     });

@@ -7,12 +7,12 @@ import {
     StoreLookup,
 } from '@luvio/engine';
 import {
-    buildInMemorySnapshot as buildInMemorySnapshot_GetRecordFields,
+    buildCachedSnapshot as buildCachedSnapshot_GetRecordFields,
     buildNetworkSnapshot as buildNetworkSnapshot_GetRecordFields,
     buildRecordSelector,
     getRecordByFields,
 } from './GetRecordFields';
-import { buildInMemorySnapshotCachePolicy as buildInMemorySnapshotCachePolicy_getObjectInfo } from '../../generated/adapters/getObjectInfo';
+import { buildCachedSnapshotCachePolicy as buildCachedSnapshotCachePolicy_getObjectInfo } from '../../generated/adapters/getObjectInfo';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import {
     keyBuilder as keyBuilder_RecordLayoutRepresentation,
@@ -107,7 +107,7 @@ function refresh(
         }
         const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, data);
         const fields = getFieldsFromLayoutMap(layoutMap, objectInfo);
-        return buildInMemorySnapshot_GetRecordFields(
+        return buildCachedSnapshot_GetRecordFields(
             luvio,
             {
                 recordId,
@@ -304,7 +304,7 @@ type BuildSnapshotContext = {
  * @returns Snapshot (possibly incomplete) for the record, undefined if the prerequisite
  *     information was not found in L1
  */
-function buildInMemorySnapshot(
+function buildCachedSnapshot(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<any>
 ): Snapshot<RecordRepresentation> | undefined {
@@ -332,7 +332,7 @@ function buildInMemorySnapshot(
     const { apiName } = record;
 
     // lookup object info for the record
-    const objectInfoSnapshot = buildInMemorySnapshotCachePolicy_getObjectInfo(
+    const objectInfoSnapshot = buildCachedSnapshotCachePolicy_getObjectInfo(
         {
             config: {
                 objectApiName: apiName,
@@ -440,7 +440,7 @@ export function getRecordLayoutType(
     return luvio.applyCachePolicy(
         requestContext || {},
         { config, luvio },
-        buildInMemorySnapshot,
+        buildCachedSnapshot,
         buildNetworkSnapshot
     );
 }

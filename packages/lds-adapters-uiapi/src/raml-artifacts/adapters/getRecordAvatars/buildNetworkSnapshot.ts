@@ -20,7 +20,7 @@ import {
 } from '../../../generated/resources/getUiApiRecordAvatarsBatchByRecordIds';
 import { RecordAvatarBatchRepresentation } from '../../../generated/types/RecordAvatarBatchRepresentation';
 import { KEY, GetRecordAvatarsConfig } from './utils';
-import { buildInMemorySnapshot } from './buildInMemorySnapshot';
+import { buildCachedSnapshot } from './buildCachedSnapshot';
 
 // Track in-flight xrequests so we known when to send out our fake response
 export const IN_FLIGHT_REQUESTS = new Set<string>();
@@ -148,5 +148,5 @@ export function buildNetworkSnapshot(
         ingestFakeResponse(luvio, recordIdsInFlight);
     }
 
-    return luvioResponse ? luvioResponse : Promise.resolve(buildInMemorySnapshot(luvio, config));
+    return luvioResponse ? luvioResponse : Promise.resolve(buildCachedSnapshot(luvio, config));
 }

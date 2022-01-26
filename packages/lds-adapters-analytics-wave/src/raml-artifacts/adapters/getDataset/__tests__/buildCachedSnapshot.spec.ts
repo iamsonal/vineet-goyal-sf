@@ -1,19 +1,19 @@
 import { Environment, Luvio, Snapshot, Store } from '@luvio/engine';
 import { DatasetRepresentation } from '../../../../generated/types/DatasetRepresentation';
-import { buildInMemorySnapshotCachePolicy as generatedBuildInMemorySnapshotCachePolicy } from '../../../../generated/adapters/getDataset';
+import { buildCachedSnapshotCachePolicy as generatedBuildCachedSnapshotCachePolicy } from '../../../../generated/adapters/getDataset';
 import { GetDatasetConfig } from '../../../../generated/adapters/getDataset';
-import { buildInMemorySnapshotCachePolicy } from '../buildInMemorySnapshotCachePolicy';
+import { buildCachedSnapshotCachePolicy } from '../buildCachedSnapshotCachePolicy';
 import { datasetNameToIdCache } from '../../../utils/datasetNameToIdCache';
 
 jest.mock('../../../../generated/adapters/getDataset', () => {
     return {
-        buildInMemorySnapshotCachePolicy: jest
+        buildCachedSnapshotCachePolicy: jest
             .fn()
             .mockReturnValue({} as Snapshot<DatasetRepresentation>),
     };
 });
 
-describe('buildInMemorySnapshotCachePolicy', () => {
+describe('buildCachedSnapshotCachePolicy', () => {
     afterEach(() => {
         datasetNameToIdCache.clear();
         jest.clearAllMocks();
@@ -23,10 +23,10 @@ describe('buildInMemorySnapshotCachePolicy', () => {
 
     it('calls generated method once on empty nameToIdCache', () => {
         const config: GetDatasetConfig = { datasetIdOrApiName: 'Foo' };
-        buildInMemorySnapshotCachePolicy({ luvio, config }, luvio.storeLookup);
+        buildCachedSnapshotCachePolicy({ luvio, config }, luvio.storeLookup);
 
-        expect(generatedBuildInMemorySnapshotCachePolicy).toHaveBeenCalledTimes(1);
-        expect(generatedBuildInMemorySnapshotCachePolicy).toHaveBeenLastCalledWith(
+        expect(generatedBuildCachedSnapshotCachePolicy).toHaveBeenCalledTimes(1);
+        expect(generatedBuildCachedSnapshotCachePolicy).toHaveBeenLastCalledWith(
             { luvio, config },
             luvio.storeLookup
         );
@@ -36,13 +36,13 @@ describe('buildInMemorySnapshotCachePolicy', () => {
         const datasetName = 'Foo';
         const datasetId = '0Fbxx0000004Cx3CAE';
         datasetNameToIdCache.set(datasetName, datasetId);
-        buildInMemorySnapshotCachePolicy(
+        buildCachedSnapshotCachePolicy(
             { luvio, config: { datasetIdOrApiName: datasetName } },
             luvio.storeLookup
         );
 
-        expect(generatedBuildInMemorySnapshotCachePolicy).toHaveBeenCalledTimes(1);
-        expect(generatedBuildInMemorySnapshotCachePolicy).toHaveBeenLastCalledWith(
+        expect(generatedBuildCachedSnapshotCachePolicy).toHaveBeenCalledTimes(1);
+        expect(generatedBuildCachedSnapshotCachePolicy).toHaveBeenLastCalledWith(
             {
                 luvio,
                 config: {

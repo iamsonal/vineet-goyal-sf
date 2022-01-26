@@ -11,7 +11,7 @@ import {
 } from '../../../generated/types/RecordLayoutUserStateRepresentation';
 import { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
 import { default as resources_getUiApiLayoutUserStateByObjectApiName_default } from '../../../generated/resources/getUiApiLayoutUserStateByObjectApiName';
-import { buildInMemorySnapshot } from './buildInMemorySnapshot';
+import { buildCachedSnapshot } from './buildCachedSnapshot';
 import { ingest } from '../../../generated/types/RecordLayoutUserStateRepresentation';
 
 export function buildNetworkSnapshot(
@@ -47,7 +47,7 @@ function onResourceResponseSuccess(
     body.layoutType = layoutType;
     body.mode = mode;
     luvio.storeIngest<RecordLayoutUserStateRepresentation>(key, ingest, body);
-    const snapshot = buildInMemorySnapshot(luvio, config);
+    const snapshot = buildCachedSnapshot(luvio, config);
     luvio.storeBroadcast();
     return snapshot;
 }

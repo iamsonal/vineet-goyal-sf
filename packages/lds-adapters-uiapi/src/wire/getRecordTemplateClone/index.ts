@@ -15,7 +15,7 @@ import {
     validateAdapterConfig,
     getRecordTemplateClone_ConfigPropertyNames,
     createResourceParams,
-    buildInMemorySnapshot as generatedBuildInMemorySnapshot,
+    buildCachedSnapshot as generatedBuildCachedSnapshot,
     buildNetworkSnapshot as generatedBuildNetworkSnapshot,
     GetRecordTemplateCloneConfig,
 } from '../../generated/adapters/getRecordTemplateClone';
@@ -136,7 +136,7 @@ const buildNetworkSnapshot: (
                 );
 
                 luvio.storeBroadcast();
-                const snapshot = buildInMemorySnapshot(luvio, context, {
+                const snapshot = buildCachedSnapshot(luvio, context, {
                     ...config,
                     recordTypeId: responseRecordTypeId as string,
                 });
@@ -171,11 +171,11 @@ const buildNetworkSnapshot: (
         );
 };
 
-const buildInMemorySnapshot: (
+const buildCachedSnapshot: (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig
-) => ReturnType<typeof generatedBuildInMemorySnapshot> = (
+) => ReturnType<typeof generatedBuildCachedSnapshot> = (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig
@@ -218,7 +218,7 @@ function buildNetworkSnapshotCachePolicy(
     return buildNetworkSnapshot(luvio, adapterContext, config, override);
 }
 
-function buildInMemorySnapshotCachePolicy(
+function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordDefaultsTemplateCloneRepresentation>
 ): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> {
@@ -275,7 +275,7 @@ export const factory: AdapterFactory<
                 recordTypeId,
                 adapterContext,
             },
-            buildInMemorySnapshotCachePolicy,
+            buildCachedSnapshotCachePolicy,
             buildNetworkSnapshotCachePolicy
         );
     });

@@ -92,7 +92,7 @@ export function ingestSuccess(
     return snapshot as FulfilledSnapshot<any, any> | StaleSnapshot<any, any>;
 }
 
-function buildInMemorySnapshotCachePolicy(
+function buildCachedSnapshotCachePolicy(
     buildSnapshotContext: BuildSnapshotContext,
     storeLookup: StoreLookup<any>
 ) {
@@ -229,17 +229,17 @@ function postApexAdapterFactory(
                 isContinuation
             );
 
-            // if this response isn't meant to be cached then pass a buildInMemory
+            // if this response isn't meant to be cached then pass a buildCached
             // func that returns undefined, that way cache policy impls will know
             // not to do any cache lookups
-            const buildInMemory = isCacheable(configPlus, context)
-                ? buildInMemorySnapshotCachePolicy
+            const buildCached = isCacheable(configPlus, context)
+                ? buildCachedSnapshotCachePolicy
                 : () => undefined;
 
             return luvio.applyCachePolicy<BuildSnapshotContext, any>(
                 requestContext || {},
                 { config: configPlus, luvio, adapterContext: context },
-                buildInMemory,
+                buildCached,
                 buildNetworkSnapshotCachePolicy
             );
         },

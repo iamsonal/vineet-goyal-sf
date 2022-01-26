@@ -113,7 +113,7 @@ export function ingestSuccess(
     return snapshot as FulfilledSnapshot<any, any> | StaleSnapshot<any, any>;
 }
 
-function buildInMemorySnapshotCachePolicy(
+function buildCachedSnapshotCachePolicy(
     buildSnapshotContext: BuildSnapshotContext,
     storeLookup: StoreLookup<any>
 ): Snapshot<any, any> {
@@ -259,7 +259,7 @@ function getApexAdapterFactory(
             return luvio.applyCachePolicy<BuildSnapshotContext, any>(
                 requestContext || {},
                 { config: configPlus, luvio, adapterContext: context },
-                buildInMemorySnapshotCachePolicy,
+                buildCachedSnapshotCachePolicy,
                 buildNetworkSnapshotCachePolicy
             );
         },

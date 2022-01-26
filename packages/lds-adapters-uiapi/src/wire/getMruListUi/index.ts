@@ -158,7 +158,7 @@ function onResourceError_getMruListUi(
     return luvio.errorSnapshot(err, buildSnapshotRefresh_getMruListUi(luvio, config));
 }
 
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     luvio: Luvio,
     storeLookup: StoreLookup<ListUiRepresentation>,
     config: GetMruListUiConfig,
@@ -279,7 +279,7 @@ function onResourceSuccess_getMruListRecords(
         body
     );
 
-    const snapshot = buildInMemorySnapshot(
+    const snapshot = buildCachedSnapshot(
         luvio,
         luvio.storeLookup.bind(luvio),
         config,
@@ -338,7 +338,7 @@ type BuildListInfoSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildInMemoryListInfoSnapshot(
+function buildCachedListInfoSnapshot(
     context: BuildListInfoSnapshotContext,
     storeLookup: StoreLookup<ListInfoRepresentation>
 ): Snapshot<ListInfoRepresentation> {
@@ -366,14 +366,14 @@ type BuildListUiSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildInMemoryListUiSnapshot(
+function buildCachedListUiSnapshot(
     context: BuildListUiSnapshotContext,
     storeLookup: StoreLookup<ListUiRepresentation>
 ): Snapshot<ListUiRepresentation> | undefined {
     const { config, listInfo, luvio } = context;
 
     if (listInfo !== undefined) {
-        context.listUi = buildInMemorySnapshot(luvio, storeLookup, config, listInfo);
+        context.listUi = buildCachedSnapshot(luvio, storeLookup, config, listInfo);
         return context.listUi;
     }
 }
@@ -421,7 +421,7 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
         const listInfoPromiseOrSnapshot = luvio.applyCachePolicy(
             definedRequestContext,
             { config, luvio },
-            buildInMemoryListInfoSnapshot,
+            buildCachedListInfoSnapshot,
             buildNotFetchableNetworkSnapshot(luvio)
         );
 
@@ -435,7 +435,7 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
             return luvio.applyCachePolicy(
                 definedRequestContext,
                 { config, listInfo, luvio },
-                buildInMemoryListUiSnapshot,
+                buildCachedListUiSnapshot,
                 buildNetworkListUiSnapshot
             );
         };

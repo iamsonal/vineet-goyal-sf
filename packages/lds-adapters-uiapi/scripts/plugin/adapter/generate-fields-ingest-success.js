@@ -61,7 +61,7 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
         'createResourceRequest'
     );
     const onResourceResponseError = importRamlArtifact(adapter.id, 'onResourceResponseError');
-    const buildInMemorySnapshot = importRamlArtifact(adapter.id, 'buildInMemorySnapshot');
+    const buildCachedSnapshot = importRamlArtifact(adapter.id, 'buildCachedSnapshot');
 
     return deindent`
       export function buildNetworkSnapshot(luvio: ${LUVIO_IMPORT}, config: ${adapterConfigImport}, override?: ${RESOURCE_REQUEST_OVERRIDE}) {
@@ -83,7 +83,7 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
                       ingest,
                       response.body
                   );
-                  const snapshot = ${buildInMemorySnapshot}(luvio, config);
+                  const snapshot = ${buildCachedSnapshot}(luvio, config);
                   if (process.env.NODE_ENV !== 'production') {
                       if (snapshot.state !== 'Fulfilled') {
                           throw new Error(

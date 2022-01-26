@@ -4,7 +4,7 @@ import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-util
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
 import { GetRecordAvatarsConfig, recordAvatarsSelector } from './utils';
 
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     luvio: Luvio,
     config: GetRecordAvatarsConfig
 ): Snapshot<RecordAvatarBulkMapRepresentation, any> {

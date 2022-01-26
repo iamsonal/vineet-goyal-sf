@@ -156,7 +156,7 @@ function buildSnapshotRefresh(
     };
 }
 
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     luvio: Luvio,
     config: GetRecordUiConfigWithDefaults
 ):
@@ -484,7 +484,7 @@ type BuildSelectorSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildInMemorySelectorSnapshot(
+function buildCachedSelectorSnapshot(
     context: BuildSelectorSnapshotContext,
     storeLookup: StoreLookup<Selector<RecordUiRepresentation>>
 ): Snapshot<Selector<RecordUiRepresentation>> | undefined {
@@ -516,7 +516,7 @@ type BuildRecordUiRepresentationSnapshotContext = {
     selector: Selector<RecordUiRepresentation> | undefined;
 };
 
-function buildInMemoryRecordUiRepresentationSnapshot(
+function buildCachedRecordUiRepresentationSnapshot(
     context: BuildRecordUiRepresentationSnapshotContext,
     storeLookup: StoreLookup<RecordUiRepresentation>
 ): Snapshot<RecordUiRepresentation> | undefined {
@@ -572,7 +572,7 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
         const selectorPromiseOrSnapshot = luvio.applyCachePolicy(
             definedRequestContext,
             { config, luvio },
-            buildInMemorySelectorSnapshot,
+            buildCachedSelectorSnapshot,
             buildNotFetchableNetworkSnapshot(luvio)
         );
 
@@ -585,7 +585,7 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
             return luvio.applyCachePolicy(
                 definedRequestContext,
                 { config, luvio, selector },
-                buildInMemoryRecordUiRepresentationSnapshot,
+                buildCachedRecordUiRepresentationSnapshot,
                 buildNetworkRecordUiRepresentationSnapshot
             );
         };

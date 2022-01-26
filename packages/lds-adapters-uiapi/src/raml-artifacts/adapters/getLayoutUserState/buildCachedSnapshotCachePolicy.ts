@@ -14,7 +14,7 @@ type BuildSnapshotContext = {
     luvio: Luvio;
 };
 
-export function buildInMemorySnapshotCachePolicy(
+export function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordLayoutUserStateRepresentation>
 ): Snapshot<RecordLayoutUserStateRepresentation, any> {

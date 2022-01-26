@@ -248,7 +248,7 @@ type BuildSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildInMemorySnapshot(
+function buildCachedSnapshot(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<unknown>
 ): Snapshot<unknown, any> {
@@ -300,7 +300,7 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
         return luvio.applyCachePolicy(
             requestContext || {},
             context,
-            buildInMemorySnapshot,
+            buildCachedSnapshot,
             buildNetworkSnapshotCachePolicy
         );
     };

@@ -45,7 +45,7 @@ function buildRefreshSnapshot(
         resolve: () => buildNetworkSnapshot(luvio, config, snapshot),
     };
 }
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     luvio: Luvio,
     config: GetListViewSummaryCollectionConfig
 ): Snapshot<ListViewSummaryCollectionRepresentation> {
@@ -110,7 +110,7 @@ function onResourceSuccess(
         listViewSummaryCollectionRepresentationIngest,
         body
     );
-    const snapshot = buildInMemorySnapshot(luvio, config);
+    const snapshot = buildCachedSnapshot(luvio, config);
     luvio.storeBroadcast();
     return snapshot;
 }
@@ -170,7 +170,7 @@ function buildNetworkSnapshotCachePolicy(
     return buildNetworkSnapshot(luvio, config, snapshot, override);
 }
 
-function buildInMemorySnapshotCachePolicy(
+function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<ListViewSummaryCollectionRepresentation>
 ): Snapshot<ListViewSummaryCollectionRepresentation, any> {
@@ -218,7 +218,7 @@ export const factory: AdapterFactory<
                 luvio,
                 config,
             },
-            buildInMemorySnapshotCachePolicy,
+            buildCachedSnapshotCachePolicy,
             buildNetworkSnapshotCachePolicy
         );
     };

@@ -63,7 +63,7 @@ function onResponseSuccess(
 ) {
     const { body } = response;
     luvio.storeIngest(key, picklistValuesRepresentationIngest, body);
-    const snapshot = buildInMemorySnapshot(luvio, config);
+    const snapshot = buildCachedSnapshot(luvio, config);
     luvio.storeBroadcast();
     return snapshot;
 }
@@ -97,7 +97,7 @@ export function buildNetworkSnapshot(
     );
 }
 
-export function buildInMemorySnapshot(luvio: Luvio, config: GetPicklistValuesConfig) {
+export function buildCachedSnapshot(luvio: Luvio, config: GetPicklistValuesConfig) {
     const fieldNames = getFieldId(config.fieldApiName);
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
         urlParams: {
@@ -143,7 +143,7 @@ function buildNetworkSnapshotCachePolicy(
     return buildNetworkSnapshot(luvio, config, override);
 }
 
-function buildInMemorySnapshotCachePolicy(
+function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<PicklistValuesRepresentation>
 ): Snapshot<PicklistValuesRepresentation, any> {
@@ -197,7 +197,7 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
                 luvio,
                 config,
             },
-            buildInMemorySnapshotCachePolicy,
+            buildCachedSnapshotCachePolicy,
             buildNetworkSnapshotCachePolicy
         );
     };

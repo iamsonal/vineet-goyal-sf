@@ -7,7 +7,7 @@ import {
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
 import { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
 
-export function buildInMemorySnapshot(luvio: Luvio, config: GetLayoutUserStateConfig) {
+export function buildCachedSnapshot(luvio: Luvio, config: GetLayoutUserStateConfig) {
     const { objectApiName, recordTypeId, layoutType, mode } = config;
     const key = keyBuilder({
         apiName: objectApiName,

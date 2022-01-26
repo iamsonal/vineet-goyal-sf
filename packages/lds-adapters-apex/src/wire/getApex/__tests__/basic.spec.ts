@@ -116,7 +116,7 @@ describe('isContinuation Header', () => {
             applyCachePolicy: jest
                 .fn()
                 .mockImplementation(
-                    (_cachePolicy, buildSnapshotContext, _buildInMemoryFunc, buildNetworkFunc) => {
+                    (_cachePolicy, buildSnapshotContext, _buildCachedFunc, buildNetworkFunc) => {
                         // have mock implementation call buildNetworkSnapshot so we can
                         // validate dispatchResourceRequest is called with correct params
                         return buildNetworkFunc(buildSnapshotContext, {

@@ -156,7 +156,7 @@ function onResourceResponseSuccess(
 
     luvio.storeIngest<RecordDefaultsTemplateCreateRepresentation>(key, ingest, body);
 
-    const snapshot = buildInMemorySnapshot(luvio, context, {
+    const snapshot = buildCachedSnapshot(luvio, context, {
         ...config,
         recordTypeId: responseRecordTypeId as string,
     });
@@ -219,7 +219,7 @@ function buildNetworkSnapshot(
         );
 }
 
-function buildInMemorySnapshot(
+function buildCachedSnapshot(
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig
@@ -261,10 +261,10 @@ const buildNetworkSnapshotCachePolicy: (
     return buildNetworkSnapshot(luvio, adapterContext, config, override);
 };
 
-const buildInMemorySnapshotCachePolicy: (
+const buildCachedSnapshotCachePolicy: (
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordDefaultsTemplateCreateRepresentation>
-) => ReturnType<typeof buildInMemorySnapshot> = (
+) => ReturnType<typeof buildCachedSnapshot> = (
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordDefaultsTemplateCreateRepresentation>
 ): Snapshot<RecordDefaultsTemplateCreateRepresentation, any> => {
@@ -316,7 +316,7 @@ export const factory: AdapterFactory<
                 recordTypeId,
                 adapterContext,
             },
-            buildInMemorySnapshotCachePolicy,
+            buildCachedSnapshotCachePolicy,
             buildNetworkSnapshotCachePolicy
         );
     });

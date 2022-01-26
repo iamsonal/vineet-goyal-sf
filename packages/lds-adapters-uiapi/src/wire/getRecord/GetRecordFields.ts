@@ -186,7 +186,7 @@ export function buildNetworkSnapshot(
 }
 
 // used by getRecordLayoutType#refresh
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     luvio: Luvio,
     config: GetRecordConfig,
     refresh?: SnapshotRefresh<RecordRepresentation>
@@ -206,7 +206,7 @@ export type BuildSnapshotContext = {
     luvio: Luvio;
 };
 
-export function buildInMemorySnapshotCachePolicy(
+export function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<RecordRepresentation>
 ): Snapshot<RecordRepresentation> {
@@ -242,7 +242,7 @@ export function getRecordByFields(
     return luvio.applyCachePolicy(
         requestContext || {},
         { config, luvio },
-        buildInMemorySnapshotCachePolicy,
+        buildCachedSnapshotCachePolicy,
         buildNetworkSnapshotCachePolicy
     );
 }

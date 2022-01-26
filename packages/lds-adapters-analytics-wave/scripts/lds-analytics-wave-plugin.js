@@ -13,7 +13,7 @@ const basePlugin = require('../../lds-compiler-plugins');
 // the custom adapter partial files
 const RAML_ARTIFACTS = {
     '/adapters/getDataset': [
-        'buildInMemorySnapshotCachePolicy',
+        'buildCachedSnapshotCachePolicy',
         'onResourceResponseSuccess',
         'onResourceResponseError',
     ],

@@ -180,7 +180,7 @@ type BuildSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildInMemorySnapshot(
+function buildCachedSnapshot(
     _context: BuildSnapshotContext,
     _storeLookup: StoreLookup<RecordCollectionRepresentation>
 ): undefined {
@@ -224,7 +224,7 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
         const promiseOrSnapshot = luvio.applyCachePolicy(
             requestContext || {},
             { config, luvio },
-            buildInMemorySnapshot,
+            buildCachedSnapshot,
             buildNetworkSnapshotCachePolicy
         );
 

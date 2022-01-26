@@ -39,8 +39,8 @@
         "release": "yarn release:adapters && ./scripts/release/core.js",
         "release:local": "./scripts/release/core.js --skip-git-check --auto-checkout --skip-clean && yarn release:adapters:local",
         "release:local:skipbuild": "./scripts/release/core.js --skip-git-check --auto-checkout --skip-build && yarn release:adapters:local",
-        "link:luvio": "yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio && lerna exec -- yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio",
-        "unlink:luvio": "yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio; lerna exec --no-bail -- yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio"
+        "link:luvio": "yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio && lerna exec -- yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio @luvio/graphql-parser",
+        "unlink:luvio": "yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio; lerna exec --no-bail -- yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio @luvio/graphql-parser"
     },
     "devDependencies": {
         "@babel/core": "^7.6.4",

@@ -1,5 +1,5 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
-import { mockGetRecordNetwork } from 'uiapi-test-util';
+import { getTrackedFieldLeafNodeIdOnly, mockGetRecordNetwork } from 'uiapi-test-util';
 
 import RecordFields from '../lwc/record-fields';
 
@@ -58,21 +58,27 @@ describe('notify change', () => {
             recordId: refreshMock.id,
             optionalFields: [
                 'TestD__c.CreatedBy.Id',
-                'TestD__c.CreatedBy.Name',
                 'TestD__c.CreatedById',
                 'TestD__c.CreatedDate',
                 'TestD__c.LastModifiedBy.Id',
-                'TestD__c.LastModifiedBy.Name',
                 'TestD__c.LastModifiedById',
                 'TestD__c.LastModifiedDate',
                 'TestD__c.Name',
                 'TestD__c.Owner.Id',
-                'TestD__c.Owner.Name',
                 'TestD__c.OwnerId',
                 'TestD__c.TestC__c',
                 'TestD__c.TestC__r.Id',
             ],
         };
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshConfig.optionalFields.push(
+                'TestD__c.CreatedBy.Name',
+                'TestD__c.LastModifiedBy.Name',
+                'TestD__c.Owner.Name'
+            );
+            refreshConfig.optionalFields.sort();
+        }
 
         mockGetRecordNetwork(refreshConfig, [refreshMock, refreshMock]);
 
@@ -133,21 +139,27 @@ describe('notify change', () => {
             recordId: refreshMock.id,
             optionalFields: [
                 'TestD__c.CreatedBy.Id',
-                'TestD__c.CreatedBy.Name',
                 'TestD__c.CreatedById',
                 'TestD__c.CreatedDate',
                 'TestD__c.LastModifiedBy.Id',
-                'TestD__c.LastModifiedBy.Name',
                 'TestD__c.LastModifiedById',
                 'TestD__c.LastModifiedDate',
                 'TestD__c.Name',
                 'TestD__c.Owner.Id',
-                'TestD__c.Owner.Name',
                 'TestD__c.OwnerId',
                 'TestD__c.TestC__c',
                 'TestD__c.TestC__r.Id',
             ],
         };
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshconfig.optionalFields.push(
+                'TestD__c.CreatedBy.Name',
+                'TestD__c.LastModifiedBy.Name',
+                'TestD__c.Owner.Name'
+            );
+            refreshconfig.optionalFields.sort();
+        }
 
         mockGetRecordNetwork(refreshconfig, refreshMock);
 

@@ -1,5 +1,9 @@
 import { getMock as globalGetMock, setupElement, clone } from 'test-util';
-import { mockGetRecordsNetwork, mockGetRecordNetwork } from 'uiapi-test-util';
+import {
+    getTrackedFieldLeafNodeIdOnly,
+    mockGetRecordsNetwork,
+    mockGetRecordNetwork,
+} from 'uiapi-test-util';
 import GetRecords from '../lwc/get-records';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import { getIdsFromGetRecordsMock } from '../testUtil';
@@ -35,21 +39,26 @@ describe('tracking fields', () => {
             fields: ['Account.Name'],
         };
 
+        const optionalFields = ['Account.Parent.Id', 'Account.ParentId'];
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields.push(
+                'Account.Parent.Parent.Id',
+                'Account.Parent.Parent.Parent.Id',
+                'Account.Parent.Parent.Parent.Parent.Id',
+                'Account.Parent.Parent.Parent.Parent.Parent.Id',
+                'Account.Parent.Parent.Parent.Parent.ParentId',
+                'Account.Parent.Parent.Parent.ParentId',
+                'Account.Parent.Parent.ParentId',
+                'Account.Parent.ParentId'
+            );
+            optionalFields.sort();
+        }
+
         mockGetRecordNetwork(
             {
                 ...recordConfig,
-                optionalFields: [
-                    'Account.Parent.Id',
-                    'Account.Parent.Parent.Id',
-                    'Account.Parent.Parent.Parent.Id',
-                    'Account.Parent.Parent.Parent.Parent.Id',
-                    'Account.Parent.Parent.Parent.Parent.Parent.Id',
-                    'Account.Parent.Parent.Parent.Parent.ParentId',
-                    'Account.Parent.Parent.Parent.ParentId',
-                    'Account.Parent.Parent.ParentId',
-                    'Account.Parent.ParentId',
-                    'Account.ParentId',
-                ],
+                optionalFields,
             },
             recordMock
         );

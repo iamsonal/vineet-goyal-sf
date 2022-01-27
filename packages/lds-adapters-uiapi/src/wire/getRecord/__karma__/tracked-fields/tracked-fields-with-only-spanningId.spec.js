@@ -9,8 +9,8 @@ import {
     expireRecords,
     extractRecordFields,
     instrument,
+    getTrackedFieldLeafNodeIdOnly,
     mockGetRecordNetwork,
-    setTrackedFieldsConfig,
 } from 'uiapi-test-util';
 import GetListUi from '../../../getListUi/__karma__/lwc/listViewId';
 import RecordFields from '../lwc/record-fields';
@@ -40,10 +40,6 @@ function keepOnlyId(record) {
 }
 
 describe('tracked fields with only spanning ID', () => {
-    beforeAll(() => {
-        setTrackedFieldsConfig(true);
-    });
-
     it('should not fetch record fields more than 1 levels deep', async () => {
         // using getRecord() twice to create entries in the store that go greater than 6 levels deep
         // first getRecord() does 5 levels: TestD__c.TestC__r.TestA__r.Opportunity__r.Account.Name
@@ -75,10 +71,23 @@ describe('tracked fields with only spanning ID', () => {
         // trim nested records from mock data to match the request
         keepOnlyId(refreshMock.fields.TestC__r.value);
 
+        let optionalFields;
+        if (getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields = ['TestD__c.TestC__c'];
+        } else {
+            optionalFields = extractRecordFields(testDMock, {
+                omit: ['TestD__c.TestC__r.Id'],
+                add: [
+                    'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHours.CreatedById',
+                    'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHours.Id',
+                    'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHoursId',
+                ],
+            });
+        }
         const refreshedConfig = {
             recordId: testDMock.id,
             fields: ['TestD__c.TestC__r.Id'],
-            optionalFields: ['TestD__c.TestC__c'],
+            optionalFields,
         };
 
         mockGetRecordNetwork(refreshedConfig, refreshMock);
@@ -127,9 +136,25 @@ describe('tracked fields with only spanning ID', () => {
         // trim nested records from mock data to match the request
         keepOnlyId(refreshMock.fields.TestC__r.value);
 
+        let optionalFields;
+        if (getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields = ['TestD__c.TestC__c', 'TestD__c.TestC__r.Id'];
+        } else {
+            optionalFields = [
+                'TestD__c.TestC__c',
+                'TestD__c.TestC__r.Id',
+                'TestD__c.TestC__r.TestA__c',
+                'TestD__c.TestC__r.TestA__r.Id',
+                'TestD__c.TestC__r.TestA__r.Opportunity__c',
+                'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.Id',
+                'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.Name',
+                'TestD__c.TestC__r.TestA__r.Opportunity__r.AccountId',
+                'TestD__c.TestC__r.TestA__r.Opportunity__r.Id',
+            ];
+        }
         const refreshedConfig = {
             recordId: testDMock.id,
-            optionalFields: ['TestD__c.TestC__c', 'TestD__c.TestC__r.Id'],
+            optionalFields,
         };
 
         mockGetRecordNetwork(refreshedConfig, refreshMock);
@@ -167,19 +192,17 @@ describe('tracked fields with only spanning ID', () => {
 
         mockListNetworkOnce(mockList);
 
-        const listRecordFields = extractRecordFields(listRecord)
-            .filter((field) => {
-                return field.split('.').length < 3;
-            })
-            // Adding fields by getRecord adapter and tracked fields Ids
-            .concat([
-                'Opportunity.FiscalYear',
-                'Opportunity.CreatedById',
-                'Opportunity.CreatedBy.Id',
-                'Opportunity.Owner.Id',
-                'Opportunity.Account.Id',
-            ])
-            .sort();
+        const listRecordFields = extractRecordFields(listRecord, {
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
+            add: ['Opportunity.CreatedBy.Id', 'Opportunity.CreatedById', 'Opportunity.FiscalYear'],
+        });
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            listRecordFields.push(
+                'Opportunity.CreatedBy.CreatedById',
+                'Opportunity.CreatedBy.Name'
+            );
+            listRecordFields.sort();
+        }
 
         const refreshMock = getMock('record-list-tracked-fields-new');
         // update value to emit
@@ -231,6 +254,21 @@ describe('tracked fields with only spanning ID', () => {
         };
         mockGetRecordNetwork(accountConfig1, accountMock1);
 
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            const accountConfig1a = {
+                recordId: accountMock1.id,
+                fields: ['Account.OperatingHours.CreatedBy.Name'],
+                optionalFields: [
+                    'Account.Name',
+                    'Account.OperatingHours.CreatedBy.Id',
+                    'Account.OperatingHours.CreatedById',
+                    'Account.OperatingHours.Id',
+                    'Account.OperatingHoursId',
+                ],
+            };
+            mockGetRecordNetwork(accountConfig1a, accountMock1);
+        }
+
         await setupElement(accountConfig1, RecordFields);
 
         // initial getRecord was fully resolved in 1 request
@@ -251,9 +289,32 @@ describe('tracked fields with only spanning ID', () => {
         const accountConfig2 = {
             recordId: accountMock2.id,
             fields: ['Account.Name'],
-            optionalFields: ['Account.OperatingHours.Id', 'Account.OperatingHoursId'],
+            optionalFields: getTrackedFieldLeafNodeIdOnly()
+                ? ['Account.OperatingHours.Id', 'Account.OperatingHoursId']
+                : [
+                      'Account.OperatingHours.CreatedBy.Id',
+                      'Account.OperatingHours.CreatedBy.Name',
+                      'Account.OperatingHours.CreatedById',
+                      'Account.OperatingHours.Id',
+                      'Account.OperatingHoursId',
+                  ],
         };
         mockGetRecordNetwork(accountConfig2, accountMock2);
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            const accountMock2a = {
+                recordId: accountMock2.id,
+                fields: ['Account.OperatingHours.CreatedBy.Name'],
+                optionalFields: [
+                    'Account.Name',
+                    'Account.OperatingHours.CreatedBy',
+                    'Account.OperatingHours.CreatedById',
+                    'Account.OperatingHours.Id',
+                    'Account.OperatingHoursId',
+                ],
+            };
+            mockGetRecordNetwork(accountMock2a, accountMock2);
+        }
 
         // 2. resolve OperatingHours conflict - request will include OperatingHours.CreatedBy.Id,
         //    response shows that User has been updated
@@ -266,11 +327,18 @@ describe('tracked fields with only spanning ID', () => {
         mockGetRecordNetwork(
             {
                 recordId: operatingHoursMock.id,
-                optionalFields: [
-                    'OperatingHours.CreatedBy.Id',
-                    'OperatingHours.CreatedById',
-                    'OperatingHours.Id',
-                ],
+                optionalFields: getTrackedFieldLeafNodeIdOnly()
+                    ? [
+                          'OperatingHours.CreatedBy.Id',
+                          'OperatingHours.CreatedById',
+                          'OperatingHours.Id',
+                      ]
+                    : [
+                          'OperatingHours.CreatedBy.Id',
+                          'OperatingHours.CreatedBy.Name',
+                          'OperatingHours.CreatedById',
+                          'OperatingHours.Id',
+                      ],
             },
             operatingHoursMock
         );
@@ -291,12 +359,8 @@ describe('tracked fields with only spanning ID', () => {
         await setupElement(accountConfig2, RecordFields);
 
         // this getRecord should have reported 3 server requests to resolve everything
-        expect(recordConflictsResolved).toHaveBeenCalledTimes(2);
+        const expectedRecordConflictsResolved = getTrackedFieldLeafNodeIdOnly() ? 2 : 4;
+        expect(recordConflictsResolved).toHaveBeenCalledTimes(expectedRecordConflictsResolved);
         expect(recordConflictsResolved).toHaveBeenCalledWith(3);
-    });
-
-    // Reset tracked fields to our default behavior
-    afterAll(() => {
-        setTrackedFieldsConfig(false);
     });
 });

@@ -147,6 +147,25 @@ function mockGetListInfoByNameNetwork(config, mockData) {
     }
 }
 
+function mockGetRecordDeepParamsNetwork(config, mockData) {
+    const { recordId, ...queryParams } = config;
+
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/records/${recordId}`,
+        queryParams: {
+            fields: queryParams.fields || undefined,
+            optionalFields: queryParams.optionalFields || undefined,
+        },
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetRecordNetwork(config, mockData) {
     const { recordId, ...queryParams } = config;
 
@@ -900,9 +919,13 @@ function extractRecordFields(record, options) {
     let fields = extractRecordFieldsAtPath(path);
 
     if (options) {
-        const { omit, add } = options;
+        const { omit, useNewTrackedFieldBehavior, add } = options;
         if (omit) {
             fields = fields.filter((name) => options.omit.indexOf(name) === -1);
+        }
+        if (useNewTrackedFieldBehavior) {
+            const pattern = /^\w+\.\w+(\.Id)?$/;
+            fields = fields.filter((name) => pattern.test(name));
         }
         if (add) {
             fields.push(...add);
@@ -944,6 +967,10 @@ function setTrackedFieldsConfig(_includeLeafNodeIdOnly) {
     configuration.setTrackedFieldDepthOnCacheMiss(depth);
     configuration.setTrackedFieldDepthOnCacheMergeConflict(depth);
     configuration.setTrackedFieldDepthOnNotifyChange(depth);
+}
+
+function getTrackedFieldLeafNodeIdOnly() {
+    return configuration.getTrackedFieldLeafNodeIdOnly();
 }
 
 export {
@@ -989,6 +1016,7 @@ export {
     mockGetObjectInfosNetwork,
     mockGetPicklistValuesNetwork,
     mockGetRecordNetwork,
+    mockGetRecordDeepParamsNetwork,
     mockGetRecordsNetwork,
     mockGetRecordActionsNetwork,
     mockGetGlobalActionsNetwork,
@@ -1018,6 +1046,7 @@ export {
     extractRecordFields,
     extractRelatedListsBatchParamsFromMockData,
     setTrackedFieldsConfig,
+    getTrackedFieldLeafNodeIdOnly,
 };
 
 export { instrument } from 'lds-adapters-uiapi';

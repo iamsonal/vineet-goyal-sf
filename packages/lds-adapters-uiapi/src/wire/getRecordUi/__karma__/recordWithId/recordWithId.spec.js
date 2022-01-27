@@ -5,6 +5,7 @@ import {
     updateElement,
     flushPromises,
 } from 'test-util';
+
 import {
     MASTER_RECORD_TYPE_ID,
     expireLayout,
@@ -13,8 +14,10 @@ import {
     expireRecords,
     expireRecordUi,
     extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
     mockDeleteRecordNetwork,
     mockGetRecordNetwork,
+    mockGetRecordDeepParamsNetwork,
     mockGetRecordUiNetwork,
     mockUpdateRecordNetwork,
 } from 'uiapi-test-util';
@@ -954,52 +957,59 @@ describe('populating null nested record', () => {
             fields: ['Opportunity.Account.Name'],
         };
 
-        mockGetRecordNetwork(
+        const optionalFields = [
+            'Opportunity.Account.Id',
+            'Opportunity.AccountId',
+            'Opportunity.Amount',
+            'Opportunity.Campaign.Id',
+            'Opportunity.Campaign.Name',
+            'Opportunity.CampaignId',
+            'Opportunity.CloseDate',
+            'Opportunity.CreatedBy.Id',
+            'Opportunity.CreatedById',
+            'Opportunity.CreatedDate',
+            'Opportunity.CurrentGenerators__c',
+            'Opportunity.DeliveryInstallationStatus__c',
+            'Opportunity.Description',
+            'Opportunity.ExpectedRevenue',
+            'Opportunity.IsPrivate',
+            'Opportunity.LastModifiedBy.Id',
+            'Opportunity.LastModifiedById',
+            'Opportunity.LastModifiedDate',
+            'Opportunity.LeadSource',
+            'Opportunity.MainCompetitors__c',
+            'Opportunity.Name',
+            'Opportunity.NextStep',
+            'Opportunity.OrderNumber__c',
+            'Opportunity.Owner.Id',
+            'Opportunity.OwnerId',
+            'Opportunity.Probability',
+            'Opportunity.StageName',
+            'Opportunity.TrackingNumber__c',
+            'Opportunity.Type',
+        ];
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields.push(
+                'Opportunity.CreatedBy.Name',
+                'Opportunity.LastModifiedBy.Name',
+                'Opportunity.Owner.Name'
+            );
+            optionalFields.sort();
+        }
+        mockGetRecordDeepParamsNetwork(
             {
                 recordId,
                 fields: ['Opportunity.Account.Name'],
-                optionalFields: [
-                    'Opportunity.Account.Id',
-                    'Opportunity.AccountId',
-                    'Opportunity.Amount',
-                    'Opportunity.Campaign.Id',
-                    'Opportunity.Campaign.Name',
-                    'Opportunity.CampaignId',
-                    'Opportunity.CloseDate',
-                    'Opportunity.CreatedBy.Id',
-                    'Opportunity.CreatedBy.Name',
-                    'Opportunity.CreatedById',
-                    'Opportunity.CreatedDate',
-                    'Opportunity.CurrentGenerators__c',
-                    'Opportunity.DeliveryInstallationStatus__c',
-                    'Opportunity.Description',
-                    'Opportunity.ExpectedRevenue',
-                    'Opportunity.IsPrivate',
-                    'Opportunity.LastModifiedBy.Id',
-                    'Opportunity.LastModifiedBy.Name',
-                    'Opportunity.LastModifiedById',
-                    'Opportunity.LastModifiedDate',
-                    'Opportunity.LeadSource',
-                    'Opportunity.MainCompetitors__c',
-                    'Opportunity.Name',
-                    'Opportunity.NextStep',
-                    'Opportunity.OrderNumber__c',
-                    'Opportunity.Owner.Id',
-                    'Opportunity.Owner.Name',
-                    'Opportunity.OwnerId',
-                    'Opportunity.Probability',
-                    'Opportunity.StageName',
-                    'Opportunity.TrackingNumber__c',
-                    'Opportunity.Type',
-                ],
+                optionalFields,
             },
             recordMock
         );
-        mockGetRecordNetwork(
+        mockGetRecordDeepParamsNetwork(
             {
                 recordId,
                 optionalFields: extractRecordFields(recordMock, {
                     omit: ['Opportunity.Campaign'],
+                    useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
                     add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
                 }),
             },
@@ -1042,6 +1052,7 @@ describe('populating null nested record', () => {
         const recordMock = clone(mockData.records[recordId]);
         const optionalFields = extractRecordFields(recordMock, {
             omit: ['Opportunity.Account.Name', 'Opportunity.Campaign'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
         }).sort();
         recordMock.fields.Account = {
@@ -1207,6 +1218,7 @@ describe('recordTypeId update', () => {
             ...config,
             optionalFields: extractRecordFields(updatedRecordData, {
                 omit: ['Opportunity.Campaign'],
+                useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
                 add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
             }),
         };
@@ -1245,6 +1257,7 @@ describe('recordTypeId update', () => {
 
         const recordFields = extractRecordFields(recordData, {
             omit: ['Opportunity.Campaign'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
         });
 
@@ -1306,6 +1319,7 @@ describe('recordTypeId update', () => {
                 recordId,
                 optionalFields: extractRecordFields(updatedRecordData, {
                     omit: ['Opportunity.Campaign'],
+                    useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
                     add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
                 }),
             },
@@ -1352,6 +1366,7 @@ describe('recordTypeId update', () => {
                 recordId,
                 optionalFields: extractRecordFields(updatedRecordData, {
                     omit: ['Opportunity.Campaign'],
+                    useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
                     add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
                 }),
             },
@@ -1400,6 +1415,7 @@ describe('recordTypeId update', () => {
                 recordId,
                 optionalFields: extractRecordFields(updatedRecordData, {
                     omit: ['Opportunity.Campaign'],
+                    useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
                     add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
                 }),
             },
@@ -1461,6 +1477,7 @@ describe('recordTypeId update', () => {
                 recordId,
                 optionalFields: extractRecordFields(updatedRecordData, {
                     omit: ['Opportunity.Campaign'],
+                    useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
                     add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
                 }),
             },
@@ -1515,6 +1532,7 @@ describe('recordTypeId update', () => {
 
         const optionalFields = extractRecordFields(mockRecordUiData.records[recordId], {
             omit: ['Opportunity.Campaign'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             add: [
                 'Opportunity.CloneSourceId',
                 'Opportunity.Campaign.Id',

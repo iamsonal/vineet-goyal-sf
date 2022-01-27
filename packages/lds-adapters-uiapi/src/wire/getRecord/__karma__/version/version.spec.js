@@ -9,6 +9,7 @@ import {
     URL_BASE,
     expireRecords,
     extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
     mockGetRecordNetwork,
 } from 'uiapi-test-util';
 
@@ -97,9 +98,10 @@ describe('Incoming record has higher version', () => {
 
         mockListNetworkOnce(mockList);
 
-        const listRecordFields = extractRecordFields(listRecord)
-            .concat(['Opportunity.FiscalYear'])
-            .sort();
+        const listRecordFields = extractRecordFields(listRecord, {
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
+            add: ['Opportunity.FiscalYear'],
+        });
 
         const refreshMock = getMock('record-Opportunity-all-fields');
         refreshMock.weakEtag = 2;
@@ -281,13 +283,24 @@ describe('Incoming record has higher version', () => {
 
         const refreshMock = getMock('list-ui-Opportunity-record-refreshed');
 
+        let optionalFields;
+        if (getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields = extractRecordFields(listRecord, {
+                useNewTrackedFieldBehavior: true,
+                add: ['Opportunity.Account.Id'],
+            });
+        } else {
+            optionalFields = extractRecordFields(listRecord, {
+                useNewTrackedFieldBehavior: false,
+                add: ['Opportunity.Account.Name'],
+            });
+        }
+
         // Mock record refresh
         mockGetRecordNetwork(
             {
                 recordId: mockRecordAccountName.id,
-                optionalFields: extractRecordFields(listRecord)
-                    .concat(['Opportunity.Account.Name'])
-                    .sort(),
+                optionalFields,
             },
             refreshMock
         );
@@ -327,9 +340,10 @@ describe('Incoming record has higher version', () => {
         mockGetRecordNetwork(
             {
                 recordId: mockOppyFiscalYear.id,
-                optionalFields: extractRecordFields(listRecord)
-                    .concat(['Opportunity.FiscalYear'])
-                    .sort(),
+                optionalFields: extractRecordFields(listRecord, {
+                    useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
+                    add: ['Opportunity.FiscalYear'],
+                }),
             },
             refreshMock
         );
@@ -395,9 +409,10 @@ describe('Incoming record has lower version', () => {
 
         mockGetRecordNetwork(recordConfig, mockRecord);
 
-        const listRecordFields = extractRecordFields(listRecord)
-            .concat(['Opportunity.FiscalYear'])
-            .sort();
+        const listRecordFields = extractRecordFields(listRecord, {
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
+            add: ['Opportunity.FiscalYear'],
+        });
 
         const refreshMock = getMock('record-Opportunity-all-fields');
         refreshMock.weakEtag = 2;

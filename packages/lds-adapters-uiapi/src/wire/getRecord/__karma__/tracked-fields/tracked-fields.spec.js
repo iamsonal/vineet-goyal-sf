@@ -6,6 +6,7 @@ import {
     URL_BASE,
     expireRecords,
     extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
     mockGetRecordNetwork,
     mockUpdateRecordNetwork,
 } from 'uiapi-test-util';
@@ -98,7 +99,9 @@ describe('tracked fields', () => {
 
         mockListUiNetwork(listConfig, listMock);
 
-        const expectedOptionalFields = extractRecordFields(listMock.records.records[0]);
+        const expectedOptionalFields = extractRecordFields(listMock.records.records[0], {
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
+        });
         const networkParams = {
             ...accountConfig,
             optionalFields: expectedOptionalFields,
@@ -224,8 +227,11 @@ describe('tracked fields', () => {
         const refreshedConfig = {
             recordId: testDMock.id,
             fields: ['TestD__c.TestC__r.Id'],
-            optionalFields: [
-                'TestD__c.TestC__c',
+            optionalFields: ['TestD__c.TestC__c'],
+        };
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshedConfig.optionalFields.push(
                 'TestD__c.TestC__r.TestA__c',
                 'TestD__c.TestC__r.TestA__r.Id',
                 'TestD__c.TestC__r.TestA__r.Opportunity__c',
@@ -235,9 +241,10 @@ describe('tracked fields', () => {
                 'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHours.Id',
                 'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHoursId',
                 'TestD__c.TestC__r.TestA__r.Opportunity__r.AccountId',
-                'TestD__c.TestC__r.TestA__r.Opportunity__r.Id',
-            ],
-        };
+                'TestD__c.TestC__r.TestA__r.Opportunity__r.Id'
+            );
+            refreshedConfig.optionalFields.sort();
+        }
 
         mockGetRecordNetwork(refreshedConfig, refreshMock);
 
@@ -289,21 +296,26 @@ describe('tracked fields', () => {
             recordId: initialMock.id,
             optionalFields: [
                 'TestD__c.CreatedBy.Id',
-                'TestD__c.CreatedBy.Name',
                 'TestD__c.CreatedById',
                 'TestD__c.CreatedDate',
                 'TestD__c.LastModifiedBy.Id',
-                'TestD__c.LastModifiedBy.Name',
                 'TestD__c.LastModifiedById',
                 'TestD__c.LastModifiedDate',
                 'TestD__c.Name',
                 'TestD__c.Owner.Id',
-                'TestD__c.Owner.Name',
                 'TestD__c.OwnerId',
                 'TestD__c.TestC__r.Id',
             ],
         };
 
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshConfig.optionalFields.push(
+                'TestD__c.CreatedBy.Name',
+                'TestD__c.LastModifiedBy.Name',
+                'TestD__c.Owner.Name'
+            );
+            refreshConfig.optionalFields.sort();
+        }
         mockGetRecordNetwork(refreshConfig, refreshMock);
 
         const elm = await setupElement(initialConfig, RecordFields);
@@ -353,20 +365,26 @@ describe('tracked fields', () => {
             recordId: initialMock.id,
             optionalFields: [
                 'TestD__c.CreatedBy.Id',
-                'TestD__c.CreatedBy.Name',
                 'TestD__c.CreatedById',
                 'TestD__c.CreatedDate',
                 'TestD__c.LastModifiedBy.Id',
-                'TestD__c.LastModifiedBy.Name',
                 'TestD__c.LastModifiedById',
                 'TestD__c.LastModifiedDate',
                 'TestD__c.Name',
                 'TestD__c.Owner.Id',
-                'TestD__c.Owner.Name',
                 'TestD__c.OwnerId',
                 'TestD__c.TestC__r.Id',
             ],
         };
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshConfig.optionalFields.push(
+                'TestD__c.CreatedBy.Name',
+                'TestD__c.LastModifiedBy.Name',
+                'TestD__c.Owner.Name'
+            );
+            refreshConfig.optionalFields.sort();
+        }
 
         mockGetRecordNetwork(refreshConfig, refreshMock);
 
@@ -417,20 +435,26 @@ describe('tracked fields', () => {
             recordId: initialMock.id,
             optionalFields: [
                 'TestD__c.CreatedBy.Id',
-                'TestD__c.CreatedBy.Name',
                 'TestD__c.CreatedById',
                 'TestD__c.CreatedDate',
                 'TestD__c.LastModifiedBy.Id',
-                'TestD__c.LastModifiedBy.Name',
                 'TestD__c.LastModifiedById',
                 'TestD__c.LastModifiedDate',
                 'TestD__c.Name',
                 'TestD__c.Owner.Id',
-                'TestD__c.Owner.Name',
                 'TestD__c.OwnerId',
                 'TestD__c.TestC__r.Id',
             ],
         };
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshConfig.optionalFields.push(
+                'TestD__c.CreatedBy.Name',
+                'TestD__c.LastModifiedBy.Name',
+                'TestD__c.Owner.Name'
+            );
+            refreshConfig.optionalFields.sort();
+        }
 
         mockGetRecordNetwork(refreshConfig, refreshMock);
 
@@ -478,21 +502,27 @@ describe('tracked fields', () => {
             recordId: initialMock.id,
             optionalFields: [
                 'TestD__c.CreatedBy.Id',
-                'TestD__c.CreatedBy.Name',
                 'TestD__c.CreatedById',
                 'TestD__c.CreatedDate',
                 'TestD__c.LastModifiedBy.Id',
-                'TestD__c.LastModifiedBy.Name',
                 'TestD__c.LastModifiedById',
                 'TestD__c.LastModifiedDate',
                 'TestD__c.Name',
                 'TestD__c.Owner.Id',
-                'TestD__c.Owner.Name',
                 'TestD__c.OwnerId',
                 'TestD__c.TestC__r.Id',
                 'TestD__c.TestC__r.NoExist',
             ],
         };
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshConfig.optionalFields.push(
+                'TestD__c.CreatedBy.Name',
+                'TestD__c.LastModifiedBy.Name',
+                'TestD__c.Owner.Name'
+            );
+            refreshConfig.optionalFields.sort();
+        }
 
         mockGetRecordNetwork(refreshConfig, refreshMock);
 
@@ -546,7 +576,6 @@ describe('tracked fields', () => {
                 'ADM_Work__c.Badge__c',
                 'ADM_Work__c.Badge__r',
                 'ADM_Work__c.CreatedBy.Id',
-                'ADM_Work__c.CreatedBy.Name',
                 'ADM_Work__c.CreatedById',
                 'ADM_Work__c.CreatedDate',
                 'ADM_Work__c.Customer__c',
@@ -557,19 +586,15 @@ describe('tracked fields', () => {
                 'ADM_Work__c.Epic__r.CreatedBy.Id',
                 'ADM_Work__c.Found_in_Build__c',
                 'ADM_Work__c.Found_in_Build__r.Id',
-                'ADM_Work__c.Found_in_Build__r.Name',
                 'ADM_Work__c.Frequency__c',
                 'ADM_Work__c.Frequency__r.Id',
-                'ADM_Work__c.Frequency__r.Name',
                 'ADM_Work__c.Gack_First_Seen__c',
                 'ADM_Work__c.Gack_Occurrences__c',
                 'ADM_Work__c.Help_Status__c',
                 'ADM_Work__c.Impact__c',
                 'ADM_Work__c.Impact__r.Id',
-                'ADM_Work__c.Impact__r.Name',
                 'ADM_Work__c.Known_Issue_Link__c',
                 'ADM_Work__c.LastModifiedBy.Id',
-                'ADM_Work__c.LastModifiedBy.Name',
                 'ADM_Work__c.LastModifiedById',
                 'ADM_Work__c.LastModifiedDate',
                 'ADM_Work__c.Number_of_Cases__c',
@@ -582,10 +607,8 @@ describe('tracked fields', () => {
                 'ADM_Work__c.Product_Legal_Request__r',
                 'ADM_Work__c.Product_Owner__c',
                 'ADM_Work__c.Product_Owner__r.Id',
-                'ADM_Work__c.Product_Owner__r.Name',
                 'ADM_Work__c.Product_Tag__c',
                 'ADM_Work__c.Product_Tag__r.Id',
-                'ADM_Work__c.Product_Tag__r.Name',
                 'ADM_Work__c.QA_Engineer__c',
                 'ADM_Work__c.QA_Engineer__r',
                 'ADM_Work__c.Readme_Notes__c',
@@ -593,7 +616,6 @@ describe('tracked fields', () => {
                 'ADM_Work__c.Resolution__c',
                 'ADM_Work__c.Scheduled_Build__c',
                 'ADM_Work__c.Scheduled_Build__r.Id',
-                'ADM_Work__c.Scheduled_Build__r.Name',
                 'ADM_Work__c.Sprint__c',
                 'ADM_Work__c.Sprint__r',
                 'ADM_Work__c.Stack_Trace_Link__c',
@@ -615,6 +637,20 @@ describe('tracked fields', () => {
                 'ADM_Work__c.visual_link_num_of_Test_Failures__c',
             ],
         };
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            refreshConfig.optionalFields.push(
+                'ADM_Work__c.CreatedBy.Name',
+                'ADM_Work__c.Found_in_Build__r.Name',
+                'ADM_Work__c.Frequency__r.Name',
+                'ADM_Work__c.Impact__r.Name',
+                'ADM_Work__c.LastModifiedBy.Name',
+                'ADM_Work__c.Product_Owner__r.Name',
+                'ADM_Work__c.Product_Tag__r.Name',
+                'ADM_Work__c.Scheduled_Build__r.Name'
+            );
+            refreshConfig.optionalFields.sort();
+        }
 
         mockGetRecordNetwork(refreshConfig, refreshMock);
 

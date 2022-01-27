@@ -11,6 +11,7 @@ import {
     expireRecords,
     expireLayoutUserState,
     extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
     LayoutMode,
     LayoutType,
     MASTER_RECORD_TYPE_ID,
@@ -49,6 +50,7 @@ describe('refresh', () => {
         const recordId = getRecordIdFromMock(mockRecordUiData);
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
 
@@ -83,6 +85,7 @@ describe('refresh', () => {
         const recordId = getRecordIdFromMock(mockRecordUiData);
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
 
@@ -150,6 +153,7 @@ describe('refresh', () => {
 
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
         const config = {
@@ -194,6 +198,7 @@ describe('refresh', () => {
 
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
         const config = {
@@ -443,6 +448,7 @@ describe('refresh', () => {
         const recordIdTwo = getRecordIdFromMock(mockRecordUiData, 1);
         const recordFieldsOne = extractRecordFields(mockRecordUiData.records[recordIdOne], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
 
@@ -505,6 +511,7 @@ describe('getRecordUi_imperative', () => {
         const recordId = getRecordIdFromMock(mockRecordUiData1);
         const recordFields = extractRecordFields(mockRecordUiData1.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
 

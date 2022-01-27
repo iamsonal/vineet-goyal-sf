@@ -3,6 +3,7 @@ import { flushPromises, setupElement, getMock as globalGetMock, stripEtags } fro
 import {
     MASTER_RECORD_TYPE_ID,
     extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
     mockGetRecordNetwork,
     mockGetRecordUiNetwork,
     mockGetLayoutNetwork,
@@ -354,6 +355,7 @@ describe('refresh', () => {
                 recordId,
                 optionalFields: extractRecordFields(refreshMockRecordData, {
                     omit: ['Opportunity.Campaign'],
+                    useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
                     add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
                 }),
             },

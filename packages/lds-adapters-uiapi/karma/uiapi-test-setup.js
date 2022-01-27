@@ -1,4 +1,5 @@
 import { clone, stripProperties } from 'test-util';
+import { setTrackedFieldsConfig } from 'uiapi-test-util';
 
 function formatResults(recordIds, results) {
     return results.reduce(function (seed, avatar, index) {
@@ -113,4 +114,6 @@ const matchers = {
 
 beforeAll(() => {
     jasmine.addMatchers(matchers);
+    const isTrackedFieldsConfig = window.__karma__.config.args.includes('ldsTrackedFieldsConfig');
+    setTrackedFieldsConfig(isTrackedFieldsConfig);
 });

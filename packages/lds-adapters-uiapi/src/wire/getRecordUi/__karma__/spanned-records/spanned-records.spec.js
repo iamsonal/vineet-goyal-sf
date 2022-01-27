@@ -3,7 +3,10 @@ import { expireRecordUi, mockGetRecordNetwork, mockGetRecordUiNetwork } from 'ui
 
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import RecordUi from '../lwc/record-ui';
-import { extractRecordFields } from '../../../../../karma/uiapi-test-util';
+import {
+    extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
+} from '../../../../../karma/uiapi-test-util';
 
 const MOCK_PREFIX = 'wire/getRecordUi/__karma__/spanned-records/data/';
 
@@ -149,22 +152,37 @@ describe('single recordId - spanned record', () => {
         // 2nd request returns with a populated spanning record
         mockGetRecordUiNetwork(recordUiConfig, [mockRecordUiData, mockRecordUiDataWithAssignee_To]);
 
+        let optionalFields;
+        if (getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields = extractRecordFields(
+                mockRecordUiDataWithAssignee_To.records[recordId],
+                {
+                    omit: ['Contact.ReportsTo'],
+                    useNewTrackedFieldBehavior: true,
+                    add: ['Contact.ReportsTo.Id', 'Contact.ReportsTo.Name'],
+                }
+            );
+        } else {
+            optionalFields = extractRecordFields(
+                mockRecordUiDataWithAssignee_To.records[recordId],
+                {
+                    omit: ['Contact.ReportsTo'],
+                    useNewTrackedFieldBehavior: false,
+                    add: [
+                        'Contact.CreatedBy.SystemModstamp',
+                        'Contact.LastModifiedBy.SystemModstamp',
+                        'Contact.ReportsTo.Id',
+                        'Contact.ReportsTo.Name',
+                    ],
+                }
+            );
+        }
+
         // 3rd request (from record merge conflict)
         mockGetRecordNetwork(
             {
                 recordId,
-                optionalFields: extractRecordFields(
-                    mockRecordUiDataWithAssignee_To.records[recordId],
-                    {
-                        omit: ['Contact.ReportsTo'],
-                        add: [
-                            'Contact.CreatedBy.SystemModstamp',
-                            'Contact.LastModifiedBy.SystemModstamp',
-                            'Contact.ReportsTo.Id',
-                            'Contact.ReportsTo.Name',
-                        ],
-                    }
-                ),
+                optionalFields,
             },
             mockRecordUiDataWithAssignee_To.records[recordId]
         );

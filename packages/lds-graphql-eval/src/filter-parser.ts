@@ -338,6 +338,7 @@ type BooleanOperator = Operator<ScalarOperatorType, BooleanLiteral, 'BooleanOper
 type DateOperator = Operator<ScalarOperatorType, DateInput, 'DateOperator'>;
 type DateTimeOperator = Operator<ScalarOperatorType, DateTimeInput, 'DateTimeOperator'>;
 type PicklistOperator = Operator<PicklistOperatorType, StringLiteral, 'PicklistOperator'>;
+type CurrencyOperator = Operator<ScalarOperatorType, DoubleLiteral, 'CurrencyOperator'>;
 
 type StringSetOperator = Operator<SetOperatorType, StringArray, 'StringSetOperator'>;
 type PicklistSetOperator = Operator<SetOperatorType, StringArray, 'PicklistSetOperator'>;
@@ -345,6 +346,7 @@ type DateSetOperator = Operator<SetOperatorType, DateArray, 'DateSetOperator'>;
 type DateTimeSetOperator = Operator<SetOperatorType, DateTimeArray, 'DateTimeSetOperator'>;
 type IntSetOperator = Operator<SetOperatorType, NumberArray, 'IntSetOperator'>;
 type DoubleSetOperator = Operator<SetOperatorType, NumberArray, 'DoubleSetOperator'>;
+type CurrencySetOperator = Operator<SetOperatorType, NumberArray, 'CurrencySetOperator'>;
 
 type ScalarOperators =
     | StringOperator
@@ -353,7 +355,8 @@ type ScalarOperators =
     | IntOperator
     | DoubleOperator
     | BooleanOperator
-    | PicklistOperator;
+    | PicklistOperator
+    | CurrencyOperator;
 
 type SetOperators =
     | StringSetOperator
@@ -361,7 +364,8 @@ type SetOperators =
     | DateTimeSetOperator
     | IntSetOperator
     | DoubleSetOperator
-    | PicklistSetOperator;
+    | PicklistSetOperator
+    | CurrencySetOperator;
 
 const dateRegEx = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
 const dateTimeRegEx =
@@ -470,6 +474,10 @@ function isPicklistOperatorType(value: string): value is PicklistOperatorType {
     return values.includes(value as PicklistOperatorType);
 }
 
+function isCurrencyOperatorType(value: string): value is ScalarOperatorType {
+    return isScalarOperatorType(value);
+}
+
 function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
     list: { values: LuvioValueNode[] },
     kind: ExtractKind<T>
@@ -491,13 +499,13 @@ function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
 function operatorWithValue(
     operator: string,
     value: LuvioValueNode,
-    schemaType: DataType
+    objectInfoDataType: DataType
 ): Result<ScalarOperators | SetOperators | NullOperator, PredicateError[]> {
     if (is<NullValueNode>(value, 'NullValue')) {
         return parseNullValue(operator).mapError((e) => [e]);
     }
 
-    if (schemaType === 'String' || schemaType === 'Reference') {
+    if (objectInfoDataType === 'String' || objectInfoDataType === 'Reference') {
         if (isStringOperatorType(operator)) {
             return is<StringValueNode>(value, 'StringValue')
                 ? success({
@@ -523,7 +531,7 @@ function operatorWithValue(
         }
     }
 
-    if (schemaType === 'Int') {
+    if (objectInfoDataType === 'Int') {
         if (isScalarOperatorType(operator)) {
             return is<IntValueNode>(value, 'IntValue')
                 ? success({
@@ -552,7 +560,7 @@ function operatorWithValue(
         }
     }
 
-    if (schemaType === 'Double') {
+    if (objectInfoDataType === 'Double') {
         if (isScalarOperatorType(operator)) {
             return is<FloatValueNode>(value, 'FloatValue')
                 ? success({
@@ -581,7 +589,7 @@ function operatorWithValue(
         }
     }
 
-    if (schemaType === 'Boolean') {
+    if (objectInfoDataType === 'Boolean') {
         if (isBooleanOperatorType(operator)) {
             return is<BooleanValueNode>(value, 'BooleanValue')
                 ? success({
@@ -593,7 +601,7 @@ function operatorWithValue(
         }
     }
 
-    if (schemaType === 'Date') {
+    if (objectInfoDataType === 'Date') {
         if (isScalarOperatorType(operator)) {
             const result = dateInput(value).mapError((e) => [e]);
             if (result.isSuccess === false) {
@@ -623,7 +631,7 @@ function operatorWithValue(
         }
     }
 
-    if (schemaType === 'DateTime') {
+    if (objectInfoDataType === 'DateTime') {
         if (isScalarOperatorType(operator)) {
             const result = dateTimeInput(value).mapError((e) => [e]);
             if (result.isSuccess === false) {
@@ -653,7 +661,7 @@ function operatorWithValue(
         }
     }
 
-    if (schemaType === 'Picklist') {
+    if (objectInfoDataType === 'Picklist') {
         if (isPicklistOperatorType(operator)) {
             return is<StringValueNode>(value, 'StringValue')
                 ? success({
@@ -661,7 +669,7 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.StringLiteral, value: value.value },
                   })
-                : failure([message(`Comparison value must be a picklist.`)]);
+                : failure([message(`Comparison value must be a Picklist.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -675,12 +683,41 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([message(`Comparison value must be a picklist array.`)]);
+                : failure([message(`Comparison value must be a Picklist array.`)]);
+        }
+    }
+
+    if (objectInfoDataType === 'Currency') {
+        if (isCurrencyOperatorType(operator)) {
+            return is<FloatValueNode>(value, 'FloatValue')
+                ? success({
+                      type: 'CurrencyOperator',
+                      operator,
+                      value: { type: ValueType.DoubleLiteral, value: parseFloat(value.value) },
+                  })
+                : failure([message(`Comparison value must be a Currency.`)]);
+        }
+
+        if (isSetOperatorType(operator)) {
+            return is<ListValueNode>(value, 'ListValue')
+                ? listNodeToTypeArray<FloatValueNode, string>(value, 'FloatValue')
+                      .map((strings): CurrencySetOperator => {
+                          return {
+                              operator,
+                              type: 'CurrencySetOperator',
+                              value: {
+                                  type: ValueType.NumberArray,
+                                  value: strings.map(parseFloat),
+                              },
+                          };
+                      })
+                      .mapError((e) => [e])
+                : failure([message(`Comparison value must be a Currency array.`)]);
         }
     }
 
     return failure([
-        message(`Comparison operator ${operator} is not supported for type ${schemaType}.`),
+        message(`Comparison operator ${operator} is not supported for type ${objectInfoDataType}.`),
     ]);
 }
 

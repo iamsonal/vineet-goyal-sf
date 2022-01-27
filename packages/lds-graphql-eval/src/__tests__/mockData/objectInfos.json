@@ -1,18 +1,16 @@
 {
     "User": {
-        "childRelationships": {},
-
+        "childRelationships": [],
         "fields": {
             "Id": { "dataType": "String", "apiName": "Id" },
             "Email": { "dataType": "String", "apiName": "Email" },
+            "SmallPhotoUrl": { "apiName": "SmallPhotoUrl", "dataType": "Url" },
+            "MobilePhone": { "apiName": "MobilePhone", "dataType": "Phone" },
+            "Signature": { "apiName": "Signature", "dataType": "TextArea" },
             "CreatedById": {
                 "apiName": "CreatedById",
                 "dataType": "Reference",
-                "referenceToInfos": [
-                    {
-                        "apiName": "User"
-                    }
-                ],
+                "referenceToInfos": [{ "apiName": "User" }],
                 "relationshipName": "CreatedBy"
             }
         }
@@ -77,7 +75,7 @@
     },
 
     "TimeSheetEntry": {
-        "childRelationships": {},
+        "childRelationships": [],
 
         "fields": {
             "Id": { "dataType": "String", "apiName": "Id" },
@@ -107,7 +105,7 @@
     },
 
     "ProcessInstance": {
-        "childRelationships": {},
+        "childRelationships": [],
 
         "fields": {
             "Id": { "dataType": "Boolean", "apiName": "Id" }
@@ -4351,7 +4349,12 @@
             }
         }
     },
-
+    "Opportunity": {
+        "childRelationships": [],
+        "fields": {
+            "Probability": { "apiName": "Probability", "dataType": "Percent" }
+        }
+    },
     "Account": {
         "childRelationships": [
             {
@@ -4720,71 +4723,14 @@
             }
         ],
         "fields": {
+            "AnnualRevenue": { "apiName": "AnnualRevenue", "dataType": "Currency" },
             "CreatedDate": {
                 "apiName": "CreatedDate",
-                "calculated": false,
-                "compound": false,
-                "compoundComponentName": null,
-                "compoundFieldName": null,
-                "controllerName": null,
-                "controllingFields": [],
-                "createable": false,
-                "custom": false,
-                "dataType": "DateTime",
-                "extraTypeInfo": null,
-                "filterable": true,
-                "filteredLookupInfo": null,
-                "highScaleNumber": false,
-                "htmlFormatted": false,
-                "inlineHelpText": null,
-                "label": "Created Date",
-                "length": 0,
-                "nameField": false,
-                "polymorphicForeignKey": false,
-                "precision": 0,
-                "reference": false,
-                "referenceTargetField": null,
-                "referenceToInfos": [],
-                "relationshipName": null,
-                "required": true,
-                "scale": 0,
-                "searchPrefilterable": false,
-                "sortable": true,
-                "unique": false,
-                "updateable": false
+                "dataType": "DateTime"
             },
             "Name": {
                 "apiName": "Name",
-                "calculated": false,
-                "compound": true,
-                "compoundComponentName": null,
-                "compoundFieldName": "Name",
-                "controllerName": null,
-                "controllingFields": [],
-                "createable": true,
-                "custom": false,
-                "dataType": "String",
-                "extraTypeInfo": "SwitchablePersonName",
-                "filterable": true,
-                "filteredLookupInfo": null,
-                "highScaleNumber": false,
-                "htmlFormatted": false,
-                "inlineHelpText": null,
-                "label": "Account Name",
-                "length": 255,
-                "nameField": true,
-                "polymorphicForeignKey": false,
-                "precision": 0,
-                "reference": false,
-                "referenceTargetField": null,
-                "referenceToInfos": [],
-                "relationshipName": null,
-                "required": true,
-                "scale": 0,
-                "searchPrefilterable": false,
-                "sortable": true,
-                "unique": false,
-                "updateable": true
+                "dataType": "String"
             }
         }
     },

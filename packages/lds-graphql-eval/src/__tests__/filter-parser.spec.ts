@@ -759,6 +759,112 @@ describe('filter-parser', () => {
 
                 [ComparisonOperator.in, nin].forEach(testWithOperator);
             });
+
+            it('returns predicate when currency field is paired with supported scalar operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'Account',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    AnnualRevenue: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: {
+                                                kind: 'FloatValue',
+                                                value: '123.45',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'Account',
+                        'Account',
+                        objectInfoMap
+                    );
+
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.AnnualRevenue.value', {
+                            type: 'DoubleLiteral',
+                            value: 123.45,
+                        })
+                    );
+                };
+
+                [eq, ne, lt, gt, lte, gte].forEach(testWithOperator);
+            });
+
+            it('returns predicate when currency field is paired with supported IN, NIN operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'Account',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    AnnualRevenue: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: listNode([doubleNode('123.45')]),
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'Account',
+                        'Account',
+                        objectInfoMap
+                    );
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.AnnualRevenue.value', {
+                            type: 'NumberArray',
+                            value: [123.45],
+                        })
+                    );
+                };
+
+                [ComparisonOperator.in, nin].forEach(testWithOperator);
+            });
         });
 
         describe('Field operator errors', () => {
@@ -1006,7 +1112,24 @@ describe('filter-parser', () => {
 
                 expect(filter.isSuccess).toEqual(false);
                 const { message } = filter.error[0] as MessageError;
-                expect(message).toEqual('Comparison value must be a picklist array.');
+                expect(message).toEqual('Comparison value must be a Picklist array.');
+            });
+
+            it('returns error when currency operator is paired with unsupported values', () => {
+                let filter = recordFilter(
+                    where({
+                        AnnualRevenue: objNode({
+                            [nin]: stringNode('foo'),
+                        }),
+                    }),
+                    'Account',
+                    'Account',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                expect(filter.isSuccess).toEqual(false);
+                const { message } = filter.error[0] as MessageError;
+                expect(message).toEqual('Comparison value must be a Currency array.');
             });
         });
 

@@ -10,6 +10,7 @@ import {
     StoreLookup,
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    ErrorSnapshot,
 } from '@luvio/engine';
 
 import {
@@ -28,6 +29,7 @@ import {
     ResourceRequestConfig,
     createResourceRequest,
     keyBuilder,
+    getResponseCacheKeys,
 } from '../../generated/resources/getUiApiListUiByObjectApiName';
 import { minimizeRequest } from '../../util/pagination';
 
@@ -141,10 +143,19 @@ export function buildNetworkSnapshot(
         .dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request, override)
         .then(
             (resp: FetchResponse<ListViewSummaryCollectionRepresentation>) => {
-                return onResourceSuccess(luvio, config, key, resp);
+                return luvio.handleSuccessResponse(
+                    () => {
+                        return onResourceSuccess(luvio, config, key, resp);
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, resp.body);
+                    }
+                );
             },
             (error: FetchResponse<unknown>) => {
-                return onResourceError(luvio, config, key, error);
+                return luvio.handleErrorResponse(() => {
+                    return onResourceError(luvio, config, key, error);
+                }) as ErrorSnapshot;
             }
         );
 }

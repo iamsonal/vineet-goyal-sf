@@ -9,6 +9,7 @@ import {
     StoreLookup,
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    ErrorSnapshot,
 } from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
 import {
@@ -180,7 +181,9 @@ export function buildNetworkSnapshot(
             );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError(luvio, config, key, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceError(luvio, config, key, err);
+            }) as ErrorSnapshot;
         }
     );
 }

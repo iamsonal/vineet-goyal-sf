@@ -10,8 +10,13 @@ import {
     keyBuilder,
 } from '../../../generated/types/RecordLayoutUserStateRepresentation';
 import { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
-import { default as resources_getUiApiLayoutUserStateByObjectApiName_default } from '../../../generated/resources/getUiApiLayoutUserStateByObjectApiName';
+
+import {
+    default as resources_getUiApiLayoutUserStateByObjectApiName_default,
+    getResponseCacheKeys,
+} from '../../../generated/resources/getUiApiLayoutUserStateByObjectApiName';
 import { buildCachedSnapshot } from './buildCachedSnapshot';
+
 import { ingest } from '../../../generated/types/RecordLayoutUserStateRepresentation';
 
 export function buildNetworkSnapshot(
@@ -19,16 +24,25 @@ export function buildNetworkSnapshot(
     config: GetLayoutUserStateConfig,
     override?: ResourceRequestOverride
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation>> {
-    const { request, key } = prepareRequest(config);
+    const { resourceParams, request, key } = prepareRequest(config);
 
     return luvio
         .dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request, override)
         .then(
             (response) => {
-                return onResourceResponseSuccess(luvio, config, key, response);
+                return luvio.handleSuccessResponse(
+                    () => {
+                        return onResourceResponseSuccess(luvio, config, key, response);
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, response.body);
+                    }
+                );
             },
             (error: FetchResponse<unknown>) => {
-                return onResourceResponseError(luvio, config, key, error);
+                return luvio.handleErrorResponse(() =>
+                    onResourceResponseError(luvio, config, key, error)
+                );
             }
         );
 }
@@ -76,14 +90,16 @@ function prepareRequest(config: GetLayoutUserStateConfig) {
         mode,
     });
 
-    const request = resources_getUiApiLayoutUserStateByObjectApiName_default({
+    const resourceParams = {
         urlParams: { objectApiName: config.objectApiName },
         queryParams: {
             layoutType: config.layoutType,
             mode: config.mode,
             recordTypeId: config.recordTypeId,
         },
-    });
+    };
 
-    return { request, key };
+    const request = resources_getUiApiLayoutUserStateByObjectApiName_default(resourceParams);
+
+    return { resourceParams, request, key };
 }

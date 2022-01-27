@@ -455,7 +455,9 @@ export function buildNetworkSnapshot(
             );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, config, selectorKey, key, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceResponseError(luvio, config, selectorKey, key, err);
+            });
         }
     );
 }

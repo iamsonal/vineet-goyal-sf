@@ -125,6 +125,7 @@ describe('isContinuation Header', () => {
                     }
                 ),
             dispatchResourceRequest: jest.fn().mockReturnValue(Promise.resolve({})),
+            handleSuccessResponse: jest.fn().mockReturnValue(Promise.resolve({})),
             withContext: (fn: any) => fn,
             snapshotAvailable: jest.fn().mockReturnValue(false),
         };

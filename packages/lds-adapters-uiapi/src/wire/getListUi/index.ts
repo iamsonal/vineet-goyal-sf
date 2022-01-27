@@ -409,7 +409,9 @@ function buildNetworkSnapshot_getListUi(
             );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getListUi(luvio, context, config, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceError_getListUi(luvio, context, config, err);
+            });
         }
     );
 }
@@ -563,7 +565,9 @@ function buildNetworkSnapshot_getListRecords(
             );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getListRecords(luvio, context, config, listInfo, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceError_getListRecords(luvio, context, config, listInfo, err);
+            });
         }
     );
 }

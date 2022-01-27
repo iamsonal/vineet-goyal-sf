@@ -8,6 +8,7 @@ import {
     AdapterRequestContext,
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    ErrorSnapshot,
 } from '@luvio/engine';
 
 import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
@@ -22,6 +23,7 @@ import { ObjectId } from '../../primitives/ObjectId';
 import getLookupRecordsResourceRequest, {
     keyBuilder,
     ResourceRequestConfig,
+    getResponseCacheKeys,
 } from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import { deepFreeze } from '../../util/deep-freeze';
 import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
@@ -145,32 +147,41 @@ export function buildNetworkSnapshot(
 
     return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request, override).then(
         (response) => {
-            // TODO [W-7235112]: remove this hack to never ingest lookup responses that
-            // avoids issues caused by them not being real RecordRepresentations
-            const key = keyBuilder(resourceParams);
-            const { body } = response;
-            const { records } = body;
-            for (let i = 0, len = records.length; i < len; i += 1) {
-                removeEtags(records[i]);
-            }
-            deepFreeze(body);
-            return {
-                state: 'Fulfilled',
-                recordId: key,
-                variables: {},
-                seenRecords: {},
-                select: {
-                    recordId: key,
-                    node: {
-                        kind: 'Fragment',
-                    },
-                    variables: {},
+            return luvio.handleSuccessResponse(
+                () => {
+                    // TODO [W-7235112]: remove this hack to never ingest lookup responses that
+                    // avoids issues caused by them not being real RecordRepresentations
+                    const key = keyBuilder(resourceParams);
+                    const { body } = response;
+                    const { records } = body;
+                    for (let i = 0, len = records.length; i < len; i += 1) {
+                        removeEtags(records[i]);
+                    }
+                    deepFreeze(body);
+                    return {
+                        state: 'Fulfilled',
+                        recordId: key,
+                        variables: {},
+                        seenRecords: {},
+                        select: {
+                            recordId: key,
+                            node: {
+                                kind: 'Fragment',
+                            },
+                            variables: {},
+                        },
+                        data: body,
+                    } as FulfilledSnapshot<RecordCollectionRepresentation, {}>;
                 },
-                data: body,
-            } as FulfilledSnapshot<RecordCollectionRepresentation, {}>;
+                () => {
+                    return getResponseCacheKeys(resourceParams, response.body);
+                }
+            );
         },
         (err: FetchResponse<unknown>) => {
-            return luvio.errorSnapshot(err);
+            return luvio.handleErrorResponse(() => {
+                return luvio.errorSnapshot(err);
+            }) as ErrorSnapshot;
         }
     );
 }

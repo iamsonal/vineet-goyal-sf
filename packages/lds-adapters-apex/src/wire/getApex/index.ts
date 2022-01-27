@@ -197,11 +197,18 @@ export function buildNetworkSnapshot(
     const request = createResourceRequest(resourceParams);
     return luvio.dispatchResourceRequest<any>(request, override).then(
         (response) => {
-            // TODO [W-10155026]: this should call luvio.handleSuccessResponse
-            return onResourceResponseSuccess(luvio, context, config, resourceParams, response);
+            return luvio.handleSuccessResponse(
+                () => onResourceResponseSuccess(luvio, context, config, resourceParams, response),
+                // TODO [W-10490362]: Properly generate the response cache keys
+                () => {
+                    return {};
+                }
+            );
         },
         (response: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, context, config, resourceParams, response);
+            return luvio.handleErrorResponse(() =>
+                onResourceResponseError(luvio, context, config, resourceParams, response)
+            );
         }
     );
 }

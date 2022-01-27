@@ -14,7 +14,9 @@ import {
     adapterName as getPicklistValuesAdapterName,
     validateAdapterConfig,
 } from '../../generated/adapters/getPicklistValues';
-import getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName from '../../generated/resources/getUiApiObjectInfoPicklistValuesByFieldApiNameAndObjectApiNameAndRecordTypeId';
+import getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName, {
+    getResponseCacheKeys,
+} from '../../generated/resources/getUiApiObjectInfoPicklistValuesByFieldApiNameAndObjectApiNameAndRecordTypeId';
 import {
     PicklistValuesRepresentation,
     keyBuilder as picklistValuesKeyBuilder,
@@ -43,16 +45,20 @@ function buildSnapshotRefresh(
 function buildRequestAndKey(config: GetPicklistValuesConfig) {
     const { recordTypeId, fieldApiName } = config;
     const fieldNames = getFieldId(fieldApiName);
-    const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
+    const resourceParams = {
         urlParams: {
             objectApiName: fieldNames.objectApiName,
             fieldApiName: fieldNames.fieldApiName,
             recordTypeId,
         },
-    });
+    };
+    const request =
+        getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName(
+            resourceParams
+        );
 
     const key = picklistValuesKeyBuilder({ id: `${request.baseUri}${request.basePath}` });
-    return { request, key };
+    return { resourceParams, request, key };
 }
 
 function onResponseSuccess(
@@ -85,14 +91,23 @@ export function buildNetworkSnapshot(
     config: GetPicklistValuesConfig,
     override?: ResourceRequestOverride
 ): Promise<Snapshot<PicklistValuesRepresentation>> {
-    const { request, key } = buildRequestAndKey(config);
+    const { resourceParams, request, key } = buildRequestAndKey(config);
 
     return luvio.dispatchResourceRequest<PicklistValuesRepresentation>(request, override).then(
         (response) => {
-            return onResponseSuccess(luvio, config, key, response);
+            return luvio.handleSuccessResponse(
+                () => {
+                    return onResponseSuccess(luvio, config, key, response);
+                },
+                () => {
+                    return getResponseCacheKeys(resourceParams, response.body);
+                }
+            );
         },
         (err: FetchResponse<unknown>) => {
-            return onResponseError(luvio, config, key, err);
+            return luvio.handleErrorResponse(() => {
+                return onResponseError(luvio, config, key, err);
+            });
         }
     );
 }

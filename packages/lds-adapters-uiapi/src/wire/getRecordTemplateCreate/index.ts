@@ -26,6 +26,7 @@ import {
     keyBuilder,
     ingestError,
     ResourceRequestConfig,
+    getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 import { adapterFragment } from '../../generated/fields/adapters/getRecordTemplateCreate';
 import { RecordDefaultsTemplateCreateRepresentation } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
@@ -204,17 +205,32 @@ function buildNetworkSnapshot(
         .dispatchResourceRequest<RecordDefaultsTemplateCreateRepresentation>(request, override)
         .then(
             (response) => {
-                return onResourceResponseSuccess(
-                    luvio,
-                    context,
-                    config,
-                    request,
-                    response,
-                    resourceParams
+                return luvio.handleSuccessResponse(
+                    () => {
+                        return onResourceResponseSuccess(
+                            luvio,
+                            context,
+                            config,
+                            request,
+                            response,
+                            resourceParams
+                        );
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, response.body);
+                    }
                 );
             },
             (response: FetchResponse<unknown>) => {
-                return onResourceResponseError(luvio, context, config, resourceParams, response);
+                return luvio.handleErrorResponse(() => {
+                    return onResourceResponseError(
+                        luvio,
+                        context,
+                        config,
+                        resourceParams,
+                        response
+                    );
+                });
             }
         );
 }

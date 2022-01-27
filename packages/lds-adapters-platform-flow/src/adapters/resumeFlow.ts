@@ -1,4 +1,7 @@
-import { createResourceRequest as resources_postConnectInteractionRuntimeResumeFlowByFlowDevName_createResourceRequest } from '../generated/resources/postConnectInteractionRuntimeResumeFlowByFlowDevName';
+import {
+    createResourceRequest as resources_postConnectInteractionRuntimeResumeFlowByFlowDevName_createResourceRequest,
+    getResponseCacheKeys,
+} from '../generated/resources/postConnectInteractionRuntimeResumeFlowByFlowDevName';
 import {
     Luvio as $64$luvio_engine_Luvio,
     ResourceRequestOverride as $64$luvio_engine_ResourceRequestOverride,
@@ -33,13 +36,22 @@ export function buildNetworkSnapshot(
         )
         .then(
             (response: any) => {
-                deepFreeze(response.body);
-                return response.body;
+                return luvio.handleSuccessResponse(
+                    () => {
+                        deepFreeze(response.body);
+                        return response.body;
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, response.body);
+                    }
+                );
             },
             (response: any) => {
-                // We want to throw these exceptions to be caught in the runtime layer
-                // eslint-disable-next-line @salesforce/lds/no-error-in-production
-                throw new Error(response.body.message || response.body.error || response.body);
+                return luvio.handleErrorResponse(() => {
+                    // We want to throw these exceptions to be caught in the runtime layer
+                    // eslint-disable-next-line @salesforce/lds/no-error-in-production
+                    throw new Error(response.body.message || response.body.error || response.body);
+                });
             }
         );
 }

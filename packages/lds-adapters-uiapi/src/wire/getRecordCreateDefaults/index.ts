@@ -11,11 +11,13 @@ import {
     StoreLookup,
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    ErrorSnapshot,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
     ResourceRequestConfig,
     keyBuilder,
+    getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
 import { createResourceParams } from '../../generated/adapters/getRecordCreateDefaults';
 import {
@@ -90,34 +92,43 @@ export function buildNetworkSnapshot(
 
     return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request, override).then(
         (response) => {
-            const { body } = response;
-            const cacheSelector: Selector = {
-                recordId: key,
-                node: {
-                    kind: 'Fragment',
-                    private: [],
-                    selections: buildSelector(body),
-                },
-                variables: {},
-            };
+            return luvio.handleSuccessResponse(
+                () => {
+                    const { body } = response;
+                    const cacheSelector: Selector = {
+                        recordId: key,
+                        node: {
+                            kind: 'Fragment',
+                            private: [],
+                            selections: buildSelector(body),
+                        },
+                        variables: {},
+                    };
 
-            context.set(selectorKey, cacheSelector);
-            luvio.storeIngest(key, ingest, body);
-            const snapshot = luvio.storeLookup<RecordDefaultsRepresentation>(
-                cacheSelector,
-                buildSnapshotRefresh(luvio, context, config)
+                    context.set(selectorKey, cacheSelector);
+                    luvio.storeIngest(key, ingest, body);
+                    const snapshot = luvio.storeLookup<RecordDefaultsRepresentation>(
+                        cacheSelector,
+                        buildSnapshotRefresh(luvio, context, config)
+                    );
+                    luvio.storeBroadcast();
+                    return snapshot;
+                },
+                () => {
+                    return getResponseCacheKeys(params, response.body);
+                }
             );
-            luvio.storeBroadcast();
-            return snapshot;
         },
         (err: FetchResponse<unknown>) => {
-            const errorSnapshot = luvio.errorSnapshot(
-                err,
-                buildSnapshotRefresh(luvio, context, config)
-            );
-            luvio.storeIngestError(key, errorSnapshot);
-            luvio.storeBroadcast();
-            return errorSnapshot;
+            return luvio.handleErrorResponse(() => {
+                const errorSnapshot = luvio.errorSnapshot(
+                    err,
+                    buildSnapshotRefresh(luvio, context, config)
+                );
+                luvio.storeIngestError(key, errorSnapshot);
+                luvio.storeBroadcast();
+                return errorSnapshot;
+            }) as ErrorSnapshot;
         }
     );
 }

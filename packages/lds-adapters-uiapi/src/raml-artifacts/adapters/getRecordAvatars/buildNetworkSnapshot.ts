@@ -4,6 +4,7 @@ import {
     Snapshot,
     ResourceRequestOverride,
     ResourceResponse,
+    ErrorSnapshot,
 } from '@luvio/engine';
 import { ArrayPrototypeReduce } from '../../../util/language';
 import { ingest as recordAvatarBulkMapRepresentationIngest } from '../../types/RecordAvatarBulkMapRepresentation/ingest';
@@ -138,7 +139,9 @@ export function buildNetworkSnapshot(
                 },
                 (err: FetchResponse<unknown>) => {
                     recordIdsNotInFlight.forEach((id) => IN_FLIGHT_REQUESTS.delete(id));
-                    return onResourceResponseError(luvio, config, resourceParams, err);
+                    return luvio.handleErrorResponse(() => {
+                        return onResourceResponseError(luvio, config, resourceParams, err);
+                    }) as ErrorSnapshot;
                 }
             );
     }

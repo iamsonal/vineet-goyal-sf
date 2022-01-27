@@ -19,7 +19,10 @@ import {
     buildNetworkSnapshot as generatedBuildNetworkSnapshot,
     GetRecordTemplateCloneConfig,
 } from '../../generated/adapters/getRecordTemplateClone';
-import { createResourceRequest } from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
+import {
+    createResourceRequest,
+    getResponseCacheKeys,
+} from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCloneByRecordId/select';
 import {
     RecordDefaultsTemplateCloneRepresentation,
@@ -113,60 +116,72 @@ const buildNetworkSnapshot: (
         .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, override)
         .then(
             (response) => {
-                const { body } = response;
-                const key = templateKeyBuilderFromType(body);
+                return luvio.handleSuccessResponse(
+                    () => {
+                        const { body } = response;
+                        const key = templateKeyBuilderFromType(body);
 
-                const responseRecordTypeId = body.record.recordTypeId;
-                const objectApiName = body.record.apiName;
-                // publish metadata for recordTypeId
-                saveDefaultRecordTypeId(context, body.objectInfos[objectApiName]);
+                        const responseRecordTypeId = body.record.recordTypeId;
+                        const objectApiName = body.record.apiName;
+                        // publish metadata for recordTypeId
+                        saveDefaultRecordTypeId(context, body.objectInfos[objectApiName]);
 
-                const optionalFieldsTrie = convertFieldsToTrie(
-                    resourceParams.queryParams.optionalFields
-                );
-                luvio.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
-                    key,
-                    resourceCreateFieldsIngest({
-                        fields: BLANK_RECORD_FIELDS_TRIE,
-                        optionalFields: optionalFieldsTrie,
-                        trackedFields: optionalFieldsTrie,
-                        serverRequestCount: 1,
-                    }),
-                    body
-                );
-
-                luvio.storeBroadcast();
-                const snapshot = buildCachedSnapshot(luvio, context, {
-                    ...config,
-                    recordTypeId: responseRecordTypeId as string,
-                });
-
-                if (process.env.NODE_ENV !== 'production') {
-                    if (snapshot.state !== 'Fulfilled') {
-                        throw new Error(
-                            'Invalid network response. Expected network response to result in Fulfilled snapshot'
+                        const optionalFieldsTrie = convertFieldsToTrie(
+                            resourceParams.queryParams.optionalFields
                         );
-                    }
-                }
+                        luvio.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
+                            key,
+                            resourceCreateFieldsIngest({
+                                fields: BLANK_RECORD_FIELDS_TRIE,
+                                optionalFields: optionalFieldsTrie,
+                                trackedFields: optionalFieldsTrie,
+                                serverRequestCount: 1,
+                            }),
+                            body
+                        );
 
-                return snapshot as FulfilledSnapshot<RecordDefaultsTemplateCloneRepresentation, {}>;
+                        luvio.storeBroadcast();
+                        const snapshot = buildCachedSnapshot(luvio, context, {
+                            ...config,
+                            recordTypeId: responseRecordTypeId as string,
+                        });
+
+                        if (process.env.NODE_ENV !== 'production') {
+                            if (snapshot.state !== 'Fulfilled') {
+                                throw new Error(
+                                    'Invalid network response. Expected network response to result in Fulfilled snapshot'
+                                );
+                            }
+                        }
+
+                        return snapshot as FulfilledSnapshot<
+                            RecordDefaultsTemplateCloneRepresentation,
+                            {}
+                        >;
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, response.body);
+                    }
+                );
             },
             (response: FetchResponse<unknown>) => {
-                const key = templateKeyBuilder({
-                    cloneSourceId: config.recordId,
-                    recordTypeId: config.recordTypeId || null,
+                return luvio.handleErrorResponse(() => {
+                    const key = templateKeyBuilder({
+                        cloneSourceId: config.recordId,
+                        recordTypeId: config.recordTypeId || null,
+                    });
+                    const errorSnapshot = luvio.errorSnapshot(response, {
+                        config,
+                        resolve: () =>
+                            buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
+                    });
+                    luvio.storeIngestError(
+                        key,
+                        errorSnapshot,
+                        RECORD_TEMPLATE_CLONE_ERROR_STORE_METADATA_PARAMS
+                    );
+                    return errorSnapshot;
                 });
-                const errorSnapshot = luvio.errorSnapshot(response, {
-                    config,
-                    resolve: () =>
-                        buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
-                });
-                luvio.storeIngestError(
-                    key,
-                    errorSnapshot,
-                    RECORD_TEMPLATE_CLONE_ERROR_STORE_METADATA_PARAMS
-                );
-                return errorSnapshot;
             }
         );
 };

@@ -12,19 +12,10 @@ jest.mock('@salesforce/lds-environment-settings', () => {
     };
 });
 
-jest.mock('@salesforce/lds-instrumentation', () => {
-    return {
-        registerLdsCacheStats: () => {},
-    };
-});
-
 import { instrumentation } from '../instrumentation';
 
 const instrumentationSpies = {
     logCrud: jest.spyOn(instrumentation, 'logCrud'),
-    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
-    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
-    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
 };
 
 beforeEach(() => {

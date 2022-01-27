@@ -41,3 +41,5 @@ export default salesforceNetworkAdapter(auraNetworkAdapter);
 
 // Expose module instrumentation
 export { instrument, AuraNetworkInstrumentation } from './instrumentation';
+
+export { forceRecordTransactionsDisabled } from './middlewares/event-logging';

@@ -256,6 +256,7 @@ describe('executeAggregateUi', () => {
                 body: {},
                 method: 'POST',
                 headers: {},
+                priority: 'normal',
             }).then((data: any) => {
                 expect(successfulResponseMock).toHaveBeenCalledTimes(1);
 
@@ -307,55 +308,11 @@ describe('executeAggregateUi', () => {
                 body: {},
                 method: 'POST',
                 headers: {},
+                priority: 'normal',
             }).catch((e) => {
                 expect(unsuccessfulResponseMock).toHaveBeenCalledTimes(1);
 
                 expect(e.status).toBe(HttpStatusCode.ServerError);
-            });
-        });
-
-        it('should throw an exception when the server returns a specific error', () => {
-            const expectedServerResponse = {
-                data: {
-                    statusCode: HttpStatusCode.BadRequest,
-                },
-            };
-
-            const serverErrorResponseMock = jest.fn().mockRejectedValueOnce(expectedServerResponse);
-
-            return dispatchSplitRecordAggregateUiAction('recordid', serverErrorResponseMock, {
-                baseUri: UI_API_BASE_URI,
-                basePath: `${UI_API_BASE_URI}/aggregate-ui`,
-                urlParams: {},
-                queryParams: {},
-                body: {},
-                method: 'POST',
-                headers: {},
-            }).catch((e) => {
-                expect(serverErrorResponseMock).toHaveBeenCalledTimes(1);
-                expect(e.body.statusCode).toEqual(HttpStatusCode.BadRequest);
-            });
-        });
-
-        it('should throw an exception when the server returns a generic error', () => {
-            const expectedServerResponse = {
-                message: 'heya',
-            };
-
-            const serverErrorResponseMock = jest.fn().mockRejectedValueOnce(expectedServerResponse);
-
-            return dispatchSplitRecordAggregateUiAction('recordid', serverErrorResponseMock, {
-                baseUri: UI_API_BASE_URI,
-                basePath: `${UI_API_BASE_URI}/aggregate-ui`,
-                urlParams: {},
-                queryParams: {},
-                body: {},
-                method: 'POST',
-                headers: {},
-            }).catch((e) => {
-                expect(serverErrorResponseMock).toHaveBeenCalledTimes(1);
-                expect(e.status).toEqual(HttpStatusCode.ServerError);
-                expect(e.body.error).toEqual(expectedServerResponse.message);
             });
         });
 
@@ -370,6 +327,7 @@ describe('executeAggregateUi', () => {
                 body: {},
                 method: 'POST',
                 headers: {},
+                priority: 'normal',
             }).catch((e) => {
                 expect(emptyBodyResponseMock).toHaveBeenCalledTimes(1);
                 expect(e.status).toEqual(HttpStatusCode.ServerError);

@@ -23,8 +23,8 @@ export interface RecordInstrumentationCallbacks {
     createRecordResolveFunction: InstrumentationResolveCallback;
     deleteRecordRejectFunction: InstrumentationRejectCallback;
     deleteRecordResolveFunction: InstrumentationResolveCallback;
-    getRecordAggregateRejectFunction: InstrumentationRejectCallback;
-    getRecordAggregateResolveFunction: InstrumentationResolveCallback;
+    getRecordAggregateRejectFunction: InstrumentationRejectCallback; // handled in lds-network-adapter
+    getRecordAggregateResolveFunction: InstrumentationResolveCallback; // handled in lds-network-adapter
     getRecordRejectFunction: InstrumentationRejectCallback;
     getRecordResolveFunction: InstrumentationResolveCallback;
     updateRecordRejectFunction: InstrumentationRejectCallback;

@@ -2,29 +2,12 @@
  * Instrumentation hooks exposed by this module.
  */
 export interface AuraNetworkInstrumentation {
-    getRecordAggregateInvoke?: () => void;
-    getRecordAggregateRetry?: () => void;
-    getRecordNormalInvoke?: () => void;
-    aggregateUiChunkCount?: (chunkCount: number) => void;
-
     logCrud?: (operation: string, options: object) => void;
-
-    /**
-     * Called when the network rate limit is exceeded.
-     */
-    networkRateLimitExceeded?: () => void;
 }
 
 // For use by callers within this module to instrument interesting things.
 export let instrumentation = {
-    getRecordAggregateInvoke: () => {},
-    getRecordAggregateRetry: () => {},
-    getRecordNormalInvoke: () => {},
-    aggregateUiChunkCount: (_chunkCount: number) => {},
-
     logCrud: (_operation: string, _options: object) => {},
-
-    networkRateLimitExceeded: () => {},
 };
 
 /**

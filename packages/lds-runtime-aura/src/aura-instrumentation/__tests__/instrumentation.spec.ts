@@ -1,4 +1,4 @@
-import { setInstrumentationHooks } from '../main';
+import { setAuraInstrumentationHooks } from '../main';
 import * as adaptersUiApi from '@salesforce/lds-adapters-uiapi';
 import * as ldsInstrumentation from '@salesforce/lds-instrumentation';
 
@@ -18,7 +18,7 @@ afterEach(() => {
 describe('adaptersUiApiInstrument', () => {
     describe('nullDisplayValueConflict', () => {
         it('scalar type field metrics', () => {
-            setInstrumentationHooks();
+            setAuraInstrumentationHooks();
 
             const { nullDisplayValueConflict } = adaptersUiApiInstrument.mock.calls[0][0];
             nullDisplayValueConflict({
@@ -32,7 +32,7 @@ describe('adaptersUiApiInstrument', () => {
         });
 
         it('spanning record type field metrics', () => {
-            setInstrumentationHooks();
+            setAuraInstrumentationHooks();
 
             const { nullDisplayValueConflict } = adaptersUiApiInstrument.mock.calls[0][0];
             nullDisplayValueConflict({

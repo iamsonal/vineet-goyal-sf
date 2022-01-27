@@ -200,20 +200,11 @@ function getObjectInfos(resourceRequest: ResourceRequest, cacheKey: string): Pro
 
 function executeAggregateUi(resourceRequest: ResourceRequest): Promise<any> {
     const aggregateUiParams = resourceRequest.body;
-    // TODO [W-10432188]: remove after instrumentation is setup in lds-network-adapter
-    const instrumentationCallbacks =
-        crudInstrumentationCallbacks !== null
-            ? {
-                  rejectFn: crudInstrumentationCallbacks.getRecordAggregateRejectFunction,
-                  resolveFn: crudInstrumentationCallbacks.getRecordAggregateResolveFunction,
-              }
-            : {};
+
     return dispatchSplitRecordAggregateUiAction(
         UiApiRecordController.ExecuteAggregateUi,
         aggregateUiParams,
-        actionConfig,
-        '' as string,
-        instrumentationCallbacks
+        actionConfig
     );
 }
 

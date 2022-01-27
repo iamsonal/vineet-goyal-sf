@@ -15,24 +15,21 @@ import {
     Timer,
 } from 'instrumentation/service';
 import {
-    instrumentAdapter as o11yInstrumentAdapter,
-    instrumentLuvio as o11yInstrumentLuvio,
-    instrumentStoreMethods as o11yInstrumentStoreMethods,
-    setStoreScheduler as o11ySetStoreScheduler,
-    setupStoreStatsCollection as o11ySetupStoreStats,
-    instrumentStoreStatsCallback as o11yInstrumentStoreStatsCallback,
-    LRUCache,
-    updatePercentileHistogramMetric,
     incrementCounterMetric,
-    incrementGetRecordAggregateInvokeCount,
-    incrementGetRecordNormalInvokeCount,
     incrementGetRecordNotifyChangeAllowCount,
     incrementGetRecordNotifyChangeDropCount,
-    incrementNetworkRateLimitExceededCount,
-    setAggregateUiChunkCountMetric,
+    instrumentAdapter as o11yInstrumentAdapter,
+    instrumentLuvio as o11yInstrumentLuvio,
+    updatePercentileHistogramMetric,
+    LRUCache,
+    setupInstrumentation as ldsInstrumentationSetupInstrumentation,
 } from '@salesforce/lds-instrumentation';
 import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
-import { instrument as networkAuraInstrument } from '@salesforce/lds-network-aura';
+import { instrument as networkAdapterInstrument } from '@salesforce/lds-network-adapter';
+import {
+    instrument as networkAuraInstrument,
+    forceRecordTransactionsDisabled,
+} from '@salesforce/lds-network-aura';
 import { instrument as lwcBindingsInstrument } from '@salesforce/lds-bindings';
 import { instrument as adsBridgeInstrument } from '@salesforce/lds-ads-bridge';
 
@@ -567,7 +564,10 @@ export function registerLdsCacheStats(name: string): CacheStatsLogger {
     return registerCacheStats(`${NAMESPACE}:${name}`);
 }
 
-export function setInstrumentationHooks() {
+/**
+ * Add or overwrite hooks that require aura implementations
+ */
+export function setAuraInstrumentationHooks() {
     adaptersUiApiInstrument({
         recordConflictsResolved: (serverRequestCount: number) =>
             updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
@@ -588,11 +588,7 @@ export function setInstrumentationHooks() {
             instrumentation.notifyChangeNetwork.bind(instrumentation),
     });
     networkAuraInstrument({
-        getRecordAggregateInvoke: incrementGetRecordAggregateInvokeCount,
-        getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
-        aggregateUiChunkCount: setAggregateUiChunkCountMetric,
         logCrud: logCRUDLightningInteraction,
-        networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
     });
     lwcBindingsInstrument({
         refreshCalled: instrumentation.handleRefreshApiCall.bind(instrumentation),
@@ -601,6 +597,28 @@ export function setInstrumentationHooks() {
     adsBridgeInstrument({
         timerMetricAddDuration: updateTimerMetric,
     });
+    // Our getRecord through aggregate-ui CRUD logging has moved
+    // to lds-network-adapter. We still need to respect the
+    // orgs environment setting
+    if (forceRecordTransactionsDisabled === false) {
+        networkAdapterInstrument({
+            getRecordAggregateResolve: (cb) => {
+                const { recordId, apiName } = cb();
+                logCRUDLightningInteraction('read', {
+                    recordId,
+                    recordType: apiName,
+                    state: 'SUCCESS',
+                });
+            },
+            getRecordAggregateReject: (cb) => {
+                const recordId = cb();
+                logCRUDLightningInteraction('read', {
+                    recordId,
+                    state: 'ERROR',
+                });
+            },
+        });
+    }
 }
 
 /**
@@ -610,11 +628,8 @@ export function setInstrumentationHooks() {
  * @param store The Store to instrument.
  */
 export function setupInstrumentation(luvio: Luvio, store: Store): void {
-    setInstrumentationHooks();
-
-    o11yInstrumentStoreMethods(luvio, store);
-    o11ySetupStoreStats(luvio, o11yInstrumentStoreStatsCallback(store));
-    o11ySetStoreScheduler(store);
+    ldsInstrumentationSetupInstrumentation(luvio, store);
+    setAuraInstrumentationHooks();
 }
 
 /**

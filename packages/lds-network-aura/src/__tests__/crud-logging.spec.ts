@@ -1,8 +1,7 @@
 import * as aura from 'aura';
 import networkAdapter from '../main';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
-import { buildResourceRequest, generateMockedRecordFields, ERROR_RESPONSE } from './test-utils';
-import { HttpStatusCode } from '@luvio/engine';
+import { buildResourceRequest, ERROR_RESPONSE } from './test-utils';
 
 jest.mock('@salesforce/lds-environment-settings', () => {
     return {
@@ -13,22 +12,10 @@ jest.mock('@salesforce/lds-environment-settings', () => {
     };
 });
 
-jest.mock('@salesforce/lds-instrumentation', () => {
-    return {
-        setAggregateUiChunkCountMetric: () => {},
-        incrementGetRecordAggregateInvokeCount: () => {},
-        incrementGetRecordNormalInvokeCount: () => {},
-        registerLdsCacheStats: () => {},
-    };
-});
-
 import { instrumentation } from '../instrumentation';
 
 const instrumentationSpies = {
     logCrud: jest.spyOn(instrumentation, 'logCrud'),
-    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
-    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
-    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
 };
 
 beforeEach(() => {
@@ -631,111 +618,6 @@ describe('crud logging', () => {
                 expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('reads', {
                     parentRecordId: 'a00RM0000004aVwYAI',
                     relatedListIds: ['CwcCustom02s__r', 'CwcCustom01s__r'],
-                    state: 'ERROR',
-                });
-            }
-        });
-    });
-
-    // TODO[@W-10432188]: move to lds-network-adapter
-    xdescribe('executeAggregateUi', () => {
-        it('logs read event when getRecord is called', async () => {
-            const request = {
-                method: 'get',
-                baseUri: UI_API_BASE_URI,
-                basePath: `/records/1234`,
-                urlParams: {
-                    recordId: '1234',
-                },
-                queryParams: {
-                    fields: generateMockedRecordFields(800),
-                },
-            };
-
-            const response = {
-                compositeResponse: [
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field1__c: { value: '1', displayValue: '10' } },
-                        },
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field2__c: { value: '2', displayValue: '20' } },
-                        },
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field3__c: { value: '3', displayValue: '30' } },
-                        },
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                ],
-            };
-
-            jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
-            await networkAdapter(buildResourceRequest(request));
-
-            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
-                recordId: '1234',
-                recordType: 'Foo',
-                state: 'SUCCESS',
-            });
-        });
-
-        it('logs read event when getRecord is called but returns error', async () => {
-            const request = {
-                method: 'get',
-                baseUri: UI_API_BASE_URI,
-                basePath: `/records/1234`,
-                urlParams: {
-                    recordId: '1234',
-                },
-                queryParams: {
-                    fields: generateMockedRecordFields(800),
-                },
-            };
-
-            const aggregateErrorResponse = {
-                compositeResponse: [
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field1__c: { value: '1', displayValue: '10' } },
-                        },
-                    },
-                    {
-                        httpStatusCode: HttpStatusCode.ServerError,
-                    },
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field3__c: { value: '3', displayValue: '30' } },
-                        },
-                    },
-                ],
-            };
-
-            jest.spyOn(aura, 'executeGlobalController').mockRejectedValueOnce(
-                aggregateErrorResponse
-            );
-            try {
-                await networkAdapter(buildResourceRequest(request));
-            } catch (err) {
-                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
-                    recordId: '1234',
                     state: 'ERROR',
                 });
             }

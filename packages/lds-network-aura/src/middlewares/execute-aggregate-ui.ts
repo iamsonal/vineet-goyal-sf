@@ -3,7 +3,6 @@ import { DispatchActionConfig } from './utils';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import { executeGlobalController } from 'aura';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { InstrumentationCallbacks } from './utils';
 
 interface AggregateUiParams {
     input: {
@@ -36,33 +35,16 @@ interface CompositeResponseEnvelope<T> {
 export function dispatchSplitRecordAggregateUiAction(
     endpoint: string,
     params: AggregateUiParams,
-    config: DispatchActionConfig = {},
-    _recordId: string,
-    _instrumentationCallbacks: InstrumentationCallbacks = {}
+    config: DispatchActionConfig = {}
 ): Promise<AuraFetchResponse<unknown>> {
     const { action: actionConfig } = config;
 
     return executeGlobalController(endpoint, params, actionConfig).then(
         (body: CompositeResponseEnvelope<RecordRepresentation>) => {
-            // TODO [W-10432188]: move to lds-network-adapter
-            // if (instrumentationCallbacks.resolveFn) {
-            //     instrumentationCallbacks.resolveFn({
-            //         body,
-            //         params: { recordId },
-            //     });
-            // }
             // stuff it into FetchResponse to be handled by lds-network-adapter
             return new AuraFetchResponse(HttpStatusCode.Ok, body);
         },
         (err) => {
-            // TODO [W-10432188]: move to lds-network-adapter
-            // if (instrumentationCallbacks && instrumentationCallbacks.rejectFn) {
-            //     instrumentationCallbacks.rejectFn({
-            //         err,
-            //         params: { recordId },
-            //     });
-            // }
-
             // Handle ConnectInJava exception shapes
             if (err.data !== undefined && err.data.statusCode !== undefined) {
                 const { data } = err;

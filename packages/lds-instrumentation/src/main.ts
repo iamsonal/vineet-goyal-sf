@@ -553,12 +553,9 @@ export function instrumentGraphqlAdapter<C, D>(instrumentedAdapter: Adapter<C, D
 }
 
 /**
- * Initialize the instrumentation and instrument the LDS instance and the Store.
- *
- * @param luvio The Luvio instance to instrument.
- * @param store The Store to instrument.
+ * Provides concrete implementations using o11y/client for instrumentation hooks
  */
-export function setupInstrumentation(luvio: Luvio, store: Store): void {
+export function setInstrumentationHooks() {
     adaptersUiApiInstrument({
         recordConflictsResolved: (serverRequestCount: number) =>
             updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
@@ -583,6 +580,16 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
         getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
         networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
     });
+}
+
+/**
+ * Initialize the instrumentation and instrument the LDS instance and the Store.
+ *
+ * @param luvio The Luvio instance to instrument.
+ * @param store The Store to instrument.
+ */
+export function setupInstrumentation(luvio: Luvio, store: Store): void {
+    setInstrumentationHooks();
     instrumentStoreMethods(luvio, store);
     setupStoreStatsCollection(luvio, instrumentStoreStatsCallback(store));
 

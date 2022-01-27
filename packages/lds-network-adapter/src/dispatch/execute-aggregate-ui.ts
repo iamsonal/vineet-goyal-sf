@@ -160,10 +160,11 @@ export function dispatchSplitRecordAggregateUiAction(
             });
             return createOkResponse(merged);
         },
-        (err: FetchResponse<any>) => {
+        (err) => {
             instrumentation.getRecordAggregateReject(() => recordId);
 
-            return err;
+            // rethrow error
+            throw err;
         }
     );
 }

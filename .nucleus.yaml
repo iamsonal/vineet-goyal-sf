@@ -5,7 +5,7 @@ core-deploy:
 steps:
   node-build:
     env:
-      NODE_OPTIONS: "--max_old_space_size=1024"
+      NODE_OPTIONS: '--max_old_space_size=1024'
     run:
       command: yarn build:nucleus
   node-pre-release-tests:
@@ -17,6 +17,12 @@ steps:
     run:
       command: yarn release:corejar
     before: core-packager
+  code-format-after-dep-patch:
+    group: publish
+    description: Code formatting fix after package.json dep patching
+    run:
+      command: yarn format:fix
+    after: npm-patch-dependency-versions
 notifications:
   email:
     address: auradataservicescrumteam@salesforce.com

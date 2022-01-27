@@ -11,8 +11,8 @@
         "build:ci": "yarn test:versions && lerna-parallelism run build",
         "build:nucleus": "yarn test:versions && lerna run build --concurrency=7",
         "clean": "lerna run clean; lerna clean --yes; rm -rf node_modules; rm -rf dist",
-        "format:check": "prettier --check '**/*.{js,ts,json,md,yml,raml}'",
-        "format:fix": "prettier --write '**/*.{js,ts,json,md,yml,raml}'",
+        "format:check": "prettier --check '**/*.{js,ts,json,md,yml,raml,yaml}'",
+        "format:fix": "prettier --write '**/*.{js,ts,json,md,yml,raml,yaml}'",
         "generate-mock-data": "node ./scripts/mockDataGeneration/generateMockData.js",
         "lint": "eslint packages/ --ext=js,ts",
         "package:new": "node ./scripts/scaffold/run.js",
@@ -123,7 +123,7 @@
         }
     },
     "lint-staged": {
-        "*.{js,ts,json,md,yml,raml}": [
+        "*.{js,ts,json,md,yml,raml,yaml}": [
             "prettier --write",
             "git add"
         ],

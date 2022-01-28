@@ -22,7 +22,13 @@ steps:
     description: Code formatting fix after package.json dep patching
     run:
       command: yarn format:fix
-    after: npm-patch-dependency-versions
+    after: node-install-patched
+  code-format-after-dep-update:
+    group: publish
+    description: Code formatting fix after package.json dep updating
+    run:
+      command: yarn format:fix
+    after: node-install-update
 notifications:
   email:
     address: auradataservicescrumteam@salesforce.com

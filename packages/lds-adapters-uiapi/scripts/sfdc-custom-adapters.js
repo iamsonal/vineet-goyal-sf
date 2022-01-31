@@ -16,7 +16,6 @@ module.exports = {
         updateRelatedListPreferences: true,
     },
     INFINITE_SCROLLING_ADAPTERS: {
-        // TODO [W-9770576]: enabling this when getRelatedListRecords is ready
-        // getRelatedListRecords: true
+        getRelatedListRecords: true,
     },
 };

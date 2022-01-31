@@ -1,0 +1,62 @@
+{
+    "count": 2,
+    "currentPageToken": "2",
+    "currentPageUrl": "/services/data/v55.0/ui-api/related-list-records/001T1000002HadrIAC/Opportunities?fields=Opportunity.Name&pageSize=2&pageToken=2",
+    "fields": ["Opportunity.Name"],
+    "listInfoETag": null,
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": "001T1000002HadrIAC",
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "Account",
+        "recordTypeId": null,
+        "relatedListId": "Opportunities",
+        "type": "relatedList"
+    },
+    "nextPageToken": "4",
+    "nextPageUrl": "/services/data/v55.0/ui-api/related-list-records/001T1000002HadrIAC/Opportunities?fields=Opportunity.Name&pageSize=2&pageToken=4",
+    "optionalFields": [],
+    "pageSize": 2,
+    "previousPageToken": "0",
+    "previousPageUrl": "/services/data/v55.0/ui-api/related-list-records/001T1000002HadrIAC/Opportunities?fields=Opportunity.Name&pageSize=2&pageToken=0",
+    "records": [
+        {
+            "apiName": "Opportunity",
+            "childRelationships": {},
+            "eTag": "b1f669dbefea73c451ad0d0139b59373",
+            "fields": {
+                "Name": {
+                    "displayValue": null,
+                    "value": "RelatedListTestOpp3"
+                }
+            },
+            "id": "006T10000023bZ7IAI",
+            "lastModifiedById": "005T1000000IJpMIAW",
+            "lastModifiedDate": "2022-01-28T05:32:46.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2022-01-28T05:32:46.000Z",
+            "weakEtag": 1643347966000
+        },
+        {
+            "apiName": "Opportunity",
+            "childRelationships": {},
+            "eTag": "2e052cb33429a22384192db7c4b00fd5",
+            "fields": {
+                "Name": {
+                    "displayValue": null,
+                    "value": "RelatedListTestOpp2"
+                }
+            },
+            "id": "006T1000001rraaIAA",
+            "lastModifiedById": "005T1000000IJpMIAW",
+            "lastModifiedDate": "2022-01-28T05:32:46.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2022-01-28T05:32:46.000Z",
+            "weakEtag": 1643347966000
+        }
+    ],
+    "sortBy": []
+}

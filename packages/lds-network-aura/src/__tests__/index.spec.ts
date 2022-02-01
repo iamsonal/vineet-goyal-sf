@@ -6052,6 +6052,31 @@ describe('routes', () => {
         });
     });
 
+    describe('get /wave/dependencies/{assetId}', () => {
+        describe('with asset id', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dependencies/0Fbxx0000004Cx3CAE`,
+                },
+                [
+                    'WaveController.getDependencies',
+                    {},
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dependencies/0Fbxx0000004Cx3CAE`,
+                },
+                {}
+            );
+        });
+    });
+
     describe('get /wave/limits', () => {
         testControllerInput(
             {

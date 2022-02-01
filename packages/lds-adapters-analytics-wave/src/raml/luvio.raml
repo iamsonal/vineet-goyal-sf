@@ -24,6 +24,8 @@ types:
     (luvio.ttl): 300
   DataflowJobNodeCollectionRepresentation:
     (luvio.ttl): 300
+  DependencyRepresentation:
+    (luvio.ttl): 300
   DatasetCollectionRepresentation:
     (luvio.ttl): 300
   RecipeCollectionRepresentation:
@@ -191,6 +193,10 @@ types:
       get:
         (luvio.adapter):
           name: getXmd
+  /dependencies/{assetId}:
+    get:
+      (luvio.adapter):
+        name: getDependencies
   /folders:
     get:
       (luvio.adapter):

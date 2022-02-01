@@ -744,6 +744,33 @@ function updateDatasetVersionMatcher(config) {
     });
 }
 
+// Dependencies
+function mockGetDependenciesNetworkOnce(config, mockData) {
+    const paramMatch = getDependenciesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDependenciesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDependenciesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDependenciesMatcher(config) {
+    let { assetId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dependencies/${assetId}`,
+        queryParams: {},
+    });
+}
+
 // Recipes
 function mockGetRecipesNetworkOnce(config, mockData) {
     const paramMatch = getRecipesMatcher(config);
@@ -1282,6 +1309,8 @@ export {
     mockGetDatasetsNetworkErrorOnce,
     mockGetDatasetVersionNetworkOnce,
     mockGetDatasetVersionNetworkErrorOnce,
+    mockGetDependenciesNetworkOnce,
+    mockGetDependenciesNetworkErrorOnce,
     mockUpdateDatasetVersionNetworkOnce,
     mockUpdateDatasetVersionNetworkErrorOnce,
     mockGetRecipesNetworkOnce,

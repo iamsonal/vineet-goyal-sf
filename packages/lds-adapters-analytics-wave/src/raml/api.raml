@@ -1218,6 +1218,103 @@ types:
         enum:
           - All
           - Limited
+  DependencyCollectionRepresentation:
+    description: A collection of Wave dependencies.
+    type: object
+    properties:
+      dependencies:
+        description: List of dependencies of a a particular asset type.
+        type: array
+        items:
+          type: any # TODO Hand-rolled W-10034467, recursive representation is not supported. Original Representation: DependencyRepresentation
+      totalSize:
+        description: Gets the total count of the dependencies irrespective of the
+          size of dependencies list.
+        type: integer
+  DependencyRepresentation:
+    description: Wave asset dependencies representation.
+    type: object
+    properties:
+      assetSharingUrl:
+        description: Sharing url of asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      components:
+        description: Components that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      dashboards:
+        description: Dashboards that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      datasets:
+        description: Datasets that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      folder:
+        description: The containing folder of the asset.
+        type: AssetReferenceRepresentation
+      id:
+        description: The 18 character asset ID.
+        type: string
+      lastAccessedDate:
+        description: The time at which the asset was last accessed.
+        type: string
+      lastModifiedBy:
+        description: The user who last modified the asset.
+        type: WaveUserRepresentation
+      lastModifiedDate:
+        description: The time at which the asset was last modified.
+        type: string
+      lenses:
+        description: Lenses that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The name of the asset.
+        type: string
+      recipes:
+        description: Recipes that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: The asset type.
+        type: string
+        enum:
+          - Collection
+          - Component
+          - Dashboard
+          - DashboardSavedView
+          - DashboardSnapshot
+          - DataConnector
+          - Dataflow
+          - DataflowJob
+          - DataflowJobNode
+          - Dataset
+          - DatasetShard
+          - DatasetVersion
+          - ExternalData
+          - Folder
+          - Lens
+          - LightningComponent
+          - LightningDashboard
+          - LightningDashboardFolder
+          - Recipe
+          - RecipeConfiguration
+          - RecipeModel
+          - ReplicatedDataset
+          - Report
+          - ReportFolder
+          - Story
+          - Widget
+          - Workflow
+      url:
+        description: Url to get the definition of the asset.
+        type: string
+      workflows:
+        description: Workflows that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
   DatasetVersionInputRepresentation:
     description: Input representation for wave Dataset Version.
     type: object
@@ -4907,6 +5004,19 @@ types:
             - Main
             - System
             - User
+  /dependencies/{assetId}:
+    get:
+      description: Get a Dependencies resource representation.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DependencyRepresentation
+    uriParameters:
+      assetId:
+        type: string
+        required: true
   /folders:
     get:
       description: Get a collection of Wave analytics folders.

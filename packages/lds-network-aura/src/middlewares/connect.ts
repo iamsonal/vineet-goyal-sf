@@ -203,6 +203,8 @@ const XMD_PATH = new RegExp(
     'i'
 );
 
+const DEPENDENCIES_PATH = new RegExp(`${WAVE_BASE_URI}/dependencies/([A-Z0-9]){15,18}$`, 'i');
+
 const WAVE_FOLDERS_PATH = new RegExp(`${WAVE_BASE_URI}/folders$`, 'i');
 
 const GET_CONTENT_TYPE_INTERNAL_PATH = new RegExp(
@@ -1052,6 +1054,13 @@ const analytics: ApiFamily = {
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATAFLOWS_PATH.test(path),
         transport: {
             controller: 'WaveController.getDataflows',
+        },
+    },
+    getDependencies: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DEPENDENCIES_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDependencies',
         },
     },
     createDataflowJob: {

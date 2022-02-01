@@ -18,7 +18,7 @@
         "package:new": "node ./scripts/scaffold/run.js",
         "test": "yarn test:versions && yarn test:unit && yarn test:integration && yarn test:memory && yarn test:size",
         "test:perf": "best",
-        "test:unit": "lerna run --stream --scope @salesforce/* --scope @mobileplatform/* test:unit -- --color",
+        "test:unit": "lerna-parallelism run --stream --scope @salesforce/* --scope @mobileplatform/* --concurrency=1 test:unit -- --color",
         "test:unit:ci": "lerna-parallelism run --stream --scope @salesforce/* --scope @mobileplatform/* test:unit -- --color",
         "test:unit:coverage": "yarn test:unit --coverage",
         "test:unit:coverage:ci": "yarn test:unit:ci --coverage --ci",

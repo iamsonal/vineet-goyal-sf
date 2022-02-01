@@ -1,5 +1,13 @@
 version: 2.1
 
+parameters:
+  run-build-and-test:
+    type: boolean
+    default: true
+  run-full-compat-test:
+    type: boolean
+    default: false
+
 orbs:
   build-tools: circleci/build-tools@3.0.0
 
@@ -257,7 +265,8 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
+  build-and-test:
+    when: << pipeline.parameters.run-build-and-test >>
     jobs:
       - build
       - test_versions:
@@ -276,5 +285,15 @@ workflows:
           requires:
             - build
       - perf_and_compare:
+          requires:
+            - build
+
+  full-compat-test:
+    when: << pipeline.parameters.run-full-compat-test >>
+    environment:
+      FULL_COMPAT_TEST: 'true'
+    jobs:
+      - build
+      - test_integration_compat:
           requires:
             - build

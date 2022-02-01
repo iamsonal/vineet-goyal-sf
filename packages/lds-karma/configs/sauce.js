@@ -23,6 +23,10 @@ const SAUCE_COMPAT_BROWSERS = {
         version: '11.0',
         idleTimeout: 180,
     },
+};
+
+const SAUCE_FULL_COMPAT_BROWSERS = {
+    ...SAUCE_COMPAT_BROWSERS,
     sl_chrome_compat: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -74,7 +78,11 @@ module.exports = function (config) {
         };
     }
 
-    const browsers = compat ? SAUCE_COMPAT_BROWSERS : SAUCE_BROWSERS;
+    const browsers = compat
+        ? process.env.FULL_COMPAT_TEST
+            ? SAUCE_FULL_COMPAT_BROWSERS
+            : SAUCE_COMPAT_BROWSERS
+        : SAUCE_BROWSERS;
 
     config.set({
         sauceLabs: sauceLabs,

@@ -15,8 +15,10 @@ describe('basic', () => {
     it('creates a connection', async () => {
         const mock = getMock('connection');
         const config = {
-            connectorId: 'SALESFORCE_ADS',
-            name: 'sfdc2',
+            connection: {
+                connectorId: 'SALESFORCE_ADS',
+                name: 'sfdc2',
+            },
         };
         mockCreateConnectionNetworkOnce(config, mock);
 
@@ -38,8 +40,10 @@ describe('basic', () => {
             ],
         };
         const config = {
-            connectorId: 'SALESFORCE_ADS',
-            name: 'sfdc2',
+            connection: {
+                connectorId: 'SALESFORCE_ADS',
+                name: 'sfdc2',
+            },
         };
         mockCreateConnectionNetworkErrorOnce(config, mock);
 

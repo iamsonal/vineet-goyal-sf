@@ -114,6 +114,13 @@ types:
       url:
         description: The URL for this Connection.
         type: string
+  ConnectionInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for connection input representation
+    type: object
+    properties:
+      connection:
+        type: ConnectionInputRepresentation
+        description: connection input representation
   ConnectionInputRepresentation:
     description: 'A definition used to create a Synchronization Connection in Analytics
       Data Service '
@@ -248,9 +255,11 @@ types:
           has.
         type: string
       info:
-        description: Information about a source Object. Could contain why this is
-          not synchronizable, or warnings
-        type: string
+        description: List of information about this source Object. Could contain why
+          this is not synchronizable, or warnings
+        type: array
+        items:
+          type: SourceObjectInfoRepresentation
       name:
         description: The name of this Source Object in the external system. The specifics
           will depend on the connector type.
@@ -678,7 +687,8 @@ types:
               type: ConnectionRepresentation
       body:
         application/json:
-          type: ConnectionInputRepresentation
+          type: ConnectionInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ConnectionInputRepresentation
+          (oas-body-name): connection
 
   /connections/{id}:
     get:

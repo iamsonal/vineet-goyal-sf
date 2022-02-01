@@ -7,14 +7,18 @@
             "name": "Account",
             "state": "Connected",
             "url": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account",
-            "info": "",
+            "info": [
+                {
+                    "message": "You need this"
+                }
+            ],
             "fieldsUrl": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account/fields"
         },
         {
             "name": "FunkyObject",
             "state": "NotConnected",
             "url": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/FunkyObject",
-            "info": "Synchronization of this Object may miss deletes because it does not have a SystemModTimestamp field",
+            "info": [],
             "fieldsUrl": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/FunkyObject/fields"
         }
     ]

@@ -1,18 +1,20 @@
 const browserConfig = require('./browser');
 const browserCompatConfig = require('./browser-compat');
 
+const idleTimeout = 300;
+
 const SAUCE_BROWSERS = {
     sl_chrome_latest: {
         base: 'SauceLabs',
         browserName: 'chrome',
         version: 'latest',
-        idleTimeout: 180,
+        idleTimeout,
     },
     sl_firefox_latest: {
         base: 'SauceLabs',
         browserName: 'firefox',
         version: 'latest',
-        idleTimeout: 180,
+        idleTimeout,
     },
 };
 
@@ -21,7 +23,7 @@ const SAUCE_COMPAT_BROWSERS = {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         version: '11.0',
-        idleTimeout: 180,
+        idleTimeout,
     },
 };
 
@@ -31,13 +33,13 @@ const SAUCE_FULL_COMPAT_BROWSERS = {
         base: 'SauceLabs',
         browserName: 'chrome',
         version: '59',
-        idleTimeout: 180,
+        idleTimeout,
     },
     sl_firefox_compat: {
         base: 'SauceLabs',
         browserName: 'firefox',
         version: '54',
-        idleTimeout: 180,
+        idleTimeout,
     },
 };
 

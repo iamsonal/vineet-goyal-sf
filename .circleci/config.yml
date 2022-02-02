@@ -287,6 +287,10 @@ workflows:
       - perf_and_compare:
           requires:
             - build
+          filters:
+            branches:
+              only:
+                - main
 
   full-compat-test:
     when: << pipeline.parameters.run-full-compat-test >>

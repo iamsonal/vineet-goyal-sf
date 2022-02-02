@@ -5,7 +5,7 @@ import {
 } from '@luvio/adapter-test-library';
 import { Environment, Luvio, Store } from '@luvio/engine';
 import { parseAndVisit } from '@luvio/graphql-parser';
-import { graphQLAdapterFactory } from '../../../main';
+import { graphQLAdapterFactory, configuration, buildCachedSnapshot } from '../../../main';
 import { namespace, representationName } from '../../../util/adapter';
 import timekeeper from 'timekeeper';
 
@@ -145,6 +145,42 @@ describe('graphQL adapter', () => {
                   },
                 }
             `);
+        });
+    });
+
+    describe('buildCachedSnapshot', () => {
+        const context: any = { config: { query: {} } };
+        it('calls buildInMemorySnapshot when storeEval is undefined', async () => {
+            const lookupSpy = jest.fn();
+            (lookupSpy as any).ttlStrategy = () => undefined;
+
+            await buildCachedSnapshot(context, lookupSpy);
+
+            expect(lookupSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not call buildInMemorySnapshot when storeEval is defined', async () => {
+            const storeEval = jest.fn(() => Promise.resolve({ state: 'Fulfilled' } as any));
+            const lookupSpy = jest.fn();
+            (lookupSpy as any).ttlStrategy = () => undefined;
+
+            configuration.setStoreEval(storeEval);
+            await buildCachedSnapshot(context, lookupSpy);
+
+            expect(lookupSpy).toHaveBeenCalledTimes(0);
+            expect(storeEval).toHaveBeenCalledTimes(1);
+        });
+
+        it('calls buildInMemorySnapshot when storeEval rejects', async () => {
+            const storeEval = jest.fn(() => Promise.reject('something bad'));
+            const lookupSpy = jest.fn();
+            (lookupSpy as any).ttlStrategy = () => undefined;
+
+            configuration.setStoreEval(storeEval);
+            await buildCachedSnapshot(context, lookupSpy);
+
+            expect(lookupSpy).toHaveBeenCalledTimes(1);
+            expect(storeEval).toHaveBeenCalledTimes(1);
         });
     });
 });

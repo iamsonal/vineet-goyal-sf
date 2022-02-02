@@ -139,7 +139,6 @@ export type DateInput = DateValue | DateEnum | DateRange | NullValue;
 export type DateTimeInput = DateTimeValue | DateTimeEnum | DateTimeRange | NullValue;
 export type DateArray = Value<ValueType.DateArray, DateInput[]>;
 export type DateTimeArray = Value<ValueType.DateTimeArray, DateTimeInput[]>;
-
 export interface ComparisonPredicate {
     type: PredicateType.comparison;
     operator: ComparisonOperator;
@@ -228,7 +227,6 @@ export interface RecordQuery {
     predicate: Predicate | undefined;
     fields: RecordQueryField[];
     alias: string;
-    apiName: string;
     first: number | undefined;
     orderBy: OrderBy[];
     joinNames: string[];

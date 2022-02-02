@@ -13,6 +13,7 @@ import {
     Snapshot,
     SnapshotRefresh,
     StoreLookup,
+    TTLStrategy,
 } from '@luvio/engine';
 import { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { astToString } from './util/ast-to-string';
@@ -26,6 +27,7 @@ import {
     isLuvioDocumentNode,
 } from './type/Document';
 import { GraphQLVariables, isGraphQLVariables } from './type/Variable';
+import { storeEval } from './configuration';
 
 export { namespace, representationName } from './util/adapter';
 
@@ -248,7 +250,28 @@ type BuildSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildCachedSnapshot(
+type hasTTLStrategy = {
+    ttlStrategy: TTLStrategy | undefined;
+};
+
+export function buildCachedSnapshot(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<unknown>
+): Promise<Snapshot<unknown, unknown>> | Snapshot<unknown, any> {
+    if (storeEval !== undefined) {
+        const { ttlStrategy } = storeLookup as unknown as hasTTLStrategy;
+
+        if (ttlStrategy !== undefined) {
+            return storeEval(context.config.query, ttlStrategy).catch(() => {
+                return buildInMemorySnapshot(context, storeLookup);
+            });
+        }
+    }
+
+    return buildInMemorySnapshot(context, storeLookup);
+}
+
+function buildInMemorySnapshot(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<unknown>
 ): Snapshot<unknown, any> {
@@ -304,3 +327,6 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
             buildNetworkSnapshotCachePolicy
         );
     };
+
+export { configuration } from './configuration';
+export { keyBuilder as connectionKeyBuilder } from './custom/connection';

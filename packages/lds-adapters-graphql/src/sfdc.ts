@@ -7,7 +7,7 @@ import {
     createWireAdapterConstructor,
 } from '@salesforce/lds-bindings';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
-import { adapterName, graphQLAdapterFactory } from './main';
+import { adapterName, graphQLAdapterFactory, configuration } from './main';
 import { namespace } from './util/adapter';
 
 let graphQL: any;
@@ -36,4 +36,4 @@ withDefaultLuvio((luvio: Luvio) => {
     graphQLImperative = ldsAdapter;
 });
 
-export { graphQL, unstable_graphQL_imperative, graphQLImperative };
+export { graphQL, unstable_graphQL_imperative, graphQLImperative, configuration };

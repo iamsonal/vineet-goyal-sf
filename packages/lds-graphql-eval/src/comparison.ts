@@ -178,7 +178,6 @@ function isOrderByEqual(lh: OrderBy | undefined, rh: OrderBy | undefined): boole
 function isRecordQueryEqual(lh: RecordQuery, rh: RecordQuery): boolean {
     return (
         lh.alias === rh.alias &&
-        lh.apiName === rh.apiName &&
         isArrayEqual(lh.fields, rh.fields, isFieldEqual) &&
         lh.first === rh.first &&
         isArrayEqual(lh.joinNames, rh.joinNames, isStrictEqual) &&

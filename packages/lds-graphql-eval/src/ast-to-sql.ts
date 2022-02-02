@@ -432,3 +432,35 @@ function comparisonOperatorToSql(operator: ComparisonOperator): string {
             return 'NOT LIKE';
     }
 }
+
+export function objectInfoSql(mappingInput: SqlMappingInput): string {
+    return `WITH objectInfoCTE AS (select ${mappingInput.jsonColumn} from ${mappingInput.jsonTable} where ${mappingInput.keyColumn} like 'UiApi\\%3A\\%3AObjectInfo%' ESCAPE '\\')
+    select json_group_object( json_extract(${mappingInput.jsonColumn}, '$.data.apiName'), 
+        json_object(
+            'fields',
+            (select json_group_object( key,  value )
+            from (
+                select json_extract(value, '$.apiName') as key, json_object('dataType', json_extract(value, '$.dataType'), 'apiName', json_extract(value, '$.apiName'), 'referenceToInfos', json_extract(value, '$.referenceToInfos'),  'relationshipName', json_extract(value, '$.relationshipName')) as value
+                from  json_each(json_extract(${mappingInput.jsonColumn}, '$.data.fields'))
+            )),
+            'childRelationships',
+            (select json_group_array( value )
+            from (
+                select json_object('fieldName', json_extract(value, '$.fieldName'), 'childObjectApiName', json_extract(value, '$.childObjectApiName'),  'relationshipName', json_extract(value, '$.relationshipName')) as value
+                from  json_each(json_extract(${mappingInput.jsonColumn}, '$.data.childRelationships'))
+            ))
+        )
+    )  from (select ${mappingInput.jsonColumn} FROM objectInfoCTE)`;
+}
+
+export function indicesSql(mappingInput: SqlMappingInput): string[] {
+    return [
+        `create index if not exists service_appointment_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.fields.ServiceAppointmentId.value')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') = 'AssignedResource'`,
+        `create index if not exists apiname on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.apiName')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') is not null`,
+        `create index if not exists record_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.id')) where json_extract(${mappingInput.jsonColumn}, '$.data.id') is not null`,
+        `create index if not exists service_resource_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.fields.ServiceResourceId.value')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') = 'AssignedResource'`,
+        `create index if not exists related_record_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.fields.RelatedRecordId.value')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') = 'ServiceResource'`,
+    ];
+}
+
+export const tableAttrs = `select json_group_object(key, value) from  (select path as key, columnName as value from soup_index_map  where soupName = 'DEFAULT'  union select 'LdsSoupTable' as key, 'TABLE_' || id as value from soup_attrs where soupName = 'DEFAULT')`;

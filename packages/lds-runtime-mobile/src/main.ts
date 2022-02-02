@@ -2,6 +2,8 @@ import { Luvio, Store, Environment, RecordSource } from '@luvio/engine';
 import { makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
+import { storeEvalFactory } from '@salesforce/lds-graphql-eval';
+
 import {
     RecordRepresentation,
     ingestRecord,
@@ -31,6 +33,7 @@ import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
 import { makeDebugEnvironment } from './debug/makeDebugEnvironment';
+import { NimbusSQLStore } from './NimbusSQLStore';
 
 let luvio: Luvio;
 
@@ -184,6 +187,10 @@ luvio = new Luvio(draftEnv, {
     instrument: instrumentLuvio,
 });
 
+//inject query eval to graphql adapter
+const sqlStore = new NimbusSQLStore();
+const storeEval = storeEvalFactory(userId, baseDurableStore, sqlStore);
+
 // Draft mapping entries exists only in the Durable store.
 // Populate Luvio L1 cache with the entries from the Durable store.
 // TODO [W-9941688]: A race condition is possible that an adapter may be invoked prior to the completion of restoring the mapping
@@ -194,7 +201,7 @@ setupInstrumentation(luvio, store);
 
 setDefaultLuvio({ luvio });
 
-export { luvio, draftQueue, draftManager };
+export { luvio, draftQueue, draftManager, storeEval };
 
 export { debugLog } from './debug/DebugLog';
 

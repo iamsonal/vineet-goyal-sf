@@ -32,6 +32,18 @@ export class JsNimbusDurableStore implements DurableStore {
         this.backingStore = backingStore;
     }
 
+    evaluateSQL(
+        _sql: string,
+        _onResult: (result: string) => void,
+        _onError: (message: string) => void
+    ): Promise<void> {
+        return Promise.resolve();
+    }
+
+    updateIndices(_indices: string[]): Promise<void> {
+        return Promise.resolve();
+    }
+
     resetStore(): Promise<void> {
         return this.backingStore.reset();
     }

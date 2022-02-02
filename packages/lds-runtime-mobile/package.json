@@ -26,6 +26,7 @@
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "1.37.10",
         "@salesforce/lds-adapters-uiapi": "1.37.10",
+        "@salesforce/lds-graphql-eval": "1.37.10",
         "@salesforce/lds-drafts": "1.37.10",
         "@salesforce/user": "0.0.12"
     }

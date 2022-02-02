@@ -3,9 +3,9 @@
     "version": "1.37.10",
     "description": "Offline GraphQL eval",
     "license": "MIT",
-    "main": "dist/umd/es2018/graphql-eval.js",
-    "module": "dist/es/es2018/graphql-eval.js",
-    "types": "dist/types/src/main.d.ts",
+    "main": "dist/graphql-eval.js",
+    "module": "dist/graphql-eval.js",
+    "types": "dist/main.d.ts",
     "files": [
         "dist"
     ],
@@ -17,6 +17,7 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@luvio/graphql-parser": "0.73.1"
+        "@luvio/graphql-parser": "0.73.1",
+        "@salesforce/lds-adapters-graphql": "1.37.10"
     }
 }

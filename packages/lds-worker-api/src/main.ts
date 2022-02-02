@@ -21,6 +21,9 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
+// TODO [W-10385519]: add initialize back in when integration tests are added
+// initializeStoreEval();
+
 export {
     subscribeToAdapter,
     invokeAdapter,

@@ -11,7 +11,6 @@ import {
     StoreLookup,
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
-    ErrorSnapshot,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
@@ -128,7 +127,7 @@ export function buildNetworkSnapshot(
                 luvio.storeIngestError(key, errorSnapshot);
                 luvio.storeBroadcast();
                 return errorSnapshot;
-            }) as ErrorSnapshot;
+            });
         }
     );
 }

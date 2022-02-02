@@ -8,7 +8,6 @@ import {
     AdapterRequestContext,
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
-    ErrorSnapshot,
 } from '@luvio/engine';
 
 import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
@@ -181,7 +180,7 @@ export function buildNetworkSnapshot(
         (err: FetchResponse<unknown>) => {
             return luvio.handleErrorResponse(() => {
                 return luvio.errorSnapshot(err);
-            }) as ErrorSnapshot;
+            });
         }
     );
 }

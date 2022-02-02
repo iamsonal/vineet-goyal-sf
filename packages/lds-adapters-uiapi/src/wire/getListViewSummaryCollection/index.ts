@@ -10,7 +10,6 @@ import {
     StoreLookup,
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
-    ErrorSnapshot,
 } from '@luvio/engine';
 
 import {
@@ -155,7 +154,7 @@ export function buildNetworkSnapshot(
             (error: FetchResponse<unknown>) => {
                 return luvio.handleErrorResponse(() => {
                     return onResourceError(luvio, config, key, error);
-                }) as ErrorSnapshot;
+                });
             }
         );
 }

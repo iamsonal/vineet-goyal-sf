@@ -4,7 +4,6 @@ import {
     Snapshot,
     ResourceRequestOverride,
     ResourceResponse,
-    ErrorSnapshot,
 } from '@luvio/engine';
 import { ArrayPrototypeReduce } from '../../../util/language';
 import { ingest as recordAvatarBulkMapRepresentationIngest } from '../../types/RecordAvatarBulkMapRepresentation/ingest';
@@ -141,7 +140,7 @@ export function buildNetworkSnapshot(
                     recordIdsNotInFlight.forEach((id) => IN_FLIGHT_REQUESTS.delete(id));
                     return luvio.handleErrorResponse(() => {
                         return onResourceResponseError(luvio, config, resourceParams, err);
-                    }) as ErrorSnapshot;
+                    });
                 }
             );
     }

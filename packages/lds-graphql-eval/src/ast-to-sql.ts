@@ -26,6 +26,7 @@ import {
     isBetweenPredicate,
     BetweenPredicate,
     RelativeDate,
+    MultiPicklistArray,
 } from './Predicate';
 
 export interface SqlMappingInput {
@@ -89,6 +90,7 @@ function selectSql(
 ) {
     const joinString = joinNamesToSql(joinNames);
     const columns = columnsSql(joinNames.concat(name), mappingInput);
+
     const predicateString =
         predicate !== undefined ? `WHERE ${predicateToSql(predicate, mappingInput)}` : '';
     const limitString = first !== undefined ? `LIMIT ${first}` : '';
@@ -230,12 +232,10 @@ function expressionToSql(expression: Expression): string {
             return `(${expression.value.map((e) => e).join(', ')})`;
         case ValueType.NullValue:
             return 'null';
-
         case ValueType.DateEnum:
             return dateEnumToSql(expression.value);
         case ValueType.DateTimeEnum:
             return dateTimeEnumToSql(expression.value);
-
         case ValueType.DateTimeArray:
             return `(${expression.value.map((e) => expressionToSql(e)).join(', ')})`;
         case ValueType.DateArray:
@@ -249,7 +249,20 @@ function expressionToSql(expression: Expression): string {
         case ValueType.DateTimeValue:
         case ValueType.StringLiteral:
             return `'${expression.value}'`;
+        case ValueType.MultiPicklistArray:
+            return multiPicklistToSql(expression);
     }
+}
+
+function multiPicklistToSql(expression: MultiPicklistArray) {
+    // Individual multipicklist terms that delimited by semicolon are stored server-side
+    // as lexically sorted strings and treated like logical ANDs. We can approximate this
+    // behavior in SQL with wildcarded `LIKE` SQL operators.  Terms with no delimiter can
+    // be treated as string literals.  Multiple terms are logically OR'd together to
+    // match the behavior described in SOQL documentation (https://sfdc.co/c9j0r)
+    return expression.value
+        .map((e) => (e.includes(';') ? `'%${e.split(';').join('%')}%'` : `'%${e}%'`))
+        .join('');
 }
 
 function relativeDateToSql(expression: RelativeDate): string {
@@ -314,5 +327,9 @@ function comparisonOperatorToSql(operator: ComparisonOperator): string {
             return 'IN';
         case ComparisonOperator.nin:
             return 'NOT IN';
+        case ComparisonOperator.includes:
+            return 'LIKE';
+        case ComparisonOperator.excludes:
+            return 'NOT LIKE';
     }
 }

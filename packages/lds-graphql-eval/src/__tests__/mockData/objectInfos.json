@@ -15,7 +15,6 @@
             }
         }
     },
-
     "TimeSheet": {
         "childRelationships": {
             "TimeSheetEntries": {
@@ -73,7 +72,6 @@
             }
         }
     },
-
     "TimeSheetEntry": {
         "childRelationships": [],
 
@@ -103,7 +101,6 @@
             }
         }
     },
-
     "ProcessInstance": {
         "childRelationships": [],
 
@@ -111,7 +108,6 @@
             "Id": { "dataType": "Boolean", "apiName": "Id" }
         }
     },
-
     "ServiceAppointment": {
         "apiName": "ServiceAppointment",
         "associateEntityType": null,
@@ -3066,7 +3062,6 @@
         },
         "updateable": true
     },
-
     "ServiceResource": {
         "childRelationships": [
             {
@@ -3280,7 +3275,6 @@
                 "relationshipName": "TopicAssignments"
             }
         ],
-
         "fields": {
             "AccountId": {
                 "apiName": "AccountId",
@@ -4346,6 +4340,15 @@
                 "sortable": true,
                 "unique": false,
                 "updateable": false
+            }
+        }
+    },
+    "ServiceTerritory": {
+        "childRelationships": [],
+        "fields": {
+            "Birds__c": {
+                "apiName": "Birds__c",
+                "dataType": "MultiPicklist"
             }
         }
     },

@@ -33,6 +33,8 @@ export enum ComparisonOperator {
     gte = 'gte',
     in = 'in',
     nin = 'nin',
+    excludes = 'excludes',
+    includes = 'includes',
 }
 
 export enum DateEnumType {
@@ -70,6 +72,7 @@ export enum ValueType {
     DateTimeRange = 'DateTimeRange',
     RelativeDate = 'RelativeDate',
     NullValue = 'NullValue',
+    MultiPicklistArray = 'MultiPicklistArray',
 }
 
 export type LiteralValue =
@@ -84,7 +87,8 @@ export type LiteralValue =
     | DateArray
     | DateTimeArray
     | RelativeDate
-    | NullValue;
+    | NullValue
+    | MultiPicklistArray;
 
 interface Value<Type, ValueType> {
     type: Type;
@@ -116,6 +120,7 @@ export interface RelativeDate {
 }
 
 export type StringLiteral = Value<ValueType.StringLiteral, string>;
+export type MultiPicklistArray = Value<ValueType.MultiPicklistArray, string[]>;
 export type IntLiteral = Value<ValueType.IntLiteral, number>;
 export type DoubleLiteral = Value<ValueType.DoubleLiteral, number>;
 export type BooleanLiteral = Value<ValueType.BooleanLiteral, Boolean>;

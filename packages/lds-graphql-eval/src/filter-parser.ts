@@ -42,6 +42,7 @@ import {
     StringArray,
     StringLiteral,
     ValueType,
+    MultiPicklistArray,
 } from './Predicate';
 import {
     errors,
@@ -73,7 +74,7 @@ import {
 import { flatMap, flatten } from './util/flatten';
 
 const NotOperator = 'not';
-const { eq, ne, gt, gte, lt, lte, nin, like } = ComparisonOperator;
+const { eq, ne, gt, gte, lt, lte, nin, like, includes, excludes } = ComparisonOperator;
 const inOp = ComparisonOperator.in;
 
 function fieldsToFilters(
@@ -255,6 +256,19 @@ function fieldFilter(
                 return dateRangeComparison(op.value, op.operator, extract);
             }
 
+            if (op.type === 'MultiPicklistSetOperator') {
+                return {
+                    type: PredicateType.compound,
+                    operator: CompoundOperator.or,
+                    children: op.value.value.map((term) => {
+                        return comparison(extract, op.operator, {
+                            type: op.value.type,
+                            value: [term],
+                        });
+                    }),
+                };
+            }
+
             return comparison(extract, op.operator, op.value);
         }
     );
@@ -317,6 +331,8 @@ type SetOperatorType = ComparisonOperator.in | ComparisonOperator.nin;
 type StringOperatorType = ScalarOperatorType | ComparisonOperator.like;
 type BooleanOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
 type PicklistOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
+type MultiPicklistOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
+type MultiPicklistSetOperatorType = ComparisonOperator.includes | ComparisonOperator.excludes;
 
 interface Operator<Operator, ValueType, OperatorType> {
     operator: Operator;
@@ -339,6 +355,11 @@ type DateOperator = Operator<ScalarOperatorType, DateInput, 'DateOperator'>;
 type DateTimeOperator = Operator<ScalarOperatorType, DateTimeInput, 'DateTimeOperator'>;
 type PicklistOperator = Operator<PicklistOperatorType, StringLiteral, 'PicklistOperator'>;
 type CurrencyOperator = Operator<ScalarOperatorType, DoubleLiteral, 'CurrencyOperator'>;
+type MultiPicklistOperator = Operator<
+    MultiPicklistOperatorType,
+    StringLiteral,
+    'MultiPicklistOperator'
+>;
 
 type StringSetOperator = Operator<SetOperatorType, StringArray, 'StringSetOperator'>;
 type PicklistSetOperator = Operator<SetOperatorType, StringArray, 'PicklistSetOperator'>;
@@ -347,6 +368,11 @@ type DateTimeSetOperator = Operator<SetOperatorType, DateTimeArray, 'DateTimeSet
 type IntSetOperator = Operator<SetOperatorType, NumberArray, 'IntSetOperator'>;
 type DoubleSetOperator = Operator<SetOperatorType, NumberArray, 'DoubleSetOperator'>;
 type CurrencySetOperator = Operator<SetOperatorType, NumberArray, 'CurrencySetOperator'>;
+type MultiPicklistSetOperator = Operator<
+    MultiPicklistSetOperatorType,
+    MultiPicklistArray,
+    'MultiPicklistSetOperator'
+>;
 
 type ScalarOperators =
     | StringOperator
@@ -356,7 +382,8 @@ type ScalarOperators =
     | DoubleOperator
     | BooleanOperator
     | PicklistOperator
-    | CurrencyOperator;
+    | CurrencyOperator
+    | MultiPicklistOperator;
 
 type SetOperators =
     | StringSetOperator
@@ -365,7 +392,8 @@ type SetOperators =
     | IntSetOperator
     | DoubleSetOperator
     | PicklistSetOperator
-    | CurrencySetOperator;
+    | CurrencySetOperator
+    | MultiPicklistSetOperator;
 
 const dateRegEx = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
 const dateTimeRegEx =
@@ -447,6 +475,11 @@ function isSetOperatorType(value: string): value is SetOperatorType {
     return values.includes(value as SetOperatorType);
 }
 
+function isMultiPicklistSetOperatorType(value: string): value is MultiPicklistSetOperatorType {
+    let values: MultiPicklistSetOperatorType[] = [excludes, includes];
+    return values.includes(value as MultiPicklistSetOperatorType);
+}
+
 function isScalarOperatorType(value: string): value is ScalarOperatorType {
     let values: ScalarOperatorType[] = [eq, ne, lt, gt, lte, gte];
     return values.includes(value as ScalarOperatorType);
@@ -476,6 +509,11 @@ function isPicklistOperatorType(value: string): value is PicklistOperatorType {
 
 function isCurrencyOperatorType(value: string): value is ScalarOperatorType {
     return isScalarOperatorType(value);
+}
+
+function isMultiPicklistOperatorType(value: string): value is MultiPicklistOperatorType {
+    let values: MultiPicklistOperatorType[] = [eq, ne];
+    return values.includes(value as MultiPicklistOperatorType);
 }
 
 function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
@@ -713,6 +751,37 @@ function operatorWithValue(
                       })
                       .mapError((e) => [e])
                 : failure([message(`Comparison value must be a Currency array.`)]);
+        }
+    }
+
+    if (objectInfoDataType === 'MultiPicklist') {
+        if (isMultiPicklistOperatorType(operator)) {
+            return is<StringValueNode>(value, 'StringValue')
+                ? success({
+                      type: 'MultiPicklistOperator',
+                      operator,
+                      value: {
+                          type: ValueType.StringLiteral,
+                          value: value.value,
+                      },
+                  })
+                : failure([message(`Comparison value must be a MultiPicklist`)]);
+        }
+
+        if (isMultiPicklistSetOperatorType(operator)) {
+            if (is<ListValueNode>(value, 'ListValue')) {
+                return listNodeToTypeArray<StringValueNode, string>(value, 'StringValue')
+                    .map((val): MultiPicklistSetOperator => {
+                        return {
+                            operator,
+                            type: 'MultiPicklistSetOperator',
+                            value: { type: ValueType.MultiPicklistArray, value: val },
+                        };
+                    })
+                    .mapError((e) => [e]);
+            } else {
+                return failure([message(`Comparison value must be a MultiPicklist array.`)]);
+            }
         }
     }
 

@@ -128,4 +128,62 @@ describe('filter sql', () => {
             expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
         });
     });
+
+    describe('multipicklist', () => {
+        const multipicklistQuery = (predicate) => {
+            return /* GraphQL */ `
+                query multipicklistPredicate {
+                    uiapi {
+                        query {
+                            ServiceTerritory(where: { Birds__c: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Birds__c {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with multipicklist filter predicates for eq operator', () => {
+            const predicate = `eq: "Albatross;Parrot"`;
+            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
+            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+        });
+
+        it('should return the correct sql with multipicklist filter predicates for ne operator', () => {
+            const predicate = `ne: "Albatross;Parrot"`;
+            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
+            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+        });
+
+        it('should return the correct sql with multipicklist filter predicates for includes operator', () => {
+            const predicate = `includes: ["Albatross;Parrot"]`;
+            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
+            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+        });
+
+        it('should return the correct sql with multipicklist filter predicates for includes operator with multiple terms', () => {
+            const predicate = `includes: ["Albatross;Parrot", "Macaw"]`;
+            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
+            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+        });
+
+        it('should return the correct sql with multipicklist filter predicates for excludes operator', () => {
+            const predicate = `excludes: ["Albatross;Parrot"]`;
+            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
+            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+        });
+
+        it('should return the correct sql with multipicklist filter predicates for excludes operator with multiple terms', () => {
+            const predicate = `excludes: ["Albatross;Parrot", "Macaw"]`;
+            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
+            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+        });
+    });
 });

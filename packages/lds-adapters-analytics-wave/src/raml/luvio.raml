@@ -28,6 +28,8 @@ types:
     (luvio.ttl): 300
   DatasetCollectionRepresentation:
     (luvio.ttl): 300
+  DatasetCoverageRepresentation:
+    (luvio.ttl): 300
   RecipeCollectionRepresentation:
     (luvio.ttl): 300
   RecipeNotificationRepresentation:
@@ -267,3 +269,8 @@ types:
     patch:
       (luvio.adapter):
         name: updateReplicatedFields
+  /security/coverage:
+    /datasets/{datasetIdOrApiName}/versions/{versionId}:
+      get:
+        (luvio.adapter):
+          name: getSecurityCoverageDatasetVersion

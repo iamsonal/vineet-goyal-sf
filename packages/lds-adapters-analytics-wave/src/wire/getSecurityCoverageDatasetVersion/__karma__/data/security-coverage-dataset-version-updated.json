@@ -1,0 +1,14 @@
+{
+    "datasetVersion": {
+        "dataset": {
+            "id": "0FbS700000047MtKAI",
+            "label": "AccountOutput",
+            "name": "AccoutOutput",
+            "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI"
+        },
+        "id": "0FcS70000005k3AKAQ",
+        "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions/0FcS70000005k3AKAQ"
+    },
+    "sources": [],
+    "url": "/services/data/v55.0/wave/security/coverage/datasets/0FbS700000047MtKAI/versions/0FcS70000005k3AKAQ"
+}

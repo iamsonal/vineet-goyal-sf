@@ -6729,6 +6729,36 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/security/coverage/datasets/{datasetIdOrApiName}/versions/{versionId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/security/coverage/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            [
+                'WaveController.getSecurityCoverageDatasetVersion',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/security/coverage/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/security/coverage/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            {}
+        );
+    });
+
     describe('get /asset/{assetId}/schedule', () => {
         testControllerInput(
             {

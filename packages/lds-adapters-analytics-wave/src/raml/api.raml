@@ -1091,6 +1091,21 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  DatasetCoverageRepresentation:
+    description: Security coverage for a dataset version.
+    type: object
+    properties:
+      datasetVersion:
+        description: Dataset version for which the coverage information applies.
+        type: DatasetVersionReferenceRepresentation
+      sources:
+        description: Source objects for the dataset version
+        type: array
+        items:
+          type: DatasetSourceRepresentation
+      url:
+        description: URL for retrieving this information.
+        type: string
   DatasetInputRepresentation:
     description: Wave Dataset input representation
     type: BaseAssetInputRepresentation
@@ -1218,6 +1233,18 @@ types:
         enum:
           - All
           - Limited
+  DatasetSourceRepresentation:
+    description: Source from which a dataset is constructed.
+    type: object
+    properties:
+      object:
+        description: Source object for a dataset
+        type: ObjectCoverageRepresentation
+      securityFields:
+        description: Dataset fields relevant to security for the object
+        type: array
+        items:
+          type: string
   DependencyCollectionRepresentation:
     description: A collection of Wave dependencies.
     type: object
@@ -1343,6 +1370,19 @@ types:
       datasetVersion:
         type: DatasetVersionInputRepresentation
         description: Dataset version input representation
+  DatasetVersionReferenceRepresentation:
+    description: Reference to a dataset version.
+    type: object
+    properties:
+      dataset:
+        description: A reference to the dataset.
+        type: AssetReferenceRepresentation
+      id:
+        description: The 18 character ID of the dataset version.
+        type: string
+      url:
+        description: The asset URL.
+        type: string
   DatasetVersionRepresentation:
     description: An instantiated version of a Wave dataset.
     discriminatorValue: DatasetVersion
@@ -1686,6 +1726,35 @@ types:
         description: Thousand separator
         type: string
         required: false # TODO Hand-rolled W-8253396
+  ObjectCoverageRepresentation:
+    description: Security coverage for an object
+    type: object
+    properties:
+      eligibleSharingSource:
+        description: Whether or not the object is an eligible sharing source
+        type: boolean
+      label:
+        description: Label for the object
+        type: string
+      name:
+        description: Name of the object
+        type: string
+      namespace:
+        description: Namespace of the object
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      securityFields:
+        description: Fields relevant to security for the object
+        type: array
+        items:
+          type: string
+      unsupportedRecords:
+        description: Specific records that are unsupported for sharing inheritance
+        type: UnsupportedRecordCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: URL for retrieving this information.
+        type: string
   OutputSourceRepresentation:
     description: output source for output objects
     discriminatorValue: outputSource
@@ -3207,6 +3276,32 @@ types:
           - Story
           - Widget
           - Workflow
+  UnsupportedRecordCollectionRepresentation:
+    description: Output representation of objects not supported by sharing inheritance
+      based on insights limits
+    type: object
+    properties:
+      count:
+        description: Count of objects not covered by sharing inheritance, may not
+          match the length of values array
+        type: integer
+      values:
+        description: Objects not covered due to sharing limit, list may be shorter
+          that count due to limiting for the API
+        type: array
+        items:
+          type: UnsupportedRecordRepresentation
+  UnsupportedRecordRepresentation:
+    description: Output representation of sharing usage of instances of objects based
+      on insights limits
+    type: object
+    properties:
+      descriptorCount:
+        description: Number of descriptors for the record id
+        type: integer
+      id:
+        description: Record id
+        type: string
   WaveAnalyticsLimitCollectionRepresentation:
     description: A collection of analytics limits
     type: object
@@ -5321,3 +5416,20 @@ types:
       id:
         type: string
         required: true
+  /security/coverage:
+    /datasets/{datasetIdOrApiName}/versions/{versionId}:
+      get:
+        description: The security coverage for a particular dataset version.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatasetCoverageRepresentation
+      uriParameters:
+        datasetIdOrApiName:
+          type: string
+          required: true
+        versionId:
+          type: string
+          required: true

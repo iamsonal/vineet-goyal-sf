@@ -198,6 +198,11 @@ const DATASET_VERSION_PATH = new RegExp(
     'i'
 );
 
+const SECURITY_COVERAGE_DATASET_VERSION_PATH = new RegExp(
+    `${WAVE_BASE_URI}/security/coverage/datasets/([A-Z0-9_]){1,80}/versions/([A-Z0-9_]){15,18}$`,
+    'i'
+);
+
 const XMD_PATH = new RegExp(
     `${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}/versions/([A-Z0-9_]){15,18}/xmds/[A-Z]+$`,
     'i'
@@ -1202,6 +1207,14 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATASET_VERSION_PATH.test(path),
         transport: {
             controller: 'WaveController.updateDatasetVersion',
+        },
+    },
+    getSecurityCoverageDatasetVersion: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && SECURITY_COVERAGE_DATASET_VERSION_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getSecurityCoverageDatasetVersion',
         },
     },
     getXmd: {

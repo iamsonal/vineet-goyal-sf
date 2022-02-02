@@ -270,7 +270,7 @@ function queryContainer(
         jsonAlias,
         path: extractPath(API_NAME_KEY),
     };
-    const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName));
+    const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName, true));
     const spanningFields = inputFields.value.filter(isSpanningField);
 
     const predicates: Predicate[] = spanningFields

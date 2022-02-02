@@ -72,7 +72,7 @@ export enum ValueType {
     DateTimeRange = 'DateTimeRange',
     RelativeDate = 'RelativeDate',
     NullValue = 'NullValue',
-    MultiPicklistArray = 'MultiPicklistArray',
+    MultiPicklistSet = 'MultiPicklistSet',
 }
 
 export type LiteralValue =
@@ -88,7 +88,7 @@ export type LiteralValue =
     | DateTimeArray
     | RelativeDate
     | NullValue
-    | MultiPicklistArray;
+    | MultiPicklistSet;
 
 interface Value<Type, ValueType> {
     type: Type;
@@ -119,8 +119,13 @@ export interface RelativeDate {
     hasTime: boolean;
 }
 
-export type StringLiteral = Value<ValueType.StringLiteral, string>;
-export type MultiPicklistArray = Value<ValueType.MultiPicklistArray, string[]>;
+export interface StringLiteral {
+    type: ValueType.StringLiteral;
+    value: string;
+    safe: boolean;
+}
+
+export type MultiPicklistSet = Value<ValueType.MultiPicklistSet, string>;
 export type IntLiteral = Value<ValueType.IntLiteral, number>;
 export type DoubleLiteral = Value<ValueType.DoubleLiteral, number>;
 export type BooleanLiteral = Value<ValueType.BooleanLiteral, Boolean>;

@@ -46,10 +46,13 @@ function makeGraphQL(where: string): string {
 // * datetime disallows invalid input
 // * datetime set works with literals and value
 
-function testOperatorResult(source: string, expectedValue: string) {
+function testOperatorResult(source: string, expectedValue: string, expectedBindings: string[]) {
     const graphqlSource = makeGraphQL(source);
-    const result = transform(parseAndVisit(graphqlSource), { userId: 'MyId', objectInfoMap });
-    expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expectedValue);
+    const queryResult = transform(parseAndVisit(graphqlSource), { userId: 'MyId', objectInfoMap });
+    const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+    expect(sqlResult.sql).toEqual(expectedValue);
+    expect(sqlResult.bindings).toEqual(expectedBindings);
 }
 
 describe('date range to sql parser', () => {
@@ -57,26 +60,30 @@ describe('date range to sql parser', () => {
         it.each([
             [
                 eq,
-                `BETWEEN date('now', 'start of month', '-4 months') AND date('now', 'start of month', '0 months', '-1 day')`,
+                `BETWEEN date('now', 'start of month', ?) AND date('now', 'start of month', ?, '-1 day')`,
+                ["'-4 months'", "'0 months'"],
             ],
-            [gt, `> date('now', 'start of month', '0 months', '-1 day')`],
-            [gte, `>= date('now', 'start of month', '-4 months')`],
-            [lt, `< date('now', 'start of month', '-4 months')`],
-            [lte, `<= date('now', 'start of month', '0 months', '-1 day')`],
-        ])('returns correct sql for last_n_months range scalar operator %s', (op, expectedComp) => {
-            const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
-                `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
-                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
-                `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
-                `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
+            [gt, `> date('now', 'start of month', ?, '-1 day')`, ["'0 months'"]],
+            [gte, `>= date('now', 'start of month', ?)`, ["'-4 months'"]],
+            [lt, `< date('now', 'start of month', ?)`, ["'-4 months'"]],
+            [lte, `<= date('now', 'start of month', ?, '-1 day')`, ["'0 months'"]],
+        ])(
+            'returns correct sql for last_n_months range scalar operator %s',
+            (op, expectedComp, expectedBindings) => {
+                const expected =
+                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
+                    `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
+                    `FROM recordsCTE as 'TimeSheet'  ` +
+                    `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
+                    `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
-            const source = `{ EndDate: { ${op}: { range: { last_n_months: 4 } } } }`;
-            return testOperatorResult(source, expected);
-        });
+                const source = `{ EndDate: { ${op}: { range: { last_n_months: 4 } } } }`;
+                return testOperatorResult(source, expected, expectedBindings);
+            }
+        );
 
         it('returns correct sql for last_n_months range scalar operator ne', () => {
             const expected =
@@ -86,12 +93,12 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', 'start of month', '-4 months') ` +
-                `AND date('now', 'start of month', '0 months', '-1 day')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', 'start of month', ?) ` +
+                `AND date('now', 'start of month', ?, '-1 day')) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ EndDate: { ne: { range: { last_n_months: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'-4 months'", "'0 months'"]);
         });
     });
 
@@ -99,26 +106,30 @@ describe('date range to sql parser', () => {
         it.each([
             [
                 eq,
-                `BETWEEN date('now', 'start of month', '1 months') AND date('now', 'start of month', '5 months', '-1 day')`,
+                `BETWEEN date('now', 'start of month', ?) AND date('now', 'start of month', ?, '-1 day')`,
+                ["'1 months'", "'5 months'"],
             ],
-            [gt, `> date('now', 'start of month', '5 months', '-1 day')`],
-            [gte, `>= date('now', 'start of month', '1 months')`],
-            [lt, `< date('now', 'start of month', '1 months')`],
-            [lte, `<= date('now', 'start of month', '5 months', '-1 day')`],
-        ])('returns correct sql for next_n_month range scalar operator %s', (op, expectedComp) => {
-            const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
-                `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
-                `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
-                `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
-                `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-                `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
-                `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
+            [gt, `> date('now', 'start of month', ?, '-1 day')`, ["'5 months'"]],
+            [gte, `>= date('now', 'start of month', ?)`, ["'1 months'"]],
+            [lt, `< date('now', 'start of month', ?)`, ["'1 months'"]],
+            [lte, `<= date('now', 'start of month', ?, '-1 day')`, ["'5 months'"]],
+        ])(
+            'returns correct sql for next_n_month range scalar operator %s',
+            (op, expectedComp, expectedBindings) => {
+                const expected =
+                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
+                    `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
+                    `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
+                    `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
+                    `FROM recordsCTE as 'TimeSheet'  ` +
+                    `WHERE ( json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') ${expectedComp} ` +
+                    `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
-            const source = `{ EndDate: { ${op}: { range: { next_n_months: 4 } } } }`;
-            return testOperatorResult(source, expected);
-        });
+                const source = `{ EndDate: { ${op}: { range: { next_n_months: 4 } } } }`;
+                return testOperatorResult(source, expected, expectedBindings);
+            }
+        );
 
         it('returns correct sql for next_n_months range scalar operator ne', () => {
             const expected =
@@ -128,25 +139,25 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', 'start of month', '1 months') ` +
-                `AND date('now', 'start of month', '5 months', '-1 day')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', 'start of month', ?) ` +
+                `AND date('now', 'start of month', ?, '-1 day')) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ EndDate: { ne: { range: { next_n_months: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'1 months'", "'5 months'"]);
         });
     });
 
     describe('Date range last_n_days', () => {
         it.each([
-            [eq, `BETWEEN date('now', '-4 days') AND date('now', '0 days')`],
-            [gt, `> date('now', '0 days')`],
-            [gte, `>= date('now', '-4 days')`],
-            [lt, `< date('now', '-4 days')`],
-            [lte, `<= date('now', '0 days')`],
+            [eq, `BETWEEN date('now', ?) AND date('now', ?)`, ["'-4 days'", "'0 days'"]],
+            [gt, `> date('now', ?)`, ["'0 days'"]],
+            [gte, `>= date('now', ?)`, ["'-4 days'"]],
+            [lt, `< date('now', ?)`, ["'-4 days'"]],
+            [lte, `<= date('now', ?)`, ["'0 days'"]],
         ])(
             'returns correct sql for all last_n_days range scalar operator %s',
-            (op, expectedComp) => {
+            (op, expectedComp, expectedBindings) => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
@@ -158,7 +169,7 @@ describe('date range to sql parser', () => {
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
                 const source = `{ EndDate: { ${op}: { range: { last_n_days: 4 } } } }`;
-                return testOperatorResult(source, expected);
+                return testOperatorResult(source, expected, expectedBindings);
             }
         );
 
@@ -170,25 +181,25 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', '-4 days') ` +
-                `AND date('now', '0 days')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', ?) ` +
+                `AND date('now', ?)) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ EndDate: { ne: { range: { last_n_days: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'-4 days'", "'0 days'"]);
         });
     });
 
     describe('Date range next_n_days', () => {
         it.each([
-            [eq, `BETWEEN date('now', '1 days') AND date('now', '4 days')`],
-            [gt, `> date('now', '4 days')`],
-            [gte, `>= date('now', '1 days')`],
-            [lt, `< date('now', '1 days')`],
-            [lte, `<= date('now', '4 days')`],
+            [eq, `BETWEEN date('now', ?) AND date('now', ?)`, ["'1 days'", "'4 days'"]],
+            [gt, `> date('now', ?)`, ["'4 days'"]],
+            [gte, `>= date('now', ?)`, ["'1 days'"]],
+            [lt, `< date('now', ?)`, ["'1 days'"]],
+            [lte, `<= date('now', ?)`, ["'4 days'"]],
         ])(
             'returns correct sql for all next_n_days range scalar operator %s',
-            (op, expectedComp) => {
+            (op, expectedComp, expectedBindings) => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
@@ -200,7 +211,7 @@ describe('date range to sql parser', () => {
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
                 const source = `{ EndDate: { ${op}: { range: { next_n_days: 4 } } } }`;
-                return testOperatorResult(source, expected);
+                return testOperatorResult(source, expected, expectedBindings);
             }
         );
 
@@ -212,12 +223,12 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', '1 days') ` +
-                `AND date('now', '4 days')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.EndDate.value') BETWEEN date('now', ?) ` +
+                `AND date('now', ?)) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ EndDate: { ne: { range: { next_n_days: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'1 days'", "'4 days'"]);
         });
     });
 
@@ -225,15 +236,16 @@ describe('date range to sql parser', () => {
         it.each([
             [
                 eq,
-                `BETWEEN datetime('now', 'start of month', '-4 months') AND datetime('now', 'start of month', '0 months', '-1 day')`,
+                `BETWEEN datetime('now', 'start of month', ?) AND datetime('now', 'start of month', ?, '-1 day')`,
+                ["'-4 months'", "'0 months'"],
             ],
-            [gt, `> datetime('now', 'start of month', '0 months', '-1 day')`],
-            [gte, `>= datetime('now', 'start of month', '-4 months')`],
-            [lt, `< datetime('now', 'start of month', '-4 months')`],
-            [lte, `<= datetime('now', 'start of month', '0 months', '-1 day')`],
+            [gt, `> datetime('now', 'start of month', ?, '-1 day')`, ["'0 months'"]],
+            [gte, `>= datetime('now', 'start of month', ?)`, ["'-4 months'"]],
+            [lt, `< datetime('now', 'start of month', ?)`, ["'-4 months'"]],
+            [lte, `<= datetime('now', 'start of month', ?, '-1 day')`, ["'0 months'"]],
         ])(
             'returns correct sql for all last_n_months datetime range scalar operator %s',
-            (op, expectedComp) => {
+            (op, expectedComp, expectedBindings) => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
@@ -245,7 +257,7 @@ describe('date range to sql parser', () => {
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
                 const source = `{ CreatedDate: { ${op}: { range: { last_n_months: 4 } } } }`;
-                return testOperatorResult(source, expected);
+                return testOperatorResult(source, expected, expectedBindings);
             }
         );
 
@@ -257,12 +269,12 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', 'start of month', '-4 months') ` +
-                `AND datetime('now', 'start of month', '0 months', '-1 day')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', 'start of month', ?) ` +
+                `AND datetime('now', 'start of month', ?, '-1 day')) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ CreatedDate: { ne: { range: { last_n_months: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'-4 months'", "'0 months'"]);
         });
     });
 
@@ -270,15 +282,16 @@ describe('date range to sql parser', () => {
         it.each([
             [
                 eq,
-                `BETWEEN datetime('now', 'start of month', '1 months') AND datetime('now', 'start of month', '5 months', '-1 day')`,
+                `BETWEEN datetime('now', 'start of month', ?) AND datetime('now', 'start of month', ?, '-1 day')`,
+                ["'1 months'", "'5 months'"],
             ],
-            [gt, `> datetime('now', 'start of month', '5 months', '-1 day')`],
-            [gte, `>= datetime('now', 'start of month', '1 months')`],
-            [lt, `< datetime('now', 'start of month', '1 months')`],
-            [lte, `<= datetime('now', 'start of month', '5 months', '-1 day')`],
+            [gt, `> datetime('now', 'start of month', ?, '-1 day')`, ["'5 months'"]],
+            [gte, `>= datetime('now', 'start of month', ?)`, ["'1 months'"]],
+            [lt, `< datetime('now', 'start of month', ?)`, ["'1 months'"]],
+            [lte, `<= datetime('now', 'start of month', ?, '-1 day')`, ["'5 months'"]],
         ])(
             'returns correct sql for all next_n_month range scalar operator %s',
-            (op, expectedComp) => {
+            (op, expectedComp, expectedBindings) => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
@@ -290,7 +303,7 @@ describe('date range to sql parser', () => {
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
                 const source = `{ CreatedDate: { ${op}: { range: { next_n_months: 4 } } } }`;
-                return testOperatorResult(source, expected);
+                return testOperatorResult(source, expected, expectedBindings);
             }
         );
 
@@ -302,25 +315,25 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', 'start of month', '1 months') ` +
-                `AND datetime('now', 'start of month', '5 months', '-1 day')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', 'start of month', ?) ` +
+                `AND datetime('now', 'start of month', ?, '-1 day')) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ CreatedDate: { ne: { range: { next_n_months: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'1 months'", "'5 months'"]);
         });
     });
 
     describe('Datetime range last_n_days', () => {
         it.each([
-            [eq, `BETWEEN datetime('now', '-4 days') AND datetime('now', '0 days')`],
-            [gt, `> datetime('now', '0 days')`],
-            [gte, `>= datetime('now', '-4 days')`],
-            [lt, `< datetime('now', '-4 days')`],
-            [lte, `<= datetime('now', '0 days')`],
+            [eq, `BETWEEN datetime('now', ?) AND datetime('now', ?)`, ["'-4 days'", "'0 days'"]],
+            [gt, `> datetime('now', ?)`, ["'0 days'"]],
+            [gte, `>= datetime('now', ?)`, ["'-4 days'"]],
+            [lt, `< datetime('now', ?)`, ["'-4 days'"]],
+            [lte, `<= datetime('now', ?)`, ["'0 days'"]],
         ])(
             'returns correct sql for all last_n_days range scalar operator %s',
-            (op, expectedComp) => {
+            (op, expectedComp, expectedBindings) => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
@@ -332,7 +345,7 @@ describe('date range to sql parser', () => {
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
                 const source = `{ CreatedDate: { ${op}: { range: { last_n_days: 4 } } } }`;
-                return testOperatorResult(source, expected);
+                return testOperatorResult(source, expected, expectedBindings);
             }
         );
 
@@ -344,25 +357,25 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', '-4 days') ` +
-                `AND datetime('now', '0 days')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', ?) ` +
+                `AND datetime('now', ?)) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ CreatedDate: { ne: { range: { last_n_days: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'-4 days'", "'0 days'"]);
         });
     });
 
     describe('Datetime range next_n_days', () => {
         it.each([
-            [eq, `BETWEEN datetime('now', '1 days') AND datetime('now', '4 days')`],
-            [gt, `> datetime('now', '4 days')`],
-            [gte, `>= datetime('now', '1 days')`],
-            [lt, `< datetime('now', '1 days')`],
-            [lte, `<= datetime('now', '4 days')`],
+            [eq, `BETWEEN datetime('now', ?) AND datetime('now', ?)`, ["'1 days'", "'4 days'"]],
+            [gt, `> datetime('now', ?)`, ["'4 days'"]],
+            [gte, `>= datetime('now', ?)`, ["'1 days'"]],
+            [lt, `< datetime('now', ?)`, ["'1 days'"]],
+            [lte, `<= datetime('now', ?)`, ["'4 days'"]],
         ])(
             'returns correct sql for all next_n_days range scalar operator %s',
-            (op, expectedComp) => {
+            (op, expectedComp, expectedBindings) => {
                 const expected =
                     `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
@@ -374,7 +387,7 @@ describe('date range to sql parser', () => {
                     `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
                 const source = `{ CreatedDate: { ${op}: { range: { next_n_days: 4 } } } }`;
-                return testOperatorResult(source, expected);
+                return testOperatorResult(source, expected, expectedBindings);
             }
         );
 
@@ -386,12 +399,12 @@ describe('date range to sql parser', () => {
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
-                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', '1 days') ` +
-                `AND datetime('now', '4 days')) ` +
+                `WHERE ( NOT (json_extract("TimeSheet.JSON", '$.data.fields.CreatedDate.value') BETWEEN datetime('now', ?) ` +
+                `AND datetime('now', ?)) ` +
                 `AND json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) )) ) as json`;
 
             const source = `{ CreatedDate: { ne: { range: { next_n_days: 4 } } } }`;
-            return testOperatorResult(source, expected);
+            return testOperatorResult(source, expected, ["'1 days'", "'4 days'"]);
         });
     });
 });

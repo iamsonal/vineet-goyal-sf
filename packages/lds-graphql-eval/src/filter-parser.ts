@@ -42,7 +42,6 @@ import {
     StringArray,
     StringLiteral,
     ValueType,
-    MultiPicklistArray,
 } from './Predicate';
 import {
     errors,
@@ -191,7 +190,7 @@ function spanningFilter(
     const { apiName } = referenceInfo;
     const path = extractPath('ApiName');
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path };
-    const typePredicate = comparison(extract, eq, stringLiteral(apiName));
+    const typePredicate = comparison(extract, eq, stringLiteral(apiName, true));
 
     return fieldsToFilters([fieldNode], jsonAlias, apiName, input).map((container) => {
         const { predicate, joinNames: names, joinPredicates: predicates } = container;
@@ -262,8 +261,8 @@ function fieldFilter(
                     operator: CompoundOperator.or,
                     children: op.value.value.map((term) => {
                         return comparison(extract, op.operator, {
-                            type: op.value.type,
-                            value: [term],
+                            type: ValueType.MultiPicklistSet,
+                            value: term,
                         });
                     }),
                 };
@@ -370,7 +369,7 @@ type DoubleSetOperator = Operator<SetOperatorType, NumberArray, 'DoubleSetOperat
 type CurrencySetOperator = Operator<SetOperatorType, NumberArray, 'CurrencySetOperator'>;
 type MultiPicklistSetOperator = Operator<
     MultiPicklistSetOperatorType,
-    MultiPicklistArray,
+    StringArray,
     'MultiPicklistSetOperator'
 >;
 
@@ -549,7 +548,7 @@ function operatorWithValue(
                 ? success({
                       type: 'StringOperator',
                       operator,
-                      value: { type: ValueType.StringLiteral, value: value.value },
+                      value: stringLiteral(value.value),
                   })
                 : failure([message(`Comparison value must be a string.`)]);
         }
@@ -705,7 +704,7 @@ function operatorWithValue(
                 ? success({
                       type: 'PicklistOperator',
                       operator,
-                      value: { type: ValueType.StringLiteral, value: value.value },
+                      value: stringLiteral(value.value),
                   })
                 : failure([message(`Comparison value must be a Picklist.`)]);
         }
@@ -756,16 +755,15 @@ function operatorWithValue(
 
     if (objectInfoDataType === 'MultiPicklist') {
         if (isMultiPicklistOperatorType(operator)) {
-            return is<StringValueNode>(value, 'StringValue')
-                ? success({
-                      type: 'MultiPicklistOperator',
-                      operator,
-                      value: {
-                          type: ValueType.StringLiteral,
-                          value: value.value,
-                      },
-                  })
-                : failure([message(`Comparison value must be a MultiPicklist`)]);
+            if (is<StringValueNode>(value, 'StringValue')) {
+                return success<MultiPicklistOperator, PredicateError[]>({
+                    type: 'MultiPicklistOperator',
+                    operator,
+                    value: stringLiteral(value.value),
+                });
+            }
+
+            return failure([message(`Comparison value must be a MultiPicklist`)]);
         }
 
         if (isMultiPicklistSetOperatorType(operator)) {
@@ -775,7 +773,7 @@ function operatorWithValue(
                         return {
                             operator,
                             type: 'MultiPicklistSetOperator',
-                            value: { type: ValueType.MultiPicklistArray, value: val },
+                            value: { type: ValueType.StringArray, value: val },
                         };
                     })
                     .mapError((e) => [e]);
@@ -850,7 +848,7 @@ function parseDateNode(
     if (valueField !== undefined) {
         if (is<StringValueNode>(valueField, 'StringValue')) {
             if (valueField.value.match(regex)) {
-                return success({ type: ValueType.StringLiteral, value: valueField.value });
+                return success(stringLiteral(valueField.value));
             }
 
             return failure(message(`${typeName} format must be ${dateFormat}.`));

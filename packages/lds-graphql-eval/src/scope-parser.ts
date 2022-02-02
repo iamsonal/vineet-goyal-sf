@@ -51,10 +51,7 @@ export function scopeFilter(
                 path: extractPath(fieldInfo.apiName),
             },
             operator: ComparisonOperator.eq,
-            right: {
-                type: ValueType.StringLiteral,
-                value: input.userId,
-            },
+            right: stringLiteral(input.userId),
         });
     }
 
@@ -92,17 +89,17 @@ function assignedToMe(input: ParserInput): ExistsPredicate {
     const userIdPredicate = comparison(
         { type: ValueType.Extract, jsonAlias: srApiName, path: relatedRecordIdPath },
         ComparisonOperator.eq,
-        { type: ValueType.StringLiteral, value: input.userId }
+        stringLiteral(input.userId)
     );
     const arTypePredicate = comparison(
         { type: ValueType.Extract, jsonAlias: arApiName, path: apiNamePath },
         ComparisonOperator.eq,
-        stringLiteral(arApiName)
+        stringLiteral(arApiName, true)
     );
     const srTypePredicate = comparison(
         { type: ValueType.Extract, jsonAlias: srApiName, path: apiNamePath },
         ComparisonOperator.eq,
-        stringLiteral(srApiName)
+        stringLiteral(srApiName, true)
     );
 
     const compound: CompoundPredicate = {

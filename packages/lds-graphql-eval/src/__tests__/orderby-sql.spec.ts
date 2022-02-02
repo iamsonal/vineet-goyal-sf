@@ -35,10 +35,16 @@ export function makeOrderByGraphQL(orderBy: string | undefined): string {
 `;
 }
 
-function testOperatorResult(orderBy: string | undefined, expectedValue: string) {
+function testOperatorResult(
+    orderBy: string | undefined,
+    expectedValue: string,
+    expectedBindings: string[]
+) {
     const graphqlSource = makeOrderByGraphQL(orderBy);
     const result = transform(parseAndVisit(graphqlSource), { userId: 'MyId', objectInfoMap });
-    expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expectedValue);
+    const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+    expect(sqlResult.sql).toEqual(expectedValue);
+    expect(sqlResult.bindings).toEqual(expectedBindings);
 }
 
 const Ascending = 'ASC';
@@ -75,7 +81,7 @@ describe('order by sql', () => {
             `ORDER BY CASE WHEN json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value') IS NULL THEN 1 ELSE 0 END ${nullsOrder}, json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value') ${order} ` +
             `)) ) as json`;
 
-        return testOperatorResult(source, expected);
+        return testOperatorResult(source, expected, []);
     });
 });
 
@@ -117,7 +123,9 @@ describe('multiple order by', () => {
             `IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.Name.value') ASC , CASE WHEN json_extract("Account.JSON", ` +
             `'$.data.fields.CreatedDate.value') IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.CreatedDate.value') DESC )) ) as json`;
 
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('should return the correct sql with multiple order by predicates with null orders specified', () => {
@@ -161,7 +169,9 @@ describe('multiple order by', () => {
             `IS NULL THEN 1 ELSE 0 END DESC, json_extract("Account.JSON", '$.data.fields.Name.value') ASC , CASE WHEN json_extract("Account.JSON", ` +
             `'$.data.fields.CreatedDate.value') IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.CreatedDate.value') DESC )) ) as json`;
 
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('should return the correct sql with duplicate order by predicates', () => {
@@ -207,6 +217,8 @@ describe('multiple order by', () => {
             `IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.Name.value') ASC , CASE WHEN json_extract("Account.JSON", ` +
             `'$.data.fields.CreatedDate.value') IS NULL THEN 1 ELSE 0 END ASC, json_extract("Account.JSON", '$.data.fields.CreatedDate.value') DESC )) ) as json`;
 
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 });

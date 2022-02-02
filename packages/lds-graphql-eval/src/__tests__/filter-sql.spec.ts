@@ -42,25 +42,33 @@ describe('filter sql', () => {
         it('should return the correct sql with Picklist filter predicates for eq operator', () => {
             const predicate = `eq: "T"`;
             const result = transform(parseAndVisit(picklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'T'"]);
         });
 
         it('should return the correct sql with Picklist filter predicates for ne operator', () => {
             const predicate = `ne: "T"`;
             const result = transform(parseAndVisit(picklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'T'"]);
         });
 
         it('should return the correct sql with Picklist filter predicates for IN operator', () => {
             const predicate = `in: ["T"]`;
             const result = transform(parseAndVisit(picklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'T'"]);
         });
 
         it('should return the correct sql with Picklist filter predicates for NIN operator', () => {
             const predicate = `nin: ["T"]`;
             const result = transform(parseAndVisit(picklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'T'"]);
         });
     });
 
@@ -90,42 +98,58 @@ describe('filter sql', () => {
         it('should return the correct sql with currency filter predicates for eq operator', () => {
             const predicate = `eq: 123.45`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
         it('should return the correct sql with currency filter predicates for ne operator', () => {
             const predicate = `ne: 123.45`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
         it('should return the correct sql with currency filter predicates for gt operator', () => {
             const predicate = `gt: 123.45`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
         it('should return the correct sql with currency filter predicates for gte operator', () => {
             const predicate = `gte: 123.45`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
         it('should return the correct sql with currency filter predicates for lt operator', () => {
             const predicate = `lt: 123.45`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
         it('should return the correct sql with currency filter predicates for lte operator', () => {
             const predicate = `lte: 123.45`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
         it('should return the correct sql with currency filter predicates for in operator', () => {
             const predicate = `in: [123.45]`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
         it('should return the correct sql with currency filter predicates for nin operator', () => {
             const predicate = `nin: [123.45]`;
             const result = transform(parseAndVisit(currencyQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['123.45']);
         });
     });
 
@@ -152,38 +176,74 @@ describe('filter sql', () => {
 
         it('should return the correct sql with multipicklist filter predicates for eq operator', () => {
             const predicate = `eq: "Albatross;Parrot"`;
-            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const queryResult = transform(
+                parseAndVisit(multipicklistQuery(predicate)),
+                parserInput
+            );
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'Albatross;Parrot'"]);
         });
 
         it('should return the correct sql with multipicklist filter predicates for ne operator', () => {
             const predicate = `ne: "Albatross;Parrot"`;
-            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const queryResult = transform(
+                parseAndVisit(multipicklistQuery(predicate)),
+                parserInput
+            );
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'Albatross;Parrot'"]);
         });
 
         it('should return the correct sql with multipicklist filter predicates for includes operator', () => {
             const predicate = `includes: ["Albatross;Parrot"]`;
-            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const queryResult = transform(
+                parseAndVisit(multipicklistQuery(predicate)),
+                parserInput
+            );
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'%Albatross%Parrot%'"]);
         });
 
         it('should return the correct sql with multipicklist filter predicates for includes operator with multiple terms', () => {
             const predicate = `includes: ["Albatross;Parrot", "Macaw"]`;
-            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const queryResult = transform(
+                parseAndVisit(multipicklistQuery(predicate)),
+                parserInput
+            );
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'%Albatross%Parrot%'", "'%Macaw%'"]);
         });
 
         it('should return the correct sql with multipicklist filter predicates for excludes operator', () => {
             const predicate = `excludes: ["Albatross;Parrot"]`;
-            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const queryResult = transform(
+                parseAndVisit(multipicklistQuery(predicate)),
+                parserInput
+            );
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'%Albatross%Parrot%'"]);
         });
 
         it('should return the correct sql with multipicklist filter predicates for excludes operator with multiple terms', () => {
             const predicate = `excludes: ["Albatross;Parrot", "Macaw"]`;
-            const result = transform(parseAndVisit(multipicklistQuery(predicate)), parserInput);
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toMatchSnapshot();
+            const queryResult = transform(
+                parseAndVisit(multipicklistQuery(predicate)),
+                parserInput
+            );
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'%Albatross%Parrot%'", "'%Macaw%'"]);
         });
     });
 });

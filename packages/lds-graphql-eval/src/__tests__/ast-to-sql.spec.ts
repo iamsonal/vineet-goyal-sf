@@ -43,11 +43,14 @@ describe('ast-parser', () => {
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( ` +
-                `json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.value') = 'MyId' AND ` +
+                `json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.value') = ? AND ` +
                 `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) ` +
                 `)) ) as json`;
+
             const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-            expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+            const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+            expect(sqlResult.sql).toEqual(expected);
+            expect(sqlResult.bindings).toEqual(["'MyId'"]);
         });
     });
 
@@ -79,7 +82,9 @@ describe('ast-parser', () => {
             `)) ) as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('includes first arg in output', () => {
@@ -110,7 +115,9 @@ describe('ast-parser', () => {
             `)) ) as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('includes assignedtome predicate', () => {
@@ -143,13 +150,15 @@ describe('ast-parser', () => {
             `join recordsCTE as 'ServiceResource' WHERE ` +
             `( json_extract("AssignedResource.JSON", '$.data.fields.ServiceResourceId.value') = json_extract("ServiceResource.JSON", '$.data.id') AND ` +
             `json_extract("AssignedResource.JSON", '$.data.fields.ServiceAppointmentId.value') = json_extract("ServiceAppointment.JSON", '$.data.id') AND ` +
-            `json_extract("ServiceResource.JSON", '$.data.fields.RelatedRecordId.value') = 'MyId' AND ` +
+            `json_extract("ServiceResource.JSON", '$.data.fields.RelatedRecordId.value') = ? AND ` +
             `json_extract("AssignedResource.JSON", '$.data.apiName') = 'AssignedResource' AND ` +
             `json_extract("ServiceResource.JSON", '$.data.apiName') = 'ServiceResource' ) ) AND ` +
             `json_extract("ServiceAppointment.JSON", '$.data.apiName') = 'ServiceAppointment' ) )) ) as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual(["'MyId'"]);
     });
 
     it('transforms GraphQL operation into a custom AST', () => {
@@ -184,7 +193,9 @@ describe('ast-parser', () => {
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' )) ) as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('transforms GraphQL query with multiple fields', () => {
@@ -231,7 +242,9 @@ describe('ast-parser', () => {
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' )) ) as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('transforms spanning record GraphQL operation', () => {
@@ -275,7 +288,9 @@ describe('ast-parser', () => {
             `as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('transforms GraphQL query with multiple root record types each having spanning fields', () => {
@@ -343,7 +358,9 @@ describe('ast-parser', () => {
             `json_extract("User.JSON", '$.data.fields.CreatedById.value') = json_extract("User.CreatedBy.JSON", '$.data.id') AND json_extract("User.JSON", '$.data.apiName') = 'User' ) )) ` +
             `) as json`;
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('transforms child record GraphQL operation', () => {
@@ -385,7 +402,9 @@ describe('ast-parser', () => {
             `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' )) ) as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual([]);
     });
 
     it('where argument join information is reflected in connection', () => {
@@ -422,7 +441,7 @@ describe('ast-parser', () => {
             `join recordsCTE as 'TimeSheet.CreatedBy.CreatedBy' ` +
             `join recordsCTE as 'TimeSheet.CreatedBy' ` +
             `WHERE ( ` +
-            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = 'xyz' AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? AND ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.id') AND ` +
             `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = ` +
@@ -432,7 +451,9 @@ describe('ast-parser', () => {
             `)) ) as json`;
 
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual(["'xyz'"]);
     });
 
     const grandParentNot = /* GraphQL */ ` { 
@@ -498,8 +519,8 @@ describe('ast-parser', () => {
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.JSON", '$.data.id') AND ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' AND ` +
-            `NOT (json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = 'xyz') AND ` +
-            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = 'abc' ) ` +
+            `NOT (json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ?) AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? ) ` +
             `)) ) as json`;
 
         const graphqlSource = makeGraphQL(source, 'TimeSheetNumber {value}');
@@ -508,6 +529,8 @@ describe('ast-parser', () => {
             objectInfoMap,
         });
 
-        expect(sql(unwrappedValue(result), sqlMappingInput)).toEqual(expected);
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.bindings).toEqual(["'xyz'", "'abc'"]);
     });
 });

@@ -58,8 +58,8 @@ export function getRelationshipInfo(
     return success(objInfo.childRelationships[fieldName]);
 }
 
-export function stringLiteral(value: string): StringLiteral {
-    return { type: ValueType.StringLiteral, value };
+export function stringLiteral(value: string, safe: boolean = false): StringLiteral {
+    return { type: ValueType.StringLiteral, value, safe };
 }
 
 export function intLiteral(value: number): IntLiteral {

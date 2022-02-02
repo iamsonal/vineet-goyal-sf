@@ -1,0 +1,81 @@
+{
+    "assetVersion": 49,
+    "configurationUrl": "/services/data/v55.0/wave/templates/0Nkxx0000004FICCA2/configuration",
+    "createdBy": {
+        "id": "005xx000001X7QLAA0",
+        "name": "User User",
+        "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+    },
+    "createdDate": "2022-01-05T23:20:19.000Z",
+    "customAttributes": [
+        {
+            "label": "Features",
+            "values": ["Feature1", "Feature2"]
+        }
+    ],
+    "description": "template description",
+    "folderSource": {
+        "id": "00lxx000000jHs9AAE",
+        "label": "app",
+        "name": "app",
+        "url": "/services/data/v55.0/wave/folders/00lxx000000jHs9AAE"
+    },
+    "icons": {
+        "appBadge": {
+            "name": "16.png",
+            "url": "/analytics/wave/web/proto/images/app/icons/16.png"
+        },
+        "templateBadge": {
+            "name": "default.png",
+            "url": "/analytics/wave/web/proto/images/template/icons/default.png"
+        },
+        "templatePreviews": [
+            {
+                "description": "some description",
+                "id": "081xx0000004CIiAAM",
+                "label": "Clean Contact",
+                "name": "CleanContact",
+                "url": "/resource/1629753932000/CleanContact"
+            },
+            {
+                "id": "081xx0000004CIiAAM",
+                "label": "Clean Contact (no description)",
+                "name": "CleanContact",
+                "url": "/resource/1629753932000/CleanContact"
+            }
+        ]
+    },
+    "id": "0Nkxx0000004FICCA2",
+    "label": "checkWireAdapterRaml",
+    "lastModifiedBy": {
+        "id": "005xx000001X7QLAA0",
+        "name": "User User",
+        "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+    },
+    "lastModifiedDate": "2022-01-11T18:04:21.000Z",
+    "name": "checkWireAdapterRaml",
+    "namespace": "testns",
+    "releaseInfo": {
+        "notesUrl": "/services/data/v55.0/wave/templates/0Nkxx0000004FICCA2/releasenotes",
+        "templateVersion": "1.0"
+    },
+    "tags": ["a", "b"],
+    "templateType": "app",
+    "url": "/services/data/v55.0/wave/templates/0Nkxx0000004FICCA2",
+    "videos": [
+        {
+            "id": "ytid",
+            "label": "yt link",
+            "linkType": "youtube",
+            "purpose": "onboarding",
+            "showPlaylist": true
+        },
+        {
+            "id": "videoid",
+            "label": "a video link",
+            "linkType": "vidyard",
+            "purpose": "walkthrough",
+            "showPlaylist": false
+        }
+    ]
+}

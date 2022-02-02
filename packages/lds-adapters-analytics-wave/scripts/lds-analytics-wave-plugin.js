@@ -18,6 +18,21 @@ const RAML_ARTIFACTS = {
         'onResourceResponseError',
     ],
     '/adapters/deleteDataset': ['buildNetworkSnapshot'],
+    '/adapters/getWaveTemplate': [
+        'buildCachedSnapshotCachePolicy',
+        'onResourceResponseSuccess',
+        'onResourceResponseError',
+    ],
+    '/adapters/getWaveTemplateConfig': [
+        'buildCachedSnapshotCachePolicy',
+        'onResourceResponseSuccess',
+        'onResourceResponseError',
+    ],
+    '/adapters/getWaveTemplateReleaseNotes': [
+        'buildCachedSnapshotCachePolicy',
+        'onResourceResponseSuccess',
+        'onResourceResponseError',
+    ],
 };
 
 // extend the basePlugin to add the logic for the partial raml artifacts

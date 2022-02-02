@@ -1,0 +1,42 @@
+{
+    "assetVersion": 49,
+    "configurationUrl": "/services/data/v55.0/wave/templates/0Nkxx0000004FICCA2/configuration",
+    "createdBy": {
+        "id": "005xx000001X7QLAA0",
+        "name": "User User",
+        "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+    },
+    "createdDate": "2022-01-05T23:20:19.000Z",
+    "customAttributes": [],
+    "description": "",
+    "folderSource": null,
+    "icons": {
+        "appBadge": {
+            "name": "16.png",
+            "url": "/analytics/wave/web/proto/images/app/icons/16.png"
+        },
+        "templateBadge": {
+            "name": "default.png",
+            "url": "/analytics/wave/web/proto/images/template/icons/default.png"
+        },
+        "templatePreviews": []
+    },
+    "id": "0Nkxx0000004FICCA2",
+    "label": "checkWireAdapterRaml",
+    "lastModifiedBy": {
+        "id": "005xx000001X7QLAA0",
+        "name": "User User",
+        "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+    },
+    "lastModifiedDate": "2022-01-05T23:20:19.000Z",
+    "name": "checkWireAdapterRaml",
+    "namespace": null,
+    "releaseInfo": {
+        "notesUrl": null,
+        "templateVersion": "1.0"
+    },
+    "tags": [],
+    "templateType": "app",
+    "url": "/services/data/v55.0/wave/templates/0Nkxx0000004FICCA2",
+    "videos": []
+}

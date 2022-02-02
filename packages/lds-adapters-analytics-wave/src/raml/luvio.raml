@@ -68,6 +68,20 @@ types:
       SourceObjectName: sourceObjectName
   SourceObjectCollectionRepresentation:
     (luvio.ttl): 300
+  TemplateCollectionRepresentation:
+    (luvio.ttl): 300000
+  TemplateConfigurationRepresentation:
+    (luvio.ttl): 300000
+    (luvio.key):
+      id: id
+  TemplateReleaseNotesRepresentation:
+    (luvio.ttl): 300000
+    (luvio.key):
+      id: id
+  TemplateRepresentation:
+    (luvio.ttl): 300000
+    (luvio.key):
+      id: id
   WaveAnalyticsLimitCollectionRepresentation:
     (luvio.ttl): 300
   WaveFolderCollectionRepresentation:
@@ -274,3 +288,25 @@ types:
       get:
         (luvio.adapter):
           name: getSecurityCoverageDatasetVersion
+  /templates:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplates
+  /templates/{templateIdOrApiName}:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplate
+      (luvio.key):
+        id: urlParams.templateIdOrApiName
+  /templates/{templateIdOrApiName}/configuration:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplateConfig
+      (luvio.key):
+        id: urlParams.templateIdOrApiName
+  /templates/{templateIdOrApiName}/releasenotes:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplateReleaseNotes
+      (luvio.key):
+        id: urlParams.templateIdOrApiName

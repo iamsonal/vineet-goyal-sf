@@ -1,0 +1,1058 @@
+{
+    "templates": [
+        {
+            "assetVersion": 50,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__AppointmentAnalytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": ["Appointment Overview", "Service Resource Performance"]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": [
+                        "Account",
+                        "AssignedResource",
+                        "ServiceAppointment",
+                        "ServiceResource",
+                        "ServiceTerritory",
+                        "Skill",
+                        "SkillRequirement",
+                        "User",
+                        "WorkOrder",
+                        "WorkType"
+                    ]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "Bring the power of Tableau CRM to Lightning Scheduler customer appointments data. Analyze past appointment volumes across accounts, work types, and territories. View the performance of service reps to manage your service business. v1.2 #080",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "16.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/16.png"
+                },
+                "templateBadge": {
+                    "name": "service_appt_logo.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/service_appt_logo.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Provides an overview of past appointments booked in Lightning Scheduler.",
+                        "label": "Appointment Overview",
+                        "name": "preview_AppointmentAnalytics_appt_overview.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_AppointmentAnalytics_appt_overview.png"
+                    },
+                    {
+                        "description": "Provides insight to how Serice Resources performed in past appointments booked in Lightning Scheduler.",
+                        "label": "Service Resource Performance",
+                        "name": "preview_AppointmentAnalytics_service_resource_performance.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_AppointmentAnalytics_service_resource_performance.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__AppointmentAnalytics",
+            "label": "Appointment Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "AppointmentAnalytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__AppointmentAnalytics/releasenotes",
+                "templateVersion": "1.2"
+            },
+            "tags": ["Lightning", "Scheduler", "Appointment"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__AppointmentAnalytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 43,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__ApprovalAnalytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Mobile Ready",
+                        "Prebuilt Dashboard",
+                        "Dataflow",
+                        "KPI Rich Datasets"
+                    ]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": [
+                        "Process Instance",
+                        "Process Instance Step",
+                        "Process Definition",
+                        "User",
+                        "UserRole"
+                    ]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "The Salesforce Approval Analytics Template will give managers and leaders more visibility into approval process and identify bottlenecks. v1.0 #120",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "12.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/12.png"
+                },
+                "templateBadge": {
+                    "name": "Approval.jpg",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/Approval.jpg"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Use Approval Analytics to identify average approval time by approver, approval process and Salesforce object..",
+                        "label": "Approval Analytics",
+                        "name": "preview_approval.jpg",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_approval.jpg"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__ApprovalAnalytics",
+            "label": "Approval Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "ApprovalAnalytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__ApprovalAnalytics/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Sales", "Service", "Marketing"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__ApprovalAnalytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 43,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__CloudCrazeAnalytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Sales performance by categories",
+                        "White space analysis",
+                        "Grow accounts/Account sales/Product footprint",
+                        "Product trends",
+                        " Revenue trends"
+                    ]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": [
+                        "Account",
+                        "Accout group",
+                        "Category",
+                        "Contact",
+                        "Product",
+                        "Product Category",
+                        "Order",
+                        "Order Item"
+                    ]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "The B2B Commerce Analytics Template gives you a fast way to apply the power of Tableau CRM to your B2B ecommerce data. v1.1",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "9.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/9.png"
+                },
+                "templateBadge": {
+                    "name": "CloudCraze.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/CloudCraze.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Analyze your Sales Performance by product categories, account, region etc, identify cross-sell up-sell opportunities, analyze product/revenue trends.",
+                        "label": "B2B Commerce Analytics",
+                        "name": "Preview_CloudCraze.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/Preview_CloudCraze.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__CloudCrazeAnalytics",
+            "label": "B2B Commerce Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "CloudCrazeAnalytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__CloudCrazeAnalytics/releasenotes",
+                "templateVersion": "1.1"
+            },
+            "tags": ["Commerce"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__CloudCrazeAnalytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 43,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__CampaignAnalytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Prebuilt Dashboard",
+                        "Mobile Ready",
+                        "Dataflow",
+                        "KPI Rich Datasets"
+                    ]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": ["Customizable Campaign Influence"]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "The Campaign Analytics template creates an app that visualizes the impact of your marketing campaigns. v1.0 #160",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "15.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/15.png"
+                },
+                "templateBadge": {
+                    "name": "campaign.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/campaign.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Explore marketing impact to sales.",
+                        "label": "Campaign Analytics",
+                        "name": "preview_campaign.jpg",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_campaign.jpg"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__CampaignAnalytics",
+            "label": "Campaign Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "CampaignAnalytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__CampaignAnalytics/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Marketing", "Sales"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__CampaignAnalytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 43,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Trending_Analytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": ["Prebuilt Dashboards", "Dataflow", "KPI Rich Datasets"]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": ["Any Custom or Standard Object with Field History enabled"]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                },
+                {
+                    "label": "Industry",
+                    "values": [
+                        "Financial Services",
+                        "Retail",
+                        "Manufacturing",
+                        "Healthcare",
+                        "Nonprofit",
+                        "Public Sector"
+                    ]
+                }
+            ],
+            "description": "The Change Analytics template brings your historical data to life via an insightful dashboard and dataset. Put it to work on data from any Salesforce object that uses field history. v1.0 #180",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "10.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/10.png"
+                },
+                "templateBadge": {
+                    "name": "change.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/change.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Complete dashboard for analyzing the most common ways fields change, duration between changes, and other key change metrics for a selected object.",
+                        "label": "Change Analytics Home",
+                        "name": "preview_change.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_change.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__Trending_Analytics",
+            "label": "Change Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "Trending_Analytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Trending_Analytics/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Trending"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__Trending_Analytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 52,
+            "configurationUrl": "/services/data/v55.0/wave/templates/0Nkxx0000004F5ICAU/configuration",
+            "createdBy": {
+                "id": "005xx000001X7QLAA0",
+                "name": "User User",
+                "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+            },
+            "createdDate": "2021-08-23T21:27:26.000Z",
+            "customAttributes": [],
+            "description": "Cleanup contacts' phone codes.",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "19.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/19.png"
+                },
+                "templateBadge": {
+                    "name": "admin.png",
+                    "url": "/analytics/wave/web/proto/images/template/icons/admin.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Clean contact data and it’s ready to be used for reporting, marketing campaigns, phone systems etc.",
+                        "id": "081xx0000004CIiAAM",
+                        "label": "Cleanup Contacts preview",
+                        "name": "CleanContact",
+                        "url": "/resource/1629753932000/CleanContact"
+                    }
+                ]
+            },
+            "id": "0Nkxx0000004F5ICAU",
+            "label": "Cleanup Contacts",
+            "lastModifiedBy": {
+                "id": "005xx000001X7QLAA0",
+                "name": "User User",
+                "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+            },
+            "lastModifiedDate": "2021-09-09T23:47:33.000Z",
+            "name": "cleanupContacts",
+            "namespace": null,
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/0Nkxx0000004F5ICAU/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Data App", "Contacts", "Sales"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/0Nkxx0000004F5ICAU",
+            "videos": []
+        },
+        {
+            "assetVersion": 53,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__CustomerInsights/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": ["Tableau CRM Components", "KPI Rich Datasets", "Recipes"]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": [
+                        "Account",
+                        "Case",
+                        "CaseHistory",
+                        "Event",
+                        "Lead",
+                        "Opportunity",
+                        "Opportunity Line Item",
+                        "Opportunity History",
+                        "Product",
+                        "Price Book",
+                        "Task",
+                        "User",
+                        "UserRole"
+                    ]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "The Customer Insights Analytics template brings together analysis of Sales Cloud and Service Cloud in a unified, easy-to-customize app. v1.0 #031",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "6.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/6.png"
+                },
+                "templateBadge": {
+                    "name": "badge_customer_insights.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/badge_customer_insights.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Use the Case Insights Dashboard to understand how your Service organization engages with customers. Use the dashboard out of the box or copy and paste the components to other dashboards to create a customized experience for your users.",
+                        "label": "Case Insights Dashboard",
+                        "name": "preview_customer_insights1.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_customer_insights1.png"
+                    },
+                    {
+                        "description": "Use the Opportunities Insights Dashboard to explore your opportunity data and understand pipeline health.",
+                        "label": "Opportunities Insights Dashboard",
+                        "name": "preview_customer_insights2.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_customer_insights2.png"
+                    },
+                    {
+                        "description": "Use the Activities Insights Dashboard to understand account engagement.",
+                        "label": "Activities Insights Dashboard",
+                        "name": "preview_customer_insights3.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_customer_insights3.png"
+                    },
+                    {
+                        "description": "Get to know the pre-built recipes that generate datasets for this template. Add custom fields and objects in Salesforce that you want to include in your dataset for further analysis. Sync your data and schedule the recipes to run at a time convenient for your organization.",
+                        "label": "Recipes",
+                        "name": "preview_customer_insights4.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_customer_insights4.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__CustomerInsights",
+            "label": "Customer Insights Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "CustomerInsights",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__CustomerInsights/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Sales", "Service", "Customer 360", "Featured"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__CustomerInsights",
+            "videos": []
+        },
+        {
+            "assetVersion": 48,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__EADesignTemplate/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Prebuilt Dashboard",
+                        "KPI rich external Datasets",
+                        "Design best practises"
+                    ]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": " The Design Style Guide Template gives you a starting point for your own Analytics app design and development through best design practices. v1.0 #030",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "12.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/12.png"
+                },
+                "templateBadge": {
+                    "name": "designtemplate.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/designtemplate.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Explore the styles used in the app, including colors, typography, and widgets.",
+                        "label": "Design Styles,Colors and Typography",
+                        "name": "preview_Design_Styles.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_Design_Styles.png"
+                    },
+                    {
+                        "description": "Explore Design patterns used in most analytics templates",
+                        "label": "Design Templates",
+                        "name": "preview_Design_Template.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_Design_Template.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__EADesignTemplate",
+            "label": "Design Style Guide",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "EADesignTemplate",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__EADesignTemplate/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Design", "Learning", "Sales", "Featured"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__EADesignTemplate",
+            "videos": []
+        },
+        {
+            "assetVersion": 50,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__EDPipelineAnalytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Prebuilt Dashboards",
+                        "Einstein Discovery Story",
+                        "Dataflow",
+                        "Mobile Ready"
+                    ]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": []
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "Accelerate sales results by adding Einstein Discovery predictions to the Sales Analytics app. v1.0 #020",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "21.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/21.png"
+                },
+                "templateBadge": {
+                    "name": "sales.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/sales.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Identify predicted close dates for each opportunity and see which deals are falling behind.",
+                        "label": "Einstein Discovery - Time to Close",
+                        "name": "preview_EDTimeToClose.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_EDTimeToClose.png"
+                    },
+                    {
+                        "description": "Dive into which deals could be expanded to hit your goal.",
+                        "label": "Einstein Discovery - Deal Size",
+                        "name": "preview_EDDealSize.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_EDDealSize.png"
+                    },
+                    {
+                        "description": "Choose a win rate threshold and drill into which deals are most likely to close.",
+                        "label": "Einstein Discovery - Win Rate",
+                        "name": "preview_EDWinRate.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_EDWinRate.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__EDPipelineAnalytics",
+            "label": "Einstein Discovery for Sales Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "EDPipelineAnalytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__EDPipelineAnalytics/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Sales", "Einstein Discovery", "Featured"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__EDPipelineAnalytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 43,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__FSL_Analytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": ["Prebuilt Dashboards", "Dataflow", "KPI Rich Datasets"]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": [
+                        "WorkOrder",
+                        "Service Appointments",
+                        "Service Resources",
+                        "Service Territories",
+                        "Work type"
+                    ]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "Only for orgs with Field Service enabled. Field Service Analytics empowers service managers to help their technicians deliver personalized, actionable customer service v1.2 #160.",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "10.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/10.png"
+                },
+                "templateBadge": {
+                    "name": "field-Service.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/field-service.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Complete dashboard for analyzing Work Orders.",
+                        "label": "Field Service WorkOrder Overview",
+                        "name": "preview_fsl1.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_fsl1.png"
+                    },
+                    {
+                        "description": "Complete dashboard for analyzing Technician Performance.",
+                        "label": "Field Service Technician Performance",
+                        "name": "preview_fsl2.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_fsl2.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__FSL_Analytics",
+            "label": "Field Service Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "FSL_Analytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__FSL_Analytics/releasenotes",
+                "templateVersion": "1.2"
+            },
+            "tags": ["Service"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__FSL_Analytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 44,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Sales_Analytics_NonProfit/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Prebuilt Dashboard",
+                        "Mobile Ready",
+                        "Dataflow",
+                        "KPI Rich Datasets"
+                    ]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": [
+                        "Account",
+                        "Opportunity",
+                        "Opportunity History",
+                        "Task",
+                        "Event",
+                        "Case",
+                        "Campaign",
+                        "Campaign Member",
+                        "User",
+                        "UserRole"
+                    ]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                },
+                {
+                    "label": "Industry",
+                    "values": ["Nonprofit"]
+                }
+            ],
+            "description": "The Fundraising Analytics template lets you create an app that brings the power of Analytics to non profit data optimized by the Salesforce Nonprofit Success Pack. v1.0 #171",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "6.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/6.png"
+                },
+                "templateBadge": {
+                    "name": "fundraising.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/fundraising.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Unlock insights into your fundraising performance.",
+                        "label": "Fundraising Analytics",
+                        "name": "preview_fundraising.jpg",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_fundraising.jpg"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__Sales_Analytics_NonProfit",
+            "label": "Fundraising Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "Sales_Analytics_NonProfit",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Sales_Analytics_NonProfit/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Sales"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__Sales_Analytics_NonProfit",
+            "videos": []
+        },
+        {
+            "assetVersion": 43,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__FundraisingPerformance/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Prebuilt Dashboard",
+                        "Mobile Ready",
+                        "Dataflow",
+                        "KPI Rich Datasets"
+                    ]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": ["Account", "Opportunity", "Contact", "User"]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                },
+                {
+                    "label": "Industry",
+                    "values": ["Nonprofit"]
+                }
+            ],
+            "description": "Nonprofits: Get a precise picture of donor retention and attrition, donor gains and losses, donation amount gains and losses, and other key performance indicators. v1.0 #050",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "6.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/6.png"
+                },
+                "templateBadge": {
+                    "name": "fundraising.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/fundraising.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Get a precise picture of donor retention and attrition, donor gains and losses, donation amount gains and losses, and other key performance indicators.",
+                        "label": "Fundraising Performance Analytics",
+                        "name": "preview_fea.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_fea.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__FundraisingPerformance",
+            "label": "Fundraising Performance Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "FundraisingPerformance",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__FundraisingPerformance/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Sales"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__FundraisingPerformance",
+            "videos": []
+        },
+        {
+            "assetVersion": 43,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__LeadChangeAnalytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": ["Prebuilt Dashboards", "Dataflow", "KPI Rich Datasets"]
+                },
+                {
+                    "label": "Salesforce Objects",
+                    "values": ["Lead", "Lead History", "Opportunity", "Account", "Contact"]
+                },
+                {
+                    "label": "Publisher",
+                    "values": ["Tableau CRM"]
+                }
+            ],
+            "description": "The Lead Trending template creates an app that gives sales operations staff insight into lead conversion. Learn how quickly the team converts leads and identify bottlenecks in the conversion process. v1.0 #070",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "10.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/10.png"
+                },
+                "templateBadge": {
+                    "name": "change.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/change.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Give Sales Ops insights into the lead process, including statuses where leads are sitting longer, where are they not getting converted.",
+                        "label": "Lead Trending Analytics Home",
+                        "name": "preview_leadchange.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_leadchange.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__LeadChangeAnalytics",
+            "label": "Lead Trending Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "LeadChangeAnalytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__LeadChangeAnalytics/releasenotes",
+                "templateVersion": "1.0"
+            },
+            "tags": ["Sales", "Marketing", "Trending"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__LeadChangeAnalytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 46,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Learning_Adventure/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [
+                {
+                    "label": "Features",
+                    "values": [
+                        "Interactive Charts",
+                        "Code Samples",
+                        "SAQL Sample Use Cases",
+                        "Tables Best Practices"
+                    ]
+                },
+                {
+                    "label": "Industry",
+                    "values": [
+                        "Financial Services",
+                        "Retail",
+                        "Manufacturing",
+                        "Healthcare",
+                        "Nonprofit",
+                        "Public Sector"
+                    ]
+                }
+            ],
+            "description": "Ready, set, learn! The Tableau CRM Learning Adventure app walks you through best practice examples for designing just the right visualizations and for building powerful dynamic apps. v6.0 #060",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "11.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/11.png"
+                },
+                "templateBadge": {
+                    "name": "learning.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/learning.png"
+                },
+                "templatePreviews": [
+                    {
+                        "description": "Learn as you play with hands-on charts examples and dynamic visualizations. Choose where you want to start your adventure!",
+                        "label": "Tableau CRM Learning Adventure Home",
+                        "name": "preview_learning_adventure.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_learning_adventure.png"
+                    },
+                    {
+                        "description": "Explore real examples of comparison, trending, relationship, composition, distribution, metrics and location charts; expand your mind to what is possible!",
+                        "label": "Choose the Right Chart",
+                        "name": "preview_learning_chart.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_learning_chart.png"
+                    },
+                    {
+                        "description": "View the code behind dynamic visualizations (or “bindings“)--explained in plain English!--and apply it yourself with step by step instructions",
+                        "label": "Build Dynamic Apps with Bindings",
+                        "name": "preview_learning_app.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_learning_app.png"
+                    },
+                    {
+                        "description": "Learn the basics of SAQL with cogrouping, windowing, unions and case operators and also dive into using SAQL for calculating quartiles and standard deviations",
+                        "label": "Ask Complex Questions with SAQL",
+                        "name": "preview_learning_saql.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_learning_saql.png"
+                    },
+                    {
+                        "description": "Tables in action! Explore the power of tables and learn how to take advantage of the rich features across table types.",
+                        "label": "Dive Into Details with Tables",
+                        "name": "preview_learning_tables.png",
+                        "namespace": "sfdc_internal",
+                        "url": "/analytics/wave/web/proto/images/template/icons/preview_learning_tables.png"
+                    }
+                ]
+            },
+            "id": "sfdc_internal__Learning_Adventure",
+            "label": "Learning Adventure",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "Learning_Adventure",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Learning_Adventure/releasenotes",
+                "templateVersion": "6.0"
+            },
+            "tags": ["Learning"],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__Learning_Adventure",
+            "videos": []
+        },
+        {
+            "assetVersion": 51,
+            "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Lightning_Usage_Analytics/configuration",
+            "createdBy": {},
+            "createdDate": null,
+            "customAttributes": [],
+            "description": null,
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "16.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/16.png"
+                },
+                "templateBadge": {
+                    "name": "default.png",
+                    "namespace": "sfdc_internal",
+                    "url": "/analytics/wave/web/proto/images/template/icons/default.png"
+                },
+                "templatePreviews": []
+            },
+            "id": "sfdc_internal__Lightning_Usage_Analytics",
+            "label": "Lightning Usage Analytics",
+            "lastModifiedBy": {},
+            "lastModifiedDate": null,
+            "name": "Lightning_Usage_Analytics",
+            "namespace": "sfdc_internal",
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Lightning_Usage_Analytics/releasenotes",
+                "templateVersion": "0.1"
+            },
+            "tags": [],
+            "templateType": "embeddedapp",
+            "url": "/services/data/v55.0/wave/templates/sfdc_internal__Lightning_Usage_Analytics",
+            "videos": []
+        },
+        {
+            "assetVersion": 49,
+            "configurationUrl": "/services/data/v55.0/wave/templates/0Nkxx0000004CAgCAM/configuration",
+            "createdBy": {
+                "id": "005xx000001X7QLAA0",
+                "name": "User User",
+                "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+            },
+            "createdDate": "2020-10-29T22:18:29.000Z",
+            "customAttributes": [],
+            "description": "App template with a long dataflow name, to make sure it fails early on a long app name.",
+            "folderSource": null,
+            "icons": {
+                "appBadge": {
+                    "name": "16.png",
+                    "url": "/analytics/wave/web/proto/images/app/icons/16.png"
+                },
+                "templateBadge": {
+                    "name": "default.png",
+                    "url": "/analytics/wave/web/proto/images/template/icons/default.png"
+                },
+                "templatePreviews": []
+            },
+            "id": "0Nkxx0000004CAgCAM",
+            "label": "Long Dataflow Name",
+            "lastModifiedBy": {
+                "id": "005xx000001X7QLAA0",
+                "name": "User User",
+                "profilePhotoUrl": "https://wave-de-dev-ed--c.localhost.soma.documentforce.com:6101/profilephoto/729xx0000005Ub8/T"
+            },
+            "lastModifiedDate": "2020-10-29T22:18:29.000Z",
+            "name": "long_dataflow_name",
+            "namespace": null,
+            "releaseInfo": {
+                "notesUrl": "/services/data/v55.0/wave/templates/0Nkxx0000004CAgCAM/releasenotes",
+                "templateVersion": "1.1"
+            },
+            "tags": [],
+            "templateType": "app",
+            "url": "/services/data/v55.0/wave/templates/0Nkxx0000004CAgCAM",
+            "videos": []
+        }
+    ]
+}

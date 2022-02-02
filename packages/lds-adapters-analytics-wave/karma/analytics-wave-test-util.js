@@ -1248,6 +1248,116 @@ function getWaveFoldersMatcher(config) {
     });
 }
 
+// Wave Templates
+function mockGetWaveTemplatesNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplatesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplatesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplatesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplatesMatcher(config) {
+    let { options, type } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates`,
+        queryParams: {
+            options,
+            type,
+        },
+    });
+}
+
+// Wave Template
+function mockGetWaveTemplateNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplateMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplateNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplateMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplateMatcher(config) {
+    let { templateIdOrApiName, options } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates/${templateIdOrApiName}`,
+        queryParams: { options },
+    });
+}
+
+// Wave Template Config
+function mockGetWaveTemplateConfigNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplateConfigMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplateConfigNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplateConfigMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplateConfigMatcher(config) {
+    let { templateIdOrApiName, options, disableApex } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates/${templateIdOrApiName}/configuration`,
+        queryParams: { options, disableApex },
+    });
+}
+
+// Wave Template Release Notes
+function mockGetWaveTemplateReleaseNotesNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplateReleaseNotesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplateReleaseNotesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplateReleaseNotesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplateReleaseNotesMatcher(config) {
+    let { templateIdOrApiName } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates/${templateIdOrApiName}/releasenotes`,
+    });
+}
+
 // XMD
 function mockGetXmdNetworkOnce(config, mockData) {
     const paramMatch = getXmdMatcher(config);
@@ -1374,6 +1484,14 @@ export {
     mockUpdateScheduleNetworkErrorOnce,
     mockGetWaveFoldersNetworkOnce,
     mockGetWaveFoldersNetworkErrorOnce,
+    mockGetWaveTemplatesNetworkOnce,
+    mockGetWaveTemplatesNetworkErrorOnce,
+    mockGetWaveTemplateNetworkOnce,
+    mockGetWaveTemplateNetworkErrorOnce,
+    mockGetWaveTemplateConfigNetworkOnce,
+    mockGetWaveTemplateConfigNetworkErrorOnce,
+    mockGetWaveTemplateReleaseNotesNetworkOnce,
+    mockGetWaveTemplateReleaseNotesNetworkErrorOnce,
     mockGetXmdNetworkOnce,
     mockGetXmdNetworkErrorOnce,
     expireAsset,

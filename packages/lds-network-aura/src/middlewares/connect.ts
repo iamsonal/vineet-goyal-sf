@@ -212,6 +212,20 @@ const DEPENDENCIES_PATH = new RegExp(`${WAVE_BASE_URI}/dependencies/([A-Z0-9]){1
 
 const WAVE_FOLDERS_PATH = new RegExp(`${WAVE_BASE_URI}/folders$`, 'i');
 
+const WAVE_TEMPLATES_PATH = new RegExp(`${WAVE_BASE_URI}/templates$`, 'i');
+
+const WAVE_TEMPLATE_PATH = new RegExp(`${WAVE_BASE_URI}/templates/([A-Z0-9_]){1,80}$`, 'i');
+
+const WAVE_TEMPLATE_CONFIG_PATH = new RegExp(
+    `${WAVE_BASE_URI}/templates/([A-Z0-9_]){1,80}/configuration$`,
+    'i'
+);
+
+const WAVE_TEMPLATE_RELEASE_NOTES_PATH = new RegExp(
+    `${WAVE_BASE_URI}/templates/([A-Z0-9_]){1,80}/releasenotes$`,
+    'i'
+);
+
 const GET_CONTENT_TYPE_INTERNAL_PATH = new RegExp(
     `${CMS_BASE_URI}/content-types/([A-Z0-9_]){1,80}$`,
     'i'
@@ -1292,6 +1306,38 @@ const analytics: ApiFamily = {
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && WAVE_FOLDERS_PATH.test(path),
         transport: {
             controller: 'WaveController.getWaveFolders',
+        },
+    },
+    getWaveTemplates: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && WAVE_TEMPLATES_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getWaveTemplates',
+        },
+    },
+    getWaveTemplate: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && WAVE_TEMPLATE_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getWaveTemplate',
+        },
+    },
+    getWaveTemplateConfig: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && WAVE_TEMPLATE_CONFIG_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getWaveTemplateConfig',
+        },
+    },
+    getWaveTemplateReleaseNotes: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && WAVE_TEMPLATE_RELEASE_NOTES_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getWaveTemplateReleaseNotes',
         },
     },
 };

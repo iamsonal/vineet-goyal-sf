@@ -1,0 +1,378 @@
+{
+    "id": "0Nkxx0000004FICCA2",
+    "name": "checkWireAdapterRaml",
+    "namespace": "foons",
+    "ui": {
+        "displayMessages": [
+            {
+                "location": "AppLandingPage",
+                "text": "Some message"
+            }
+        ],
+        "pages": [
+            {
+                "condition": "{{Variables.Overrides.createAllDashboards == true}}",
+                "helpUrl": "https://www.salesforce.com",
+                "title": "Page title",
+                "variables": [
+                    {
+                        "name": "booleanvar",
+                        "visibility": "Visible"
+                    }
+                ],
+                "vfPage": {
+                    "id": "066xx0000004RmOAAU",
+                    "namespace": "testns",
+                    "name": "templatePage",
+                    "url": "https://wave-de-dev-ed--c.localhost.soma.visualforce.com:6101/apex/templatePage"
+                }
+            }
+        ]
+    },
+    "variables": {
+        "booleanvar": {
+            "computedValue": null,
+            "defaultValue": true,
+            "description": "A variable description",
+            "excludeSelected": false,
+            "excludes": [],
+            "label": "A variable label",
+            "mostRecentValue": null,
+            "required": true,
+            "variableType": {
+                "enums": [true, false],
+                "type": "BooleanType"
+            }
+        },
+        "connectorvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": ["SFDC_LOCAL"],
+                "type": "StringType"
+            }
+        },
+        "datetimevar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "type": "DateTimeType"
+            }
+        },
+        "numbervar": {
+            "computedValue": null,
+            "defaultValue": 42,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": [],
+                "max": 100,
+                "min": 0,
+                "type": "NumberType"
+            }
+        },
+        "numberenumvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": [1, 2, 100],
+                "max": null,
+                "min": null,
+                "type": "NumberType"
+            }
+        },
+        "stringvar": {
+            "computedValue": null,
+            "defaultValue": "A",
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": ["A", "B", "Z"],
+                "type": "StringType"
+            }
+        },
+        "arrayvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": [
+                    ["one", "two"],
+                    ["a", "b"]
+                ],
+                "itemsType": {
+                    "enums": [],
+                    "type": "StringType"
+                },
+                "sizeLimit": {
+                    "max": 2,
+                    "min": 1
+                },
+                "type": "ArrayType"
+            }
+        },
+        "datasetanyfieldvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": true,
+            "excludes": ["Id", "Name"],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "properties": {
+                    "datasetId": {
+                        "enums": [],
+                        "type": "StringType"
+                    },
+                    "fieldName": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["datasetId"],
+                "strictValidation": true,
+                "type": "DatasetAnyFieldType"
+            }
+        },
+        "datasetdatevar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "properties": {
+                    "datasetId": {
+                        "enums": [],
+                        "type": "StringType"
+                    },
+                    "dateAlias": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["datasetId"],
+                "strictValidation": true,
+                "type": "DatasetDateType"
+            }
+        },
+        "datasetdimvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "properties": {
+                    "datasetId": {
+                        "enums": [],
+                        "type": "StringType"
+                    },
+                    "fieldName": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["datasetId"],
+                "strictValidation": true,
+                "type": "DatasetDimensionType"
+            }
+        },
+        "datasetmeasvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "properties": {
+                    "datasetId": {
+                        "enums": [],
+                        "type": "StringType"
+                    },
+                    "fieldName": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["datasetId"],
+                "strictValidation": true,
+                "type": "DatasetMeasureType"
+            }
+        },
+        "datasetvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "properties": {
+                    "datasetId": {
+                        "enums": [],
+                        "type": "StringType"
+                    },
+                    "datasetAlias": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["datasetId"],
+                "strictValidation": true,
+                "type": "DatasetType"
+            }
+        },
+        "sobjectvar": {
+            "computedValue": null,
+            "defaultValue": {
+                "sobjectName": "Account"
+            },
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "properties": {
+                    "sobjectName": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["sobjectName"],
+                "strictValidation": true,
+                "type": "SobjectType"
+            }
+        },
+        "sobjectfieldvar": {
+            "computedValue": null,
+            "defaultValue": {
+                "sobjectName": "Account",
+                "fieldName": ""
+            },
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "dataType": "xsd:string",
+                "properties": {
+                    "sobjectName": {
+                        "enums": [],
+                        "type": "StringType"
+                    },
+                    "fieldName": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["sobjectName"],
+                "strictValidation": true,
+                "type": "SobjectFieldType"
+            }
+        },
+        "Overrides": {
+            "computedValue": null,
+            "defaultValue": {
+                "createAllDashboards": true,
+                "createAllLenses": true,
+                "createAllExternalFiles": true,
+                "createDataflow": true,
+                "createAllDatasetFiles": true,
+                "createAllImages": true
+            },
+            "description": "Internal configuration to allow asset creation overrides, not to be displayed in UI.",
+            "excludeSelected": false,
+            "excludes": [],
+            "label": "Overrides",
+            "mostRecentValue": null,
+            "required": true,
+            "variableType": {
+                "properties": {
+                    "createAllDashboards": {
+                        "enums": [true, false],
+                        "type": "BooleanType"
+                    },
+                    "createAllLenses": {
+                        "enums": [true, false],
+                        "type": "BooleanType"
+                    },
+                    "createAllExternalFiles": {
+                        "enums": [true, false],
+                        "type": "BooleanType"
+                    },
+                    "createDataflow": {
+                        "enums": [true, false],
+                        "type": "BooleanType"
+                    },
+                    "createAllDatasetFiles": {
+                        "enums": [true, false],
+                        "type": "BooleanType"
+                    },
+                    "createAllImages": {
+                        "enums": [true, false],
+                        "type": "BooleanType"
+                    }
+                },
+                "required": [
+                    "createAllExternalFiles",
+                    "createAllDashboards",
+                    "createAllImages",
+                    "createAllDatasetFiles",
+                    "createAllLenses",
+                    "createDataflow"
+                ],
+                "strictValidation": true,
+                "type": "ObjectType"
+            }
+        }
+    }
+}

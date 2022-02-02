@@ -142,6 +142,23 @@ types:
       message:
         description: message
         type: string
+  ArrayTypeRepresentation:
+    description: Representation for array variable types.
+    discriminatorValue: ArrayType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          the inner variable types.
+        type: array # TODO Hand-rolled W-8252808
+        items:
+          type: any
+      itemsType:
+        description: The variable type contents of the array variable type.
+        type: VariableTypeRepresentation | nil
+      sizeLimit:
+        description: The size limit of the array variable type.
+        type: SizeLimitRepresentation | nil
   AssetReferenceInputRepresentation:
     description: Simple, reference input representation for wave assets.
     type: BaseAssetReferenceInputRepresentation
@@ -287,6 +304,17 @@ types:
       url:
         description: URL to get the definition of the asset.
         type: string
+  BooleanTypeRepresentation:
+    description: Representation for boolean variable types.
+    discriminatorValue: BooleanType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          boolean variable types.
+        type: array
+        items:
+          type: boolean
   ConditionalFormattingPropertyInputRepresentation:
     description: Extended metadata for property in conditional formatting linked to
       a Dimension / Measure.
@@ -379,6 +407,17 @@ types:
       value:
         description: The value of the connection property
         type: string | integer | boolean #TODO handrolled W-9203372
+  ConnectorTypeRepresentation:
+    description: Representation for connector variable types.
+    discriminatorValue: ConnectorType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          string variable types.
+        type: array
+        items:
+          type: string
   DailyScheduleRepresentation:
     description: Daily schedule on which to execute some type of job
     discriminatorValue: daily
@@ -1072,6 +1111,26 @@ types:
       id:
         description: The 18 character asset ID.
         type: string
+  DatasetAnyFieldTypeRepresentaton:
+    description: Representation for any generic dataset field variable type.
+    discriminatorValue: DatasetAnyFieldType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   DatasetCollectionRepresentation:
     description: A collection of Wave Datasets.
     type: object
@@ -1106,6 +1165,46 @@ types:
       url:
         description: URL for retrieving this information.
         type: string
+  DatasetDateTypeRepresentation:
+    description: Representation for date (in dataset) variable types.
+    discriminatorValue: DatasetDateType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+  DatasetDimensionTypeRepresentation:
+    description: Representation for dimension variable types.
+    discriminatorValue: DatasetDimensionType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   DatasetInputRepresentation:
     description: Wave Dataset input representation
     type: BaseAssetInputRepresentation
@@ -1145,6 +1244,26 @@ types:
       dataset:
         type: DatasetInputRepresentation
         description: Dataset input representation
+  DatasetMeasureTypeRepresentation:
+    description: Representation for measure variable types.
+    discriminatorValue: DatasetMeasureType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   DatasetRepresentation:
     description: A Wave dataset.
     discriminatorValue: Dataset
@@ -1245,6 +1364,26 @@ types:
         type: array
         items:
           type: string
+  DatasetTypeRepresentation:
+    description: Representation for dataset variable types.
+    discriminatorValue: DatasetType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   DependencyCollectionRepresentation:
     description: A collection of Wave dependencies.
     type: object
@@ -1441,6 +1580,22 @@ types:
         description: The URL of the Xmd Collection resource for this dataset version.
         type: string
         required: false # TODO Hand-rolled W-8253396
+  DateTimeTypeRepresentation:
+    description: Representation for date/time variable types.
+    discriminatorValue: DateTimeType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties: {}
+  DisplayMessageRepresentation:
+    description: Representation for a display message in the ui configuration of
+      a wave template.
+    type: object
+    properties:
+      location:
+        description: The name of a page where the text content to display
+        type: string | nil
+      text:
+        description: Text content to display
+        type: string | nil
   EmptyScheduleRepresentation:
     description: Represents an empty schedule on an asset
     discriminatorValue: none
@@ -1487,6 +1642,14 @@ types:
       lastHour:
         description: Hour at which schedule stops queueing.
         type: integer
+        required: false # TODO Hand-rolled W-8253396
+  ImageAssetReferenceRepresentation:
+    description: Image reference representation.
+    type: TemplateAssetReferenceRepresentation # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+    properties:
+      description:
+        description: The image description.
+        type: string
         required: false # TODO Hand-rolled W-8253396
   LicenseAttributesInputRepresentation:
     description: Input representation for analytics license attributes.
@@ -1726,6 +1889,26 @@ types:
         description: Thousand separator
         type: string
         required: false # TODO Hand-rolled W-8253396
+  NumberTypeRepresentation:
+    description: Representation for numeric variable types.
+    discriminatorValue: NumberType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          numeric variable types.
+        type: array
+        items:
+          format: double
+          type: number
+      max:
+        description: The maximum allowed value of the number.
+        #format: double # Hand-rolled format not allowed with union type
+        type: number | nil
+      min:
+        description: The minimum allowed value of the number.
+        #format: double # Hand-rolled format not allowed with union type
+        type: number | nil
   ObjectCoverageRepresentation:
     description: Security coverage for an object
     type: object
@@ -1779,6 +1962,60 @@ types:
         description: The number of rows in the output of the sync out operation.
         type: integer
         required: false # TODO Hand-rolled W-8253396
+  ObjectTypeRepresentation:
+    description: Representation for object variable types.
+    discriminatorValue: ObjectType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+  PageRepresentation:
+    description: Representation for a single page layout definition for Wave templates.
+    type: object
+    properties:
+      condition:
+        description: The optional condition in which the page should be shown. Values
+          should be client-side EL notation (e.g. {{Variables.selectedOption}})
+        type: string | nil
+      helpUrl:
+        description: An URL to this page's help webpage.
+        type: string | nil
+      title:
+        description: The title for the page.
+        type: string
+      variables:
+        description: The collection of variables for this template configuration.
+        type: array
+        items:
+          type: PageVariableRepresentation
+      vfPage:
+        description: The visualforce page to be used as the user interface instead
+          of the standard wizard interface.
+        type: TemplateAssetReferenceRepresentation | nil # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+  PageVariableRepresentation:
+    description: Representation for a page variable in the page definition which
+      is part of a wave template.
+    type: object
+    properties:
+      name:
+        description: The name of a variable.
+        type: string
+      visibility:
+        description: The visibility expression for this variable
+        type: string | nil
   PermissionsRepresentation:
     description: Permissions of the user on an asset.
     type: object
@@ -3102,6 +3339,61 @@ types:
         description: Select or drop fields
         type: string
         required: false # TODO Hand-rolled W-8253396
+  SizeLimitRepresentation:
+    description: Representation for the size limit of an array type variable.
+    type: object
+    properties:
+      max:
+        description: Maximum number of elements in an array
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      min:
+        description: Minimum number of elements in an array
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+  SObjectFieldTypeRepresentation:
+    description: Representation for sObject field variable types.
+    discriminatorValue: SobjectFieldType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+      dataType:
+        description: The SObjectField datatype when a default field is not supplied.
+        type: string | nil
+  SObjectTypeRepresentation:
+    description: Representation for sObject variable types.
+    discriminatorValue: SobjectType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   SourceFieldCollectionRepresentation:
     description: A list of Source Fields.
     type: object
@@ -3196,6 +3488,111 @@ types:
       url:
         description: The URL to get this Source Object.
         type: string
+  StringTypeRepresentation:
+    description: Representation for string variable types.
+    discriminatorValue: StringType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          string variable types.
+        type: array
+        items:
+          type: string | nil # TODO Hand-rolled Item 19 on raml generation gaps
+  TemplateAssetReferenceRepresentation: # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+    # In the generated raml, TemplateIconsRepresentation and PageRepresentation use AssetReferenceRepresentation.
+    # However, there won't be ids on some responses, but BaseAssetReferenceRepresentation has id as
+    # required and is then used in some luvio.keys (which won't compile if id is marked as not required). And, I can't
+    # just extend BaseAssetReferenceRepresentation here and mark id as required since that fails to build:raml saying
+    # that you can't loosen the required-ness in a subtype.
+    discriminator: name
+    type: object
+    properties:
+      id:
+        description: The 18 character ID of the asset.
+        type: string
+        required: false
+      label:
+        description: The asset label.
+        type: string
+        required: false
+      name:
+        description: The asset developer name.
+        type: string
+        required: false
+      namespace:
+        description: The namespace that qualifies the asset name
+        type: string
+        required: false
+      url:
+        description: The asset URL.
+        type: string
+        required: false
+  TemplateCollectionRepresentation:
+    description: Representation for Wave analytics application templates.
+    type: object
+    properties:
+      templates:
+        description: The collection of application templates available within this
+          organization.
+        type: array
+        items:
+          type: TemplateRepresentation
+  TemplateConfigurationRepresentation:
+    description: Representation for Wave analytics template configuration.
+    type: object
+    properties:
+      id:
+        description: The ID or fully qualified API name of this template.
+        type: string
+      name:
+        description: The local API name of the template.
+        type: string
+      namespace:
+        description: The namespace of the template provider.
+        type: string | nil
+      ui:
+        description: The user interface definition for this Wave template.
+        type: UiDefinitionRepresentation
+      variables:
+        description: The defined set of variables for this Wave template.
+        type: object
+        properties:
+          //:
+            # Setting this to the real type causes the snapshot to reject with:
+            # 'Invalid resource response. Expected resource response to result in Fulfilled or Stale snapshot'
+            # (with no errors about the type, even on empty {} value). Using type: any gets past it for now.
+            type: any # TODO Hand-rolled W-8863405
+            #type: VariableDefinitionRepresentation
+  TemplateCustomAttributesRepresentation:
+    description: Representation for template extra metadata.
+    type: object
+    properties:
+      label:
+        description: The label for the extra metadata
+        type: string | nil
+      values:
+        description: The values for the extra metadata
+        type: array
+        items:
+          type: string
+  TemplateIconsRepresentation:
+    description: Representation for describing the icons configured for a wave template.
+    type: object
+    properties:
+      appBadge:
+        description: The badge icon used on any app created from this template.
+        type: TemplateAssetReferenceRepresentation | nil # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+      templateBadge:
+        description: The badge icon used to represent this template in the template
+          configuration wizard.
+        type: TemplateAssetReferenceRepresentation | nil # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+      templatePreviews:
+        description: The images used to display in the carousel on the template detail
+          page when the template is selected in the wizard.
+        type: array
+        items:
+          type: ImageAssetReferenceRepresentation
   TemplateOptionsRepresentation:
     description: Representation for the options used on the last action performed
       on a templated Wave Application.
@@ -3218,6 +3615,107 @@ types:
         description: The user that performed the last action.
         type: WaveUserRepresentation
         required: false # TODO Hand-rolled W-8253396
+  TemplateReleaseNotesRepresentation:
+    description: Representation for a wave template's release notes
+    type: object
+    properties:
+      id:
+        description: The ID or fully qualified API name of this template.
+        type: string
+      name:
+        description: The local API name of the template.
+        type: string
+      namespace:
+        description: The namespace of the template provider.
+        type: string | nil
+      notes:
+        description: The release note's markdown.
+        type: string | nil
+  TemplateReleaseRepresentation:
+    description: Representation for a wave templates release information.
+    type: object
+    properties:
+      notesUrl:
+        description: The URL to the release notes for this template
+        type: string | nil
+      templateVersion:
+        description: The version of this template.
+        type: string | nil
+  TemplateRepresentation:
+    description: Representation for a single Wave analytics template.
+    type: object
+    properties:
+      assetVersion:
+        description: Asset version (api version) of all the dashboards and lenses.
+        format: double
+        type: number
+      configurationUrl:
+        description: The URL to the configuration of the template.
+        type: string
+      createdBy:
+        description: The user that created the template.
+        type: WaveUserRepresentation | nil
+      createdDate:
+        description: Time the template was created.
+        type: string | nil
+      customAttributes:
+        description: Custom Attribute definitions for this template
+        type: array
+        items:
+          type: TemplateCustomAttributesRepresentation
+      description:
+        description: The description of the application template.
+        type: string | nil
+      folderSource:
+        description: The folder source of this template
+        type: AssetReferenceRepresentation | nil
+      icons:
+        description: The icons configured for this wave template.
+        type: TemplateIconsRepresentation
+      id:
+        description: The ID or fully qualified API name of this template.
+        type: string
+      label:
+        description: The localized name of the application template.
+        type: string
+      lastModifiedBy:
+        description: The user that last updated the template.
+        type: WaveUserRepresentation | nil
+      lastModifiedDate:
+        description: Last time the template was modified.
+        type: string | nil
+      name:
+        description: The local API name of the application template.
+        type: string
+      namespace:
+        description: The namespace of the application template provider.
+        type: string | nil
+      releaseInfo:
+        description: The release information for this template
+        type: TemplateReleaseRepresentation
+      tags:
+        description: Tag definitions for this template
+        type: array
+        items:
+          type: string
+      templateType:
+        description: The template type app or dashboard, if empty or null then template
+          type is app.
+        type: string
+        enum:
+          - App
+          - Dashboard
+          - Data
+          - EmbeddedApp
+          - Lens
+      url:
+        description: The URL to the detail of the template.
+        type: string
+      videos:
+        description: Videos associated with this template
+        type: array
+        items:
+          type: VideoInfoRepresentation
   TimeRepresentation:
     description: Time at which something should happen
     type: object
@@ -3302,6 +3800,102 @@ types:
       id:
         description: Record id
         type: string
+  UiDefinitionRepresentation:
+    description: Representation for UI definition of Wave templates.
+    type: object
+    properties:
+      displayMessages:
+        description: The display messages for this template configuration.
+        type: array
+        items:
+          type: DisplayMessageRepresentation
+      pages:
+        description: The page collection for this template configuration.
+        type: array
+        items:
+          type: PageRepresentation
+  VariableDefinitionRepresentation:
+    description: Representation for Wave template variable definitions.
+    type: object
+    properties:
+      computedValue:
+        description: The computed value of the variable. This value is set by integrated
+          apex implementations.
+        type: any # TODO Hand-rolled W-8252808
+      defaultValue:
+        description: The default value of the variable.
+        type: any # TODO Hand-rolled W-8252808
+      description:
+        description: The description of the variable.
+        type: string | nil
+      excludeSelected:
+        description: True if this variable has excludeSelected in the template.
+        type: boolean
+      excludes:
+        description: Values to exclude from the variable selection list
+        type: array
+        items:
+          type: string
+      label:
+        description: The label for the expected variable.
+        type: string | nil
+      mostRecentValue:
+        description: The value specified in the most recent app creation process.
+        type: any # TODO Hand-rolled W-8252808
+      required:
+        description: True if this variable is required by the template.
+        type: boolean
+      variableType:
+        description: The expected type of the variable.
+        type: VariableTypeRepresentation
+  VariableTypeRepresentation:
+    description: Abstractly describes the type of variable definition.
+    discriminator: type
+    type: object
+    properties:
+      type:
+        description: The type of the variable.
+        type: string
+        enum:
+          - ArrayType
+          - BooleanType
+          - ConnectorType
+          - DatasetAnyFieldType
+          - DatasetDateType
+          - DatasetDimensionType
+          - DatasetMeasureType
+          - DatasetType
+          - DateTimeType
+          - NumberType
+          - ObjectType
+          - SobjectFieldType
+          - SobjectType
+          - StringType
+  VideoInfoRepresentation:
+    description: Representation for describing a particular video.
+    type: object
+    properties:
+      id:
+        description: The platform-specific ID of the video content.
+        type: string
+      label:
+        description: The video display title.
+        type: string
+      linkType:
+        description: The video platform.
+        type: string
+        enum:
+          - Vidyard
+          - YouTube
+      purpose:
+        description: The video type/purpose.
+        type: string
+        enum:
+          - Onboarding
+          - Walkthrough
+      showPlaylist:
+        description: Whether a playlist should be shown by the video platform.
+        type: boolean
   WaveAnalyticsLimitCollectionRepresentation:
     description: A collection of analytics limits
     type: object
@@ -5431,5 +6025,84 @@ types:
           type: string
           required: true
         versionId:
+  /templates:
+    get:
+      description: Returns collection of Wave analytics templates within the current
+        organization.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TemplateCollectionRepresentation
+      queryParameters:
+        options:
+          type: string
+          required: false
+          enum:
+            - CreateApp
+            - ManageableOnly
+            - ViewOnly
+        type:
+          type: string
+          required: false
+          enum:
+            - App
+            - Dashboard
+            - Data
+            - EmbeddedApp
+            - Lens
+  /templates/{templateIdOrApiName}:
+    get:
+      description: Returns the details for a specific template.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TemplateRepresentation
+      queryParameters:
+        options:
+          type: string
+          required: false
+          enum:
+            - CreateApp
+            - ManageableOnly
+            - ViewOnly
+    /configuration:
+      get:
+        description: Returns the configuration for a specific template.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TemplateConfigurationRepresentation
+        queryParameters:
+          disableApex:
+            type: boolean
+            required: false
+          options:
+            type: string
+            required: false
+            enum:
+              - CreateApp
+              - ManageableOnly
+              - ViewOnly
+      uriParameters:
+        templateIdOrApiName:
+          type: string
+          required: true
+    /releasenotes:
+      get:
+        description: Returns the release notes for the template.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TemplateReleaseNotesRepresentation
+      uriParameters:
+        templateIdOrApiName:
           type: string
           required: true

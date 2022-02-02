@@ -6897,6 +6897,169 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/templates', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/templates`,
+            },
+            [
+                'WaveController.getWaveTemplates',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates`,
+                    queryParams: {
+                        options: 'ViewOnly',
+                        type: 'Data',
+                    },
+                },
+                [
+                    'WaveController.getWaveTemplates',
+                    {
+                        options: 'ViewOnly',
+                        type: 'Data',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/templates`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/templates`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/templates/{templateIdOrApiName}', () => {
+        [
+            ['id', '0Nk6g000000QSJJCA4'],
+            ['name', 'myns_MyTemplateName'],
+        ].forEach(([valType, val]) => {
+            describe(`with template ${valType}`, () => {
+                testControllerInput(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}`,
+                    },
+                    [
+                        'WaveController.getWaveTemplate',
+                        {},
+                        { background: false, hotspot: true, longRunning: false },
+                    ]
+                );
+
+                testResolveResponse(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}`,
+                    },
+                    {}
+                );
+
+                testRejectFetchResponse({
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates/${val}`,
+                });
+            });
+        });
+    });
+
+    describe('get /wave/templates/{templateIdOrApiName}/configuration', () => {
+        [
+            ['id', '0Nk6g000000QSJJCA4'],
+            ['name', 'myns_MyTemplateName'],
+        ].forEach(([valType, val]) => {
+            describe(`with template ${valType}`, () => {
+                testControllerInput(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/configuration`,
+                    },
+                    [
+                        'WaveController.getWaveTemplateConfig',
+                        {},
+                        { background: false, hotspot: true, longRunning: false },
+                    ]
+                );
+
+                testResolveResponse(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/configuration`,
+                    },
+                    {}
+                );
+
+                testRejectFetchResponse({
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates/${val}/configuration`,
+                });
+            });
+        });
+    });
+
+    describe('get /wave/templates/{templateIdOrApiName}/releasenotes', () => {
+        [
+            ['id', '0Nk6g000000QSJJCA4'],
+            ['name', 'myns_MyTemplateName'],
+        ].forEach(([valType, val]) => {
+            describe(`with template ${valType}`, () => {
+                testControllerInput(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/releasenotes`,
+                    },
+                    [
+                        'WaveController.getWaveTemplateReleaseNotes',
+                        {},
+                        { background: false, hotspot: true, longRunning: false },
+                    ]
+                );
+
+                testResolveResponse(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/releasenotes`,
+                    },
+                    {}
+                );
+
+                testRejectFetchResponse({
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates/${val}/releasenotes`,
+                });
+            });
+        });
+    });
+
     describe('get /connect/communities/{communityId}/managed-content/delivery/contents', () => {
         testControllerInput(
             {

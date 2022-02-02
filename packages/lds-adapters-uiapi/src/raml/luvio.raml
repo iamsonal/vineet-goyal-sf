@@ -68,9 +68,9 @@ types:
     (luvio.ttl): 900000
     (luvio.private):
       - eTag
-  ListReferenceRepresentation:
-    (luvio.key):
-      id: id
+  ListInfoBatchRepresentation:
+    examples:
+      mockListInfosResponse: !include ../mocks/types/ListInfoBatchRepresentation/list-infos.json
   ListRecordCollectionRepresentation:
     (luvio.private):
       - currentPageUrl
@@ -651,10 +651,19 @@ types:
       (luvio.adapter):
         name: updateLayoutUserState
   /list-info:
-    '/{listViewId}':
+    '/batch':
       get:
-        (luvio.key):
-          listViewId: urlParams.listViewId
+        (luvio.adapter):
+          name: getListInfosByName
+        (luvio.composite):
+          resource: /ui-api/list-info/{objectApiName}/{listViewApiName}
+          uriParameters:
+            objectApiName: names
+            listViewApiName: names
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
     '/{objectApiName}/{listViewApiName}':
       uriParameters:
         objectApiName:

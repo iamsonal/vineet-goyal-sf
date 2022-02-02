@@ -166,6 +166,23 @@ function mockGetRecordDeepParamsNetwork(config, mockData) {
     }
 }
 
+function mockGetListInfosByNameNetwork(config, mockData) {
+    const { names } = config;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/list-info/batch`,
+        queryParams: {
+            names,
+        },
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetRecordNetwork(config, mockData) {
     const { recordId, ...queryParams } = config;
 
@@ -1012,6 +1029,7 @@ export {
     mockGetLayoutNetwork,
     mockGetLayoutUserStateNetwork,
     mockGetListInfoByNameNetwork,
+    mockGetListInfosByNameNetwork,
     mockGetObjectInfoNetwork,
     mockGetObjectInfosNetwork,
     mockGetPicklistValuesNetwork,

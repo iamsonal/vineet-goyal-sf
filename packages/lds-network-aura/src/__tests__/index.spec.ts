@@ -4315,6 +4315,46 @@ describe('routes', () => {
         );
     });
 
+    describe('get /list-info/batch?names={objectApiName}.{listViewApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-info/batch`,
+                queryParams: {
+                    names: ['Account.__SearchResult'],
+                },
+            },
+            [
+                'ListUiController.getListInfosByName',
+                {
+                    names: ['Account.__SearchResult'],
+                },
+                undefined,
+            ]
+        );
+    });
+
+    describe('get /list-info/batch?names={objectApiName}.{listViewApiName},{objectApiName}.{listViewApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-info/batch`,
+                queryParams: {
+                    names: ['Account.AllAccounts', 'Contact.__SearchResult'],
+                },
+            },
+            [
+                'ListUiController.getListInfosByName',
+                {
+                    names: ['Account.AllAccounts', 'Contact.__SearchResult'],
+                },
+                undefined,
+            ]
+        );
+    });
+
     describe('get /list-info/{objectApiName}/{listViewApiName}', () => {
         testControllerInput(
             {

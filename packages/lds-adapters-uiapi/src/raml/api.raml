@@ -2731,6 +2731,24 @@ types:
       result:
         description: object wrapper around inner representation
         type: RelatedListInfoRepresentation
+  ListInfoBatchRepresentation: # TODO: Handrolled for W-10327887
+    description: ListInfoBatchRepresentation
+    type: object
+    properties:
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array
+        items:
+          type: SimpleListInfoResultRepresentation
+  SimpleListInfoResultRepresentation: # TODO: Handrolled for W-10327887
+    type: object
+    properties:
+      statusCode:
+        description: An HTTP status code indicating the status of this individual request in the batch.
+        type: number
+      result:
+        description: object wrapper around inner representation
+        type: ListInfoRepresentation
   RelatedListInfoRepresentation:
     description: RelatedListInfoRepresentation
     type: object
@@ -4675,6 +4693,28 @@ types:
         type: string
         required: true
   /list-info:
+    /batch:
+      get:
+        description: Retrieve a list of listInfo.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListInfoBatchRepresentation # TODO: hand rolled for W-10327887
+        queryParameters:
+          ids:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          names:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
     /{listViewId}:
       get:
         description: Retrieve list info.

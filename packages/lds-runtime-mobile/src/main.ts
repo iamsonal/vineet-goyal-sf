@@ -25,7 +25,6 @@ import { recordIdGenerator } from './RecordIdGenerator';
 
 import { NimbusNetworkAdapter } from './network/NimbusNetworkAdapter';
 import { makeNetworkAdapterChunkRecordFields } from './network/record-field-batching/makeNetworkAdapterChunkRecordFields';
-import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 import { buildInternalAdapters } from './utils/adapters';
 import { restoreDraftKeyMapping } from './utils/restoreDraftKeyMapping';
@@ -33,7 +32,7 @@ import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
 import { makeDebugEnvironment } from './debug/makeDebugEnvironment';
-import { NimbusSQLStore } from './NimbusSQLStore';
+import { NimbusSqlDurableStore } from './NimbusSqlDurableStore';
 
 let luvio: Luvio;
 
@@ -99,7 +98,7 @@ const networkAdapter = salesforceNetworkAdapter(
     makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter)
 );
 
-const baseDurableStore = new NimbusDurableStore();
+const baseDurableStore = new NimbusSqlDurableStore();
 
 // specific adapters
 const internalAdapterStore = new Store();
@@ -188,8 +187,7 @@ luvio = new Luvio(draftEnv, {
 });
 
 //inject query eval to graphql adapter
-const sqlStore = new NimbusSQLStore();
-const storeEval = storeEvalFactory(userId, baseDurableStore, sqlStore);
+const storeEval = storeEvalFactory(userId, baseDurableStore);
 
 // Draft mapping entries exists only in the Durable store.
 // Populate Luvio L1 cache with the entries from the Durable store.

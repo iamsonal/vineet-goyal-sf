@@ -1,6 +1,8 @@
-import { storeEvalFactory } from '../../storeEval/storeEvalFactory';
 import { MockDurableStore } from '@luvio/adapter-test-library';
-import { SQLEvaluatingStore } from '../../SQLEvaluatingStore';
+import { parseAndVisit as parse } from '@luvio/graphql-parser';
+import type { SqlDurableStore } from '@salesforce/lds-store-sql';
+
+import { storeEvalFactory } from '../../storeEval/storeEvalFactory';
 import {
     buildTTLStrategy,
     evaluationResults,
@@ -10,7 +12,6 @@ import {
     TABLE_ATTRS_JSON,
 } from './util';
 import { objectInfoSql } from '../../ast-to-sql';
-import { parseAndVisit as parse } from '@luvio/graphql-parser';
 import infoJson from '../mockData/objectInfos.json';
 import { SnapshotState } from '../../storeEval/snapshot';
 
@@ -19,17 +20,17 @@ type SetupOptions = { evalResult?: string | string[]; isEvalSupported?: boolean 
 function setup({ evalResult = '{}', isEvalSupported = true }: SetupOptions = {}) {
     const results = Array.isArray(evalResult) ? evalResult : [evalResult];
 
-    const sqlStore: SQLEvaluatingStore = {
-        isEvalSupported: function (): boolean {
-            return isEvalSupported;
+    // TODO [W-10530832]: export a MockSqlDurableStore from lds-store-sql for testing usage that uses
+    // sqlite3 node package
+    const sqlStore: SqlDurableStore = Object.create(new MockDurableStore(), {
+        isEvalSupported: { value: () => isEvalSupported },
+        updateIndices: { value: jest.fn(() => Promise.resolve()) },
+        evaluateSQL: {
+            value: jest.fn().mockImplementation((_input) => {
+                return Promise.resolve(results.shift());
+            }),
         },
-
-        updateIndices: jest.fn(() => Promise.resolve()),
-
-        evaluateSQL: (_input) => {
-            return Promise.resolve(results.shift());
-        },
-    };
+    });
 
     return { sqlStore };
 }
@@ -62,13 +63,11 @@ describe('storeEvalFactory', () => {
                 evalResult: [TABLE_ATTRS_DB_RESULT, JSON.stringify(infoJson)],
             });
 
-            let durableStore: MockDurableStore = new MockDurableStore();
-
-            expect(durableStore.listeners.size).toEqual(0);
-            const _ = storeEvalFactory('userId', durableStore, sqlStore);
+            expect((sqlStore as unknown as MockDurableStore).listeners.size).toEqual(0);
+            const _ = storeEvalFactory('userId', sqlStore);
             await flushPromises();
 
-            expect(durableStore.listeners.size).toEqual(1);
+            expect((sqlStore as unknown as MockDurableStore).listeners.size).toEqual(1);
         });
 
         it('queries object info', async () => {
@@ -76,13 +75,14 @@ describe('storeEvalFactory', () => {
                 evalResult: [TABLE_ATTRS_DB_RESULT, JSON.stringify(infoJson)],
             });
 
-            let durableStore: MockDurableStore = new MockDurableStore();
-            const spy = jest.spyOn(sqlStore, 'evaluateSQL');
-
-            const _ = storeEvalFactory('userId', durableStore, sqlStore);
+            const _ = storeEvalFactory('userId', sqlStore);
             await flushPromises();
 
-            expect(spy).toHaveBeenNthCalledWith(2, objectInfoSql(TABLE_ATTRS_JSON), []);
+            expect(sqlStore.evaluateSQL).toHaveBeenNthCalledWith(
+                2,
+                objectInfoSql(TABLE_ATTRS_JSON),
+                []
+            );
         });
     });
 
@@ -94,9 +94,8 @@ describe('storeEvalFactory', () => {
                 isEvalSupported: false,
             });
 
-            const durableStore: MockDurableStore = new MockDurableStore();
             const ast = parse(source);
-            const storeEval = storeEvalFactory('userId', durableStore, sqlStore);
+            const storeEval = storeEvalFactory('userId', sqlStore);
 
             await flushPromises();
 
@@ -112,9 +111,8 @@ describe('storeEvalFactory', () => {
                 isEvalSupported: true,
             });
 
-            const durableStore: MockDurableStore = new MockDurableStore();
             const ast = parse(source);
-            const storeEval = storeEvalFactory('userId', durableStore, sqlStore);
+            const storeEval = storeEvalFactory('userId', sqlStore);
 
             await flushPromises();
             return storeEval(ast, ttlStrategy).catch((e) => {
@@ -131,9 +129,8 @@ describe('storeEvalFactory', () => {
                 isEvalSupported: true,
             });
 
-            const durableStore: MockDurableStore = new MockDurableStore();
             const ast = parse(source);
-            const storeEval = storeEvalFactory('userId', durableStore, sqlStore);
+            const storeEval = storeEvalFactory('userId', sqlStore);
 
             await flushPromises();
             return storeEval(ast, ttlStrategy).catch((e) => {
@@ -155,9 +152,8 @@ describe('storeEvalFactory', () => {
                 isEvalSupported: true,
             });
 
-            const durableStore: MockDurableStore = new MockDurableStore();
             const ast = parse(source);
-            const storeEval = storeEvalFactory('userId', durableStore, sqlStore);
+            const storeEval = storeEvalFactory('userId', sqlStore);
 
             await flushPromises();
             return storeEval(ast, ttlStrategy).then((snapshot) => {
@@ -182,9 +178,8 @@ describe('storeEvalFactory', () => {
                 isEvalSupported: true,
             });
 
-            const durableStore: MockDurableStore = new MockDurableStore();
             const ast = parse(source);
-            const storeEval = storeEvalFactory('userId', durableStore, sqlStore);
+            const storeEval = storeEvalFactory('userId', sqlStore);
 
             await flushPromises();
             return storeEval(ast, ttlStrategy).then((snapshot) => {
@@ -207,9 +202,8 @@ describe('storeEvalFactory', () => {
                 isEvalSupported: true,
             });
 
-            const durableStore: MockDurableStore = new MockDurableStore();
             const ast = parse(source);
-            const storeEval = storeEvalFactory('userId', durableStore, sqlStore);
+            const storeEval = storeEvalFactory('userId', sqlStore);
 
             await flushPromises();
             return storeEval(ast, ttlStrategy).then((snapshot) => {

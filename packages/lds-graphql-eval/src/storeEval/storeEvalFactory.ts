@@ -1,15 +1,16 @@
-import { LuvioDocumentNode } from '@luvio/graphql-parser';
+import type { Snapshot, TTLStrategy } from '@luvio/engine';
+import type { DurableStoreChange } from '@luvio/environments';
+import type { LuvioDocumentNode } from '@luvio/graphql-parser';
+import type { SqlStore, SqlDurableStore } from '@salesforce/lds-store-sql';
+
 import { transform } from '../ast-parser';
 import { sql, SqlMappingInput } from '../ast-to-sql';
 import { message, PredicateError } from '../Error';
 import { failure, Result } from '../Result';
 import { queryTableAttrs, durableObjectInfo, updateIndices } from './promises';
-import { DurableStore, DurableStoreChange } from '@luvio/environments';
-import { SQLEvaluatingStore } from '../SQLEvaluatingStore';
 import { ObjectInfoMap } from '../info-types';
 import { RootQuery } from '../Predicate';
 import { hasObjectInfoChanges } from './util';
-import { Snapshot, TTLStrategy } from '@luvio/engine';
 import { createSnapshot } from './snapshot';
 
 function evalQuery(
@@ -27,7 +28,7 @@ function evalQuery(
 function offlineEvalSnapshot(
     query: RootQuery,
     mappingInput: SqlMappingInput,
-    sqlStore: SQLEvaluatingStore,
+    sqlStore: SqlStore,
     ttlStrategy: TTLStrategy,
     timestamp: number
 ): Promise<Snapshot<unknown, any>> {
@@ -45,27 +46,27 @@ type StoreEval = (
     ast: LuvioDocumentNode,
     ttlStrategy: TTLStrategy
 ) => Promise<Snapshot<unknown, any>>;
+
 export function storeEvalFactory(
     userId: string,
-    durableStore: DurableStore,
-    sqlStore: SQLEvaluatingStore,
+    sqlDurableStore: SqlDurableStore,
     timestampSource: () => number = Date.now
 ): StoreEval {
     const tableAttrsPromise = queryTableAttrs();
     const { query: queryObjectInfo, saved: savedObjectInfo } = durableObjectInfo(tableAttrsPromise);
     const applyIndicesPromise = updateIndices(tableAttrsPromise);
 
-    queryObjectInfo(sqlStore);
+    queryObjectInfo(sqlDurableStore);
 
-    durableStore.registerOnChangedListener((changes: DurableStoreChange[]) => {
-        if (sqlStore.isEvalSupported() === false) {
+    sqlDurableStore.registerOnChangedListener((changes: DurableStoreChange[]) => {
+        if (sqlDurableStore.isEvalSupported() === false) {
             return;
         }
 
-        applyIndicesPromise(sqlStore);
+        applyIndicesPromise(sqlDurableStore);
 
         if (hasObjectInfoChanges(changes) === true) {
-            queryObjectInfo(sqlStore);
+            queryObjectInfo(sqlDurableStore);
         }
     });
 
@@ -75,7 +76,7 @@ export function storeEvalFactory(
     };
 
     const storeEval = (ast: LuvioDocumentNode, ttlStrategy: TTLStrategy) => {
-        if (sqlStore.isEvalSupported() === false) {
+        if (sqlDurableStore.isEvalSupported() === false) {
             // console.log('eval not supported')
             return Promise.reject('Eval is not supported.');
         }
@@ -87,7 +88,7 @@ export function storeEvalFactory(
             );
         }
 
-        return tableAttrsPromise(sqlStore).then((mappingInput) => {
+        return tableAttrsPromise(sqlDurableStore).then((mappingInput) => {
             if (mappingInput === undefined) {
                 return Promise.reject('DurableStore attrs required for evaluating GraphQL query.');
             }
@@ -96,7 +97,7 @@ export function storeEvalFactory(
             return offlineEvalSnapshot(
                 queryResult.value,
                 mappingInput,
-                sqlStore,
+                sqlDurableStore,
                 ttlStrategy,
                 timestamp
             );

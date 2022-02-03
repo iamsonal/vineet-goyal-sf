@@ -1,13 +1,12 @@
-import { SQLEvaluatingStore } from '../../SQLEvaluatingStore';
+import type { SqlStore } from '@salesforce/lds-store-sql';
+
 import { updateIndices, durableObjectInfo, queryTableAttrs } from '../../storeEval/promises';
 import { indicesSql, objectInfoSql, SqlMappingInput, tableAttrs } from '../../ast-to-sql';
 import { TABLE_ATTRS_DB_RESULT, TABLE_ATTRS_JSON } from './util';
 
 function setup(evalResult: string) {
-    const store: SQLEvaluatingStore = {
-        isEvalSupported: function (): boolean {
-            return true;
-        },
+    const store: SqlStore = {
+        isEvalSupported: () => true,
 
         updateIndices: jest.fn(() => new Promise((resolve) => setTimeout(() => resolve()))),
 
@@ -30,7 +29,7 @@ describe('promises', () => {
         it('rejects if mapping input is not available', () => {
             expect.assertions(1);
             const { store } = setup('{}');
-            const tableAttrs = (_: SQLEvaluatingStore) => Promise.resolve(undefined);
+            const tableAttrs = (_: SqlStore) => Promise.resolve(undefined);
 
             const { query: promise } = durableObjectInfo(tableAttrs);
 
@@ -41,7 +40,7 @@ describe('promises', () => {
 
         it('shares promise if one is already pending', async () => {
             const { store } = setup(TABLE_ATTRS_DB_RESULT);
-            const tableAttrs = (_: SQLEvaluatingStore) => Promise.resolve(mappingInput);
+            const tableAttrs = (_: SqlStore) => Promise.resolve(mappingInput);
             const { query: promise } = durableObjectInfo(tableAttrs);
 
             await Promise.all([
@@ -58,7 +57,7 @@ describe('promises', () => {
 
         it('evaluates query if mapping input is available', async () => {
             const { store } = setup(TABLE_ATTRS_DB_RESULT);
-            const tableAttrs = (_: SQLEvaluatingStore) => Promise.resolve(mappingInput);
+            const tableAttrs = (_: SqlStore) => Promise.resolve(mappingInput);
             const { query: promise } = durableObjectInfo(tableAttrs);
 
             await promise(store);
@@ -68,7 +67,7 @@ describe('promises', () => {
 
         it('allows new requests after finishing', async () => {
             const { store } = setup(TABLE_ATTRS_DB_RESULT);
-            const tableAttrs = (_: SQLEvaluatingStore) => Promise.resolve(mappingInput);
+            const tableAttrs = (_: SqlStore) => Promise.resolve(mappingInput);
             const { query: promise } = durableObjectInfo(tableAttrs);
 
             await Promise.all([

@@ -1,8 +1,8 @@
+import type { SqlStore } from '@salesforce/lds-store-sql';
 import { indicesSql, objectInfoSql, SqlMappingInput, tableAttrs } from '../ast-to-sql';
 import { ObjectInfoMap } from '../info-types';
-import { SQLEvaluatingStore } from '../SQLEvaluatingStore';
 
-type GetTableAttrs = (sqlStore: SQLEvaluatingStore) => Promise<SqlMappingInput | undefined>;
+type GetTableAttrs = (sqlStore: SqlStore) => Promise<SqlMappingInput | undefined>;
 
 /**
  * Returns a promise function that queries all available object info from the durable store.
@@ -15,14 +15,14 @@ type GetTableAttrs = (sqlStore: SQLEvaluatingStore) => Promise<SqlMappingInput |
  * When the promise completes a new promise can be attempted
  */
 export function durableObjectInfo(getTableAttrs: GetTableAttrs): {
-    query: (sqlStore: SQLEvaluatingStore) => Promise<ObjectInfoMap>;
+    query: (sqlStore: SqlStore) => Promise<ObjectInfoMap>;
     saved: () => ObjectInfoMap | undefined;
 } {
     let getDurableObjectInfoPromise: Promise<ObjectInfoMap> | undefined = undefined;
     let lastObjectInfoMap: ObjectInfoMap | undefined = undefined;
 
     //creates work
-    const query = (sqlStore: SQLEvaluatingStore) => {
+    const query = (sqlStore: SqlStore) => {
         if (getDurableObjectInfoPromise === undefined) {
             getDurableObjectInfoPromise = getTableAttrs(sqlStore)
                 .then((mappingInput) => {
@@ -66,7 +66,7 @@ export function durableObjectInfo(getTableAttrs: GetTableAttrs): {
 export function queryTableAttrs(): GetTableAttrs {
     let tableAttrsPromise: Promise<SqlMappingInput | undefined> | undefined = undefined;
 
-    return (sqlStore: SQLEvaluatingStore) => {
+    return (sqlStore: SqlStore) => {
         if (tableAttrsPromise === undefined) {
             tableAttrsPromise = sqlStore
                 .evaluateSQL(tableAttrs, [])
@@ -109,12 +109,10 @@ export function queryTableAttrs(): GetTableAttrs {
  * If the promise completes successfully subsequent requests will share that resolved value.
  * If the promise fails, a new promise can be attempted.
  */
-export function updateIndices(
-    getTableAttrs: GetTableAttrs
-): (sqlStore: SQLEvaluatingStore) => Promise<void> {
+export function updateIndices(getTableAttrs: GetTableAttrs): (sqlStore: SqlStore) => Promise<void> {
     let applyIndicesPromise: Promise<void> | undefined = undefined;
 
-    return (sqlStore: SQLEvaluatingStore) => {
+    return (sqlStore: SqlStore) => {
         if (applyIndicesPromise === undefined) {
             applyIndicesPromise = getTableAttrs(sqlStore)
                 .then((mappingInput) => {

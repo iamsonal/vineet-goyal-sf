@@ -1,8 +1,9 @@
-export interface SQLEvaluatingStore {
+/**
+ * A store that can evaluate SQL queries
+ */
+export interface SqlStore {
     /**
-     * @returns true if the backing plugins available in the environment support
-     * SQL evaluation and updating indices.
-     *
+     * @returns true if the implementation supports SQL evaluation and updating indices.
      */
     isEvalSupported(): boolean;
 

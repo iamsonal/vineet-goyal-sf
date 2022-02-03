@@ -1,9 +1,10 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import { SQLEvaluatingStore } from '@salesforce/lds-graphql-eval';
+import type { SqlDurableStore } from '@salesforce/lds-store-sql';
+import { NimbusDurableStore } from './NimbusDurableStore';
 
-export class NimbusSQLStore implements SQLEvaluatingStore {
+export class NimbusSqlDurableStore extends NimbusDurableStore implements SqlDurableStore {
     isEvalSupported(): boolean {
         return (
             __nimbus.plugins.LdsDurableStore.updateIndices !== undefined &&

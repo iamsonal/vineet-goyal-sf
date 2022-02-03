@@ -72,15 +72,16 @@ export function isIdField(fieldInfo: FieldInfo): boolean {
 }
 
 export function isScalarDataType(type: DataType): boolean {
-    return (
-        type === 'Boolean' ||
-        type === 'String' ||
-        type === 'Double' ||
-        type === 'DateTime' ||
-        type === 'Int' ||
-        type === 'Picklist' ||
-        type === 'Currency' ||
-        type === 'MultiPicklist' ||
-        type === 'Time'
-    );
+    return [
+        'Boolean',
+        'String',
+        'Double',
+        'DateTime',
+        'Int',
+        'Picklist',
+        'Currency',
+        'MultiPicklist',
+        'Time',
+        'Phone',
+    ].includes(type);
 }

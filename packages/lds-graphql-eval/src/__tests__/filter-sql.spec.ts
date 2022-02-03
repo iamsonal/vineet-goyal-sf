@@ -343,4 +343,107 @@ describe('filter sql', () => {
             expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'", "'09:00:00.000Z'"]);
         });
     });
+
+    describe('phone', () => {
+        const phoneQuery = (predicate) => {
+            return /* GraphQL */ `
+                query phoneQuery {
+                    uiapi {
+                        query {
+                            User(where: { Phone: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Phone {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with phone filter predicates for eq operator', () => {
+            const predicate = `eq: "555-867-5309"`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for ne operator', () => {
+            const predicate = `ne: "555-867-5309"`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for like operator', () => {
+            const predicate = `like: "555-867-5309"`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for gt operator', () => {
+            const predicate = `gt: "555-867-5309"`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for gte operator', () => {
+            const predicate = `gte: "555-867-5309"`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for lt operator', () => {
+            const predicate = `lt: "555-867-5309"`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for lte operator', () => {
+            const predicate = `lte: "555-867-5309"`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for in operator', () => {
+            const predicate = `in: ["555-867-5309", "123-456-7890"]`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'", "'123-456-7890'"]);
+        });
+
+        it('should return the correct sql with phone filter predicates for nin operator', () => {
+            const predicate = `nin: ["555-867-5309", "123-456-7890"]`;
+            const queryResult = transform(parseAndVisit(phoneQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'555-867-5309'", "'123-456-7890'"]);
+        });
+    });
 });

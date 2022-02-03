@@ -968,7 +968,7 @@ describe('filter-parser', () => {
             });
 
             it('returns an error when string field IN is not paired with ListValueNode', () => {
-                const expected = 'Comparison value must be a string array.';
+                const expected = 'Comparison value must be a String array.';
 
                 expectedFieldError(
                     'TimeSheetNumber',
@@ -990,7 +990,7 @@ describe('filter-parser', () => {
             });
 
             it('returns an error when string field is compared to other types', () => {
-                const expected = 'Comparison value must be a string.';
+                const expected = 'Comparison value must be a String.';
 
                 expectedFieldError('TimeSheetNumber', booleanNode(false), expected);
                 expectedFieldError('TimeSheetNumber', doubleNode('5.5'), expected);

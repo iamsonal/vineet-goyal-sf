@@ -355,6 +355,7 @@ type DateTimeOperator = Operator<ScalarOperatorType, DateTimeInput, 'DateTimeOpe
 type PicklistOperator = Operator<PicklistOperatorType, StringLiteral, 'PicklistOperator'>;
 type CurrencyOperator = Operator<ScalarOperatorType, DoubleLiteral, 'CurrencyOperator'>;
 type TimeOperator = Operator<ScalarOperatorType, StringLiteral, 'TimeOperator'>;
+type PhoneOperator = Operator<ScalarOperatorType, StringLiteral, 'PhoneOperator'>;
 type MultiPicklistOperator = Operator<
     MultiPicklistOperatorType,
     StringLiteral,
@@ -369,6 +370,7 @@ type IntSetOperator = Operator<SetOperatorType, NumberArray, 'IntSetOperator'>;
 type DoubleSetOperator = Operator<SetOperatorType, NumberArray, 'DoubleSetOperator'>;
 type CurrencySetOperator = Operator<SetOperatorType, NumberArray, 'CurrencySetOperator'>;
 type TimeSetOperator = Operator<SetOperatorType, StringArray, 'TimeSetOperator'>;
+type PhoneSetOperator = Operator<SetOperatorType, StringArray, 'PhoneSetOperator'>;
 type MultiPicklistSetOperator = Operator<
     MultiPicklistSetOperatorType,
     StringArray,
@@ -385,7 +387,8 @@ type ScalarOperators =
     | PicklistOperator
     | CurrencyOperator
     | MultiPicklistOperator
-    | TimeOperator;
+    | TimeOperator
+    | PhoneOperator;
 
 type SetOperators =
     | StringSetOperator
@@ -396,7 +399,8 @@ type SetOperators =
     | PicklistSetOperator
     | CurrencySetOperator
     | MultiPicklistSetOperator
-    | TimeSetOperator;
+    | TimeSetOperator
+    | PhoneSetOperator;
 
 const dateRegEx = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
 const dateTimeRegEx =
@@ -546,15 +550,15 @@ function operatorWithValue(
         return parseNullValue(operator).mapError((e) => [e]);
     }
 
-    if (objectInfoDataType === 'String' || objectInfoDataType === 'Reference') {
+    if (['String', 'Reference', 'Phone'].includes(objectInfoDataType)) {
         if (isStringOperatorType(operator)) {
             return is<StringValueNode>(value, 'StringValue')
                 ? success({
-                      type: 'StringOperator',
+                      type: `StringOperator`,
                       operator,
                       value: stringLiteral(value.value),
                   })
-                : failure([message(`Comparison value must be a string.`)]);
+                : failure([message(`Comparison value must be a ${objectInfoDataType}.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -568,7 +572,7 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([message(`Comparison value must be a string array.`)]);
+                : failure([message(`Comparison value must be a ${objectInfoDataType} array.`)]);
         }
     }
 

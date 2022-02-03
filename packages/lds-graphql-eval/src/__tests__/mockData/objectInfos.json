@@ -5,7 +5,7 @@
             "Id": { "dataType": "String", "apiName": "Id" },
             "Email": { "dataType": "String", "apiName": "Email" },
             "SmallPhotoUrl": { "apiName": "SmallPhotoUrl", "dataType": "Url" },
-            "MobilePhone": { "apiName": "MobilePhone", "dataType": "Phone" },
+            "Phone": { "apiName": "Phone", "dataType": "Phone" },
             "Signature": { "apiName": "Signature", "dataType": "TextArea" },
             "CreatedById": {
                 "apiName": "CreatedById",

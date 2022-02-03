@@ -17,7 +17,7 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@luvio/graphql-parser": "0.73.1",
+        "@luvio/graphql-parser": "0.73.2",
         "@salesforce/lds-adapters-graphql": "1.37.10"
     }
 }

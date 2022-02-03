@@ -39,10 +39,10 @@
         "@salesforce/lds-bindings": "1.37.10"
     },
     "devDependencies": {
-        "@luvio/cli": "0.73.1",
-        "@luvio/compiler": "0.73.1",
-        "@luvio/engine": "0.73.1",
-        "@luvio/lwc-luvio": "0.73.1",
+        "@luvio/cli": "0.73.2",
+        "@luvio/compiler": "0.73.2",
+        "@luvio/engine": "0.73.2",
+        "@luvio/lwc-luvio": "0.73.2",
         "@salesforce/lds-karma": "1.37.10"
     },
     "volta": {

@@ -16,7 +16,7 @@ import {
     validateAdapterConfig,
     createResourceParams,
 } from '../../generated/adapters/getMruListUi';
-import { createResourceRequest as createMruListRecordsResourceRequest } from '../../generated/resources/getUiApiMruListRecordsByObjectApiName';
+import createMruListRecordsResourceRequest from '../../generated/resources/getUiApiMruListRecordsByObjectApiName';
 import {
     createResourceRequest as createMruListUiResourceRequest,
     createPaginationParams as getUiApiMruListUiByObjectApiName_createPaginationParams,
@@ -28,16 +28,20 @@ import {
     DynamicSelectParams as types_ListRecordCollectionRepresentation_DynamicSelectParams,
     ListRecordCollectionRepresentation,
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
+    keyBuilderFromType as ListRecordCollectionRepresentation_keyBuilderFromType,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
     ingest as types_ListRecordCollectionRepresentation_ingest,
     dynamicSelect as types_ListRecordCollectionRepresentation_dynamicSelect,
+    getTypeCacheKeys as types_ListRecordCollectionRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListRecordCollectionRepresentation';
 import {
     DynamicSelectParams as types_ListUiRepresentation_DynamicSelectParams,
     ListUiRepresentation,
     keyBuilder as listUiRepresentation_keyBuilder,
+    keyBuilderFromType as listUiRepresentation_keyBuilderFromType,
     ingest as types_ListUiRepresentation_ingest,
     dynamicSelect as types_ListUiRepresentation_dynamicSelect,
+    getTypeCacheKeys as types_ListUiRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListUiRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { getListInfo, ListFields, listFields } from '../../util/lists';
@@ -116,12 +120,6 @@ function onResourceSuccess_getMruListUi(
     const { body } = response;
     const listInfo = body.info;
 
-    // response might have records.sortBy in csv format
-    const sortBy = body.records.sortBy;
-    if (sortBy && typeof sortBy === 'string') {
-        body.records.sortBy = (sortBy as unknown as string).split(',');
-    }
-
     const listUiKey = listUiRepresentation_keyBuilder({
         ...listInfo.listReference,
         sortBy: body.records.sortBy,
@@ -192,10 +190,27 @@ function buildNetworkSnapshot_getMruListUi(
 
     return luvio.dispatchResourceRequest<ListUiRepresentation>(request).then(
         (response) => {
-            return onResourceSuccess_getMruListUi(luvio, config, response);
+            const { body } = response;
+
+            // response might have records.sortBy in csv format but keyBuilder/ingestion
+            // functions expect it to be an array so coerce it here if needed
+            const sortBy = body.records.sortBy;
+            if (sortBy && typeof sortBy === 'string') {
+                body.records.sortBy = (sortBy as unknown as string).split(',');
+            }
+
+            return luvio.handleSuccessResponse(
+                () => onResourceSuccess_getMruListUi(luvio, config, response),
+                () =>
+                    types_ListUiRepresentation_getTypeCacheKeys(body, () =>
+                        listUiRepresentation_keyBuilderFromType(body)
+                    )
+            );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getMruListUi(luvio, config, err);
+            return luvio.handleErrorResponse(() =>
+                onResourceError_getMruListUi(luvio, config, err)
+            );
         }
     );
 }
@@ -249,24 +264,16 @@ function prepareRequest_getMruListRecords(
     return request;
 }
 
+// Only call this function if you are certain the list view hasn't changed (ie:
+// the listInfoEtag in the body is the same as the cached listInfo.eTag)
 function onResourceSuccess_getMruListRecords(
     luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     response: ResourceResponse<ListRecordCollectionRepresentation>
-) {
+): Snapshot<ListUiRepresentation> {
     const { body } = response;
     const { listInfoETag } = body;
-
-    // fall back to mru-list-ui if list view has changed
-    if (listInfoETag !== listInfo.eTag) {
-        return buildNetworkSnapshot_getMruListUi(luvio, config);
-    }
-
-    // server returns sortBy in csv format
-    if (body.sortBy) {
-        body.sortBy = (body.sortBy as unknown as string).split(',');
-    }
 
     const fields = listFields(luvio, config, listInfo).processRecords(body.records);
 
@@ -323,10 +330,33 @@ function buildNetworkSnapshot_getMruListRecords(
 
     return luvio.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         (response) => {
-            return onResourceSuccess_getMruListRecords(luvio, config, listInfo, response);
+            const { body } = response;
+
+            // fall back to mru-list-ui if list view has changed
+            if (body.listInfoETag !== listInfo.eTag) {
+                return buildNetworkSnapshot_getMruListUi(luvio, config);
+            }
+
+            // response might have records.sortBy in csv format but keyBuilder/ingestion
+            // functions expect it to be an array so coerce it here if needed
+            const { sortBy } = body;
+            if (sortBy && typeof sortBy === 'string') {
+                body.sortBy = (sortBy as unknown as string).split(',');
+            }
+
+            // else ingest
+            return luvio.handleSuccessResponse(
+                () => onResourceSuccess_getMruListRecords(luvio, config, listInfo, response),
+                () =>
+                    types_ListRecordCollectionRepresentation_getTypeCacheKeys(body, () =>
+                        ListRecordCollectionRepresentation_keyBuilderFromType(body)
+                    )
+            );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getMruListRecords(luvio, config, listInfo, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceError_getMruListRecords(luvio, config, listInfo, err);
+            });
         }
     );
 }

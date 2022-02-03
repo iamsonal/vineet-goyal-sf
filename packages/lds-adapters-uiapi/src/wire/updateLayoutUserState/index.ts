@@ -9,6 +9,8 @@ import {
     RecordLayoutUserStateRepresentation,
     keyBuilder,
     ingest,
+    getTypeCacheKeys,
+    keyBuilderFromType,
 } from '../../generated/types/RecordLayoutUserStateRepresentation';
 import patchUiApiLayoutUserStateByObjectApiName from '../../generated/resources/patchUiApiLayoutUserStateByObjectApiName';
 import { validate as validateRecordLayoutUserStateInput } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
@@ -39,7 +41,11 @@ function updateLayoutUserState(
 ) {
     return luvio.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(updateRequest).then(
         (response) => {
-            return ingestAndBroadcast(luvio, key, config, response.body);
+            const { body } = response;
+            return luvio.handleSuccessResponse(
+                () => ingestAndBroadcast(luvio, key, config, body),
+                () => getTypeCacheKeys(body, () => keyBuilderFromType(body))
+            );
         },
         (err: FetchResponse<{ error: string }>) => {
             deepFreeze(err);

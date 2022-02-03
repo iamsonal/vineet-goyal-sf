@@ -60,6 +60,7 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
         resource.id,
         'createResourceRequest'
     );
+    const buildCacheKeysIdentifier = importRamlArtifact(resource.id, 'getResponseCacheKeys');
     const onResourceResponseError = importRamlArtifact(adapter.id, 'onResourceResponseError');
     const buildCachedSnapshot = importRamlArtifact(adapter.id, 'buildCachedSnapshot');
 
@@ -73,28 +74,32 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
           const fieldsTrie = ${fieldsTrieStatement};
           return luvio.dispatchResourceRequest<${returnTypeInterface}>(request, override)
               .then((response) => {
-                  const ingest = ${createFieldsIngestSuccessImport}({
-                      fields: fieldsTrie,
-                      optionalFields: optionalFieldsTrie,
-                      trackedFields: optionalFieldsTrie,
-                  });
-                  luvio.storeIngest<${returnTypeInterface}>(
-                      key,
-                      ingest,
-                      response.body
-                  );
-                  const snapshot = ${buildCachedSnapshot}(luvio, config);
-                  if (process.env.NODE_ENV !== 'production') {
-                      if (snapshot.state !== 'Fulfilled') {
-                          throw new Error(
-                              'Invalid network response. Expected network response to result in Fulfilled snapshot'
-                          );
-                      }
-                  }
-                  luvio.storeBroadcast();
-                  return snapshot as ${FULFILLED_SNAPSHOT}<${returnTypeInterface}, {}>;
+                  return luvio.handleSuccessResponse(() => {
+                      const ingest = ${createFieldsIngestSuccessImport}({
+                          fields: fieldsTrie,
+                          optionalFields: optionalFieldsTrie,
+                          trackedFields: optionalFieldsTrie,
+                        });
+                        luvio.storeIngest<${returnTypeInterface}>(
+                            key,
+                            ingest,
+                            response.body
+                            );
+                            const snapshot = ${buildCachedSnapshot}(luvio, config);
+                            if (process.env.NODE_ENV !== 'production') {
+                                if (snapshot.state !== 'Fulfilled') {
+                                    throw new Error(
+                                        'Invalid network response. Expected network response to result in Fulfilled snapshot'
+                                        );
+                                    }
+                                }
+                                luvio.storeBroadcast();
+                                return snapshot as ${FULFILLED_SNAPSHOT}<${returnTypeInterface}, {}>;
+                  }, () => ${buildCacheKeysIdentifier}(resourceParams, response.body));
               }, (response: ${FETCH_RESPONSE}<unknown>) => {
-                  return ${onResourceResponseError}(luvio, config, resourceParams, response);
+                  return luvio.handleErrorResponse(() => {
+                      return ${onResourceResponseError}(luvio, config, resourceParams, response);
+                  });
               });
       }
   `;

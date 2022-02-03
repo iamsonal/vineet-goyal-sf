@@ -9,8 +9,6 @@ import {
     SnapshotRefresh,
     ResourceResponse,
     AdapterContext,
-    CacheKeySet,
-    FulfilledSnapshot,
     AdapterRequestContext,
     StoreLookup,
 } from '@luvio/engine';
@@ -46,16 +44,20 @@ import {
     DynamicSelectParams as types_ListRecordCollectionRepresentation_DynamicSelectParams,
     ListRecordCollectionRepresentation,
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
+    keyBuilderFromType as ListRecordCollectionRepresentation_keyBuilderFromType,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
     ingest as types_ListRecordCollectionRepresentation_ingest,
     dynamicSelect as types_ListRecordCollectionRepresentation_dynamicSelect,
+    getTypeCacheKeys as types_ListRecordCollectionRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListRecordCollectionRepresentation';
 import {
     DynamicSelectParams as types_ListUiRepresentation_DynamicSelectParams,
     ListUiRepresentation,
     keyBuilder as listUiRepresentation_keyBuilder,
+    keyBuilderFromType as listUiRepresentation_keyBuilderFromType,
     ingest as types_ListUiRepresentation_ingest,
     dynamicSelect as types_ListUiRepresentation_dynamicSelect,
+    getTypeCacheKeys as types_ListUiRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListUiRepresentation';
 import { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
@@ -70,8 +72,6 @@ import {
 } from '../../util/lists';
 import { minimizeRequest } from '../../util/pagination';
 import { isFulfilledSnapshot, isStaleSnapshot } from '../../util/snapshot';
-import { ObjectKeys, ObjectFreeze } from '../../util/language';
-import { isString } from '../../validation/utils';
 
 import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
@@ -233,101 +233,6 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
     return request;
 }
 
-function getResponseCacheKeys_getListUi(
-    luvio: Luvio,
-    response: FetchResponse<ListUiRepresentation>
-): CacheKeySet {
-    // TODO [W-10055997]: make this more efficient
-
-    // for now we will get the cache keys by actually ingesting then looking at
-    // the store records
-
-    // ingest mutates the response so we have to make a copy
-    const responseCopy = JSON.parse(JSON.stringify(response));
-    const { body } = responseCopy,
-        listInfo = body.info,
-        { listReference } = listInfo;
-
-    // response might have records.sortBy in csv format
-    const sortBy = body.records.sortBy;
-    if (isString(sortBy)) {
-        body.records.sortBy = ObjectFreeze(sortBy.split(','));
-    }
-
-    const listUiKey = listUiRepresentation_keyBuilder({
-        ...listReference,
-        sortBy: body.records.sortBy,
-    });
-
-    luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
-
-    const visited = ObjectKeys((luvio as any).environment.store.visitedIds);
-
-    const keys: CacheKeySet = {};
-    for (let i = 0, len = visited.length; i < len; i++) {
-        const key = visited[i];
-        const namespace = key.split('::')[0];
-        const representationName = key.split('::')[1].split(':')[0];
-        keys[key] = {
-            namespace,
-            representationName,
-        };
-    }
-
-    return keys;
-}
-
-function getResponseCacheKeys_getListRecords(
-    luvio: Luvio,
-    listInfo: ListInfoRepresentation,
-    response: ResourceResponse<ListRecordCollectionRepresentation>
-) {
-    // TODO [W-10055997]: make this more efficient
-
-    // for now we will get the cache keys by actually ingesting then looking at
-    // the store records
-
-    // ingest mutates the response so we have to make a copy
-    const responseCopy = JSON.parse(JSON.stringify(response));
-    const { body } = responseCopy;
-    const { listInfoETag } = body;
-
-    // bail early if list view has changed
-    if (listInfoETag !== listInfo.eTag) {
-        return {};
-    }
-
-    // response might have records.sortBy in csv format
-    const { sortBy } = body;
-    if (sortBy && typeof sortBy === 'string') {
-        body.sortBy = (sortBy as unknown as string).split(',');
-    }
-
-    luvio.storeIngest(
-        ListRecordCollectionRepresentation_keyBuilder({
-            listViewId: listInfoETag,
-            sortBy: body.sortBy,
-        }),
-        types_ListRecordCollectionRepresentation_ingest,
-        body
-    );
-
-    const visited = ObjectKeys((luvio as any).environment.store.visitedIds);
-
-    const keys: CacheKeySet = {};
-    for (let i = 0, len = visited.length; i < len; i++) {
-        const key = visited[i];
-        const namespace = key.split('::')[0];
-        const representationName = key.split('::')[1].split(':')[0];
-        keys[key] = {
-            namespace,
-            representationName,
-        };
-    }
-
-    return keys;
-}
-
 function onResourceSuccess_getListUi(
     luvio: Luvio,
     context: AdapterContext,
@@ -337,12 +242,6 @@ function onResourceSuccess_getListUi(
     const { body } = response,
         listInfo = body.info,
         { listReference } = listInfo;
-
-    // response might have records.sortBy in csv format
-    const sortBy = body.records.sortBy;
-    if (sortBy && typeof sortBy === 'string') {
-        body.records.sortBy = (sortBy as unknown as string).split(',');
-    }
 
     const listUiKey = listUiRepresentation_keyBuilder({
         ...listReference,
@@ -403,9 +302,21 @@ function buildNetworkSnapshot_getListUi(
 
     return luvio.dispatchResourceRequest<ListUiRepresentation>(request).then(
         (response) => {
+            const { body } = response;
+
+            // response might have records.sortBy in csv format but keyBuilder/ingestion
+            // functions expect it to be an array so coerce it here if needed
+            const sortBy = body.records.sortBy;
+            if (sortBy && typeof sortBy === 'string') {
+                body.records.sortBy = (sortBy as unknown as string).split(',');
+            }
+
             return luvio.handleSuccessResponse(
                 () => onResourceSuccess_getListUi(luvio, context, config, response),
-                () => getResponseCacheKeys_getListUi(luvio, response)
+                () =>
+                    types_ListUiRepresentation_getTypeCacheKeys(body, () =>
+                        listUiRepresentation_keyBuilderFromType(body)
+                    )
             );
         },
         (err: FetchResponse<unknown>) => {
@@ -478,26 +389,17 @@ function prepareRequest_getListRecords(
     return request;
 }
 
+// Only call this function if you are certain the list view hasn't changed (ie:
+// the listInfoEtag in the body is the same as the cached listInfo.eTag)
 function onResourceSuccess_getListRecords(
     luvio: Luvio,
     context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     response: ResourceResponse<ListRecordCollectionRepresentation>
-) {
+): Snapshot<ListUiRepresentation> {
     const { body } = response;
     const { listInfoETag } = body;
-
-    // fall back to list-ui if list view has changed
-    if (listInfoETag !== listInfo.eTag) {
-        return buildNetworkSnapshot_getListUi(luvio, context, config);
-    }
-
-    // response might have records.sortBy in csv format
-    const { sortBy } = body;
-    if (sortBy && typeof sortBy === 'string') {
-        body.sortBy = (sortBy as unknown as string).split(',');
-    }
 
     const fields = listFields(luvio, config, listInfo).processRecords(body.records);
 
@@ -552,16 +454,27 @@ function buildNetworkSnapshot_getListRecords(
 
     return luvio.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         (response) => {
+            const { body } = response;
+
+            // fall back to list-ui if list view has changed
+            if (body.listInfoETag !== listInfo.eTag) {
+                return buildNetworkSnapshot_getListUi(luvio, context, config);
+            }
+
+            // response might have records.sortBy in csv format but keyBuilder/ingestion
+            // functions expect it to be an array so coerce it here if needed
+            const { sortBy } = body;
+            if (sortBy && typeof sortBy === 'string') {
+                body.sortBy = (sortBy as unknown as string).split(',');
+            }
+
+            // else ingest
             return luvio.handleSuccessResponse(
+                () => onResourceSuccess_getListRecords(luvio, context, config, listInfo, response),
                 () =>
-                    onResourceSuccess_getListRecords(
-                        luvio,
-                        context,
-                        config,
-                        listInfo,
-                        response
-                    ) as FulfilledSnapshot<ListUiRepresentation, unknown>,
-                () => getResponseCacheKeys_getListRecords(luvio, listInfo, response)
+                    types_ListRecordCollectionRepresentation_getTypeCacheKeys(body, () =>
+                        ListRecordCollectionRepresentation_keyBuilderFromType(body)
+                    )
             );
         },
         (err: FetchResponse<unknown>) => {

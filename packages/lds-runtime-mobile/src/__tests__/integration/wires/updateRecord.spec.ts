@@ -128,6 +128,61 @@ describe('mobile runtime integration tests', () => {
             });
         });
 
+        it('drafts still present when record with a newer weakEtag comes in', async () => {
+            const originalNameValue = 'Justin';
+            const updateServerNameValue = 'Wes';
+            const draftOneNameValue = 'Jason';
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(
+                    createTestRecord(RECORD_ID, originalNameValue, originalNameValue, 1)
+                ),
+            });
+
+            const snapshot = await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
+            expect(snapshot.state).toBe('Fulfilled');
+
+            // create a draft edit
+            await updateRecord({
+                recordId: RECORD_ID,
+                fields: { Name: draftOneNameValue },
+            });
+
+            // bump weak etag
+            const updatedRecord = createTestRecord(
+                RECORD_ID,
+                updateServerNameValue,
+                updateServerNameValue,
+                2
+            );
+            updatedRecord.fields['Birthday'] = { value: 'foo', displayValue: 'foo' };
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(updatedRecord),
+            });
+
+            // make a request for the same record that will go to the network and come back with a
+            // newer weakEtag
+            const newSnapshot = await getRecord({
+                recordId: RECORD_ID,
+                fields: ['Account.Name', 'Account.Birthday'],
+            });
+            expect(newSnapshot.state).toBe('Fulfilled');
+
+            // expect that the draft is still applied to the new record
+            expect(newSnapshot.data.drafts.edited).toBe(true);
+            expect(newSnapshot.data.fields['Name']).toStrictEqual({
+                value: draftOneNameValue,
+                displayValue: draftOneNameValue,
+            });
+            expect(newSnapshot.data.drafts.serverValues['Name']).toStrictEqual({
+                value: updateServerNameValue,
+                displayValue: updateServerNameValue,
+            });
+        });
+
         it('serverValues are assigned to updateRecord response', async () => {
             const originalNameValue = 'Justin';
             const draftOneNameValue = 'Jason';

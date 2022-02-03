@@ -83,5 +83,6 @@ export function isScalarDataType(type: DataType): boolean {
         'MultiPicklist',
         'Time',
         'Phone',
+        'Url',
     ].includes(type);
 }

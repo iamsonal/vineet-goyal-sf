@@ -446,4 +446,107 @@ describe('filter sql', () => {
             expect(sqlResult.bindings).toEqual(["'555-867-5309'", "'123-456-7890'"]);
         });
     });
+
+    describe('url', () => {
+        const urlQuery = (predicate) => {
+            return /* GraphQL */ `
+                query urlQuery {
+                    uiapi {
+                        query {
+                            User(where: { SmallPhotoUrl: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        SmallPhotoUrl {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with url filter predicates for eq operator', () => {
+            const predicate = `eq: "https://www.example.com"`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for ne operator', () => {
+            const predicate = `ne: "https://www.example.com"`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for like operator', () => {
+            const predicate = `like: "https://www.example.com"`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for gt operator', () => {
+            const predicate = `gt: "https://www.example.com"`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for gte operator', () => {
+            const predicate = `gte: "https://www.example.com"`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for lt operator', () => {
+            const predicate = `lt: "https://www.example.com"`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for lte operator', () => {
+            const predicate = `lte: "https://www.example.com"`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for in operator', () => {
+            const predicate = `in: ["https://www.example.com"]`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+
+        it('should return the correct sql with url filter predicates for nin operator', () => {
+            const predicate = `nin: ["https://www.example.com"]`;
+            const queryResult = transform(parseAndVisit(urlQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
+        });
+    });
 });

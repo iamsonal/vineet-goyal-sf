@@ -80,6 +80,7 @@ export function isScalarDataType(type: DataType): boolean {
         type === 'Int' ||
         type === 'Picklist' ||
         type === 'Currency' ||
-        type === 'MultiPicklist'
+        type === 'MultiPicklist' ||
+        type === 'Time'
     );
 }

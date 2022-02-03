@@ -354,6 +354,7 @@ type DateOperator = Operator<ScalarOperatorType, DateInput, 'DateOperator'>;
 type DateTimeOperator = Operator<ScalarOperatorType, DateTimeInput, 'DateTimeOperator'>;
 type PicklistOperator = Operator<PicklistOperatorType, StringLiteral, 'PicklistOperator'>;
 type CurrencyOperator = Operator<ScalarOperatorType, DoubleLiteral, 'CurrencyOperator'>;
+type TimeOperator = Operator<ScalarOperatorType, StringLiteral, 'TimeOperator'>;
 type MultiPicklistOperator = Operator<
     MultiPicklistOperatorType,
     StringLiteral,
@@ -367,6 +368,7 @@ type DateTimeSetOperator = Operator<SetOperatorType, DateTimeArray, 'DateTimeSet
 type IntSetOperator = Operator<SetOperatorType, NumberArray, 'IntSetOperator'>;
 type DoubleSetOperator = Operator<SetOperatorType, NumberArray, 'DoubleSetOperator'>;
 type CurrencySetOperator = Operator<SetOperatorType, NumberArray, 'CurrencySetOperator'>;
+type TimeSetOperator = Operator<SetOperatorType, StringArray, 'TimeSetOperator'>;
 type MultiPicklistSetOperator = Operator<
     MultiPicklistSetOperatorType,
     StringArray,
@@ -382,7 +384,8 @@ type ScalarOperators =
     | BooleanOperator
     | PicklistOperator
     | CurrencyOperator
-    | MultiPicklistOperator;
+    | MultiPicklistOperator
+    | TimeOperator;
 
 type SetOperators =
     | StringSetOperator
@@ -392,7 +395,8 @@ type SetOperators =
     | DoubleSetOperator
     | PicklistSetOperator
     | CurrencySetOperator
-    | MultiPicklistSetOperator;
+    | MultiPicklistSetOperator
+    | TimeSetOperator;
 
 const dateRegEx = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
 const dateTimeRegEx =
@@ -780,6 +784,32 @@ function operatorWithValue(
             } else {
                 return failure([message(`Comparison value must be a MultiPicklist array.`)]);
             }
+        }
+    }
+
+    if (objectInfoDataType === 'Time') {
+        if (isScalarOperatorType(operator)) {
+            return is<StringValueNode>(value, 'StringValue')
+                ? success({
+                      type: 'TimeOperator',
+                      operator,
+                      value: stringLiteral(value.value),
+                  })
+                : failure([message(`Comparison value must be a Time`)]);
+        }
+
+        if (isSetOperatorType(operator)) {
+            return is<ListValueNode>(value, 'ListValue')
+                ? listNodeToTypeArray<StringValueNode, string>(value, 'StringValue')
+                      .map((value): TimeSetOperator => {
+                          return {
+                              operator,
+                              type: 'TimeSetOperator',
+                              value: { type: ValueType.StringArray, value },
+                          };
+                      })
+                      .mapError((e) => [e])
+                : failure([message(`Comparison value must be a Time array.`)]);
         }
     }
 

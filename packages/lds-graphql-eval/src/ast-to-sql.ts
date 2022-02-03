@@ -321,7 +321,6 @@ function expressionToSql(expression: Expression): SqlAndBindings {
         case ValueType.DateTimeValue:
             return { sql: '?', bindings: [`'${expression.value}'`] };
         case ValueType.StringLiteral:
-            //bind
             return stringLiteralToSql(expression);
         case ValueType.MultiPicklistSet:
             return multiPicklistToSql(expression);

@@ -8,7 +8,8 @@ export type DataType =
     | 'Reference'
     | 'Picklist'
     | 'Currency'
-    | 'MultiPicklist';
+    | 'MultiPicklist'
+    | 'Time';
 
 export type FieldInfo = ScalarFieldInfo | ReferenceFieldInfo;
 
@@ -27,7 +28,8 @@ export interface ScalarFieldInfo extends BaseFieldInfo {
         | 'Int'
         | 'Picklist'
         | 'Currency'
-        | 'MultiPicklist';
+        | 'MultiPicklist'
+        | 'Time';
 }
 
 export interface ReferenceToInfo {

@@ -246,4 +246,101 @@ describe('filter sql', () => {
             expect(sqlResult.bindings).toEqual(["'%Albatross%Parrot%'", "'%Macaw%'"]);
         });
     });
+
+    describe('time', () => {
+        const timeQuery = (predicate) => {
+            return /* GraphQL */ `
+                query timeQuery {
+                    uiapi {
+                        query {
+                            BusinessHours(where: { MondayStartTime: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                        }
+                                        MondayStartTime {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with time filter predicates for eq operator', () => {
+            const predicate = `eq: "08:00:00.000Z"`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'"]);
+        });
+
+        it('should return the correct sql with time filter predicates for ne operator', () => {
+            const predicate = `ne: "08:00:00.000Z"`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'"]);
+        });
+
+        it('should return the correct sql with time filter predicates for gt operator', () => {
+            const predicate = `gt: "08:00:00.000Z"`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'"]);
+        });
+
+        it('should return the correct sql with time filter predicates for gte operator', () => {
+            const predicate = `gte: "08:00:00.000Z"`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'"]);
+        });
+
+        it('should return the correct sql with time filter predicates for lt operator', () => {
+            const predicate = `lt: "08:00:00.000Z"`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'"]);
+        });
+
+        it('should return the correct sql with time filter predicates for lte operator', () => {
+            const predicate = `lte: "08:00:00.000Z"`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'"]);
+        });
+
+        it('should return the correct sql with time filter predicates for in operator', () => {
+            const predicate = `in: ["08:00:00.000Z","09:00:00.000Z"]`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'", "'09:00:00.000Z'"]);
+        });
+
+        it('should return the correct sql with time filter predicates for nin operator', () => {
+            const predicate = `nin: ["08:00:00.000Z","09:00:00.000Z"]`;
+            const queryResult = transform(parseAndVisit(timeQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'08:00:00.000Z'", "'09:00:00.000Z'"]);
+        });
+    });
 });

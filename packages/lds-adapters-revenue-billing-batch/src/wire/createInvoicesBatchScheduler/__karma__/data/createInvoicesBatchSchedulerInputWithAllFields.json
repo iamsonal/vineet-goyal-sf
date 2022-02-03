@@ -6,7 +6,6 @@
         "preferredTime": "10:00 AM",
         "frequencyCadence": "Monthly",
         "recursEveryMonthOnDay": "28",
-        "criteriaExpression": "1 AND 2",
         "status": "Active",
         "filterCriteria": [
             {

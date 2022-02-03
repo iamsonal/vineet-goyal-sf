@@ -8092,7 +8092,6 @@ describe('routes', () => {
                         preferredTime: '10:00 AM',
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
-                        criteriaExpression: '1 AND 2',
                         status: 'Active',
                         filterCriteria: [
                             {
@@ -8123,7 +8122,6 @@ describe('routes', () => {
                         preferredTime: '10:00 AM',
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
-                        criteriaExpression: '1 AND 2',
                         status: 'Active',
                         filterCriteria: [
                             {
@@ -8146,11 +8144,9 @@ describe('routes', () => {
                 { background: false, hotspot: true, longRunning: false },
             ],
             {
-                schedulerDetails: {
-                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
-                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
                 },
-                invoiceBatchRunCriteriaId: '5ICR000000000HvOAI',
             }
         );
 
@@ -8167,11 +8163,9 @@ describe('routes', () => {
                 basePath: `/batch/invoices/schedulers`,
             },
             {
-                schedulerDetails: {
-                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
-                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
                 },
-                invoiceBatchRunCriteriaId: '5ICR000000000HvOAI',
             }
         );
     });

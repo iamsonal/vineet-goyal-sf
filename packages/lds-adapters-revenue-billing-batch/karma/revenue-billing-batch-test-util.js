@@ -62,7 +62,6 @@ function getCreateInvoicesBatchSchedulerMatcher(config) {
         endDate,
         preferredTime,
         frequencyCadence,
-        criteriaExpression,
         status,
         filterCriteria,
     } = config;
@@ -73,7 +72,6 @@ function getCreateInvoicesBatchSchedulerMatcher(config) {
             endDate,
             preferredTime,
             frequencyCadence,
-            criteriaExpression,
             status,
             filterCriteria,
         },

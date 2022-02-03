@@ -156,24 +156,9 @@ types:
     description: Invoices Batch Scheduler Output Representation
     type: object
     properties:
-      invoiceBatchRunCriteriaId:
-        description: Invoice Batch Run Criteria Id
-        type: string
-      schedulerDetails:
+      billingBatchScheduler:
         description: Billing Batch Scheduler Details
-        type: BillingBatchInvoiceSchedulerOutputRepresentation
-  BillingBatchInvoiceSchedulerOutputRepresentation:
-    description: Billing Batch Scheduler Output Representation
-    type: object
-    properties:
-      billingBatchFilterCriteriaId:
-        description: List of Billing Batch Filter Criteria IDs
-        type: array
-        items:
-          type: string
-      billingBatchSchedulerId:
-        description: Billing Batch Scheduler Id
-        type: string
+        type: BillingBatchSchedulerRepresentation
   BatchInvoiceSchedulerInputWrapperRepresentation:
     description: Wrapper for invoice batch scheduler input representation
     type: object
@@ -185,10 +170,6 @@ types:
     description: Invoices Batch Scheduler Input Representation
     type: ScheduleOptionsInputRepresentation
     properties:
-      criteriaExpression:
-        description: Filter Criteria Expression
-        type: string
-        required: false # TODO handrolled W-9314597
       filterCriteria:
         description: List of filter criteria line items
         type: array

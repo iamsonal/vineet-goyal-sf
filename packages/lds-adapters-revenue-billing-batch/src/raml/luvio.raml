@@ -16,7 +16,7 @@ types:
     (luvio.ttl): 1000
     (luvio.opaque): true
     (luvio.key):
-      billingBatchSchedulerId: schedulerDetails.billingBatchSchedulerId
+      billingBatchSchedulerId: billingBatchScheduler.id
 
 /billing/batch/payments/schedulers:
   post:
@@ -107,7 +107,6 @@ types:
                 "preferredTime": "10:00 AM",
                 "frequencyCadence": "Monthly",
                 "recursEveryMonthOnDay": "1",
-                "criteriaExpression": "1 AND 2",
                 "status" : "Active",
                 "filterCriteria":
                   [
@@ -136,7 +135,6 @@ types:
                 "endDate": "2021-05-15",
                 "preferredTime": "10:00 AM",
                 "frequencyCadence": "Monthly",
-                "criteriaExpression": "1 AND 2",
                 "status": "Active",
                 "filterCriteria": []
               }
@@ -153,7 +151,6 @@ types:
               "endDate": "2021-05-15",
               "preferredTime": "10:00 AM",
               "frequencyCadence": "Daily",
-              "criteriaExpression": "1 AND 2",
               "status": "Draft",
               "filterCriteria": []
             }

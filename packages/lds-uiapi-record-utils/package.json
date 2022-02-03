@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-uiapi-record-utils",
-    "version": "1.37.10",
+    "version": "1.37.11",
     "description": "LDS Record Utilities",
     "license": "MIT",
     "main": "dist/ldsRecordUtils.js",
@@ -19,6 +19,6 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.37.10"
+        "@salesforce/lds-adapters-uiapi": "1.37.11"
     }
 }

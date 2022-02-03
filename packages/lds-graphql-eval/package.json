@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-graphql-eval",
-    "version": "1.37.10",
+    "version": "1.37.11",
     "description": "Offline GraphQL eval",
     "license": "MIT",
     "main": "dist/graphql-eval.js",
@@ -18,6 +18,6 @@
     },
     "devDependencies": {
         "@luvio/graphql-parser": "0.73.2",
-        "@salesforce/lds-adapters-graphql": "1.37.10"
+        "@salesforce/lds-adapters-graphql": "1.37.11"
     }
 }

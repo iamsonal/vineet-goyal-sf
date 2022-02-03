@@ -25,6 +25,105 @@ annotationTypes:
     type: string
     allowedTargets: TypeDeclaration
 types:
+  DecisionTableBasicRepresentation:
+    description: Output representation of Decison Table Basic Details
+    type: object
+    properties:
+      description:
+        description: 'DecisionTableDetails api DecisionTable description '
+        type: string
+        required: false
+      id:
+        description: DecisionTableDetails api DecisionTable  id
+        type: string
+        required: false
+      name:
+        description: DecisionTableDetails api DecisionTable name
+        type: string
+        required: false
+  DecisionTableResultListRepresentation:
+    description: Output representation of Decision Table Details Get
+    type: object
+    properties:
+      code:
+        description: API response code for failure case
+        type: string
+        required: false
+      decisionTables:
+        description: List of decisionTables
+        type: array
+        required: false
+        items:
+          type: DecisionTableBasicRepresentation
+      isSuccess:
+        description: States whether API is successful or not
+        type: boolean
+        required: false
+      message:
+        description: API response message for failure case
+        type: string
+        required: false
+  DecisionTableResultRepresentation:
+    description: Output representation of Decision Table Details Get
+    type: object
+    properties:
+      code:
+        description: DecisionTableGetResult api DecisionTable Code
+        type: string
+        required: false
+      description:
+        description: 'DecisionTableGetResult api DecisionTable description '
+        type: string
+        required: false
+      id:
+        description: DecisionTableGetResult api DecisionTable  id
+        type: string
+        required: false
+      inputVariables:
+        description: DecisionTableGetResult api DecisionTable input variables
+        type: array
+        required: false
+        items:
+          type: DecisionTableVariable
+      isSuccess:
+        description: DecisionTableGetResult api DecisionTable success status
+        type: boolean
+        required: false
+      message:
+        description: DecisionTableGetResult api DecisionTable message
+        type: string
+        required: false
+      name:
+        description: DecisionTableGetResult api DecisionTable name
+        type: string
+        required: false
+      outputVariables:
+        description: DecisionTableGetResult api DecisionTable output variables
+        type: array
+        required: false
+        items:
+          type: DecisionTableVariable
+  DecisionTableVariable:
+    description: Representation of DecisionTableVariable
+    type: object
+    properties:
+      columnKey:
+        description: DecisionTableGetResult api DecisionTable variable column Key
+        type: string
+        required: false # TODO Hand-rolled W-10339232
+      dataType:
+        description: DecisionTableGetResult api DecisionTable variable dataType
+        type: string
+      id:
+        description: DecisionTableGetResult api DecisionTable variable lineItemId
+        type: string
+      listValues:
+        description: DecisionTableGetResult api DecisionTable variable ListValues
+        type: string
+        required: false # TODO Hand-rolled W-10339232
+      name:
+        description: DecisionTableGetResult api DecisionTable variable column Key
+        type: string
   CalculationProcedureDetailOutputRepresentation:
     description: Output represenation of calculation Procedure Details Get
     type: object
@@ -863,6 +962,33 @@ types:
         required: false
 /connect:
   /omnistudio:
+    /decision-tables:
+      get:
+        description: Method to trigger search on Decision Table
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DecisionTableResultListRepresentation
+        queryParameters:
+          searchKey:
+            type: string
+            required: false
+    /decision-tables/{decisionTableId}:
+      get:
+        description: Get information about a single Sample object.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DecisionTableResultRepresentation
+      uriParameters:
+        decisionTableId:
+          description: Unique ID used to represent a Decision Table.
+          type: string
+          required: true
     /evaluation-services:
       get:
         description: Used for fetching calculation procedure from source object.

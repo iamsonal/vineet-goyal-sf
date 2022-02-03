@@ -2402,6 +2402,29 @@ describe('routes', () => {
         );
     });
 
+    describe('get /omnistudio/decision-tables/{id}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables/00xx1234abcd123`,
+            },
+            [
+                'InteractionCalculationProceduresController.getDecisionTableDetails',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables/123`,
+            },
+            {}
+        );
+    });
+
     describe('patch /omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}', () => {
         testControllerInput(
             {
@@ -2684,6 +2707,47 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: CONNECT_BASE_URI,
                 basePath: `/omnistudio/decision-matrices`,
+            },
+            {}
+        );
+    });
+
+    describe('get /omnistudio/decision-tables', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables`,
+            },
+            [
+                'InteractionCalculationProceduresController.searchDecisionTableByName',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/omnistudio/decision-tables`,
+                    queryParams: {
+                        searchKey: 'DT1',
+                    },
+                },
+                [
+                    'InteractionCalculationProceduresController.searchDecisionTableByName',
+                    {
+                        searchKey: 'DT1',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables`,
             },
             {}
         );

@@ -333,6 +333,11 @@ const GET_DECISION_MATRIC_DETAILS_PATH = new RegExp(
     'i'
 );
 
+const GET_DECISION_TABLE_DETAILS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/decision-tables/([A-Z0-9]){15,18}$`,
+    'i'
+);
+
 const GET_CALC_PROC_VERSION_DETAILS_PATH = new RegExp(
     `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}$`,
     'i'
@@ -360,6 +365,11 @@ const SIMULATION_EVALUATION_SERVICE_PATH = new RegExp(
 
 const SEARCH_DECISION_MATRICES_PATH = new RegExp(
     `${CONNECT_BASE_URI}/omnistudio/decision-matrices`,
+    'i'
+);
+
+const SEARCH_DECISION_TABLES_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/decision-tables`,
     'i'
 );
 
@@ -657,6 +667,14 @@ const connect: ApiFamily = {
             controller: 'InteractionCalculationProceduresController.getDecisionMatrixDetails',
         },
     },
+    getDecisionTableDetails: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_DECISION_TABLE_DETAILS_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.getDecisionTableDetails',
+        },
+    },
     getCalcProcVersionDetails: {
         method: 'get',
         predicate: (path: string) =>
@@ -720,6 +738,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SEARCH_DECISION_MATRICES_PATH.test(path),
         transport: {
             controller: 'InteractionCalculationProceduresController.searchDecisionMatrixByName',
+        },
+    },
+    searchDecisionTableByName: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && SEARCH_DECISION_TABLES_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.searchDecisionTableByName',
         },
     },
     getSimulationInputVariables: {

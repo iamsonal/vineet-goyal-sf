@@ -1,0 +1,12 @@
+{
+    "decisionTables": [
+        {
+            "id": "0lIxx0000000001EAA",
+            "name": "AM1"
+        },
+        {
+            "id": "0lIxx000000001dEAA",
+            "name": "AM2"
+        }
+    ]
+}

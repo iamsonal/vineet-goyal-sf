@@ -246,7 +246,15 @@ function comparisonPredicateToSql(predicate: ComparisonPredicate): SqlAndBinding
     const { sql: left, bindings: leftBindings } = expressionToSql(predicate.left);
     const { sql: right, bindings: rightBindings } = expressionToSql(predicate.right);
 
-    const bindings = leftBindings.concat(rightBindings);
+    let bindings = leftBindings.concat(rightBindings);
+    if (
+        predicate.operator === ComparisonOperator.eq &&
+        predicate.right.type === ValueType.StringLiteral &&
+        predicate.right.isCaseSensitive === false
+    ) {
+        return { sql: `${left} ${operator} ${right} COLLATE NOCASE`, bindings };
+    }
+
     return { sql: `${left} ${operator} ${right}`, bindings };
 }
 

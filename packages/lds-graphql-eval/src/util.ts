@@ -58,8 +58,12 @@ export function getRelationshipInfo(
     return success(objInfo.childRelationships[fieldName]);
 }
 
-export function stringLiteral(value: string, safe: boolean = false): StringLiteral {
-    return { type: ValueType.StringLiteral, value, safe };
+export function stringLiteral(
+    value: string,
+    safe: boolean = false,
+    isCaseSensitive: boolean = false
+): StringLiteral {
+    return { type: ValueType.StringLiteral, value, safe, isCaseSensitive };
 }
 
 export function intLiteral(value: number): IntLiteral {

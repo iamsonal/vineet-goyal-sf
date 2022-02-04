@@ -43,7 +43,7 @@ describe('ast-parser', () => {
                 `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
                 `FROM recordsCTE as 'TimeSheet'  ` +
                 `WHERE ( ` +
-                `json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.value') = ? AND ` +
+                `json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.value') = ? COLLATE NOCASE AND ` +
                 `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) ` +
                 `)) ) as json`;
 
@@ -150,7 +150,7 @@ describe('ast-parser', () => {
             `join recordsCTE as 'ServiceResource' WHERE ` +
             `( json_extract("AssignedResource.JSON", '$.data.fields.ServiceResourceId.value') = json_extract("ServiceResource.JSON", '$.data.id') AND ` +
             `json_extract("AssignedResource.JSON", '$.data.fields.ServiceAppointmentId.value') = json_extract("ServiceAppointment.JSON", '$.data.id') AND ` +
-            `json_extract("ServiceResource.JSON", '$.data.fields.RelatedRecordId.value') = ? AND ` +
+            `json_extract("ServiceResource.JSON", '$.data.fields.RelatedRecordId.value') = ? COLLATE NOCASE AND ` +
             `json_extract("AssignedResource.JSON", '$.data.apiName') = 'AssignedResource' AND ` +
             `json_extract("ServiceResource.JSON", '$.data.apiName') = 'ServiceResource' ) ) AND ` +
             `json_extract("ServiceAppointment.JSON", '$.data.apiName') = 'ServiceAppointment' ) )) ) as json`;
@@ -441,7 +441,7 @@ describe('ast-parser', () => {
             `join recordsCTE as 'TimeSheet.CreatedBy.CreatedBy' ` +
             `join recordsCTE as 'TimeSheet.CreatedBy' ` +
             `WHERE ( ` +
-            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? COLLATE NOCASE AND ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.id') AND ` +
             `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = ` +
@@ -519,8 +519,8 @@ describe('ast-parser', () => {
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.JSON", '$.data.id') AND ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' AND ` +
-            `NOT (json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ?) AND ` +
-            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? ) ` +
+            `NOT (json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? COLLATE NOCASE) AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? COLLATE NOCASE ) ` +
             `)) ) as json`;
 
         const graphqlSource = makeGraphQL(source, 'TimeSheetNumber {value}');

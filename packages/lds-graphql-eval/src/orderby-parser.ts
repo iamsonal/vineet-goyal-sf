@@ -74,7 +74,11 @@ function spanningOrderBy(
     const { apiName } = referenceInfo;
     const path = extractPath('ApiName');
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path };
-    const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName, true));
+    const typePredicate = comparison(
+        extract,
+        ComparisonOperator.eq,
+        stringLiteral(apiName, true, true)
+    );
 
     const result = fieldsToOrderBy([fieldNode], jsonAlias, apiName, input);
     if (!result.isSuccess) {

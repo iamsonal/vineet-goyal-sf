@@ -190,7 +190,7 @@ function spanningFilter(
     const { apiName } = referenceInfo;
     const path = extractPath('ApiName');
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path };
-    const typePredicate = comparison(extract, eq, stringLiteral(apiName, true));
+    const typePredicate = comparison(extract, eq, stringLiteral(apiName, true, true));
 
     return fieldsToFilters([fieldNode], jsonAlias, apiName, input).map((container) => {
         const { predicate, joinNames: names, joinPredicates: predicates } = container;

@@ -83,6 +83,7 @@ Object {
                   },
                   "operator": "eq",
                   "right": Object {
+                    "isCaseSensitive": false,
                     "safe": false,
                     "type": "StringLiteral",
                     "value": "MyId",
@@ -97,6 +98,7 @@ Object {
                   },
                   "operator": "eq",
                   "right": Object {
+                    "isCaseSensitive": true,
                     "safe": true,
                     "type": "StringLiteral",
                     "value": "AssignedResource",
@@ -111,6 +113,7 @@ Object {
                   },
                   "operator": "eq",
                   "right": Object {
+                    "isCaseSensitive": true,
                     "safe": true,
                     "type": "StringLiteral",
                     "value": "ServiceResource",
@@ -131,6 +134,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "ServiceAppointment",
@@ -193,6 +197,7 @@ Object {
         },
         "operator": "eq",
         "right": Object {
+          "isCaseSensitive": true,
           "safe": true,
           "type": "StringLiteral",
           "value": "TimeSheet",
@@ -262,6 +267,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": false,
               "safe": false,
               "type": "StringLiteral",
               "value": "MyId",
@@ -276,6 +282,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "TimeSheet",
@@ -338,6 +345,7 @@ Object {
         },
         "operator": "eq",
         "right": Object {
+          "isCaseSensitive": true,
           "safe": true,
           "type": "StringLiteral",
           "value": "TimeSheet",
@@ -414,6 +422,7 @@ Object {
         },
         "operator": "eq",
         "right": Object {
+          "isCaseSensitive": true,
           "safe": true,
           "type": "StringLiteral",
           "value": "TimeSheet",
@@ -490,6 +499,7 @@ Object {
         },
         "operator": "eq",
         "right": Object {
+          "isCaseSensitive": true,
           "safe": true,
           "type": "StringLiteral",
           "value": "TimeSheet",
@@ -593,6 +603,7 @@ Object {
         },
         "operator": "eq",
         "right": Object {
+          "isCaseSensitive": true,
           "safe": true,
           "type": "StringLiteral",
           "value": "TimeSheet",
@@ -673,6 +684,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",
@@ -701,6 +713,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "TimeSheet",
@@ -777,6 +790,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",
@@ -805,6 +819,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",
@@ -874,6 +889,7 @@ Object {
                   },
                   "operator": "eq",
                   "right": Object {
+                    "isCaseSensitive": true,
                     "safe": true,
                     "type": "StringLiteral",
                     "value": "TimeSheetEntry",
@@ -941,6 +957,7 @@ Object {
         },
         "operator": "eq",
         "right": Object {
+          "isCaseSensitive": true,
           "safe": true,
           "type": "StringLiteral",
           "value": "TimeSheet",
@@ -1021,6 +1038,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",
@@ -1049,6 +1067,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "TimeSheet",
@@ -1125,6 +1144,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": false,
               "safe": false,
               "type": "StringLiteral",
               "value": "xyz",
@@ -1153,6 +1173,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",
@@ -1181,6 +1202,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",
@@ -1195,6 +1217,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
+              "isCaseSensitive": true,
               "safe": true,
               "type": "StringLiteral",
               "value": "TimeSheet",

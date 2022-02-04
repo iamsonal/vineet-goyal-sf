@@ -123,6 +123,7 @@ export interface StringLiteral {
     type: ValueType.StringLiteral;
     value: string;
     safe: boolean;
+    isCaseSensitive: boolean;
 }
 
 export type MultiPicklistSet = Value<ValueType.MultiPicklistSet, string>;

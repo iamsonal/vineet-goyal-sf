@@ -94,12 +94,12 @@ function assignedToMe(input: ParserInput): ExistsPredicate {
     const arTypePredicate = comparison(
         { type: ValueType.Extract, jsonAlias: arApiName, path: apiNamePath },
         ComparisonOperator.eq,
-        stringLiteral(arApiName, true)
+        stringLiteral(arApiName, true, true)
     );
     const srTypePredicate = comparison(
         { type: ValueType.Extract, jsonAlias: srApiName, path: apiNamePath },
         ComparisonOperator.eq,
-        stringLiteral(srApiName, true)
+        stringLiteral(srApiName, true, true)
     );
 
     const compound: CompoundPredicate = {

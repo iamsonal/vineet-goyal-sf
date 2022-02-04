@@ -189,6 +189,7 @@ describe('order by filter parser', () => {
                                         type: ValueType.StringLiteral,
                                         value: 'User',
                                         safe: true,
+                                        isCaseSensitive: true,
                                     },
                                 },
                                 {
@@ -203,6 +204,7 @@ describe('order by filter parser', () => {
                                         type: ValueType.StringLiteral,
                                         value: 'TimeSheet',
                                         safe: true,
+                                        isCaseSensitive: true,
                                     },
                                 },
                             ],

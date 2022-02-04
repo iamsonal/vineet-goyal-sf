@@ -75,7 +75,7 @@ export function buildDurableRecordRepresentation(
         recordTypeId: null,
         recordTypeInfo: null,
         systemModstamp: '',
-        fields: recordFields,
+        fields: recordFields as DurableRecordRepresentation['fields'],
         links,
     };
 
@@ -113,7 +113,7 @@ export function createPatchRequest() {
     };
 }
 
-export function createPostRequest() {
+export function createPostRequest(): ResourceRequest {
     return {
         baseUri: '/services/data/v55.0',
         basePath: `/ui-api/records/`,
@@ -127,6 +127,7 @@ export function createPostRequest() {
         urlParams: {},
         queryParams: {},
         headers: {},
+        priority: 'normal',
     };
 }
 
@@ -166,6 +167,7 @@ export function createEditDraftAction(
             urlParams: { recordId: recordId },
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -195,6 +197,7 @@ export function createPostDraftAction(
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -222,6 +225,7 @@ export function createDeleteDraftAction(
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -256,6 +260,7 @@ export function createErrorDraftAction(
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -290,6 +295,7 @@ export function createCompletedDraftAction(
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -344,6 +350,7 @@ export function createUnsupportedRequestDraftAction(
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };

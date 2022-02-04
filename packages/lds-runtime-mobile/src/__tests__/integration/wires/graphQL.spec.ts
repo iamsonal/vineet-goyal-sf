@@ -414,7 +414,11 @@ describe('mobile runtime integration tests', () => {
                     });
                 }
 
-                expect(networkAdapter.sentRequests.length).toBe(numberOfCalls);
+                // there is an un-awaited promise to fetch object info for ServiceResource
+                // so we await that promise and add 1 to the expected number of calls
+                await flushPromises();
+
+                expect(networkAdapter.sentRequests.length).toBe(numberOfCalls + 1);
             });
         });
     });

@@ -1,11 +1,10 @@
-import { HttpStatusCode } from '@luvio/engine';
+import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import { DRAFT_ERROR_CODE } from '../../DraftFetchResponse';
 import {
-    flushPromises,
     createPostRequest,
     DEFAULT_API_NAME,
     DEFAULT_NAME_FIELD_VALUE,
@@ -56,6 +55,7 @@ describe('draft environment tests', () => {
                     urlParams: {},
                     queryParams: {},
                     headers: {},
+                    priority: 'normal',
                 })
             );
             rejects.toMatchObject({
@@ -94,7 +94,7 @@ describe('draft environment tests', () => {
                     weakEtag: -1,
                 });
             });
-            const request = {
+            const request: ResourceRequest = {
                 baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${CREATE_DRAFT_RECORD_ID}`,
                 method: 'post',
@@ -107,6 +107,7 @@ describe('draft environment tests', () => {
                 urlParams: {},
                 queryParams: {},
                 headers: {},
+                priority: 'normal',
             };
 
             const result = await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(
@@ -146,7 +147,7 @@ describe('draft environment tests', () => {
                     weakEtag: -1,
                 });
             });
-            const request = {
+            const request: ResourceRequest = {
                 baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'post',
@@ -159,6 +160,7 @@ describe('draft environment tests', () => {
                 urlParams: {},
                 queryParams: {},
                 headers: {},
+                priority: 'normal',
             };
 
             await draftEnvironment.dispatchResourceRequest(request);
@@ -258,7 +260,7 @@ describe('draft environment tests', () => {
 
             store.redirect(draftReferenceKey, canonicalReferenceKey);
 
-            const request = {
+            const request: ResourceRequest = {
                 baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/`,
                 method: 'post',
@@ -271,6 +273,7 @@ describe('draft environment tests', () => {
                 urlParams: {},
                 queryParams: {},
                 headers: {},
+                priority: 'normal',
             };
             const expectedRequest = {
                 ...request,
@@ -360,9 +363,11 @@ describe('draft environment tests', () => {
         });
 
         it('created record never expires', async () => {
-            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
-                isDraftId: () => true,
-            });
+            const { draftEnvironment, durableStore, baseEnvironment } = await setupDraftEnvironment(
+                {
+                    isDraftId: () => true,
+                }
+            );
 
             draftEnvironment.storePublish(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_DATA);
             draftEnvironment.publishStoreMetadata(STORE_KEY_DRAFT_RECORD, {
@@ -372,14 +377,8 @@ describe('draft environment tests', () => {
                 ingestionTimestamp: 1,
             });
 
-            // broadcast so staging store flushes to L2
-            draftEnvironment.storeBroadcast(
-                draftEnvironment.rebuildSnapshot,
-                draftEnvironment.snapshotAvailable
-            );
-
-            // wait for flush to finish before reading L2 values
-            await flushPromises();
+            // flush to L2
+            await baseEnvironment.publishChangesToDurableStore();
 
             const record = (
                 await (durableStore as unknown as MockDurableStore).persistence.get(

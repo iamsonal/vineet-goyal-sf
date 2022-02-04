@@ -2,7 +2,7 @@ import { Luvio, Store, Environment, RecordSource } from '@luvio/engine';
 import { makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
-import { storeEvalFactory } from '@salesforce/lds-graphql-eval';
+import { storeEvalFactory, StoreEval } from '@salesforce/lds-graphql-eval';
 
 import {
     RecordRepresentation,
@@ -187,7 +187,7 @@ luvio = new Luvio(draftEnv, {
 });
 
 //inject query eval to graphql adapter
-const storeEval = storeEvalFactory(userId, baseDurableStore);
+const storeEval: StoreEval = storeEvalFactory(userId, baseDurableStore);
 
 // Draft mapping entries exists only in the Durable store.
 // Populate Luvio L1 cache with the entries from the Durable store.

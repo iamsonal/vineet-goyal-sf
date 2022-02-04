@@ -42,7 +42,7 @@ function offlineEvalSnapshot(
     });
 }
 
-type StoreEval = (
+export type StoreEval = (
     ast: LuvioDocumentNode,
     ttlStrategy: TTLStrategy
 ) => Promise<Snapshot<unknown, any>>;

@@ -1,1 +1,1 @@
-export { storeEvalFactory } from './storeEval/storeEvalFactory';
+export { storeEvalFactory, StoreEval } from './storeEval/storeEvalFactory';

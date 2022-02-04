@@ -84,5 +84,7 @@ export function isScalarDataType(type: DataType): boolean {
         'Time',
         'Phone',
         'Url',
+        'Email',
+        'TextArea',
     ].includes(type);
 }

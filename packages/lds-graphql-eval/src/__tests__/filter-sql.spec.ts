@@ -549,4 +549,313 @@ describe('filter sql', () => {
             expect(sqlResult.bindings).toEqual(["'https://www.example.com'"]);
         });
     });
+
+    describe('textArea', () => {
+        const textAreaQuery = (predicate) => {
+            return /* GraphQL */ `
+                query textAreaQuery {
+                    uiapi {
+                        query {
+                            User(where: { Street: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Street {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with textArea filter predicates for eq operator', () => {
+            const predicate = `eq: "123 Main Street"`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for ne operator', () => {
+            const predicate = `ne: "123 Main Street"`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for like operator', () => {
+            const predicate = `like: "123 Main Street"`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for gt operator', () => {
+            const predicate = `gt: "123 Main Street"`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for gte operator', () => {
+            const predicate = `gte: "123 Main Street"`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for lt operator', () => {
+            const predicate = `lt: "123 Main Street"`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for lte operator', () => {
+            const predicate = `lte: "123 Main Street"`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for in operator', () => {
+            const predicate = `in: ["123 Main Street"]`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+
+        it('should return the correct sql with textArea filter predicates for nin operator', () => {
+            const predicate = `nin: ["123 Main Street"]`;
+            const queryResult = transform(parseAndVisit(textAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'123 Main Street'"]);
+        });
+    });
+
+    describe('longTextArea', () => {
+        const longTextAreaQuery = (predicate) => {
+            return /* GraphQL */ `
+                query longTextAreaQuery {
+                    uiapi {
+                        query {
+                            User(where: { Signature: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Signature {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with longTextArea filter predicates for eq operator', () => {
+            const predicate = `eq: "John Hancock"`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for ne operator', () => {
+            const predicate = `ne: "John Hancock"`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for like operator', () => {
+            const predicate = `like: "John Hancock"`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for gt operator', () => {
+            const predicate = `gt: "John Hancock"`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for gte operator', () => {
+            const predicate = `gte: "John Hancock"`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for lt operator', () => {
+            const predicate = `lt: "John Hancock"`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for lte operator', () => {
+            const predicate = `lte: "John Hancock"`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for in operator', () => {
+            const predicate = `in: ["John Hancock"]`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+
+        it('should return the correct sql with longTextArea filter predicates for nin operator', () => {
+            const predicate = `nin: ["John Hancock"]`;
+            const queryResult = transform(parseAndVisit(longTextAreaQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'John Hancock'"]);
+        });
+    });
+
+    describe('email', () => {
+        const emailQuery = (predicate) => {
+            return /* GraphQL */ `
+                query emailQuery {
+                    uiapi {
+                        query {
+                            User(where: { Email: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Email {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with email filter predicates for eq operator', () => {
+            const predicate = `eq: "foo@bar.com"`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for ne operator', () => {
+            const predicate = `ne: "foo@bar.com"`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for like operator', () => {
+            const predicate = `like: "foo@bar.com"`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for gt operator', () => {
+            const predicate = `gt: "foo@bar.com"`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for gte operator', () => {
+            const predicate = `gte: "foo@bar.com"`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for lt operator', () => {
+            const predicate = `lt: "foo@bar.com"`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for lte operator', () => {
+            const predicate = `lte: "foo@bar.com"`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for in operator', () => {
+            const predicate = `in: ["foo@bar.com"]`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+
+        it('should return the correct sql with email filter predicates for nin operator', () => {
+            const predicate = `nin: ["foo@bar.com"]`;
+            const queryResult = transform(parseAndVisit(emailQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
+        });
+    });
 });

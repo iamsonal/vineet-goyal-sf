@@ -3,10 +3,11 @@
         "childRelationships": [],
         "fields": {
             "Id": { "dataType": "String", "apiName": "Id" },
-            "Email": { "dataType": "String", "apiName": "Email" },
+            "Email": { "dataType": "Email", "apiName": "Email" },
             "SmallPhotoUrl": { "apiName": "SmallPhotoUrl", "dataType": "Url" },
             "Phone": { "apiName": "Phone", "dataType": "Phone" },
             "Signature": { "apiName": "Signature", "dataType": "TextArea" },
+            "Street": { "apiName": "Street", "dataType": "TextArea" },
             "CreatedById": {
                 "apiName": "CreatedById",
                 "dataType": "Reference",

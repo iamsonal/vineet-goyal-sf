@@ -301,8 +301,8 @@ describe('filter-parser', () => {
             const errors = unwrappedError(filter);
             expect(filter.isSuccess).toEqual(false);
             expect(errors).toEqual([
-                message('Comparison operator foo is not supported for type String.'),
-                message('Comparison operator bar is not supported for type String.'),
+                message('Comparison operator foo is not supported for type Email.'),
+                message('Comparison operator bar is not supported for type Email.'),
             ]);
         });
 

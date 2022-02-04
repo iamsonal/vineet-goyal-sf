@@ -11,7 +11,9 @@ export type DataType =
     | 'MultiPicklist'
     | 'Time'
     | 'Phone'
-    | 'Url';
+    | 'Url'
+    | 'TextArea'
+    | 'Email';
 
 export type FieldInfo = ScalarFieldInfo | ReferenceFieldInfo;
 
@@ -33,7 +35,9 @@ export interface ScalarFieldInfo extends BaseFieldInfo {
         | 'MultiPicklist'
         | 'Time'
         | 'Phone'
-        | 'Url';
+        | 'Url'
+        | 'TextArea'
+        | 'Email';
 }
 
 export interface ReferenceToInfo {

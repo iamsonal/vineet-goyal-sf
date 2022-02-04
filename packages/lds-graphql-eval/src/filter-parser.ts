@@ -550,7 +550,7 @@ function operatorWithValue(
         return parseNullValue(operator).mapError((e) => [e]);
     }
 
-    if (['String', 'Reference', 'Phone', 'Url'].includes(objectInfoDataType)) {
+    if (['String', 'Reference', 'Phone', 'Url', 'Email', 'TextArea'].includes(objectInfoDataType)) {
         if (isStringOperatorType(operator)) {
             return is<StringValueNode>(value, 'StringValue')
                 ? success({

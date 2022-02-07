@@ -43,6 +43,8 @@ types:
     (luvio.ttl): 5000
   TableRepresentation:
     (luvio.ttl): 5000
+    (luvio.key):
+      qualifiedName: qualifiedName
   DatabaseCollectionRepresentation:
     (luvio.ttl): 5000
   DatabaseRepresentation:
@@ -65,14 +67,22 @@ types:
     get:
       (luvio.adapter):
         name: getSchema
-  /databases/{databaseName}/schemas/{schemaName}/tables:
-    get:
-      (luvio.adapter):
-        name: getTables
-  /databases/{databaseName}/schemas/{schemaName}/tables/{tableName}:
-    get:
-      (luvio.adapter):
-        name: getTable
+  /catalog:
+    /tables:
+      get:
+        (luvio.adapter):
+          name: getCatalogTables
+    /tables/{qualifiedName}:
+      get:
+        (luvio.adapter):
+          name: getCatalogTable
+        (luvio.key):
+          qualifiedName: urlParams.qualifiedName
+      delete:
+        (luvio.adapter):
+          name: deleteCatalogTable
+        (luvio.key):
+          qualifiedName: urlParams.qualifiedName
 
 /analytics/data-service/sync:
   /connectors:

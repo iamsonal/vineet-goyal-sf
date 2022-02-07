@@ -6,6 +6,7 @@ import {
     WAVE_BASE_URI,
     ADATS_DATABASE_BASE_URI,
     ADATS_SYNC_BASE_URI,
+    ADATS_CATALOG_BASE_URI,
     CMS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     SCALECENTER_BASE_URI,
@@ -107,13 +108,8 @@ const ADATS_SCHEMA_PATH = new RegExp(
     'i'
 );
 
-const ADATS_TABLES_PATH = new RegExp(
-    `${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas/[a-zA-Z0-9_-]+/tables$`,
-    'i'
-);
-const ADATS_TABLE_PATH = new RegExp(
-    `${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas/[a-zA-Z0-9_-]+/tables/[a-zA-Z0-9_-]+$`
-);
+const ADATS_CATALOG_TABLES_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/tables$`, 'i');
+const ADATS_CATALOG_TABLE_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/tables/[a-zA-Z.0-9_-]+$`);
 
 const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
 
@@ -1530,20 +1526,28 @@ const adats: ApiFamily = {
         },
     },
 
-    getTables: {
+    getCatalogTables: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_TABLES_PATH.test(path),
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_TABLES_PATH.test(path),
         transport: {
-            controller: 'AdatsController.getTables',
+            controller: 'AdatsController.getCatalogTables',
         },
     },
-    getTable: {
+    getCatalogTable: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_TABLE_PATH.test(path),
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_TABLE_PATH.test(path),
         transport: {
-            controller: 'AdatsController.getTable',
+            controller: 'AdatsController.getCatalogTable',
+        },
+    },
+    deleteCatalogTable: {
+        method: 'delete',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_TABLE_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.deleteCatalogTable',
         },
     },
 };

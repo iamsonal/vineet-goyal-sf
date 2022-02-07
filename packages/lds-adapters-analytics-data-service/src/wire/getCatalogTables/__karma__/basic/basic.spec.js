@@ -1,12 +1,12 @@
 import timekeeper from 'timekeeper';
-import GetTable from '../lwc/get-table';
+import GetCatalogTables from '../lwc/get-catalog-tables';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
-    mockGetTableNetworkOnce,
-    mockGetTableNetworkErrorOnce,
+    mockGetCatalogTablesNetworkOnce,
+    mockGetCatalogTablesNetworkErrorOnce,
 } from 'analytics-data-service-test-util';
 
-const MOCK_PREFIX = 'wire/getTable/__karma__/data/';
+const MOCK_PREFIX = 'wire/getCatalogTables/__karma__/data/';
 
 const TTL = 5000;
 
@@ -15,34 +15,26 @@ function getMock(filename) {
 }
 
 describe('basic', () => {
-    it('gets table', async () => {
-        const mock = getMock('table');
-        const config = {
-            dbName: 'testDatabase01',
-            schemaName: 'testSchema01',
-            tableName: 'testTable01',
-        };
-        mockGetTableNetworkOnce(config, mock);
+    it('gets tables', async () => {
+        const mock = getMock('tables');
+        const config = { dbName: 'testDatabase01', schemaName: 'testSchema01' };
+        mockGetCatalogTablesNetworkOnce(config, mock);
 
-        const el = await setupElement(config, GetTable);
+        const el = await setupElement(config, GetCatalogTables);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
     });
 
     it('does not fetch a second time', async () => {
-        const mock = getMock('table');
-        const config = {
-            dbName: 'testDatabase01',
-            schemaName: 'testSchema01',
-            tableName: 'testTable01',
-        };
-        mockGetTableNetworkOnce(config, mock);
+        const mock = getMock('tables');
+        const config = { dbName: 'testDatabase01', schemaName: 'testSchema01' };
+        mockGetCatalogTablesNetworkOnce(config, mock);
 
-        const el = await setupElement(config, GetTable);
+        const el = await setupElement(config, GetCatalogTables);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
 
-        const el2 = await setupElement(config, GetTable);
+        const el2 = await setupElement(config, GetCatalogTables);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredData()).toEqual(mock);
     });
@@ -59,14 +51,10 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = {
-            dbName: 'testDatabase01',
-            schemaName: 'testSchema01',
-            tableName: 'testTable01',
-        };
-        mockGetTableNetworkErrorOnce(config, mock);
+        const config = { dbName: 'testDatabase01', schemaName: 'testSchema01' };
+        mockGetCatalogTablesNetworkErrorOnce(config, mock);
 
-        const el = await setupElement(config, GetTable);
+        const el = await setupElement(config, GetCatalogTables);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
@@ -83,21 +71,17 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = {
-            dbName: 'testDatabase01',
-            schemaName: 'testSchema01',
-            tableName: 'testTable01',
-        };
-        mockGetTableNetworkOnce(config, {
+        const config = { dbName: 'testDatabase01', schemaName: 'testSchema01' };
+        mockGetCatalogTablesNetworkOnce(config, {
             reject: true,
             data: mock,
         });
 
-        const el = await setupElement(config, GetTable);
+        const el = await setupElement(config, GetCatalogTables);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
 
-        const el2 = await setupElement(config, GetTable);
+        const el2 = await setupElement(config, GetCatalogTables);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
     });
@@ -105,41 +89,33 @@ describe('basic', () => {
 
 describe('caching', () => {
     it('returns cached result when cached data is available', async () => {
-        const mock = getMock('table');
-        const config = {
-            dbName: 'testDatabase01',
-            schemaName: 'testSchema01',
-            tableName: 'testTable01',
-        };
-        mockGetTableNetworkOnce(config, mock);
+        const mock = getMock('tables');
+        const config = { dbName: 'testDatabase01', schemaName: 'testSchema01' };
+        mockGetCatalogTablesNetworkOnce(config, mock);
 
         // populate cache
-        await setupElement(config, GetTable);
+        await setupElement(config, GetCatalogTables);
 
         // second component should have the cached data without hitting network
-        const element = await setupElement(config, GetTable);
+        const element = await setupElement(config, GetCatalogTables);
 
         expect(element.getWiredData()).toEqual(mock);
     });
 
     it('retrieves data from network when cached data is expired', async () => {
-        const mock = getMock('table');
-        const updatedData = getMock('table-updated');
-        const config = {
-            dbName: 'testDatabase01',
-            schemaName: 'testSchema01',
-            tableName: 'testTable01',
-        };
-        mockGetTableNetworkOnce(config, [mock, updatedData]);
+        const mock = getMock('tables');
+        const updatedData = getMock('tables-updated');
+        const config = { dbName: 'testDatabase01', schemaName: 'testSchema01' };
+        mockGetCatalogTablesNetworkOnce(config, [mock, updatedData]);
 
         // populate cache
-        await setupElement(config, GetTable);
+        await setupElement(config, GetCatalogTables);
 
         // expire cache
         timekeeper.travel(Date.now() + TTL + 1);
 
         // second component should retrieve from network with updated data
-        const element = await setupElement(config, GetTable);
+        const element = await setupElement(config, GetCatalogTables);
 
         expect(element.getWiredData()).toEqual(updatedData);
     });

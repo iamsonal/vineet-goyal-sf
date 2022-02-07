@@ -6,6 +6,7 @@ export const WAVE_BASE_URI = `${BASE_URI}/wave`;
 export const ADATS_BASE_URI = `${BASE_URI}/analytics/data-service`;
 export const ADATS_SYNC_BASE_URI = `${BASE_URI}/analytics/data-service/sync`;
 export const ADATS_DATABASE_BASE_URI = `${BASE_URI}/analytics/data-service/databases`;
+export const ADATS_CATALOG_BASE_URI = `${BASE_URI}/analytics/data-service/catalog`;
 export const CMS_BASE_URI = `${CONNECT_BASE_URI}/cms`;
 export const CMS_NON_CONNECT_BASE_URI = `${BASE_URI}/cms`;
 export const SCALECENTER_BASE_URI = `${BASE_URI}/scalecenter`;

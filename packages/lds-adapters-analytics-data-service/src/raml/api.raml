@@ -515,8 +515,25 @@ types:
       createdOnDate:
         description: The date and time that the table was created.
         type: string
+      database:
+        description: The database that this table belongs to.
+        type: ResourceReferenceRepresentation
+      deletedBy:
+        description: The user that deleted this table. This field is not present if
+          the table is not deleted.
+        type: ResourceReferenceRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      deletedOnDate:
+        description: The date and time that this table was deleted. This field is
+          not present if the table is not deleted.
+        type: string
+        required: false # TODO Hand-rolled W-9314597
       description:
         description: The description of the table.
+        type: string | nil
+        required: false
+      lastDataUpdate:
+        description: The date and time that the data in the table was last changed
         type: string | nil
         required: false
       lastUpdatedDate:
@@ -527,14 +544,89 @@ types:
         description: The location of the table.
         type: string | nil
         required: false
+      managedBy:
+        description: The identity of the service that currently manages this table.
+        type: string
+        enum:
+          - Ingest
+          - Recipe
+          - Sync
+        required: false # TODO Hand-rolled W-9314597
       name:
         description: The name of the table.
         type: string
-      tableUrl:
+      qualifiedName:
+        description: The qualified 3 part name of the table.
+        type: string
+      schema:
+        description: The schema that this table belongs to.
+        type: ResourceReferenceRepresentation
+      state:
+        description: The current state of this table.
+        type: string
+        enum:
+          - Creating
+          - Deleted
+          - Ready
+          - Updating
+        required: false # TODO Hand-rolled W-9314597
+      undeleteToken:
+        description: A token that can be used to restore a deleted table
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      url:
         description: The URL of the table resource
         type: string
 
 /analytics/data-service:
+  /catalog:
+    /tables:
+      get:
+        description: Retrieve a list of Analytics Data Service Tables.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TableCollectionRepresentation
+        queryParameters:
+          database:
+            type: string
+            required: false
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          schema:
+            type: string
+            required: false
+          userId:
+            type: string
+            required: false
+    /tables/{qualifiedName}:
+      delete:
+        description: Delete a Table
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Get a Table by its name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TableRepresentation
+        queryParameters:
+          userId:
+            type: string
+            required: false
+      uriParameters:
+        qualifiedName:
+          type: string
+          required: true
   /databases:
     get:
       description: Retrieve a list of ADS Databases.

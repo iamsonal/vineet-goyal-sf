@@ -19,6 +19,7 @@ import {
     CIB_BASE_URI,
     ADATS_DATABASE_BASE_URI,
     ADATS_SYNC_BASE_URI,
+    ADATS_CATALOG_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
@@ -9276,15 +9277,15 @@ describe('routes', () => {
         );
     });
 
-    describe('get /analytics/data-service/databases/{databaseName}/schemas/{schemaName}/tables', () => {
+    describe('get /analytics/data-service/catalog/tables', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas/testSchema01/tables`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables`,
             },
             [
-                'AdatsController.getTables',
+                'AdatsController.getCatalogTables',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -9293,22 +9294,22 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas/testSchema01/tables`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables`,
             },
             {}
         );
     });
 
-    describe('get /analytics/data-service/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}', () => {
+    describe('get /analytics/data-service/catalog/tables/{qualifiedName}', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas/testSchema01/tables/testTable01`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
             },
             [
-                'AdatsController.getTable',
+                'AdatsController.getCatalogTable',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -9317,8 +9318,32 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas/testSchema01/tables/testTable01`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
+            },
+            {}
+        );
+    });
+
+    describe('delete /analytics/data-service/catalog/tables/{qualifiedName}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
+            },
+            [
+                'AdatsController.deleteCatalogTable',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
             },
             {}
         );

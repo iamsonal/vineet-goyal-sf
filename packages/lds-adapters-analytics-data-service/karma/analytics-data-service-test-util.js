@@ -8,6 +8,8 @@ const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_SYNC_BASE = `/analytics/data-service/sync`;
 const URL_DATABASE_BASE = `/analytics/data-service/databases`;
+const URL_CATALOG_BASE = `/analytics/data-service/catalog`;
+
 const ASSET_TTL = 5000;
 // Data Connectors
 function mockGetConnectorsNetworkOnce(config, mockData) {
@@ -397,9 +399,9 @@ function mockGetSchemaNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-// Tables
-function mockGetTablesNetworkOnce(config, mockData) {
-    const paramMatch = getTablesMatcher(config);
+// Catalog Tables
+function mockGetCatalogTablesNetworkOnce(config, mockData) {
+    const paramMatch = getCatalogTablesMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -407,14 +409,14 @@ function mockGetTablesNetworkOnce(config, mockData) {
     }
 }
 
-function mockGetTablesNetworkErrorOnce(config, mockData) {
-    const paramMatch = getTablesMatcher(config);
+function mockGetCatalogTablesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCatalogTablesMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-// Table
-function mockGetTableNetworkOnce(config, mockData) {
-    const paramMatch = getTableMatcher(config);
+// Catalog Table
+function mockGetCatalogTableNetworkOnce(config, mockData) {
+    const paramMatch = getCatalogTableMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -422,8 +424,22 @@ function mockGetTableNetworkOnce(config, mockData) {
     }
 }
 
-function mockGetTableNetworkErrorOnce(config, mockData) {
-    const paramMatch = getTableMatcher(config);
+function mockGetCatalogTableNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCatalogTableMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockDeleteCatalogTableNetworkOnce(config, mockData = {}) {
+    const paramMatch = deleteCatalogTableMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteCatalogTableNetworkErrorOnce(config, mockData = {}) {
+    const paramMatch = deleteCatalogTableMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -476,23 +492,38 @@ function getSchemaMatcher(config) {
     });
 }
 
-function getTablesMatcher(config) {
-    const { dbName, schemaName } = config;
+function getCatalogTablesMatcher(config) {
+    const { dbName, schemaName, userId } = config;
     return sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas/${schemaName}/tables`,
+        basePath: `${URL_CATALOG_BASE}/tables`,
         method: 'get',
         body: null,
+        queryParams: { database: dbName, schema: schemaName, userId },
     });
 }
 
-function getTableMatcher(config) {
-    const { dbName, schemaName, tableName } = config;
+function getCatalogTableMatcher(config) {
+    const { userId, qualifiedName } = config;
+
     return sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas/${schemaName}/tables/${tableName}`,
+        basePath: `${URL_CATALOG_BASE}/tables/${qualifiedName}`,
         method: 'get',
         body: null,
+        queryParams: { userId },
+    });
+}
+
+function deleteCatalogTableMatcher(config) {
+    const { qualifiedName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_CATALOG_BASE}/tables/${qualifiedName}`,
     });
 }
 
@@ -521,6 +552,7 @@ function expireAsset() {
 }
 
 export {
+    URL_CATALOG_BASE,
     mockGetConnectorsNetworkOnce,
     mockGetConnectorsNetworkErrorOnce,
     mockGetConnectionsNetworkOnce,
@@ -552,12 +584,14 @@ export {
     mockGetSchemasNetworkErrorOnce,
     mockGetSchemaNetworkOnce,
     mockGetSchemaNetworkErrorOnce,
-    mockGetTablesNetworkOnce,
-    mockGetTablesNetworkErrorOnce,
-    mockGetTableNetworkOnce,
-    mockGetTableNetworkErrorOnce,
+    mockGetCatalogTablesNetworkOnce,
+    mockGetCatalogTablesNetworkErrorOnce,
+    mockGetCatalogTableNetworkOnce,
+    mockGetCatalogTableNetworkErrorOnce,
     mockGetDatabasesNetworkOnce,
     mockGetDatabasesNetworkErrorOnce,
     mockGetDatabaseNetworkOnce,
     mockGetDatabaseNetworkErrorOnce,
+    mockDeleteCatalogTableNetworkOnce,
+    mockDeleteCatalogTableNetworkErrorOnce,
 };

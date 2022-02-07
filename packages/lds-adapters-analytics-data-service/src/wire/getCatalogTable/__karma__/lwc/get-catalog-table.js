@@ -1,19 +1,15 @@
 import { api, LightningElement, wire } from 'lwc';
-import { getTable } from 'lds-adapters-analytics-data-service';
+import { getCatalogTable } from 'lds-adapters-analytics-data-service';
 
-export default class GetTable extends LightningElement {
+export default class GetCatalogTable extends LightningElement {
     wirePushCount = -1;
 
-    @api dbName;
-    @api schemaName;
-    @api tableName;
+    @api qualifiedName;
 
-    @wire(getTable, {
-        databaseName: '$dbName',
-        schemaName: '$schemaName',
-        tableName: '$tableName',
+    @wire(getCatalogTable, {
+        qualifiedName: '$qualifiedName',
     })
-    onGetTable({ data, error }) {
+    onGetCatalogTable({ data, error }) {
         this.data = data;
         this.error = error;
         this.wirePushCount += 1;

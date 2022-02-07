@@ -31,7 +31,6 @@ async function createSingleComponentsFromBatchData(mockData) {
                 fields: relatedListRecordCollection.fields,
                 optionalFields: relatedListRecordCollection.optionalFields,
                 pageSize: relatedListRecordCollection.pageSize,
-                pageToken: '0',
                 sortBy: relatedListRecordCollection.sortBy,
             },
         };
@@ -41,7 +40,6 @@ async function createSingleComponentsFromBatchData(mockData) {
             fields: relatedListRecordCollection.fields,
             optionalFields: relatedListRecordCollection.optionalFields,
             pageSize: relatedListRecordCollection.pageSize,
-            pageToken: '0',
             sortBy: relatedListRecordCollection.sortBy,
         };
         mockGetRelatedListRecordsNetworkPost(singleResourceConfig, relatedListRecordCollection);
@@ -58,7 +56,7 @@ describe('basic', () => {
 
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it('gets data with valid parameters', async () => {
@@ -69,7 +67,7 @@ describe('basic', () => {
         const element = await setupElement(params, RelatedListRecordsBatch);
 
         const wireData = element.getWiredData();
-        expect(wireData).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(wireData).toEqualSyntheticCursorListSnapshot(mockData);
     });
 });
 
@@ -83,7 +81,7 @@ describe('batching', () => {
         await setupElement(params, RelatedListRecordsBatch);
         // second component should have the cached data without hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it('returns updated result when cached data is expired', async () => {
@@ -101,7 +99,7 @@ describe('batching', () => {
         expireRecords();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it('returns updated result when cached data is expired with no record linking', async () => {
@@ -118,7 +116,7 @@ describe('batching', () => {
         expireRelatedListRecordCollection();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     // should provide a cache hit for existing single data
@@ -133,7 +131,7 @@ describe('batching', () => {
 
         // // second component should have the cached data without hitting network
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     // 1 single wire calls
@@ -149,7 +147,7 @@ describe('batching', () => {
 
         mockGetRelatedListRecordsBatchNetwork(batchComponentParams, mockData);
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 });
 
@@ -164,7 +162,7 @@ describe('error cases', () => {
         mockGetRelatedListRecordsBatchNetwork(params, mockData);
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it("emits to component twice with error data - 400 status doesn't cache", async () => {
@@ -175,11 +173,11 @@ describe('error cases', () => {
 
         // Get data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockErrorData);
+        expect(errorElement.getWiredData()).toEqualSyntheticCursorListSnapshot(mockErrorData);
 
         // Network is mocked only once, should still retrieve data here.
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockFullData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockFullData);
     });
 
     it('should retrieve actual data after error response cache expired', async () => {
@@ -190,14 +188,14 @@ describe('error cases', () => {
 
         // Get error data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockError);
+        expect(errorElement.getWiredData()).toEqualSyntheticCursorListSnapshot(mockError);
 
         // Cache bust
         expireRecords();
 
         // Should get the real data now
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     describe('gack cases', () => {
@@ -209,7 +207,7 @@ describe('error cases', () => {
             const element = await setupElement(params, RelatedListRecordsBatch);
 
             const wireData = element.getWiredData();
-            expect(wireData).toEqualListSnapshotWithoutPrivateProps(mockData);
+            expect(wireData).toEqualSyntheticCursorListSnapshot(mockData);
         });
     });
 
@@ -241,8 +239,8 @@ describe('error cases', () => {
             await flushPromises();
 
             expect(callback).toHaveBeenCalledTimes(2);
-            expect(callback.calls.argsFor(0)[0].data).toEqualListSnapshotWithoutPrivateProps(mock1);
-            expect(callback.calls.argsFor(1)[0].data).toEqualListSnapshotWithoutPrivateProps(mock2);
+            expect(callback.calls.argsFor(0)[0].data).toEqualSyntheticCursorListSnapshot(mock1);
+            expect(callback.calls.argsFor(1)[0].data).toEqualSyntheticCursorListSnapshot(mock2);
         });
     });
 });

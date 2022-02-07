@@ -5,7 +5,7 @@ import { JSONStringify } from '../../../utils/language';
 import { resetLuvioStore, setup } from './integrationTestSetup';
 import mockGetRelatedListRecords from './data/list-ui-All-Related-Lists.json';
 import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
-import { flushPromises } from '../../testUtils';
+import { flushPromises, clone } from '../../testUtils';
 
 import mockData_Service_Appointments__r from './data/related-list-records/related-list-records-Service_Appointments__r.json';
 
@@ -14,6 +14,20 @@ const RELATED_LIST_RECORD_COLLECTION_PRIVATE_FIELDS = [
     'nextPageUrl',
     'previousPageUrl',
 ];
+
+function base64Encode(input) {
+    // using nodejs API for base64 conversion here
+    return Buffer.from(input, 'utf8').toString('base64');
+}
+
+function convertToSyntheticTokens(result) {
+    ['currentPageToken', 'nextPageToken', 'previousPageToken'].forEach((token) => {
+        if (result[token] !== undefined && result[token] !== null) {
+            result[token] = base64Encode(`client:${result[token]}`);
+        }
+    });
+    return result;
+}
 
 // add toEqualFulfilledSnapshotWithData custom matcher
 expect.extend(customMatchers);
@@ -184,9 +198,10 @@ describe('mobile runtime integration tests', () => {
                 };
 
                 const snapshot = await getRelatedListRecords(config);
+                const expected = convertToSyntheticTokens(clone(mockData_Service_Appointments__r));
 
                 expect(snapshot).toEqualFulfilledSnapshotWithData(
-                    mockData_Service_Appointments__r,
+                    expected,
                     RELATED_LIST_RECORD_COLLECTION_PRIVATE_FIELDS
                 );
             });

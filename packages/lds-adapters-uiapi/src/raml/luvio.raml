@@ -138,6 +138,8 @@ types:
       relatedListId: listReference.relatedListId
     (luvio.paginated):
       items: records
+      strategy: Cursor
+      synthetic: true
       token: currentPageToken
       nextToken: nextPageToken
       previousToken: previousPageToken
@@ -1385,6 +1387,8 @@ types:
         relatedListId: urlParams.relatedListId
       (luvio.paginationParams):
         defaultSize: 50
+        strategy: Cursor
+        synthetic: true
         body:
           token: pageToken
           pageSize: pageSize

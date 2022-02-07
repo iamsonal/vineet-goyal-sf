@@ -26,6 +26,23 @@ function stripActionsIds(result) {
     }
 }
 
+function convertToSyntheticTokens(result, tokenProperties) {
+    tokenProperties.forEach((token) => {
+        if (result[token] !== undefined && result[token] !== null) {
+            // Karma tests run in browser context only so using btoa() for base64 encoding
+            result[token] = btoa(`client:${result[token]}`);
+        }
+    });
+
+    // if we got a list of results, ensure we convert tokens in each result
+    Object.keys(result).forEach((key) => {
+        const value = result[key];
+        if (typeof value === 'object' && value !== null) {
+            convertToSyntheticTokens(result[key], tokenProperties);
+        }
+    });
+}
+
 const matchers = {
     toEqualActionsBatchSnapshot: () => {
         return {
@@ -106,6 +123,22 @@ const matchers = {
                 stripProperties(stripped, ['currentPageUrl', 'nextPageUrl', 'previousPageUrl']);
 
                 expect(actual).toEqualSnapshotWithoutEtags(stripped);
+                return { pass: true };
+            },
+        };
+    },
+
+    toEqualSyntheticCursorListSnapshot: () => {
+        return {
+            compare: function (actual, expected) {
+                const tokenConverted = clone(expected);
+                convertToSyntheticTokens(tokenConverted, [
+                    'currentPageToken',
+                    'nextPageToken',
+                    'previousPageToken',
+                ]);
+
+                expect(actual).toEqualListSnapshotWithoutPrivateProps(tokenConverted);
                 return { pass: true };
             },
         };

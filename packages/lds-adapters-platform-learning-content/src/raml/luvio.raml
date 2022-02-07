@@ -1,0 +1,27 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'LearningContentPlatform'
+(luvio.ttl): 15000
+
+types:
+  FeaturedItemRepresentation:
+    (luvio.key):
+      id: id
+
+/learning-content-platform/featured-item:
+  /list:
+    get:
+      (luvio.adapter):
+        name: getFeaturedItems
+  /list/related:
+    get:
+      (luvio.adapter):
+        name: getFeaturedItemsRelatedList
+  /list/recommended:
+    get:
+      (luvio.adapter):
+        name: getFeaturedItemsRecommendedList

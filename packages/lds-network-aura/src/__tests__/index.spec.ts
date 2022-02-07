@@ -8,6 +8,7 @@ import {
     COMMERCE_BASE_URI,
     CONNECT_BASE_URI,
     GUIDANCE_BASE_URI,
+    LEARNING_CONTENT_PLATFORM_BASE_URI,
     WAVE_BASE_URI,
     ADATS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
@@ -5344,6 +5345,88 @@ describe('routes', () => {
                 body: {},
             },
             {}
+        );
+    });
+
+    describe('get /featured-item/list', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list',
+                queryParams: {
+                    pageRef: '123456',
+                },
+            },
+            [
+                'LearningContentPlatformController.getFeaturedItems',
+                { pageRef: '123456' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list',
+            },
+            { pageRef: '123456' }
+        );
+    });
+
+    describe('get /featured-item/list/recommended', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/recommended',
+                queryParams: {
+                    appId: '123456',
+                },
+            },
+            [
+                'LearningContentPlatformController.getFeaturedItemsRecommendedList',
+                { appId: '123456' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/recommended',
+            },
+            { appId: '123456' }
+        );
+    });
+
+    describe('get /featured-item/list/related', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/related',
+                queryParams: {
+                    appId: '123456',
+                    pageRef: JSON.stringify({ type: 'standard__objectPage' }),
+                },
+            },
+            [
+                'LearningContentPlatformController.getFeaturedItemsRelatedList',
+                { appId: '123456', pageRef: JSON.stringify({ type: 'standard__objectPage' }) },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/related',
+            },
+            { appId: '123456', pageRef: JSON.stringify({ type: 'standard__objectPage' }) }
         );
     });
 

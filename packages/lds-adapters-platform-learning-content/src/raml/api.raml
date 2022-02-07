@@ -1,0 +1,176 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  FeaturedItemListRepresentation:
+    description: This representation defines two top level list of FeaturedItemRepresentation
+      type
+    type: object
+    properties:
+      recommendedList:
+        description: return recommended list
+        type: array
+        items:
+          type: FeaturedItemRepresentation
+      relatedList:
+        description: return related list
+        type: array
+        items:
+          type: FeaturedItemRepresentation
+  FeaturedItemRecommendedListRepresentation:
+    description: This representation defines a list of recommended items in the side
+      panel home page
+    type: object
+    properties:
+      recommendedList:
+        description: returns recommended list
+        type: array
+        items:
+          type: FeaturedItemRepresentation
+  FeaturedItemRelatedListRepresentation:
+    description: This representation defines a list of related items in the side panel
+      home page
+    type: object
+    properties:
+      relatedList:
+        description: returns related list
+        type: array
+        items:
+          type: FeaturedItemRepresentation
+  FeaturedItemRepresentation:
+    description: This representation will be used to show featured items(recommended
+      & related) in the Side Panel Home Page
+    type: object
+    properties:
+      availablePointCount:
+        description: the total points possible for the LearningContent
+        type: integer | nil
+      completedDate:
+        description: the completedDate for the LearningItem for the end user at runtime
+        type: string | nil
+      completedItemCount:
+        description: Returns the number of LearningContentItems completed by the current
+          user
+        type: integer | nil
+      completedPercent:
+        description: The completion percentage of the learning unit as a whole integer,
+        type: integer | nil
+      description:
+        description: Description for the side panel item
+        type: string
+      dueDate:
+        description: the dueDate for the FeaturedItem for the end user at runtime
+        type: string | nil
+      durationCount:
+        description: the total time in minutes for the LearningContent
+        type: integer | nil
+      durationRemainingCount:
+        description: the number of minutes remaining for the user to complete this
+          LearningContent
+        type: integer | nil
+      earnedPointCount:
+        description: the number of points earned by the user for this LearningContent
+        type: integer | nil
+      iconName:
+        description: SLDS icon name
+        type: string
+      id:
+        description: Defines a uniques identifier across different content types
+        type: string
+      isCompleted:
+        description: If the end-user completed the learningItem
+        type: boolean | nil
+      isCuratedContent:
+        description: if this content was curated by SFDC, instead of being assembled
+          by a learning admin.
+        type: boolean | nil
+      isOverdue:
+        description: If the end-user learningItem is overdue
+        type: boolean | nil
+      itemCount:
+        description: Returns the number of LearningContentItems associated with this
+          FeaturedItem
+        type: integer | nil
+      relatedId:
+        description: Id for the entity backing the learning unit, E.g. this would
+          return the Id for a Trailhead module if this was a Trailhead unit, or the
+          Id for a LearningLink if this was a link to outside content
+        type: string | nil
+      title:
+        description: The localized title for the side panel item
+        type: string
+      type:
+        description: Specifies different Content Types that will be in the side panel
+          home page.
+        type: string
+      url:
+        description: Specifies a URL in a FeaturedItem
+        type: string | nil
+/learning-content-platform/featured-item:
+  /list:
+    get:
+      description: Returns two lists to be displayed on side panel home page
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FeaturedItemListRepresentation
+      queryParameters:
+        pageRef:
+          type: string
+          required: false
+  /list/recommended:
+    get:
+      description: Returns a list of recommended items to be displayed on the side
+        panel home page
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FeaturedItemRecommendedListRepresentation
+      queryParameters:
+        appId:
+          type: string
+          required: true
+  /list/related:
+    get:
+      description: Returns a list of related items to be displayed on the side panel
+        home page
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FeaturedItemRelatedListRepresentation
+      queryParameters:
+        appId:
+          type: string
+          required: true
+        pageRef:
+          type: string
+          required: true

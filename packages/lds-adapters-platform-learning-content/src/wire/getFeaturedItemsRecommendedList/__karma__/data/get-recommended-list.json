@@ -1,0 +1,25 @@
+{
+    "recommendedList": [
+        {
+            "id": "test_id",
+            "title": "test_title",
+            "description": "test_description",
+            "iconName": "test_icon_name",
+            "type": "test_content_type",
+            "availablePointCount": null,
+            "completedDate": null,
+            "completedPercent": null,
+            "dueDate": null,
+            "durationCount": null,
+            "durationRemainingCount": null,
+            "earnedPointCount": null,
+            "isCompleted": null,
+            "isCuratedContent": null,
+            "isOverdue": null,
+            "relatedId": null,
+            "url": null,
+            "itemCount": null,
+            "completedItemCount": null
+        }
+    ]
+}

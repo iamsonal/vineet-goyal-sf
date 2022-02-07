@@ -17,6 +17,7 @@ import {
     CIB_BASE_URI,
     RCG_TENANTMANAGEMENT_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
+    LEARNING_CONTENT_PLATFORM_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_MICROBATCHING_PATH = new RegExp(
@@ -50,6 +51,19 @@ const GET_PRODUCT_PRICE_PATH = new RegExp(
 );
 
 const GET_GUIDANCE_ASSISTANT_PATH = new RegExp(`${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}$`, 'i');
+
+const GET_LEARNING_CONTENT_PLATFORM_PATH = new RegExp(
+    `${LEARNING_CONTENT_PLATFORM_BASE_URI}/featured-item/list$`,
+    'i'
+);
+const GET_LEARNING_CONTENT_PLATFORM_RELATED_LIST_PATH = new RegExp(
+    `${LEARNING_CONTENT_PLATFORM_BASE_URI}/featured-item/list/related$`,
+    'i'
+);
+const GET_LEARNING_CONTENT_PLATFORM_RECOMMENDED_LIST_PATH = new RegExp(
+    `${LEARNING_CONTENT_PLATFORM_BASE_URI}/featured-item/list/recommended$`,
+    'i'
+);
 
 const GET_GUIDANCE_ASSISTANT_LIST_PATH = new RegExp(
     `${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}/list$`,
@@ -938,6 +952,36 @@ const scalecenter: ApiFamily = {
     },
 };
 
+const learningContentPlatform: ApiFamily = {
+    getFeaturedItems: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(LEARNING_CONTENT_PLATFORM_BASE_URI) &&
+            GET_LEARNING_CONTENT_PLATFORM_PATH.test(path),
+        transport: {
+            controller: 'LearningContentPlatformController.getFeaturedItems',
+        },
+    },
+    getFeaturedItemsRelatedList: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(LEARNING_CONTENT_PLATFORM_BASE_URI) &&
+            GET_LEARNING_CONTENT_PLATFORM_RELATED_LIST_PATH.test(path),
+        transport: {
+            controller: 'LearningContentPlatformController.getFeaturedItemsRelatedList',
+        },
+    },
+    getFeaturedItemsRecommendedList: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(LEARNING_CONTENT_PLATFORM_BASE_URI) &&
+            GET_LEARNING_CONTENT_PLATFORM_RECOMMENDED_LIST_PATH.test(path),
+        transport: {
+            controller: 'LearningContentPlatformController.getFeaturedItemsRecommendedList',
+        },
+    },
+};
+
 const guidance: ApiFamily = {
     getGuidanceAssistantList: {
         method: 'get',
@@ -1720,3 +1764,4 @@ registerApiFamilyRoutes(videovisits);
 registerApiFamilyRoutes(interesttagging);
 registerApiFamilyRoutes(identityVerification);
 registerApiFamilyRoutes(hpiscore);
+registerApiFamilyRoutes(learningContentPlatform);

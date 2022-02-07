@@ -7689,6 +7689,65 @@ describe('routes', () => {
             }
         );
     });
+    describe('post /connect/cms/contents/unpublish', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CMS_BASE_URI,
+                basePath: `/contents/unpublish`,
+                body: {
+                    unpublishInput: {
+                        channelIds: ['0apx0000000GmanAAC'],
+                        description: 'Test Description',
+                        contentIds: ['20YRM0000000CPi2AM'],
+                        variantIds: [],
+                    },
+                },
+            },
+            [
+                'ManagedContentController.unpublish',
+                {
+                    unpublishInput: {
+                        channelIds: ['0apx0000000GmanAAC'],
+                        description: 'Test Description',
+                        contentIds: ['20YRM0000000CPi2AM'],
+                        variantIds: [],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                deploymentId: '0jkxx000000003FAAQ',
+                description: 'Test Description',
+                unpublishedDate: '2022-02-01T09:13:35.000Z',
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CMS_BASE_URI,
+            basePath: `/contents/unpublish`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CMS_BASE_URI,
+                basePath: `/contents/unpublish`,
+                body: {
+                    unpublishInput: {
+                        channelIds: ['0apx0000000GmanAAC'],
+                        description: 'Test Description',
+                        contentIds: ['20YRM0000000CPi2AM'],
+                        variantIds: [],
+                    },
+                },
+            },
+            {
+                deploymentId: '0jkxx000000003FAAQ',
+                description: 'Test Description',
+                unpublishedDate: '2022-02-01T09:13:35.000Z',
+            }
+        );
+    });
 
     describe('post /connect/cms/contents', () => {
         testControllerInput(

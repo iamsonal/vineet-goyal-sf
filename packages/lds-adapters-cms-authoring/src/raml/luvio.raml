@@ -25,6 +25,11 @@ types:
   ManagedContentSpaceFolderItemCollectionRepresentation:
     (luvio.ttl): 100
     (luvio.opaque): true
+  ManagedContentUnpublishOutputRepresentation:
+    (luvio.ttl): 100
+    (luvio.opaque): true
+    (luvio.key):
+      id: deploymentId
 
 /cms:
   /deployments:
@@ -336,7 +341,38 @@ types:
                         "urlName":"testurl"
                     }
                   }
-
+      /unpublish:
+        post:
+          (luvio.adapter):
+            name: unpublishManagedContent
+            tests:
+              validConfigs:
+                - |
+                  {
+                    "unpublishInput": {
+                      "channelIds": ["0apx0000000GmanAAC"],
+                      "description": "Test Description",
+                      "contentIds": ["20YRM0000000CPi2AM", "20YRM0000000CPi2AN"],
+                      "variantIds": []
+                    }
+                  }
+                - |
+                  {
+                    "unpublishInput": {
+                      "channelIds": [],
+                      "description": "Test Description",
+                      "contentIds": [],
+                      "variantIds": ["9Psxx0000004DwKCAU", "9Psxx0000004DwKCAV"]
+                    }
+                  }
+              invalidConfigs:
+                - |
+                  {
+                    "channelIds": [],
+                    "description": "Test Description",
+                      "contentIds": ["20YRM0000000CPi2AM"],
+                      "variantIds": ["9Psxx0000004DwKCAU"]
+                  }
     /folders/{folderId}/items:
       get:
         (luvio.adapter):

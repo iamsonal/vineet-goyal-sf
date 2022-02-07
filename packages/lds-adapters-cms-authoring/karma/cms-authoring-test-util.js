@@ -10,6 +10,20 @@ const MANAGED_CONTENT_TTL = 100;
 const MANAGED_CONTENT_VARIANT_TTL = 3600000;
 const GET_MANAGED_CONTENT_BY_FOLDER_ID_TTL = 100;
 
+function mockUnpublishManagedContent(config, mockData) {
+    const paramMatch = getUnpublishManagedContentMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockUnpublishManagedContentErrorOnce(config, mockData) {
+    const paramMatch = getUnpublishManagedContentMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function mockCreateDeployment(config, mockData) {
     const paramMatch = getCreateDeploymentsMatcher(config);
     if (Array.isArray(mockData)) {
@@ -44,6 +58,23 @@ function mockGetManagedContentByFolderId(config, mockData) {
     } else {
         mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
     }
+}
+
+function getUnpublishManagedContentMatcher(config) {
+    let { channelIds, description, contentIds, variantIds } = config;
+    return sinon.match({
+        body: {
+            channelIds,
+            description,
+            contentIds,
+            variantIds,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/contents/unpublish`,
+        queryParams: {},
+    });
 }
 
 function getCreateDeploymentsMatcher(config) {
@@ -226,6 +257,8 @@ function mockReplaceManagedContentVariantErrorOnce(config, mockData) {
 }
 
 export {
+    mockUnpublishManagedContent,
+    mockUnpublishManagedContentErrorOnce,
     getCreateDeploymentsMatcher,
     mockCreateDeployment,
     mockCreateDeploymentsErrorOnce,

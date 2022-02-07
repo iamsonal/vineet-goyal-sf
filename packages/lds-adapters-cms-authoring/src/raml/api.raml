@@ -1676,6 +1676,49 @@ types:
         type: string
         enum:
           - LightningView
+  ManagedContentUnpublishInputWrapperRepresentation: # TODO Hand-rolled W-9800110
+    description: Wrapper for Input required for unpublish managed content or variants
+    type: object
+    properties:
+      unpublishInput:
+        type: ManagedContentUnpublishInputRepresentation
+  ManagedContentUnpublishInputRepresentation:
+    description: Input required for unpublishing content
+    type: object
+    properties:
+      channelIds:
+        description: '[Optional] The target channel or channels to unpublish content to.'
+        type: array
+        items:
+          type: string
+      contentIds:
+        description: '[Optional] The contents to unpublish. Either contentIds or variantIds
+          are required.'
+        type: array
+        items:
+          type: string
+      description:
+        description: Description for unpublish Action.
+        type: string
+      variantIds:
+        description: '[Optional] The variants to unpublish. Either contentIds or variantIds
+          are required.'
+        type: array
+        items:
+          type: string
+  ManagedContentUnpublishOutputRepresentation:
+    description: Information about a Unpublished action
+    type: object
+    properties:
+      deploymentId:
+        description: ManagedContentDeployment Entity Id
+        type: string
+      description:
+        description: Provided description.
+        type: string | nil
+      unpublishedDate:
+        description: Unpublished Date
+        type: string | nil
   ManagedContentUserSummaryRepresentation:
     description: Information about a user who created/modified content.
     type: object
@@ -2710,6 +2753,20 @@ types:
             type: ManagedContentInputWrapperRepresentation
             #required: false # TODO hand rolled. W-9275477
             (oas-body-name): ManagedContentInputParam
+      /unpublish:
+        post:
+          description: Unpublish content to specified channels
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentUnpublishOutputRepresentation
+          body:
+            application/json:
+              type: ManagedContentUnpublishInputWrapperRepresentation
+              #required: false # TODO hand rolled. W-9275477
+              (oas-body-name): unpublishInput
       /variants/{variantId}:
         get:
           description: Gets a managed content variant by Id.

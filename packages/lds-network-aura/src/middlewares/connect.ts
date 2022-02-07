@@ -277,6 +277,8 @@ const GET_COLLECTION_METADATA_FOR_CHANNEL = new RegExp(
 
 const CREATE_DEPLOYMENT_PATH = new RegExp(`${CMS_NON_CONNECT_BASE_URI}/deployments`, 'i');
 
+const UNPUBLISH_MANAGED_CONTENT_PATH = new RegExp(`${CMS_BASE_URI}/contents/unpublish`, 'i');
+
 const CREATE_MANAGED_CONTENT_PATH = new RegExp(`${CMS_BASE_URI}/contents`, 'i');
 
 const RECORD_SEO_PROPERTIES_PATH = new RegExp(
@@ -536,6 +538,14 @@ const connect: ApiFamily = {
             path.startsWith(CMS_BASE_URI) && GET_CONTENT_TYPE_INTERNAL_PATH.test(path),
         transport: {
             controller: 'ManagedContentTypeController.getContentTypeSchema',
+        },
+    },
+    unpublishManagedContent: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CMS_BASE_URI) && UNPUBLISH_MANAGED_CONTENT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.unpublish',
         },
     },
     listContentInternal: {

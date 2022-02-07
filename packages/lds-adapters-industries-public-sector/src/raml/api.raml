@@ -218,6 +218,161 @@ types:
         items:
           # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
           type: ServicePlanTemplateGoalInputRepresentation
+  # TODO Hand-Rolled due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAMmFgP)
+  CaseServicePlanInputWrapperRepresentation:
+    description: Wrapper Input Representation for Case Service Plan
+    type: object
+    properties:
+      caseServicePlan:
+        type: CaseServicePlanInputRepresentation
+        description: Input representation for Case Service Plan
+  CaseServicePlanInputRepresentation:
+    description: Input representation for Case Service Plan
+    type: object
+    properties:
+      id:
+        description: Id of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      caseId:
+        description: CaseId of the CaseServicePlan
+        type: string
+      description:
+        description: Description of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      endDate:
+        description: EndDate of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      servicePlanTemplateId:
+        description: ServicePlanTemplateId of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      startDate:
+        description: StartDate of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      status:
+        description: Status of the CaseServicePlan
+        type: string
+      enrolleeBenefits:
+        description: EnrolleeBenefits of the CaseServicePlan
+        type: EnrolleeBenefitListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      publicServiceGoals:
+        description: PublicServiceGoals of the CaseServicePlan
+        type: PublicServiceGoalListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+  EnrolleeBenefitListInputRepresentation:
+    description: Input representation for List of EnrolleeBenefits
+    type: object
+    properties:
+      records:
+        description: List of EnrolleeBenefits
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: EnrolleeBenefitInputRepresentation
+  EnrolleeBenefitInputRepresentation:
+    description: Input representation for EnrolleeBenefit
+    type: object
+    properties:
+      associatedPublicServiceGoal:
+        description: AssociatedPublicServiceGoal of the EnrolleeBenefit
+        type: PublicServiceGoalInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      benefitFrequency:
+        description: BenefitFrequency of the EnrolleeBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      benefitId:
+        description: Benefit Id of the Benefit
+        type: string
+      endDate:
+        description: EndDate of the EnrolleeBenefit
+        type: string
+      enrollmentCount:
+        description: EnrollmentCount of the EnrolleeBenefit
+        type: integer
+      id:
+        description: Id of the EnrolleBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      maximumAmount:
+        description: MaximumAmount of the EnrolleeBenefit
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      minimumAmount:
+        description: MinimumAmount of the EnrolleeBenefit
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      participantId:
+        description: ParticipantId of the EnrolleeBenefit
+        type: string
+      priority:
+        description: Priority of the EnrolleeBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      startDate:
+        description: StartDate of EnrolleeBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+  PublicServiceGoalListInputRepresentation:
+    description: Input representation for List of PublicServiceGoals
+    type: object
+    properties:
+      records:
+        description: List of PublicServiceGoals
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: PublicServiceGoalInputRepresentation
+  PublicServiceGoalInputRepresentation:
+    description: Input representation for PublicServiceGoal
+    type: object
+    properties:
+      completionPercentage:
+        description: CompletionPercentage of the PublicServiceGoal
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      goalAssigneeId:
+        description: GoalAssigneeId of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      goalDefinitionId:
+        description: GoalDefinitionId of the PublicServiceGoal
+        type: string
+      goalType:
+        description: GoalType of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      id:
+        description: Id of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      priority:
+        description: Priority of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      startDate:
+        description: StartDate of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      status:
+        description: Status of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      targetCompletionDate:
+        description: TargetCompletionDate of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+
 /connect/socialcare:
   /benefits:
     get:
@@ -277,3 +432,18 @@ types:
       servicePlanTemplateId:
         type: string
         required: true
+
+  /case-service-plans:
+    post:
+      description: API to create/update Case Service Plan
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GenericOutputRepresentation
+      body:
+        application/json:
+          type: CaseServicePlanInputWrapperRepresentation
+          #required: false
+          (oas-body-name): caseServicePlan

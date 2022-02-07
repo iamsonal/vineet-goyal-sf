@@ -37,6 +37,30 @@ function postServicePlanTemplateDetailsMatcher(config) {
     });
 }
 
+export function mockPostCaseServicePlanDetailsNetwokOnce(config, mockData) {
+    const paramMatch = postCaseServicePlanDetailsMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockPostCaseServicePlanDetailsNetwokErrorOnce(config, mockData) {
+    const paramMatch = postCaseServicePlanDetailsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function postCaseServicePlanDetailsMatcher(config) {
+    const { caseServicePlanRecord } = config;
+    return sinon.match({
+        body: {
+            caseServicePlanRecord,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `/connect/socialcare/case-service-plans`,
+        queryParams: {},
+    });
+}
+
 export function mockSearchGoalDefinitionByNameNetworkOnce(config, mockData) {
     const paramMatch = searchGoalDefinitionByNameMatcher(config);
     if (Array.isArray(mockData)) {

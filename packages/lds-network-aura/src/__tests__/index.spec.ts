@@ -2915,6 +2915,119 @@ describe('routes', () => {
         );
     });
 
+    describe('post /socialcare/case-service-plans', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans`,
+                urlParams: {},
+                body: {
+                    caseServicePlan: {
+                        publicServiceGoals: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    targetCompletionDate: '2023-02-03',
+                                    completionPercentage: 20.0,
+                                    status: 'In-progress',
+                                    goalAssigneeId: '0jiS70000000001IAA',
+                                    goalType: 'Individual',
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        enrolleeBenefits: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    endDate: '2023-02-03',
+                                    benefitFrequency: 'monthly',
+                                    enrollmentCount: 2,
+                                    minimumAmount: 5000.0,
+                                    maximumAmount: 10000.0,
+                                    participantId: '0jiS70000000001IAA',
+                                    benefitId: '0jiS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        status: 'active',
+                        description: 'description',
+                        startDate: '2022-02-03',
+                        endDate: '2023-02-03',
+                        caseId: '0jiS70000000001IAA',
+                        servicePlanTemplateId: '1stS70000004C93IAE',
+                    },
+                },
+            },
+            [
+                'PublicSectorFamilyController.createOrUpdateCaseServicePlan',
+                {
+                    caseServicePlan: {
+                        publicServiceGoals: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    targetCompletionDate: '2023-02-03',
+                                    completionPercentage: 20.0,
+                                    status: 'In-progress',
+                                    goalAssigneeId: '0jiS70000000001IAA',
+                                    goalType: 'Individual',
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        enrolleeBenefits: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    endDate: '2023-02-03',
+                                    benefitFrequency: 'monthly',
+                                    enrollmentCount: 2,
+                                    minimumAmount: 5000.0,
+                                    maximumAmount: 10000.0,
+                                    participantId: '0jiS70000000001IAA',
+                                    benefitId: '0jiS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        status: 'active',
+                        description: 'description',
+                        startDate: '2022-02-03',
+                        endDate: '2023-02-03',
+                        caseId: '0jiS70000000001IAA',
+                        servicePlanTemplateId: '1stS70000004C93IAE',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                id: '1spS70000004C93IAE',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/socialcare/case-service-plans`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans`,
+            },
+            {
+                id: '1spS70000004C93IAE',
+            }
+        );
+    });
+
     describe('get /action-logs', () => {
         testControllerInput(
             {

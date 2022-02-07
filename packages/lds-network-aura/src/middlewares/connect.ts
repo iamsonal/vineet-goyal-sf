@@ -387,6 +387,11 @@ const POST_SERVICE_PLAN_TEMPLATE_DETAILS = new RegExp(
     'i'
 );
 
+const POST_CASE_SERVICE_PLAN_DETAILS = new RegExp(
+    `${CONNECT_BASE_URI}/socialcare/case-service-plans`,
+    'i'
+);
+
 const MARKETING_INTEGRATION_GET_FORM_PATH = new RegExp(
     `${SITES_BASE_URI}/([A-Z0-9]){15,18}/marketing-integration/forms/([A-Z0-9]){15,18}$`,
     'i'
@@ -788,6 +793,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && POST_SERVICE_PLAN_TEMPLATE_DETAILS.test(path),
         transport: {
             controller: 'PublicSectorFamilyController.associateSPTChildRecords',
+        },
+    },
+    postCaseServicePlanDetails: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && POST_CASE_SERVICE_PLAN_DETAILS.test(path),
+        transport: {
+            controller: 'PublicSectorFamilyController.createOrUpdateCaseServicePlan',
         },
     },
     getProgramProcessRule: {

@@ -6,7 +6,6 @@ import {
     mergeRecordFields,
     buildGetRecordByFieldsCompositeRequest,
     MAX_AGGREGATE_UI_CHUNK_LIMIT,
-    ResourceRequestWithConfigOptionalFields,
 } from '../execute-aggregate-ui';
 import { buildResourceRequest, generateMockedRecordFields } from './test-utils';
 import { UI_API_BASE_URI } from '../../uiapi-base';
@@ -114,45 +113,17 @@ describe('executeAggregateUi', () => {
             });
         });
 
-        it('should limit lookups to no more than four per chunk', () => {
-            // 20 fields with four lookups per chunk equals five chunks
-            const fields = generateMockedRecordFields(20, 'CrazyHugeCustomFieldName', true);
-
-            const actualCompositeRequest = buildGetRecordByFieldsCompositeRequest(
-                buildResourceRequest({}),
-                {
-                    fieldsArray: [],
-                    optionalFieldsArray: fields,
-                    optionalFieldsLength: fields.length,
-                    fieldsLength: 0,
-                }
-            );
-
-            expect(actualCompositeRequest.length).toEqual(5);
-            actualCompositeRequest.forEach((requestChunk) => {
-                expect(requestChunk.referenceId.length).toBeGreaterThan(0);
-                expect(requestChunk.url.length).toBeGreaterThan(0);
-            });
-        });
-
         it('should put the config lookup fields in the first chunk always', () => {
-            // 20 fields with four lookups per chunk equals five chunks
+            // This should generate two chunks
             const trackedOptionalFields = generateMockedRecordFields(
-                20,
+                20000,
                 'CrazyHugeCustomFieldName',
                 true
             );
-            const configFields = generateMockedRecordFields(20, 'ConfigFieldName', true);
-            const configOptionalFields = generateMockedRecordFields(
-                20,
-                'ConfigOptionalFieldName',
-                true
-            );
 
+            // This should generate one chunk
+            const configFields = generateMockedRecordFields(20000, 'ConfigFieldName', true);
             const resourceRequest: ResourceRequest = buildResourceRequest({});
-            (resourceRequest as ResourceRequestWithConfigOptionalFields).configOptionalFields =
-                configOptionalFields;
-
             const actualCompositeRequest = buildGetRecordByFieldsCompositeRequest(resourceRequest, {
                 fieldsArray: configFields,
                 optionalFieldsArray: trackedOptionalFields,
@@ -160,62 +131,12 @@ describe('executeAggregateUi', () => {
                 fieldsLength: configFields.length,
             });
 
-            // Five chunks plus one each for fields and optionalFields from config == 7
-            expect(actualCompositeRequest.length).toEqual(7);
+            // One chunk for fields and two for optionalFields == 3
+            expect(actualCompositeRequest.length).toEqual(3);
             actualCompositeRequest.forEach((requestChunk) => {
                 expect(requestChunk.referenceId.length).toBeGreaterThan(0);
                 expect(requestChunk.url.length).toBeGreaterThan(0);
             });
-        });
-
-        it('should dedupe tracked fields with config fields', () => {
-            // 20 fields with four lookups per chunk equals five chunks
-            const trackedOptionalFields = generateMockedRecordFields(
-                20,
-                'CrazyHugeCustomFieldName',
-                true
-            );
-            const configFields = generateMockedRecordFields(20, 'ConfigFieldName', true);
-            const configOptionalFields = generateMockedRecordFields(
-                20,
-                'ConfigOptionalFieldName',
-                true
-            );
-
-            // add in a field that we expect to be deduped
-            const dedupedField = configOptionalFields[0];
-            trackedOptionalFields.push(dedupedField);
-
-            const resourceRequest: ResourceRequest = buildResourceRequest({});
-            (resourceRequest as ResourceRequestWithConfigOptionalFields).configOptionalFields =
-                configOptionalFields;
-
-            const actualCompositeRequest = buildGetRecordByFieldsCompositeRequest(resourceRequest, {
-                fieldsArray: configFields,
-                optionalFieldsArray: trackedOptionalFields,
-                optionalFieldsLength: trackedOptionalFields.length,
-                fieldsLength: configFields.length,
-            });
-
-            // Five chunks plus one each for fields and optionalFields from config == 7
-            // Without tracked optionalField dedupe, we would get another chunk.
-            expect(actualCompositeRequest.length).toEqual(7);
-
-            actualCompositeRequest.forEach((requestChunk) => {
-                expect(requestChunk.referenceId.length).toBeGreaterThan(0);
-                expect(requestChunk.url.length).toBeGreaterThan(0);
-            });
-
-            // More assertions for optionalFields deduping
-            expect(actualCompositeRequest[1].referenceId).toEqual(
-                'LDS_Records_AggregateUi_optionalFields_0'
-            );
-            expect(actualCompositeRequest[1].url).toContain(dedupedField);
-
-            // Check that it's not in other chunks (1st is for fields)
-            for (let i = 2; i < actualCompositeRequest.length; i++) {
-                expect(actualCompositeRequest[i].url).not.toContain(dedupedField);
-            }
         });
     });
 

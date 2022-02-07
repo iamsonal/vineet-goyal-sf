@@ -14,6 +14,6 @@
         "build": "tsc"
     },
     "devDependencies": {
-        "@luvio/environments": "0.73.2"
+        "@luvio/environments": "0.73.3"
     }
 }

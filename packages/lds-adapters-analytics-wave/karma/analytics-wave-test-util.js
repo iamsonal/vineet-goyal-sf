@@ -268,6 +268,34 @@ function getDataConnectorSourceObjectMatcher(config) {
     });
 }
 
+// Data connector source object preview
+function mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectDataPreviewWithFieldsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectDataPreviewWithFieldsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorSourceObjectDataPreviewWithFieldsMatcher(config) {
+    const { uriParams, body } = config;
+    const { connectorIdOrApiName, sourceObjectName } = uriParams;
+    return sinon.match({
+        body,
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}/sourceObjects/${sourceObjectName}/dataPreview`,
+        queryParams: {},
+    });
+}
+
 // Data connector source fields
 function mockGetDataConnectorSourceFieldsNetworkOnce(config, mockData) {
     const paramMatch = getDataConnectorSourceFieldsMatcher(config);
@@ -1414,6 +1442,8 @@ export {
     mockGetDataConnectorSourceObjectNetworkErrorOnce,
     mockGetDataConnectorSourceFieldsNetworkOnce,
     mockGetDataConnectorSourceFieldsNetworkErrorOnce,
+    mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkOnce,
+    mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkErrorOnce,
     mockGetDataConnectorSourceObjectsNetworkOnce,
     mockGetDataConnectorSourceObjectsNetworkErrorOnce,
     mockGetDataConnectorTypesNetworkOnce,

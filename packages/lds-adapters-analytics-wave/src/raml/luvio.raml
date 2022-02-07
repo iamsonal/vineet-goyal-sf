@@ -68,6 +68,9 @@ types:
       SourceObjectName: sourceObjectName
   SourceObjectCollectionRepresentation:
     (luvio.ttl): 300
+  SourceObjectDataRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 5000
   TemplateCollectionRepresentation:
     (luvio.ttl): 300000
   TemplateConfigurationRepresentation:
@@ -129,6 +132,11 @@ types:
         (luvio.key):
           connectorIdOrApiName: urlParams.connectorIdOrApiName
           SourceObjectName: urlParams.sourceObjectName
+      /dataPreview:
+        post:
+          (luvio.adapter):
+            name: getDataConnectorSourceObjectDataPreviewWithFields
+          (luvio.method): get
       /fields:
         get:
           (luvio.adapter):

@@ -135,6 +135,16 @@ types:
       value:
         description: The value of the advanced property
         type: string # TODO: hand rolled
+  AdvancedPropertyValueInputRepresentation:
+    description: Wave Data Connector Advanced Property input representation
+    type: object
+    properties:
+      name:
+        description: The name of the advanced property.
+        type: string
+      value:
+        description: The value of the advanced property
+        type: string # TODO: hand rolled
   AppLogRepresentation:
     description: Wave action representation.
     type: object
@@ -3449,6 +3459,35 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  SourceObjectDataInputRepresentation:
+    description: Input representation for getting source object data given a list
+      of fields and advanced properties
+    type: object
+    properties:
+      advancedProperties:
+        description: List of user-specified advanced properties associated with this
+          object.
+        type: array
+        items:
+          type: AdvancedPropertyValueInputRepresentation # TODO hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      sourceObjectFields:
+        description: List of fields as a way to filter the fields returned in the
+          response.
+        type: array
+        items:
+          type: string
+  SourceObjectDataRepresentation:
+    description: A Source Object Data represents the data to be previewed that the
+      selected Data Connector knows about.
+    type: object
+    properties:
+      dataListJson:
+        description: The json representation, as a string, for data preview to show.
+        type: string
+      url:
+        description: The URL to get this Source Object Data.
+        type: string
   SourceObjectRepresentation:
     description: A Source Object represents a specific category or type of data that
       the Data Connector knows about. When a Source Object is replicated into Wave,
@@ -5351,6 +5390,27 @@ types:
         sourceObjectName:
           type: string
           required: true
+      /dataPreview:
+        post:
+          description: Get a single Source Object Data by name, list of fields,
+            and advanced properties if applicable.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: SourceObjectDataRepresentation
+          body:
+            application/json:
+              type: SourceObjectDataInputRepresentation
+              (oas-body-name): sourceObjectParam
+        uriParameters:
+          connectorIdOrApiName:
+            type: string
+            required: true
+          sourceObjectName:
+            type: string
+            required: true
       /fields:
         get:
           description: Get a list of all the Source Fields of a particular Source Object.

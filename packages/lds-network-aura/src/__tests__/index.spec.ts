@@ -5674,6 +5674,59 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/dataconnectors/{connectorIdOrApiName}/sourceObjects/{sourceObjectName}/dataPreview', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/dataPreview`,
+                body: {
+                    sourceObjectParam: {
+                        sourceObjectFields: ['car_make', 'id', 'car_model_year'],
+                        advancedProperties: [
+                            { name: 'StartDate', value: '2018-01-01' },
+                            { name: 'ViewID', value: '174299164' },
+                            { name: 'EndDate', value: 'today' },
+                        ],
+                    },
+                },
+            },
+            [
+                'WaveController.getDataConnectorSourceObjectDataPreviewWithFields',
+                {
+                    sourceObjectParam: {
+                        sourceObjectFields: ['car_make', 'id', 'car_model_year'],
+                        advancedProperties: [
+                            { name: 'StartDate', value: '2018-01-01' },
+                            { name: 'ViewID', value: '174299164' },
+                            { name: 'EndDate', value: 'today' },
+                        ],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/dataPreview`,
+                body: {
+                    sourceObjectParam: {
+                        sourceObjectFields: ['car_make', 'id', 'car_model_year'],
+                        advancedProperties: [
+                            { name: 'StartDate', value: '2018-01-01' },
+                            { name: 'ViewID', value: '174299164' },
+                            { name: 'EndDate', value: 'today' },
+                        ],
+                    },
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataconnectors/{connectorIdOrApiName}/sourceObjects/{sourceObjectName}/fields', () => {
         testControllerInput(
             {

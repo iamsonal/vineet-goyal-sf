@@ -127,6 +127,11 @@ const DATA_CONNECTOR_SOURCE_OBJECT_PATH = new RegExp(
     'i'
 );
 
+const DATA_CONNECTOR_SOURCE_OBJECT_PREVIEW_PATH = new RegExp(
+    `${WAVE_BASE_URI}/dataconnectors/([A-Z0-9]){15,18}/sourceObjects/.{1,255}/dataPreview$`,
+    'i'
+);
+
 const DATA_CONNECTOR_SOURCE_FIELDS_PATH = new RegExp(
     `${WAVE_BASE_URI}/dataconnectors/([A-Z0-9]){15,18}/sourceObjects/.{1,255}/fields$`,
     'i'
@@ -1087,6 +1092,14 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_SOURCE_OBJECT_PATH.test(path),
         transport: {
             controller: 'WaveController.getDataConnectorSourceObject',
+        },
+    },
+    getDataConnectorSourceObjectDataPreviewWithFields: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_SOURCE_OBJECT_PREVIEW_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataConnectorSourceObjectDataPreviewWithFields',
         },
     },
     ingestDataConnector: {

@@ -178,6 +178,17 @@ types:
     discriminatorValue: asset # TODO Hand rolled
     type: BaseAssetReferenceRepresentation
     properties: {}
+  DatasetVersionSharingSourceRepresentation:
+    description: Asset reference representation.
+    type: object
+    properties:
+      name:
+        description: The asset developer name.
+        type: string
+      namespace:
+        description: The namespace that qualifies the asset name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   BaseAssetInputRepresentation:
     description: Base Wave Asset input Representation
     discriminator: name # TODO Hand rolled W-8988532
@@ -1362,6 +1373,18 @@ types:
         enum:
           - All
           - Limited
+  DatasetVersionCollectionRepresentation:
+    description: A collection of Dataset Versions.
+    type: object
+    properties:
+      url:
+        description: URL to get this collection.
+        type: string
+      versions:
+        description: Collection of dataset versions for a particular dataset.
+        type: array
+        items:
+          type: DatasetVersionRepresentation
   DatasetSourceRepresentation:
     description: Source from which a dataset is constructed.
     type: object
@@ -1566,7 +1589,7 @@ types:
       sharingSource:
         description: Entity from which sharing rules will be inherited for this dataset
           version
-        type: AssetReferenceRepresentation
+        type: DatasetVersionSharingSourceRepresentation # Hand-rolled: Supposed to be AssetReferenceRepresentation but may not contain ID
         required: false # TODO Hand-rolled W-8253396
       source:
         description: The parent dataflow or file for this dataset version.
@@ -5703,59 +5726,72 @@ types:
       datasetIdOrApiName:
         type: string
         required: true
-    /versions/{versionId}:
+    /versions:
       get:
-        description: Get a dataset version resource representation.
+        description: Get the dataset versions for a particular dataset.
         responses:
           '200':
             description: Success
             body:
               application/json:
-                type: DatasetVersionRepresentation
-      patch:
-        description: Patch a dataset version resource representation.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: DatasetVersionRepresentation
-        body:
-          application/json:
-            type: DatasetVersionInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DatasetVersionInputRepresentation
-            (oas-body-name): datasetVersion
+                type: DatasetVersionCollectionRepresentation
+      /{versionId}:
+        get:
+          description: Get a dataset version resource representation.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: DatasetVersionRepresentation
+        patch:
+          description: Patch a dataset version resource representation.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: DatasetVersionRepresentation
+          body:
+            application/json:
+              type: DatasetVersionInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DatasetVersionInputRepresentation
+              (oas-body-name): datasetVersion
+        uriParameters:
+          datasetIdOrApiName:
+            type: string
+            required: true
+          versionId:
+            type: string
+            required: true
+        /xmds/{xmdType}:
+          get:
+            description: Get the extended metadata of the given type for the given
+              dataset version.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: XmdRepresentation
+          uriParameters:
+            datasetIdOrApiName:
+              type: string
+              required: true
+            versionId:
+              type: string
+              required: true
+            xmdType:
+              type: string
+              required: true
+              enum:
+                - Asset
+                - Main
+                - System
+                - User
       uriParameters:
         datasetIdOrApiName:
           type: string
           required: true
-        versionId:
-          type: string
-          required: true
-    /versions/{versionId}/xmds/{xmdType}:
-      get:
-        description: Get the extended metadata of the given type for the given
-          dataset version.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: XmdRepresentation
-      uriParameters:
-        datasetIdOrApiName:
-          type: string
-          required: true
-        versionId:
-          type: string
-          required: true
-        xmdType:
-          type: string
-          required: true
-          enum:
-            - Asset
-            - Main
-            - System
-            - User
   /dependencies/{assetId}:
     get:
       description: Get a Dependencies resource representation.
@@ -6088,6 +6124,8 @@ types:
           type: string
           required: true
         versionId:
+          type: string
+          required: true
   /templates:
     get:
       description: Returns collection of Wave analytics templates within the current

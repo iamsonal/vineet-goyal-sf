@@ -28,6 +28,8 @@ types:
     (luvio.ttl): 300
   DatasetCollectionRepresentation:
     (luvio.ttl): 300
+  DatasetVersionCollectionRepresentation:
+    (luvio.ttl): 300
   DatasetCoverageRepresentation:
     (luvio.ttl): 300
   RecipeCollectionRepresentation:
@@ -204,19 +206,23 @@ types:
     patch:
       (luvio.adapter):
         name: updateDataset
-    /versions/{versionId}:
+    /versions:
       get:
         (luvio.adapter):
-          name: getDatasetVersion
-        (luvio.key):
-          id: urlParams.versionId
-      patch:
-        (luvio.adapter):
-          name: updateDatasetVersion
-    /versions/{versionId}/xmds/{xmdType}:
-      get:
-        (luvio.adapter):
-          name: getXmd
+          name: getDatasetVersions
+      /{versionId}:
+        get:
+          (luvio.adapter):
+            name: getDatasetVersion
+          (luvio.key):
+            id: urlParams.versionId
+        patch:
+          (luvio.adapter):
+            name: updateDatasetVersion
+        /xmds/{xmdType}:
+          get:
+            (luvio.adapter):
+              name: getXmd
   /dependencies/{assetId}:
     get:
       (luvio.adapter):

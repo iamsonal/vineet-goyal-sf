@@ -1,0 +1,102 @@
+{
+    "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions",
+    "versions": [
+        {
+            "createdBy": {
+                "id": "005S7000000GHNKIA4",
+                "name": "Integration User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2022-01-05T20:22:34.000Z",
+            "dataset": {
+                "id": "0FbS700000047MtKAI",
+                "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI"
+            },
+            "files": [],
+            "id": "0FcS70000005k35KAA",
+            "lastModifiedBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2022-01-05T20:27:15.000Z",
+            "permissions": {
+                "create": true,
+                "modify": true,
+                "view": true
+            },
+            "predicate": "false",
+            "predicateVersion": 54.0,
+            "securityCoverageUrl": "/services/data/v55.0/wave/security/coverage/datasets/0FbS700000047MtKAI/versions/0FcS70000005k35KAA",
+            "totalRowCount": 3,
+            "type": "datasetversion",
+            "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions/0FcS70000005k35KAA",
+            "xmdsUrl": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions/0FcS70000005k35KAA/xmds"
+        },
+        {
+            "createdBy": {
+                "id": "005S7000000GHNKIA4",
+                "name": "Integration User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-10-04T18:34:11.000Z",
+            "dataset": {
+                "id": "0FbS700000047MtKAI",
+                "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI"
+            },
+            "files": [],
+            "id": "0FcS70000005Y9jKAE",
+            "lastModifiedBy": {
+                "id": "005S7000000GHNKIA4",
+                "name": "Integration User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2022-01-05T20:23:42.000Z",
+            "permissions": {
+                "create": true,
+                "modify": true,
+                "view": true
+            },
+            "securityCoverageUrl": "/services/data/v55.0/wave/security/coverage/datasets/0FbS700000047MtKAI/versions/0FcS70000005Y9jKAE",
+            "totalRowCount": 3,
+            "type": "datasetversion",
+            "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions/0FcS70000005Y9jKAE",
+            "xmdsUrl": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions/0FcS70000005Y9jKAE/xmds"
+        },
+        {
+            "createdBy": {
+                "id": "005S7000000GHNKIA4",
+                "name": "Integration User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2022-01-05T20:23:37.000Z",
+            "dataset": {
+                "id": "0FbS700000047MtKAI",
+                "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI"
+            },
+            "files": [],
+            "id": "0FcS70000005k3AKAQ",
+            "lastModifiedBy": {
+                "id": "005S7000000GHNKIA4",
+                "name": "Integration User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2022-01-05T20:23:42.000Z",
+            "permissions": {
+                "create": true,
+                "modify": true,
+                "view": true
+            },
+            "predicate": "false",
+            "predicateVersion": 1.0,
+            "securityCoverageUrl": "/services/data/v55.0/wave/security/coverage/datasets/0FbS700000047MtKAI/versions/0FcS70000005k3AKAQ",
+            "sharingSource": {
+                "name": "Account"
+            },
+            "totalRowCount": 3,
+            "type": "datasetversion",
+            "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions/0FcS70000005k3AKAQ",
+            "xmdsUrl": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI/versions/0FcS70000005k3AKAQ/xmds"
+        }
+    ]
+}

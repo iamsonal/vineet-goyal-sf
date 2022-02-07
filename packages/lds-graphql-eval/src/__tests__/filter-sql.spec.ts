@@ -858,4 +858,107 @@ describe('filter sql', () => {
             expect(sqlResult.bindings).toEqual(["'foo@bar.com'"]);
         });
     });
+
+    describe('percent', () => {
+        const percentQuery = (predicate) => {
+            return /* GraphQL */ `
+                query percentQuery {
+                    uiapi {
+                        query {
+                            Opportunity(where: { Probability: { ${predicate} } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Probability {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+        };
+
+        it('should return the correct sql with percent filter predicates for eq operator', () => {
+            const predicate = `eq: 50.2`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+
+        it('should return the correct sql when provided in integer form', () => {
+            const predicate = `eq: 50`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50']);
+        });
+
+        it('should return the correct sql with percent filter predicates for ne operator', () => {
+            const predicate = `ne: 50.2`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+
+        it('should return the correct sql with percent filter predicates for gt operator', () => {
+            const predicate = `gt: 50.2`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+
+        it('should return the correct sql with percent filter predicates for gte operator', () => {
+            const predicate = `gte: 50.2`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+
+        it('should return the correct sql with percent filter predicates for lt operator', () => {
+            const predicate = `lt: 50.2`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+
+        it('should return the correct sql with percent filter predicates for lte operator', () => {
+            const predicate = `lte: 50.2`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+
+        it('should return the correct sql with percent filter predicates for in operator', () => {
+            const predicate = `in: [50.2]`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+
+        it('should return the correct sql with percent filter predicates for nin operator', () => {
+            const predicate = `nin: [50.2]`;
+            const queryResult = transform(parseAndVisit(percentQuery(predicate)), parserInput);
+            const sqlResult = sql(unwrappedValue(queryResult), sqlMappingInput);
+
+            expect(sqlResult.sql).toMatchSnapshot();
+            expect(sqlResult.bindings).toEqual(['50.2']);
+        });
+    });
 });

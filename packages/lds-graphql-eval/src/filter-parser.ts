@@ -190,7 +190,7 @@ function spanningFilter(
     const { apiName } = referenceInfo;
     const path = extractPath('ApiName');
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path };
-    const typePredicate = comparison(extract, eq, stringLiteral(apiName, true, true));
+    const typePredicate = comparison(extract, eq, stringLiteral(apiName, true));
 
     return fieldsToFilters([fieldNode], jsonAlias, apiName, input).map((container) => {
         const { predicate, joinNames: names, joinPredicates: predicates } = container;
@@ -631,6 +631,62 @@ function operatorWithValue(
                       })
                       .mapError((e) => [e])
                 : failure([message(`Comparison value must be a double array.`)]);
+        }
+    }
+
+    if (objectInfoDataType === 'Percent') {
+        if (isScalarOperatorType(operator)) {
+            // Percents are documented as being Double-like, but in practice the UIAPI GraphQL
+            // API will accent Integer (50) and Float (50.0) inputs and treat them equally
+            const isPercentLike =
+                (is<FloatValueNode>(value, 'FloatValue') || is<IntValueNode>(value, 'IntValue')) &&
+                !isNaN(parseFloat(value.value));
+
+            if (isPercentLike) {
+                return success({
+                    type: 'DoubleOperator',
+                    operator,
+                    value: { type: ValueType.DoubleLiteral, value: parseFloat(value.value) },
+                });
+            } else {
+                return failure([message(`Comparison value must be a ${objectInfoDataType}.`)]);
+            }
+        }
+
+        if (isSetOperatorType(operator)) {
+            if (is<ListValueNode>(value, 'ListValue')) {
+                const typeErrors: PredicateError[] = [];
+                const values = [];
+
+                for (const node of value.values) {
+                    if (
+                        is<FloatValueNode>(node, 'FloatValue') ||
+                        is<IntValueNode>(node, 'IntValue')
+                    ) {
+                        values.push(parseFloat(node.value));
+                    } else {
+                        typeErrors.push(
+                            message(`Comparison value must be a ${objectInfoDataType} array.`)
+                        );
+                    }
+                }
+                if (typeErrors.length) {
+                    return failure(typeErrors);
+                }
+
+                return success({
+                    operator,
+                    type: 'DoubleSetOperator',
+                    value: {
+                        type: ValueType.NumberArray,
+                        value: values,
+                    },
+                });
+            } else {
+                return failure([
+                    message(`Comparison value must be a ${objectInfoDataType} array.`),
+                ]);
+            }
         }
     }
 

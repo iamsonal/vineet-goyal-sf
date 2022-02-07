@@ -86,5 +86,6 @@ export function isScalarDataType(type: DataType): boolean {
         'Url',
         'Email',
         'TextArea',
+        'Percent',
     ].includes(type);
 }

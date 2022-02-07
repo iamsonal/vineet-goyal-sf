@@ -1173,7 +1173,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
-              "isCaseSensitive": true,
+              "isCaseSensitive": false,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",
@@ -1202,7 +1202,7 @@ Object {
             },
             "operator": "eq",
             "right": Object {
-              "isCaseSensitive": true,
+              "isCaseSensitive": false,
               "safe": true,
               "type": "StringLiteral",
               "value": "User",

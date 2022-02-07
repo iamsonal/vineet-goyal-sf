@@ -137,7 +137,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, true)
+                    stringLiteral('User', true, false)
                 ),
             ]);
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
@@ -190,7 +190,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, true)
+                    stringLiteral('User', true, false)
                 ),
             ]);
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
@@ -271,7 +271,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, true)
+                    stringLiteral('User', true, false)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -333,7 +333,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, true)
+                    stringLiteral('User', true, false)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -386,7 +386,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, true)
+                    stringLiteral('User', true, false)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -478,7 +478,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, true)
+                    stringLiteral('User', true, false)
                 ),
                 comparison(
                     jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
@@ -488,7 +488,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, true)
+                    stringLiteral('User', true, false)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -577,6 +577,45 @@ describe('filter-parser', () => {
                     );
 
                 [eq, ne, lt, gt, lte, gte].forEach(testWithOperator);
+            });
+
+            it('returns predicate when Percent field is paired with an supported value types', () => {
+                let filter = recordFilter(
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Probability: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        in: listNode([doubleNode('33.6'), intNode('33')]),
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    'Opportunity',
+                    'Opportunity',
+                    objectInfoMap
+                );
+
+                expect(filter.isSuccess).toEqual(true);
+                expect(unwrappedValue(filter)).toEqual({
+                    predicate: {
+                        type: 'comparison',
+                        left: {
+                            type: 'JsonExtract',
+                            jsonAlias: 'Opportunity',
+                            path: 'data.fields.Probability.value',
+                        },
+                        right: { type: 'NumberArray', value: [33.6, 33] },
+                        operator: 'in',
+                    },
+                    joinNames: [],
+                    joinPredicates: [],
+                });
             });
 
             it('returns predicate when string field is paired with an supported operators', () => {
@@ -1134,6 +1173,33 @@ describe('filter-parser', () => {
                 expect(filter.isSuccess).toEqual(false);
                 const { message } = filter.error[0] as MessageError;
                 expect(message).toEqual('Comparison value must be a Currency array.');
+            });
+
+            it('returns an error when Percent field is paired with an unsupported value types', () => {
+                let filter = recordFilter(
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Probability: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        eq: stringNode('foo'),
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    'Opportunity',
+                    'Opportunity',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                expect(filter.isSuccess).toEqual(false);
+                const { message } = filter.error[0] as MessageError;
+                expect(message).toEqual('Comparison value must be a Percent.');
             });
         });
 

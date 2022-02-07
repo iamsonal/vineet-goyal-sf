@@ -13,7 +13,8 @@ export type DataType =
     | 'Phone'
     | 'Url'
     | 'TextArea'
-    | 'Email';
+    | 'Email'
+    | 'Percent';
 
 export type FieldInfo = ScalarFieldInfo | ReferenceFieldInfo;
 
@@ -37,7 +38,8 @@ export interface ScalarFieldInfo extends BaseFieldInfo {
         | 'Phone'
         | 'Url'
         | 'TextArea'
-        | 'Email';
+        | 'Email'
+        | 'Percent';
 }
 
 export interface ReferenceToInfo {

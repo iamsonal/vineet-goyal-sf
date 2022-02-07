@@ -206,6 +206,10 @@ jobs:
     steps:
       - checkout
       - build-tools/merge-with-parent
+      - run:
+          name: Recommend rebase on failure
+          command: echo 'Failed to merge branch with parent. Please rebase the branch.'
+          when: on_fail
       - restore_yarn_cache
       - install
       - run_version_check

@@ -3,7 +3,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '54.0'
+version: '55.0'
 mediaType: application/json
 protocols:
   - https
@@ -592,6 +592,124 @@ types:
       url:
         description: The URL of the table resource
         type: string
+  GrantCollectionRepresentation:
+    description: A list of grants for Analytics Data Service assets
+    type: object
+    properties:
+      grants:
+        description: The list of grants.
+        type: array
+        items:
+          type: GrantRepresentation
+      nextPageUrl:
+        description: The url of the next page in the collection.
+        type: string
+      totalSize:
+        description: The total number of grants returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  GrantInputCollectionRepresentation:
+    description: A definition used to grant or revoke new grants
+    type: object
+    properties:
+      grants:
+        description: Grants to process
+        type: array
+        items:
+          type: GrantInputRepresentation
+      requestId:
+        description: The id of this request in the originating system
+        type: string
+  GrantInputRepresentation:
+    description: A definition used to grant or revoke an access grant
+    type: object
+    properties:
+      grantee:
+        description: salesforce Id of the grantee for this permission
+        type: string
+      operation:
+        description: Is this operation a grant or revoke
+        type: string
+        enum:
+          - Grant
+          - Revoke
+      permission:
+        description: The permission to grant or revoke
+        type: string
+        enum:
+          - CreateSchema
+          - CreateTable
+          - Delete
+          - Insert
+          - Ownership
+          - Select
+          - Update
+          - Usage
+      qualifiedName:
+        description: qualified name for the asset this request is operating on
+        type: string
+  GrantRepresentation:
+    description: Details about an Analytics Data Service access grant
+    type: object
+    properties:
+      grantDate:
+        description: Time of the initial grant
+        type: string
+      grantee:
+        description: Grantee that holds this permission
+        type: GrantUrogRepresentation
+      grantor:
+        description: User that granted this permission
+        type: GrantUrogRepresentation
+      permission:
+        description: Permission this grant allows
+        type: string
+        enum:
+          - CreateSchema
+          - CreateTable
+          - Delete
+          - Insert
+          - Ownership
+          - Select
+          - Update
+          - Usage
+      resource:
+        description: Resource this grant is for
+        type: ResourceReferenceRepresentation
+  GrantUpdateCollectionRepresentation:
+    description: A list of Updated Grants for ADS assets
+    type: object
+    properties:
+      grants:
+        description: The list of grants that have been updated from this update request.
+        type: array
+        items:
+          type: GrantRepresentation
+      requestId:
+        description: The provided request id.
+        type: string
+  GrantUrogRepresentation:
+    description: Details about a user, role, or group granted access to an ADS asset
+    type: object
+    properties:
+      displayName:
+        description: display name of the grant holder - full user name, group name,
+          or role name
+        type: string
+      id:
+        description: Id of the grant holder
+        type: string
+      type:
+        description: type of the grant holder - user/group/role at
+        type: string
+        enum:
+          - Group
+          - RoleAt
+          - RoleDown
+          - RoleDownInternal
+          - User
 
 /analytics/data-service:
   /catalog:
@@ -727,7 +845,38 @@ types:
         qualifiedName:
           type: string
           required: true
-
+    /grants:
+      get:
+        description: Retrieve a list of Analytics Data Service Grants.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: GrantCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          qualifiedName:
+            type: string
+            required: false
+      post:
+        description: Grant or revoke Analytics Data Service Grants
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: GrantUpdateCollectionRepresentation
+        body:
+          application/json:
+            description: List of Grant/Revoke statements
+            type: GrantInputCollectionRepresentation
+            (oas-body-name): grants
 /analytics/data-service/sync:
   /connectors:
     get:

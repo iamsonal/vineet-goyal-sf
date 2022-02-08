@@ -6,8 +6,9 @@ import timekeeper from 'timekeeper';
 
 const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
-const URL_SYNC_BASE = `/analytics/data-service/sync`;
 const URL_CATALOG_BASE = `/analytics/data-service/catalog`;
+const URL_GRANTS_BASE = `/grants`;
+const URL_SYNC_BASE = `/analytics/data-service/sync`;
 const ASSET_TTL = 5000;
 // Data Connectors
 function mockGetConnectorsNetworkOnce(config, mockData) {
@@ -559,6 +560,61 @@ function getCatalogDatabaseMatcher(config) {
     });
 }
 
+// Grants
+function mockGetCatalogGrantsNetworkOnce(config, mockData) {
+    const paramMatch = getCatalogGrantsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetCatalogGrantsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCatalogGrantsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockCreateCatalogGrantsNetworkOnce(config, mockData) {
+    const paramMatch = createCatalogGrantsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCreateCatalogGrantsNetworkErrorOnce(config, mockData) {
+    const paramMatch = createCatalogGrantsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getCatalogGrantsMatcher(config) {
+    const { qualifiedName, page, pageSize } = config;
+    return sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_CATALOG_BASE}${URL_GRANTS_BASE}`,
+        method: 'get',
+        body: null,
+        queryParams: {
+            page,
+            pageSize,
+            qualifiedName,
+        },
+    });
+}
+
+function createCatalogGrantsMatcher(config) {
+    let { grants, requestId } = config;
+    return sinon.match({
+        body: { grants, requestId },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_CATALOG_BASE}${URL_GRANTS_BASE}`,
+    });
+}
+
 function expireAsset() {
     timekeeper.travel(Date.now() + ASSET_TTL + 1);
 }
@@ -606,4 +662,8 @@ export {
     mockGetCatalogDatabasesNetworkErrorOnce,
     mockDeleteCatalogTableNetworkOnce,
     mockDeleteCatalogTableNetworkErrorOnce,
+    mockGetCatalogGrantsNetworkOnce,
+    mockGetCatalogGrantsNetworkErrorOnce,
+    mockCreateCatalogGrantsNetworkOnce,
+    mockCreateCatalogGrantsNetworkErrorOnce,
 };

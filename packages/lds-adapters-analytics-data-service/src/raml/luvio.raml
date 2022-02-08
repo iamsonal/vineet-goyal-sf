@@ -50,6 +50,17 @@ types:
   DatabaseRepresentation:
     (luvio.ttl): 5000
 
+  GrantCollectionRepresentation:
+    (luvio.ttl): 5000
+  GrantRepresentation:
+    (luvio.ttl): 5000
+  GrantInputCollectionRepresentation:
+    (luvio.ttl): 300
+  GrantUpdateCollectionRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      requestId: requestId
+
 /analytics/data-service:
   /catalog:
     /databases:
@@ -83,6 +94,13 @@ types:
           name: deleteCatalogTable
         (luvio.key):
           qualifiedName: urlParams.qualifiedName
+    /grants:
+      get:
+        (luvio.adapter):
+          name: getCatalogGrants
+      post:
+        (luvio.adapter):
+          name: createCatalogGrants
 /analytics/data-service/sync:
   /connectors:
     get:

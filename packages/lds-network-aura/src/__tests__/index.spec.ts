@@ -9515,6 +9515,78 @@ describe('routes', () => {
         );
     });
 
+    describe('get /analytics/data-service/catalog/grants', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+                queryParams: {
+                    qualifiedName: 'testdb01.testSchema01.testTable',
+                },
+            },
+            [
+                'AdatsController.getCatalogGrants',
+                {
+                    qualifiedName: 'testdb01.testSchema01.testTable',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+            },
+            {}
+        );
+    });
+
+    describe('post /analytics/data-service/catalog/grants', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+                body: {
+                    grants: [
+                        {
+                            qualifiedName: 'testdb01.testSchema01.testTable',
+                            grantee: '0ZGRM0000004Dn04AE',
+                            operation: 'Grant',
+                            permission: 'Ownership',
+                        },
+                    ],
+                },
+            },
+            [
+                'AdatsController.createCatalogGrants',
+                {
+                    grants: [
+                        {
+                            qualifiedName: 'testdb01.testSchema01.testTable',
+                            grantee: '0ZGRM0000004Dn04AE',
+                            operation: 'Grant',
+                            permission: 'Ownership',
+                        },
+                    ],
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+            },
+            {}
+        );
+    });
+
     describe('post /connect/identity-verification/search', () => {
         testControllerInput(
             {

@@ -1,0 +1,25 @@
+{
+    "requestId": "requestId",
+    "grants": [
+        {
+            "resource": {
+                "id": "Account",
+                "label": "Account",
+                "name": "Account",
+                "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account"
+            },
+            "grantee": {
+                "id": "0ZGRM0000004Dn04AE",
+                "displayName": "Bart Simpson",
+                "type": "User"
+            },
+            "grantor": {
+                "id": "0ZGRM0000004DF24AA",
+                "displayName": "Homer Simpson",
+                "type": "User"
+            },
+            "grantDate": "2020-10-14T14:36:56.000Z",
+            "permission": "CreateTable"
+        }
+    ]
+}

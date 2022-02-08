@@ -127,6 +127,8 @@ const ADATS_CATALOG_SCHEMA_PATH = new RegExp(
 const ADATS_CATALOG_TABLES_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/tables$`, 'i');
 const ADATS_CATALOG_TABLE_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/tables/[a-zA-Z.0-9_-]+$`);
 
+const ADATS_GRANTS_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/grants$`);
+
 const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
 
 const DATA_CONNECTORS_PATH = new RegExp(`${WAVE_BASE_URI}/dataconnectors$`, 'i');
@@ -1618,6 +1620,22 @@ const adats: ApiFamily = {
             path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_TABLE_PATH.test(path),
         transport: {
             controller: 'AdatsController.deleteCatalogTable',
+        },
+    },
+    getCatalogGrants: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_GRANTS_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.getCatalogGrants',
+        },
+    },
+    createCatalogGrants: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_GRANTS_PATH.test(path),
+        transport: {
+            controller: 'AdatsController.createCatalogGrants',
         },
     },
 };

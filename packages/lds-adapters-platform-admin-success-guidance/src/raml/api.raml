@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '54.0'
+version: '55.0'
 mediaType: application/json
 protocols:
   - https
@@ -343,6 +343,10 @@ types:
       developerName:
         description: The Lightning Assistant developer name
         type: string
+      estimatedMinutesToComplete:
+        description: The estimated minutes to complete of the assistant
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
       icon:
         description: The URL for the icon for the assistant
         type: string

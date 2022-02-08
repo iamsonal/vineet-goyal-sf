@@ -6,6 +6,7 @@
     "debugModeEnabled": false,
     "description": "This is a test assistant fetched with getAssistant(...)",
     "developerName": "test_assistant_name",
+    "estimatedMinutesToComplete": 100,
     "icon": "/projRes/ui-admin-success-components/img/tempicon.png",
     "isArchived": false,
     "isPreview": false,

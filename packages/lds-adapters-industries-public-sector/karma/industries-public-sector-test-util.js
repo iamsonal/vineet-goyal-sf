@@ -37,6 +37,32 @@ function postServicePlanTemplateDetailsMatcher(config) {
     });
 }
 
+export function mockGetSPTWithChildRecordsNetworkOnce(config, mockData) {
+    const paramMatch = getSPTWithChildRecordsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetSPTWithChildRecordsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getSPTWithChildRecordsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getSPTWithChildRecordsMatcher(config) {
+    const { servicePlanTemplateId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/socialcare/serviceplan-templates/${servicePlanTemplateId}`,
+        queryParams: {},
+    });
+}
+
 export function mockPostCaseServicePlanDetailsNetwokOnce(config, mockData) {
     const paramMatch = postCaseServicePlanDetailsMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);

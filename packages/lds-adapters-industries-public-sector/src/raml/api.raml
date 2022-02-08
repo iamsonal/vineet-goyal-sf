@@ -47,6 +47,46 @@ types:
         description: API response message for failure case
         type: string
         required: false
+  BenefitOutputRepresentation:
+    description: Output Representation of Benefit
+    type: object
+    properties:
+      associatedGoalDefinition:
+        description: Associated GoalDefinition of the Benefit
+        type: GoalDefinitionOutputRepresentation
+        required: false
+      benefitFrequency:
+        description: Frequency of the Benefit
+        type: string
+        required: false
+      enrollmentCount:
+        description: EnrollmentCount of the Benefit
+        type: integer
+        required: false
+      id:
+        description: Id of the Benefit record
+        type: string
+      isActive:
+        description: Boolean value representing whether this benefit record is active
+          or not
+        type: boolean
+      maximumAmount:
+        description: Maximum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      minimumAmount:
+        description: Minimum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      name:
+        description: Name of the Benefit
+        type: string
+      status:
+        description: Status of the Benefit
+        type: string
+        required: false
   BenefitRepresentation:
     description: Output Representation of Benefit
     type: object
@@ -130,6 +170,19 @@ types:
         description: API response message for failure case
         type: string
         required: false
+  GoalDefinitionOutputRepresentation:
+    description: Output Representation of Goal Definition
+    type: object
+    properties:
+      id:
+        description: Record Id of goal Definition
+        type: string
+      name:
+        description: Name of Goal Definition
+        type: string
+      status:
+        description: Status of Goal Definition
+        type: string
   GoalDefinitionRepresentation:
     description: Output Representation of Goal Definition
     type: object
@@ -196,6 +249,20 @@ types:
         items:
           # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
           type: ServicePlanTemplateBenefitInputRepresentation
+  ServicePlanTemplateBenefitRepresentation:
+    description: Record Representation of ServicePlanTemplateBenefit
+    type: object
+    properties:
+      associatedBenefit:
+        description: Associated Benefit record ServicePlanTemplateBenefit
+        type: BenefitOutputRepresentation
+      id:
+        description: Id of ServicePlanTemplateBenefit Record
+        type: string
+      priority:
+        description: Priority of ServicePlanTemplateBenefit Record
+        type: string
+        required: false
   ServicePlanTemplateGoalInputRepresentation:
     description: Input Representation for Service Plan Template Goal Object
     type: object
@@ -218,6 +285,44 @@ types:
         items:
           # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
           type: ServicePlanTemplateGoalInputRepresentation
+  ServicePlanTemplateGoalRepresentation:
+    description: Record Representation of ServicePlanTemplateGoal
+    type: object
+    properties:
+      associatedGoalDefinition:
+        description: Associated GoalDefinition Record
+        type: GoalDefinitionOutputRepresentation
+      id:
+        description: Id of ServicePlanTemplateGoal Record
+        type: string
+      priority:
+        description: Priority of ServicePlanTemplateGoal Record
+        type: string
+        required: false
+  ServicePlanTemplateRepresentation:
+    description: ServicePlanTemplate record and it's related ServicePlanTemplateGoals
+      and ServicePlanTemplateBenefits
+    type: object
+    properties:
+      id:
+        description: Id of ServicePlanTemplate Record
+        type: string
+      name:
+        description: Name of ServicePlanTemplate Record
+        type: string
+      servicePlanTemplateBenefits:
+        description: List of Associated ServicePlanTemplateBenefit Records
+        type: array
+        items:
+          type: ServicePlanTemplateBenefitRepresentation
+      servicePlanTemplateGoals:
+        description: List of Associated ServicePlanTemplateGoal Records
+        type: array
+        items:
+          type: ServicePlanTemplateGoalRepresentation
+      status:
+        description: Status of ServicePlanTemplate Record
+        type: string
   # TODO Hand-Rolled due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAMmFgP)
   CaseServicePlanInputWrapperRepresentation:
     description: Wrapper Input Representation for Case Service Plan
@@ -407,7 +512,19 @@ types:
         searchKey:
           type: string
           required: false
-
+  /serviceplan-templates/{servicePlanTemplateId}:
+    get:
+      description: API to fetch data of ServicePlanTemplateId and it's related record
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ServicePlanTemplateRepresentation
+    uriParameters:
+      servicePlanTemplateId:
+        type: string
+        required: true
   /serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}:
     post:
       description: Create Service Plan Template Benefit and Service Plan Template

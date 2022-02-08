@@ -399,6 +399,11 @@ const SEARCH_GOAL_DEFINITIONS_PATH = new RegExp(
 
 const SEARCH_ACTIVE_BENEFITS_PATH = new RegExp(`${CONNECT_BASE_URI}/socialcare/benefits`, 'i');
 
+const GET_SERVICE_PLAN_TEMPLATE_DETAILS = new RegExp(
+    `${CONNECT_BASE_URI}/socialcare/serviceplan-templates/([A-Z0-9]){15,18}$`,
+    'i'
+);
+
 const POST_SERVICE_PLAN_TEMPLATE_DETAILS = new RegExp(
     `${CONNECT_BASE_URI}/socialcare/serviceplan-templates/([A-Z0-9]){15,18}/actions/([A-Z]){1,128}`,
     'i'
@@ -802,6 +807,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SEARCH_ACTIVE_BENEFITS_PATH.test(path),
         transport: {
             controller: 'PublicSectorFamilyController.getActiveBenefitsByNameSearch',
+        },
+    },
+    getSPTWithChildRecords: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_SERVICE_PLAN_TEMPLATE_DETAILS.test(path),
+        transport: {
+            controller: 'PublicSectorFamilyController.getSPTWithChildRecords',
         },
     },
     postServicePlanTemplateDetails: {

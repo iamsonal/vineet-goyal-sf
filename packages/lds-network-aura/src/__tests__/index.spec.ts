@@ -2837,6 +2837,38 @@ describe('routes', () => {
         );
     });
 
+    describe('get /socialcare/serviceplan-templates/{servicePlanTemplateId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE`,
+                urlParams: {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                },
+            },
+            [
+                'PublicSectorFamilyController.getSPTWithChildRecords',
+                {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE`,
+            },
+            {}
+        );
+    });
+
     describe('post /socialcare/serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}', () => {
         testControllerInput(
             {

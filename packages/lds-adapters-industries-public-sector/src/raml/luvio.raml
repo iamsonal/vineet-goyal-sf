@@ -46,6 +46,10 @@ types:
               }
       queryParameters:
         searchKey:
+  /serviceplan-templates/{servicePlanTemplateId}:
+    get:
+      (luvio.adapter):
+        name: getSPTWithChildRecords
   /serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}:
     post:
       (luvio.adapter):

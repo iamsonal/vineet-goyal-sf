@@ -153,6 +153,7 @@ describe('mobile runtime integration tests', () => {
             const networkCallsBefore = networkAdapter.sentRequests.length;
             // flush everything and now make a combined request, it should service from L2
             await flushPromises();
+
             (luvio as any).environment.store.reset();
 
             const configCombined = {
@@ -296,10 +297,10 @@ describe('mobile runtime integration tests', () => {
             snapshot = await getRecords(config);
 
             expect(snapshot.state).toBe('Stale');
-
-            await flushPromises();
-
             expect(networkSpy).toBeCalledTimes(2);
+
+            await durableStore.waitForSet((key) => key.indexOf(id1) > 0);
+            await durableStore.flushPendingWork();
 
             snapshot = await getRecords(config);
 

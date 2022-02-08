@@ -34,6 +34,7 @@ export class MockNimbusNetworkAdapter implements NetworkAdapter {
         } else {
             onResponse(mockResponse);
         }
+
         return Promise.resolve('mocked cancel token');
     }
 

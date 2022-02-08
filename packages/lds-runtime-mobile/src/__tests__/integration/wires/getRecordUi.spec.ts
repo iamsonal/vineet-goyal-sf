@@ -3,7 +3,6 @@ import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.js
 import recordUiResponse from './data/single-record-Account-layouttypes-Full-modes-View.json';
 import { JSONStringify } from '../../../utils/language';
 import { resetLuvioStore, setup } from './integrationTestSetup';
-import { flushPromises } from '../../testUtils';
 const RECORD_ID = mockAccount.id;
 
 describe('mobile runtime integration tests', () => {
@@ -46,7 +45,6 @@ describe('mobile runtime integration tests', () => {
             expect(uiSnapshot.state).toBe('Fulfilled');
             expect(uiSnapshot.data.records[RECORD_ID].fields['Name']).toBeUndefined();
 
-            await flushPromises();
             resetLuvioStore();
 
             const snapshotFromCache = await getRecord({

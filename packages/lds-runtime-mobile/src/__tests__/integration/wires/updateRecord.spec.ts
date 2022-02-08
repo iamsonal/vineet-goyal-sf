@@ -4,7 +4,7 @@ import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftManager, DraftQueue, DraftActionOperationType } from '@salesforce/lds-drafts';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
-import { flushPromises } from '../../testUtils';
+import { callbackObserver, flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOpportunity from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
@@ -227,7 +227,11 @@ describe('mobile runtime integration tests', () => {
             expect(snapshot.state).toBe('Fulfilled');
 
             const getRecordCallbackSpy = jest.fn();
-            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
+            const { waitForCallback, callback } = callbackObserver<any>();
+            luvio.storeSubscribe(snapshot, (snapshot) => {
+                getRecordCallbackSpy(snapshot);
+                callback(snapshot);
+            });
 
             await updateRecord({
                 recordId: RECORD_ID,
@@ -270,6 +274,7 @@ describe('mobile runtime integration tests', () => {
             // the draft queue completed listener asynchronously ingests so have to flush promises
             await flushPromises();
 
+            await waitForCallback(4);
             expect(getRecordCallbackSpy).toBeCalledTimes(4);
 
             // should still contain the second draft data
@@ -300,12 +305,19 @@ describe('mobile runtime integration tests', () => {
             expect(snapshot.state).toBe('Fulfilled');
 
             const getRecordCallbackSpy = jest.fn();
-            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
+
+            const { waitForCallback, callback } = callbackObserver<any>();
+            luvio.storeSubscribe(snapshot, (snapshot) => {
+                callback(snapshot);
+                getRecordCallbackSpy(snapshot);
+            });
 
             await updateRecord({
                 recordId: RECORD_ID,
                 fields: { Name: updatedNameValue },
             });
+
+            await waitForCallback(1);
 
             // before upload we should get back the optimistic response with drafts property
             expect(getRecordCallbackSpy).toBeCalledTimes(1);
@@ -327,10 +339,8 @@ describe('mobile runtime integration tests', () => {
 
             await draftQueue.processNextAction();
 
-            // the draft queue completed listener asynchronously ingests so have to flush promises
-            await flushPromises();
-
             const recordCallbacks = getRecordCallbackSpy.mock.calls;
+            await waitForCallback(3);
 
             // callback should not contain drafts anymore
             expect(recordCallbacks[recordCallbacks.length - 1][0].data.fields.Name.value).toBe(
@@ -419,9 +429,8 @@ describe('mobile runtime integration tests', () => {
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
 
-            // update the reference fied
+            // update the reference field
             await updateRecord({ recordId: opportunityId, fields: { OwnerId: updatedOwnerId } });
-
             await flushPromises();
 
             const oppyWithExtraField = {

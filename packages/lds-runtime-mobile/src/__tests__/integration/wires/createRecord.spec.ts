@@ -400,7 +400,8 @@ describe('mobile runtime integration tests', () => {
             const draftRecordId = record.id;
             const key = keyBuilderRecord({ recordId: draftRecordId });
 
-            expect(durableStore.kvp['DEFAULT'][key]).toBeDefined();
+            const foundEntries = await durableStore.getEntriesInSegment([key], 'DEFAULT');
+            expect(foundEntries.isMissingEntries).toEqual(false);
 
             networkAdapter.setMockResponse({
                 status: 201,
@@ -413,7 +414,8 @@ describe('mobile runtime integration tests', () => {
             await flushPromises();
 
             // draft removed from durable store
-            expect(durableStore.kvp['DEFAULT'][key]).toBeUndefined();
+            const missingEntry = await durableStore.getEntriesInSegment([key], 'DEFAULT');
+            expect(missingEntry.isMissingEntries).toEqual(true);
 
             // draft still accessible using draft id
             const snap = await getRecord({
@@ -439,7 +441,8 @@ describe('mobile runtime integration tests', () => {
             const canonicalKeyId = mockAccount.id;
             const key = keyBuilderRecord({ recordId: draftKeyId });
 
-            expect(durableStore.kvp['DEFAULT'][key]).toBeDefined();
+            const foundEntries = await durableStore.getEntriesInSegment([key], 'DEFAULT');
+            expect(foundEntries.isMissingEntries).toEqual(false);
 
             networkAdapter.setMockResponse({
                 status: 201,
@@ -452,8 +455,8 @@ describe('mobile runtime integration tests', () => {
             await flushPromises();
 
             // draft removed from durable store
-            expect(durableStore.kvp['DEFAULT'][key]).toBeUndefined();
-
+            const missingEntry = await durableStore.getEntriesInSegment([key], 'DEFAULT');
+            expect(missingEntry.isMissingEntries).toEqual(true);
             // ---- Act ----
 
             // Reset Luvio

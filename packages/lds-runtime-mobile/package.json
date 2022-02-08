@@ -28,6 +28,7 @@
         "@salesforce/lds-adapters-uiapi": "1.38.0",
         "@salesforce/lds-drafts": "1.38.0",
         "@salesforce/lds-graphql-eval": "1.38.0",
-        "@salesforce/user": "0.0.12"
+        "@salesforce/user": "0.0.12",
+        "sqlite3": "4.2.0"
     }
 }

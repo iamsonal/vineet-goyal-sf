@@ -7,7 +7,6 @@ import {
 import { JSONStringify } from '../utils/language';
 import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
 import { DurableStoreChange } from '@mobileplatform/nimbus-plugin-lds';
-import { flushPromises } from './testUtils';
 
 const testSegment = 'testSegment';
 describe('Nimbus durable store tests', () => {
@@ -162,11 +161,8 @@ describe('Nimbus durable store tests', () => {
         });
         it('should parse serialized entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
-            nimbusStore.kvp = {
-                [DefaultDurableSegment]: {
-                    [recordId]: JSONStringify(recordData),
-                },
-            };
+
+            await nimbusStore.set(recordId, DefaultDurableSegment, recordData);
             mockNimbusStoreGlobal(nimbusStore);
 
             const durableStore = new NimbusDurableStore();
@@ -179,11 +175,8 @@ describe('Nimbus durable store tests', () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             const durableStore = new NimbusDurableStore();
-            nimbusStore.kvp = {
-                [DefaultDurableSegment]: {
-                    ['present']: JSONStringify({ data: {} }),
-                },
-            };
+            await nimbusStore.set('present', DefaultDurableSegment, { data: {} });
+
             const result = await durableStore.getEntries(
                 ['missing', 'present'],
                 DefaultDurableSegment
@@ -367,9 +360,8 @@ describe('Nimbus durable store tests', () => {
             });
             expect(callCount).toEqual(0);
             const secondDurableStore = new NimbusDurableStore();
-            secondDurableStore.evictEntries(['1'], DefaultDurableSegment);
+            await secondDurableStore.evictEntries(['1'], DefaultDurableSegment);
 
-            await flushPromises();
             expect(callCount).toEqual(1);
         });
 
@@ -385,9 +377,8 @@ describe('Nimbus durable store tests', () => {
                 expect(changes[0].isExternalChange).toEqual(false);
             });
             expect(callCount).toEqual(0);
-            durableStore.evictEntries(['1'], DefaultDurableSegment);
+            await durableStore.evictEntries(['1'], DefaultDurableSegment);
 
-            await flushPromises();
             expect(callCount).toEqual(1);
         });
     });

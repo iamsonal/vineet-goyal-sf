@@ -10,7 +10,6 @@ import {
     GUIDANCE_BASE_URI,
     LEARNING_CONTENT_PLATFORM_BASE_URI,
     WAVE_BASE_URI,
-    ADATS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     CMS_BASE_URI,
     BILLING_BASE_URI,
@@ -18,7 +17,6 @@ import {
     EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
     CIB_BASE_URI,
-    ADATS_DATABASE_BASE_URI,
     ADATS_SYNC_BASE_URI,
     ADATS_CATALOG_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
@@ -9317,15 +9315,15 @@ describe('routes', () => {
         );
     });
 
-    describe('get /analytics/data-service/databases', () => {
+    describe('get /analytics/data-service/catalog/databases', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_CATALOG_BASE_URI,
                 basePath: `/databases`,
             },
             [
-                'AdatsController.getDatabases',
+                'AdatsController.getCatalogDatabases',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -9334,22 +9332,22 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_CATALOG_BASE_URI,
                 basePath: `/databases`,
             },
             {}
         );
     });
 
-    describe('get /analytics/data-service/databases/{databaseName}', () => {
+    describe('get /analytics/data-service/catalog/databases/{database}', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/databases/testDatabase01`,
             },
             [
-                'AdatsController.getDatabase',
+                'AdatsController.getCatalogDatabase',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -9358,8 +9356,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/databases/testDatabase01`,
             },
             {}
         );

@@ -7,9 +7,7 @@ import timekeeper from 'timekeeper';
 const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_SYNC_BASE = `/analytics/data-service/sync`;
-const URL_DATABASE_BASE = `/analytics/data-service/databases`;
 const URL_CATALOG_BASE = `/analytics/data-service/catalog`;
-
 const ASSET_TTL = 5000;
 // Data Connectors
 function mockGetConnectorsNetworkOnce(config, mockData) {
@@ -443,9 +441,9 @@ function mockDeleteCatalogTableNetworkErrorOnce(config, mockData = {}) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-// Databases
-function mockGetDatabasesNetworkOnce(config, mockData) {
-    const paramMatch = getDatabasesMatcher();
+// Catalog Databases
+function mockGetCatalogDatabasesNetworkOnce(config, mockData) {
+    const paramMatch = getCatalogDatabasesMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -453,22 +451,22 @@ function mockGetDatabasesNetworkOnce(config, mockData) {
     }
 }
 
-function mockGetDatabasesNetworkErrorOnce(config, mockData) {
-    const paramMatch = getDatabasesMatcher();
+// Catalog Database
+function mockGetCatalogDatabasesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCatalogDatabasesMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-// Database
-function mockGetDatabaseNetworkOnce(config, mockData) {
-    const paramMatch = getDatabaseMatcher(config);
+function mockGetCatalogDatabaseNetworkOnce(config, mockData) {
+    const paramMatch = getCatalogDatabaseMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
         mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
     }
 }
-function mockGetDatabaseNetworkErrorOnce(config, mockData) {
-    const paramMatch = getDatabaseMatcher(config);
+function mockGetCatalogDatabaseNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCatalogDatabaseMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -537,23 +535,27 @@ function deleteCatalogTableMatcher(config) {
     });
 }
 
-function getDatabasesMatcher() {
+function getCatalogDatabasesMatcher(config) {
+    const { userId } = config;
+
     return sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_DATABASE_BASE}`,
+        basePath: `${URL_CATALOG_BASE}/databases`,
         method: 'get',
         body: null,
+        queryParams: { userId },
     });
 }
 
-function getDatabaseMatcher(config) {
-    const { dbName } = config;
+function getCatalogDatabaseMatcher(config) {
+    const { dbName, userId } = config;
+
     return sinon.match({
         baseUri: BASE_URI,
-
-        basePath: `${URL_DATABASE_BASE}/${dbName}`,
+        basePath: `${URL_CATALOG_BASE}/databases/${dbName}`,
         method: 'get',
         body: null,
+        queryParams: { userId },
     });
 }
 
@@ -598,10 +600,10 @@ export {
     mockGetCatalogTablesNetworkErrorOnce,
     mockGetCatalogTableNetworkOnce,
     mockGetCatalogTableNetworkErrorOnce,
-    mockGetDatabasesNetworkOnce,
-    mockGetDatabasesNetworkErrorOnce,
-    mockGetDatabaseNetworkOnce,
-    mockGetDatabaseNetworkErrorOnce,
+    mockGetCatalogDatabaseNetworkOnce,
+    mockGetCatalogDatabaseNetworkErrorOnce,
+    mockGetCatalogDatabasesNetworkOnce,
+    mockGetCatalogDatabasesNetworkErrorOnce,
     mockDeleteCatalogTableNetworkOnce,
     mockDeleteCatalogTableNetworkErrorOnce,
 };

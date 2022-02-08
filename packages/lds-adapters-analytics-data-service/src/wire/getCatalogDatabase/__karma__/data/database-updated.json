@@ -1,0 +1,7 @@
+{
+    "description": "db updated",
+    "name": "testDBInsert01",
+    "qualifiedName": "testDBInsert01",
+    "schemasUrl": "/services/data/v55.0/analytics/data-service/catalog/schemas?database=testDBInsert01",
+    "url": "/services/data/v55.0/analytics/data-service/catalog/databases/testDBInsert01"
+}

@@ -457,9 +457,15 @@ types:
       name:
         description: The name of the database. Maximum of 80 characters
         type: string
+      qualifiedName:
+        description: The qualified name of the database.
+        type: string
       schemasUrl:
         description: The URL of the schemas resource, listing the schemas contained
           in this database.
+        type: string
+      url:
+        description: The URL of this database.
         type: string
 
   SchemaCollectionRepresentation:
@@ -589,6 +595,47 @@ types:
 
 /analytics/data-service:
   /catalog:
+    /databases:
+      get:
+        description: Retrieve a list of Databases.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatabaseCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          userId:
+            type: string
+            required: false
+    /databases/{database}:
+      delete:
+        description: Delete a Database
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Get a Database by it's name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatabaseRepresentation
+        queryParameters:
+          userId:
+            type: string
+            required: false
+      uriParameters:
+        database:
+          type: string
+          required: true
     /schemas:
       get:
         description: Retrieve a list of Analytics Data Service Schemas.
@@ -680,114 +727,6 @@ types:
         qualifiedName:
           type: string
           required: true
-  /databases:
-    get:
-      description: Retrieve a list of ADS Databases.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: DatabaseCollectionRepresentation
-      queryParameters:
-        page:
-          type: integer
-          required: false
-        pageSize:
-          type: integer
-          required: false
-  /databases/{databaseName}:
-    get:
-      description: Get a Database by it's name
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: DatabaseRepresentation
-    uriParameters:
-      databaseName:
-        type: string
-        required: true
-
-  /databases/{databaseName}/schemas:
-    get:
-      description: Retrieve a list of Analytics Data Service Schemas.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: SchemaCollectionRepresentation
-      queryParameters:
-        page:
-          type: integer
-          required: false
-        pageSize:
-          type: integer
-          required: false
-    uriParameters:
-      databaseName:
-        type: string
-        required: true
-  /databases/{databaseName}/schemas/{schemaName}:
-    get:
-      description: Get a Schema by its name
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: SchemaRepresentation
-    uriParameters:
-      databaseName:
-        type: string
-        required: true
-      schemaName:
-        type: string
-        required: true
-  /databases/{databaseName}/schemas/{schemaName}/tables:
-    get:
-      description: Retrieve a list of Analytics Data Service Tables.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: TableCollectionRepresentation
-      queryParameters:
-        page:
-          type: integer
-          required: false
-        pageSize:
-          type: integer
-          required: false
-    uriParameters:
-      databaseName:
-        type: string
-        required: true
-      schemaName:
-        type: string
-        required: true
-  /databases/{databaseName}/schemas/{schemaName}/tables/{tableName}:
-    get:
-      description: Get a Table by its name
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: TableRepresentation
-    uriParameters:
-      databaseName:
-        type: string
-        required: true
-      schemaName:
-        type: string
-        required: true
-      tableName:
-        type: string
-        required: true
 
 /analytics/data-service/sync:
   /connectors:

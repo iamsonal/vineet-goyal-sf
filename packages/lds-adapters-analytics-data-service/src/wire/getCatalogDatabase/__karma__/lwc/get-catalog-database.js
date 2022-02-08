@@ -1,11 +1,15 @@
 import { api, LightningElement, wire } from 'lwc';
-import { getDatabases } from 'lds-adapters-analytics-data-service';
+import { getCatalogDatabase } from 'lds-adapters-analytics-data-service';
 
-export default class GetDatabases extends LightningElement {
+export default class GetCatalogDatabase extends LightningElement {
     wirePushCount = -1;
 
-    @wire(getDatabases, {})
-    onGetDatabases({ data, error }) {
+    @api dbName;
+
+    @wire(getCatalogDatabase, {
+        database: '$dbName',
+    })
+    onGetCatalogDatabase({ data, error }) {
         this.data = data;
         this.error = error;
         this.wirePushCount += 1;

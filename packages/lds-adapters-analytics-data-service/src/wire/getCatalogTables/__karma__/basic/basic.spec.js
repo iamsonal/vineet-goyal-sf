@@ -7,7 +7,6 @@ import {
 } from 'analytics-data-service-test-util';
 
 const MOCK_PREFIX = 'wire/getCatalogTables/__karma__/data/';
-
 const TTL = 5000;
 
 function getMock(filename) {

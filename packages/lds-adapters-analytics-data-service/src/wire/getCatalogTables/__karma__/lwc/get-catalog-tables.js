@@ -4,8 +4,8 @@ import { getCatalogTables } from 'lds-adapters-analytics-data-service';
 export default class GetCatalogTables extends LightningElement {
     wirePushCount = -1;
 
-    @api dbName;
     @api schemaName;
+    @api dbName;
     @api userId;
 
     @wire(getCatalogTables, {

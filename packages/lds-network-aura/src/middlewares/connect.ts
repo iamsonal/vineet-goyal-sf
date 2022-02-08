@@ -4,9 +4,8 @@ import {
     COMMERCE_BASE_URI,
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
-    ADATS_DATABASE_BASE_URI,
-    ADATS_SYNC_BASE_URI,
     ADATS_CATALOG_BASE_URI,
+    ADATS_SYNC_BASE_URI,
     CMS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     SCALECENTER_BASE_URI,
@@ -113,8 +112,11 @@ const ADATS_TARGET_PATH = new RegExp(
     'i'
 );
 
-const ADATS_DATABASES_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}$`, 'i');
-const ADATS_DATABASE_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+$`, 'i');
+const ADATS_CATALOG_DATABASES_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/databases$`, 'i');
+const ADATS_CATALOG_DATABASE_PATH = new RegExp(
+    `${ADATS_CATALOG_BASE_URI}/databases/[a-zA-Z0-9_-]+$`,
+    'i'
+);
 
 const ADATS_CATALOG_SCHEMAS_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/schemas$`, 'i');
 const ADATS_CATALOG_SCHEMA_PATH = new RegExp(
@@ -1549,23 +1551,22 @@ const adats: ApiFamily = {
             controller: 'AdatsController.updateTarget',
         },
     },
-    getDatabases: {
+    getCatalogDatabases: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_DATABASES_PATH.test(path),
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_DATABASES_PATH.test(path),
         transport: {
-            controller: 'AdatsController.getDatabases',
+            controller: 'AdatsController.getCatalogDatabases',
         },
     },
-    getDatabase: {
+    getCatalogDatabase: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_DATABASE_PATH.test(path),
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_DATABASE_PATH.test(path),
         transport: {
-            controller: 'AdatsController.getDatabase',
+            controller: 'AdatsController.getCatalogDatabase',
         },
     },
-
     getCatalogSchemas: {
         method: 'get',
         predicate: (path: string) =>
@@ -1582,7 +1583,6 @@ const adats: ApiFamily = {
             controller: 'AdatsController.getCatalogSchema',
         },
     },
-
     getCatalogTables: {
         method: 'get',
         predicate: (path: string) =>

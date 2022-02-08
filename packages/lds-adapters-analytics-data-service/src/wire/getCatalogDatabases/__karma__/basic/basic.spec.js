@@ -1,13 +1,13 @@
 import timekeeper from 'timekeeper';
-import GetDatabase from '../lwc/get-database';
+import GetCatalogDatabases from '../lwc/get-catalog-databases';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
-    mockGetDatabaseNetworkOnce,
-    mockGetDatabaseNetworkErrorOnce,
+    mockGetCatalogDatabasesNetworkOnce,
+    mockGetCatalogDatabasesNetworkErrorOnce,
 } from 'analytics-data-service-test-util';
 
-const MOCK_PREFIX = 'wire/getDatabase/__karma__/data/';
-
+const MOCK_PREFIX = 'wire/getCatalogDatabases/__karma__/data/';
+const config = {};
 const TTL = 5000;
 
 function getMock(filename) {
@@ -15,26 +15,25 @@ function getMock(filename) {
 }
 
 describe('basic', () => {
-    it('gets database', async () => {
-        const mock = getMock('database');
-        const config = { dbName: 'testDatabase01' };
-        mockGetDatabaseNetworkOnce(config, mock);
+    it('gets databases', async () => {
+        const mock = getMock('databases');
 
-        const el = await setupElement(config, GetDatabase);
+        mockGetCatalogDatabasesNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetCatalogDatabases);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
     });
 
     it('does not fetch a second time', async () => {
-        const mock = getMock('database');
-        const config = { dbName: 'testDatabase01' };
-        mockGetDatabaseNetworkOnce(config, mock);
+        const mock = getMock('databases');
+        mockGetCatalogDatabasesNetworkOnce(config, mock);
 
-        const el = await setupElement(config, GetDatabase);
+        const el = await setupElement(config, GetCatalogDatabases);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
 
-        const el2 = await setupElement(config, GetDatabase);
+        const el2 = await setupElement(config, GetCatalogDatabases);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredData()).toEqual(mock);
     });
@@ -51,10 +50,9 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dbName: 'testDatabase01' };
-        mockGetDatabaseNetworkErrorOnce(config, mock);
+        mockGetCatalogDatabasesNetworkErrorOnce(config, mock);
 
-        const el = await setupElement(config, GetDatabase);
+        const el = await setupElement(config, GetCatalogDatabases);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
@@ -71,17 +69,16 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dbName: 'testDatabase01' };
-        mockGetDatabaseNetworkOnce(config, {
+        mockGetCatalogDatabasesNetworkOnce(config, {
             reject: true,
             data: mock,
         });
 
-        const el = await setupElement(config, GetDatabase);
+        const el = await setupElement(config, GetCatalogDatabases);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
 
-        const el2 = await setupElement(config, GetDatabase);
+        const el2 = await setupElement(config, GetCatalogDatabases);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
     });
@@ -89,33 +86,31 @@ describe('basic', () => {
 
 describe('caching', () => {
     it('returns cached result when cached data is available', async () => {
-        const mock = getMock('database');
-        const config = { dbName: 'testDatabase01' };
-        mockGetDatabaseNetworkOnce(config, mock);
+        const mock = getMock('databases');
+        mockGetCatalogDatabasesNetworkOnce(config, mock);
 
         // populate cache
-        await setupElement(config, GetDatabase);
+        await setupElement(config, GetCatalogDatabases);
 
         // second component should have the cached data without hitting network
-        const element = await setupElement(config, GetDatabase);
+        const element = await setupElement(config, GetCatalogDatabases);
 
         expect(element.getWiredData()).toEqual(mock);
     });
 
     it('retrieves data from network when cached data is expired', async () => {
-        const mock = getMock('database');
-        const updatedData = getMock('database-updated');
-        const config = { dbName: 'testDatabase01' };
-        mockGetDatabaseNetworkOnce(config, [mock, updatedData]);
+        const mock = getMock('databases');
+        const updatedData = getMock('databases-updated');
+        mockGetCatalogDatabasesNetworkOnce(config, [mock, updatedData]);
 
         // populate cache
-        await setupElement(config, GetDatabase);
+        await setupElement(config, GetCatalogDatabases);
 
         // expire cache
         timekeeper.travel(Date.now() + TTL + 1);
 
         // second component should retrieve from network with updated data
-        const element = await setupElement(config, GetDatabase);
+        const element = await setupElement(config, GetCatalogDatabases);
 
         expect(element.getWiredData()).toEqual(updatedData);
     });

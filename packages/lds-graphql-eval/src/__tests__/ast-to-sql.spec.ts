@@ -533,4 +533,27 @@ describe('ast-parser', () => {
         expect(sqlResult.sql).toEqual(expected);
         expect(sqlResult.bindings).toEqual(["'xyz'", "'abc'"]);
     });
+
+    it('should resolve fields typed as WeakEtag', () => {
+        const query = /* GraphQL */ `
+            query etag {
+                uiapi {
+                    query {
+                        User @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    WeakEtag
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const result = transform(parseAndVisit(query), { userId: 'MyId', objectInfoMap });
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toMatchSnapshot();
+        expect(sqlResult.bindings).toEqual([]);
+    });
 });

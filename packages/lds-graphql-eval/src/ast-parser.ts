@@ -127,6 +127,17 @@ function idField(jsonAlias: string, names: string[]): ScalarField {
     return { type: FieldType.Scalar, extract, path: outputPath };
 }
 
+function weakEtagField(jsonAlias: string, names: string[]): ScalarField {
+    const outputPath = names.concat('WeakEtag').join('.');
+
+    const extract: JsonExtract = {
+        type: Extract,
+        jsonAlias,
+        path: extractPath('WeakEtag'),
+    };
+    return { type: FieldType.Scalar, extract, path: outputPath };
+}
+
 function scalarField(
     node: LuvioSelectionObjectFieldNode,
     names: string[],
@@ -197,6 +208,10 @@ function selectionToQueryField(
 
         if (isIdField(fieldInfo)) {
             return success([idField(parentAlias, names)]);
+        }
+
+        if (fieldInfo.dataType === 'WeakEtag') {
+            return success([weakEtagField(parentAlias, names)]);
         }
 
         //Scalar field

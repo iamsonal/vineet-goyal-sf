@@ -78,6 +78,7 @@ export function isScalarDataType(type: DataType): boolean {
         'Double',
         'DateTime',
         'Int',
+        'WeakEtag',
         'Picklist',
         'Currency',
         'MultiPicklist',

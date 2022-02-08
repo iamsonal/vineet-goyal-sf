@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ast-parser should resolve fields typed as WeakEtag 1`] = `"WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\\\%3A\\\\%3ARecordRepresentation%' ESCAPE '\\\\') SELECT json_set('{}', '$.data.uiapi.query.User.edges', (SELECT json_group_array(json_set('{}', '$.node.WeakEtag', (json_extract(\\"User.JSON\\", '$.data.weakEtag')), '$.node._drafts', (json_extract(\\"User.JSON\\", '$.data.drafts')), '$.node.Id', (json_extract(\\"User.JSON\\", '$.data.id')), '$.node._metadata', (json_extract(\\"User.JSON\\", '$.metadata')) )) FROM (SELECT 'User'.TABLE_1_1 as 'User.JSON' FROM recordsCTE as 'User'  WHERE json_extract(\\"User.JSON\\", '$.data.apiName') = 'User' )) ) as json"`;

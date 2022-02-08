@@ -37,11 +37,21 @@ export function getFieldInfo(
         return failure(missingObjectInfo(apiName));
     }
 
+    // Special casing for WeakEtag which is represented in the GraphQL schema but
+    // has no ObjectInfo representation
+    if (fieldName === 'WeakEtag') {
+        return success({
+            apiName: 'WeakEtag',
+            dataType: 'WeakEtag',
+        });
+    }
+
     const fieldInfo = Object.values(objInfo.fields).filter(
         (field) =>
             field.apiName === fieldName ||
             (field.dataType === 'Reference' && field.relationshipName === fieldName)
     )[0];
+
     return success(fieldInfo);
 }
 
@@ -159,6 +169,8 @@ export function extractPath(fieldName: string, subfield: string | undefined = un
             return 'data.drafts';
         case 'metadata':
             return 'metadata';
+        case 'WeakEtag':
+            return 'data.weakEtag';
         default: {
             const sub = subfield !== undefined ? subfield : 'value';
             return `data.fields.${fieldName}.${sub}`;

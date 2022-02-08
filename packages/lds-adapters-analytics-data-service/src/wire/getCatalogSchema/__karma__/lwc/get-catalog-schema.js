@@ -1,15 +1,15 @@
 import { api, LightningElement, wire } from 'lwc';
-import { getSchemas } from 'lds-adapters-analytics-data-service';
+import { getCatalogSchema } from 'lds-adapters-analytics-data-service';
 
-export default class GetSchemas extends LightningElement {
+export default class GetCatalogSchema extends LightningElement {
     wirePushCount = -1;
 
-    @api dbName;
+    @api qualifiedSchemaName;
 
-    @wire(getSchemas, {
-        databaseName: '$dbName',
+    @wire(getCatalogSchema, {
+        qualifiedName: '$qualifiedSchemaName',
     })
-    onGetSchemas({ data, error }) {
+    onGetCatalogSchema({ data, error }) {
         this.data = data;
         this.error = error;
         this.wirePushCount += 1;

@@ -481,16 +481,25 @@ types:
     description: Details about an Analytics Data Service Schema
     type: object
     properties:
+      database:
+        description: The database that this schema belongs to
+        type: ResourceReferenceRepresentation
       description:
         description: The description of the schema.
         type: string | nil
         required: false
       name:
-        description: The name of the schema. Maximum of 255 characters
+        description: The name of the schema.
+        type: string
+      qualifiedName:
+        description: The qualified name of the schema.
         type: string
       tablesUrl:
         description: The URL of the tables resource, listing the tables contained
           in this schema.
+        type: string
+      url:
+        description: The URL of this schema.
         type: string
 
   TableCollectionRepresentation:
@@ -580,6 +589,50 @@ types:
 
 /analytics/data-service:
   /catalog:
+    /schemas:
+      get:
+        description: Retrieve a list of Analytics Data Service Schemas.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SchemaCollectionRepresentation
+        queryParameters:
+          database:
+            type: string
+            required: false
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          userId:
+            type: string
+            required: false
+    /schemas/{qualifiedName}:
+      delete:
+        description: Delete a Schema
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Get a Schema by its name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SchemaRepresentation
+        queryParameters:
+          userId:
+            type: string
+            required: false
+      uriParameters:
+        qualifiedName:
+          type: string
+          required: true
     /tables:
       get:
         description: Retrieve a list of Analytics Data Service Tables.

@@ -369,9 +369,9 @@ function deleteTargetMatcher(config) {
     });
 }
 
-// Schemas
-function mockGetSchemasNetworkOnce(config, mockData) {
-    const paramMatch = getSchemasMatcher(config);
+// Catalog Schemas
+function mockGetCatalogSchemasNetworkOnce(config, mockData) {
+    const paramMatch = getCatalogSchemasMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -379,14 +379,14 @@ function mockGetSchemasNetworkOnce(config, mockData) {
     }
 }
 
-function mockGetSchemasNetworkErrorOnce(config, mockData) {
-    const paramMatch = getSchemasMatcher(config);
+function mockGetCatalogSchemasNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCatalogSchemasMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-// Schema
-function mockGetSchemaNetworkOnce(config, mockData) {
-    const paramMatch = getSchemaMatcher(config);
+// Catalog Schema
+function mockGetCatalogSchemaNetworkOnce(config, mockData) {
+    const paramMatch = getCatalogSchemaMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -394,8 +394,8 @@ function mockGetSchemaNetworkOnce(config, mockData) {
     }
 }
 
-function mockGetSchemaNetworkErrorOnce(config, mockData) {
-    const paramMatch = getSchemaMatcher(config);
+function mockGetCatalogSchemaNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCatalogSchemaMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -472,23 +472,33 @@ function mockGetDatabaseNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-function getSchemasMatcher(config) {
-    const { dbName } = config;
+function getCatalogSchemasMatcher(config) {
+    const { dbName, userId } = config;
+    let query = '';
+    if (dbName) {
+        query += `?database=${dbName}`;
+        if (userId) {
+            query += `&userId=${userId}`;
+        }
+    }
+
     return sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas`,
+        basePath: `${URL_CATALOG_BASE}/schemas${query}`,
         method: 'get',
         body: null,
     });
 }
 
-function getSchemaMatcher(config) {
-    const { dbName, schemaName } = config;
+function getCatalogSchemaMatcher(config) {
+    const { userId, qualifiedSchemaName } = config;
+
     return sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_DATABASE_BASE}/${dbName}/schemas/${schemaName}`,
+        basePath: `${URL_CATALOG_BASE}/schemas/${qualifiedSchemaName}`,
         method: 'get',
         body: null,
+        queryParams: { userId },
     });
 }
 
@@ -580,10 +590,10 @@ export {
     mockDeleteTargetNetworkOnce,
     mockDeleteTargetNetworkErrorOnce,
     expireAsset,
-    mockGetSchemasNetworkOnce,
-    mockGetSchemasNetworkErrorOnce,
-    mockGetSchemaNetworkOnce,
-    mockGetSchemaNetworkErrorOnce,
+    mockGetCatalogSchemasNetworkOnce,
+    mockGetCatalogSchemasNetworkErrorOnce,
+    mockGetCatalogSchemaNetworkOnce,
+    mockGetCatalogSchemaNetworkErrorOnce,
     mockGetCatalogTablesNetworkOnce,
     mockGetCatalogTablesNetworkErrorOnce,
     mockGetCatalogTableNetworkOnce,

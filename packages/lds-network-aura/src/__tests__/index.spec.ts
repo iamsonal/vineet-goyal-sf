@@ -9365,15 +9365,15 @@ describe('routes', () => {
         );
     });
 
-    describe('get /analytics/data-service/databases/{databaseName}/schemas', () => {
+    describe('get /analytics/data-service/catalog/schemas', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas`,
             },
             [
-                'AdatsController.getSchemas',
+                'AdatsController.getCatalogSchemas',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -9382,22 +9382,22 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas`,
             },
             {}
         );
     });
 
-    describe('get /analytics/data-service/databases/{databaseName}/schemas/{schemaName}', () => {
+    describe('get /analytics/data-service/catalog/schemas/{qualifiedName}', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas/testSchema01`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas/testDatabase01.testSchema01`,
             },
             [
-                'AdatsController.getSchema',
+                'AdatsController.getCatalogSchema',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -9406,8 +9406,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_DATABASE_BASE_URI,
-                basePath: `/testDatabase01/schemas/testSchema01`,
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas/testDatabase01.testSchema01`,
             },
             {}
         );

@@ -116,9 +116,9 @@ const ADATS_TARGET_PATH = new RegExp(
 const ADATS_DATABASES_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}$`, 'i');
 const ADATS_DATABASE_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+$`, 'i');
 
-const ADATS_SCHEMAS_PATH = new RegExp(`${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas$`, 'i');
-const ADATS_SCHEMA_PATH = new RegExp(
-    `${ADATS_DATABASE_BASE_URI}/[a-zA-Z0-9_-]+/schemas/[a-zA-Z0-9_-]+$`,
+const ADATS_CATALOG_SCHEMAS_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/schemas$`, 'i');
+const ADATS_CATALOG_SCHEMA_PATH = new RegExp(
+    `${ADATS_CATALOG_BASE_URI}/schemas/[a-zA-Z.0-9_-]+$`,
     'i'
 );
 
@@ -1566,20 +1566,20 @@ const adats: ApiFamily = {
         },
     },
 
-    getSchemas: {
+    getCatalogSchemas: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_SCHEMAS_PATH.test(path),
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_SCHEMAS_PATH.test(path),
         transport: {
-            controller: 'AdatsController.getSchemas',
+            controller: 'AdatsController.getCatalogSchemas',
         },
     },
-    getSchema: {
+    getCatalogSchema: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(ADATS_DATABASE_BASE_URI) && ADATS_SCHEMA_PATH.test(path),
+            path.startsWith(ADATS_CATALOG_BASE_URI) && ADATS_CATALOG_SCHEMA_PATH.test(path),
         transport: {
-            controller: 'AdatsController.getSchema',
+            controller: 'AdatsController.getCatalogSchema',
         },
     },
 

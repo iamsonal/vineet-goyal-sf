@@ -83,6 +83,14 @@ types:
           name: deleteCatalogTable
         (luvio.key):
           qualifiedName: urlParams.qualifiedName
+    /schemas:
+      get:
+        (luvio.adapter):
+          name: getCatalogSchemas
+    /schemas/{qualifiedName}:
+      get:
+        (luvio.adapter):
+          name: getCatalogSchema
 
 /analytics/data-service/sync:
   /connectors:

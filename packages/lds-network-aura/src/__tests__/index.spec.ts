@@ -2539,6 +2539,29 @@ describe('routes', () => {
         );
     });
 
+    describe('get /socialcare/case-service-plans/{caseServicePlanId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans/12345678912345678`,
+            },
+            [
+                'PublicSectorFamilyController.getCaseServicePlan',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans/12345678912345678`,
+            },
+            {}
+        );
+    });
+
     describe('get /omnistudio/evaluation-services/{id}', () => {
         testControllerInput(
             {

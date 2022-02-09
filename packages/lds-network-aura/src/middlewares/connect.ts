@@ -16,6 +16,7 @@ import {
     CIB_BASE_URI,
     RCG_TENANTMANAGEMENT_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
+    PSS_SOCIAL_CARE_BASE_URI,
     LEARNING_CONTENT_PLATFORM_BASE_URI,
 } from './connect-base';
 
@@ -396,6 +397,11 @@ const SEARCH_DECISION_TABLES_PATH = new RegExp(
 
 const SEARCH_GOAL_DEFINITIONS_PATH = new RegExp(
     `${CONNECT_BASE_URI}/socialcare/goal-definitions`,
+    'i'
+);
+
+const GET_CASE_SERVICE_PLAN_PATH = new RegExp(
+    `${PSS_SOCIAL_CARE_BASE_URI}/case-service-plans/([A-Z0-9]{15,18})$`,
     'i'
 );
 
@@ -809,6 +815,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SEARCH_ACTIVE_BENEFITS_PATH.test(path),
         transport: {
             controller: 'PublicSectorFamilyController.getActiveBenefitsByNameSearch',
+        },
+    },
+    getCaseServicePlan: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_CASE_SERVICE_PLAN_PATH.test(path),
+        transport: {
+            controller: 'PublicSectorFamilyController.getCaseServicePlan',
         },
     },
     getSPTWithChildRecords: {

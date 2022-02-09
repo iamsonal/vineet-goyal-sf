@@ -20,6 +20,11 @@ types:
     (luvio.opaque): true
     (luvio.key):
       id: id
+  CaseServicePlanRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 1000
+    (luvio.key):
+      id: id
 
 /connect/socialcare:
   /benefits:
@@ -34,6 +39,12 @@ types:
               }
       queryParameters:
         searchKey:
+  /case-service-plans/{caseServicePlanId}:
+    get:
+      (luvio.adapter):
+        name: getCaseServicePlan
+      (luvio.key):
+        id: urlParams.caseServicePlanId
   /goal-definitions:
     get:
       (luvio.adapter):

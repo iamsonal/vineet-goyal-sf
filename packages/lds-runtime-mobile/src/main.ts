@@ -33,6 +33,10 @@ import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadata
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
 import { makeDebugEnvironment } from './debug/makeDebugEnvironment';
 import { NimbusSqlDurableStore } from './NimbusSqlDurableStore';
+import { getInstrumentation } from 'o11y/client';
+import { withInstrumentation } from './utils/observabilityUtils';
+
+const O11Y_NAMESPACE_LDS_MOBILE = 'lds-mobile';
 
 let luvio: Luvio;
 
@@ -98,7 +102,9 @@ const networkAdapter = salesforceNetworkAdapter(
     makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter)
 );
 
-const baseDurableStore = new NimbusSqlDurableStore();
+const baseDurableStore = new NimbusSqlDurableStore({
+    withInstrumentation: withInstrumentation(getInstrumentation(O11Y_NAMESPACE_LDS_MOBILE)),
+});
 
 // specific adapters
 const internalAdapterStore = new Store();

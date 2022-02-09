@@ -19,6 +19,7 @@ import {
 } from '@mobileplatform/nimbus-plugin-lds';
 
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
+import { METRIC_NAME, InstrumentationConfig } from './utils/observabilityUtils';
 
 import { idleDetector } from 'o11y/client';
 
@@ -70,7 +71,26 @@ function toNativeEntries(entries: DurableStoreEntries<unknown>): { [key: string]
     return putEntries;
 }
 
+type WithInstrumentation = (
+    operation: () => Promise<any>,
+    config: InstrumentationConfig
+) => Promise<any>;
+interface NimbusDurableStoreConfig {
+    withInstrumentation: WithInstrumentation;
+}
+
 export class NimbusDurableStore implements DurableStore {
+    withInstrumentation?: WithInstrumentation;
+
+    constructor(config?: NimbusDurableStoreConfig) {
+        if (config === undefined) {
+            return;
+        }
+        const { withInstrumentation } = config;
+
+        this.withInstrumentation = withInstrumentation;
+    }
+
     batchOperations(operations: LuvioOperation<unknown>[]): Promise<void> {
         const nimbusOperations: NimbusOperation[] = [];
 
@@ -135,7 +155,17 @@ export class NimbusDurableStore implements DurableStore {
         tasker.add();
 
         // TODO [W-9930552]: Remove this once getEntriesInSegment is no longer supported
-        return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment)
+        const operation = () =>
+            __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment);
+
+        return this.wrapInstrumentation(operation, {
+            metricName: METRIC_NAME.DURABLE_STORE,
+            tags: {
+                operation: 'read',
+                method: 'getEntries',
+                segment,
+            },
+        })
             .then((result) => {
                 return this.convertToEntryList(result) as DurableStoreEntries<T>;
             })
@@ -146,7 +176,16 @@ export class NimbusDurableStore implements DurableStore {
         tasker.add();
 
         // TODO [W-9930552]: Remove this getAllEntriesInSegment is no longer supported
-        return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment)
+        const operation = () => __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment);
+
+        return this.wrapInstrumentation(operation, {
+            metricName: METRIC_NAME.DURABLE_STORE,
+            tags: {
+                operation: 'read',
+                method: 'getAllEntries',
+                segment,
+            },
+        })
             .then((result) => {
                 // if the segment isn't found then isMissingEntries will be set and
                 // we should return undefined.
@@ -159,14 +198,26 @@ export class NimbusDurableStore implements DurableStore {
     }
 
     setEntries<T>(entries: DurableStoreEntries<T>, segment: string): Promise<void> {
+        let operation = null;
+
         // TODO [W-8963041]: Remove this once old versions of setEntries are no longer supported
         if (__nimbus.plugins.LdsDurableStore.batchOperations === undefined) {
-            return this.setEntriesOld(entries, segment);
+            operation = () => this.setEntriesOld(entries, segment);
+        } else {
+            operation = () =>
+                this.batchOperations([
+                    { entries: entries, segment, type: LuvioOperationType.SetEntries },
+                ]);
         }
 
-        return this.batchOperations([
-            { entries: entries, segment, type: LuvioOperationType.SetEntries },
-        ]);
+        return this.wrapInstrumentation(operation, {
+            metricName: METRIC_NAME.DURABLE_STORE,
+            tags: {
+                operation: 'write',
+                method: 'setEntries',
+                segment,
+            },
+        });
     }
 
     private setEntriesOld(entries: DurableStoreEntries<unknown>, segment: string): Promise<void> {
@@ -238,6 +289,16 @@ export class NimbusDurableStore implements DurableStore {
         }
 
         return unsubscribe(() => uuid);
+    }
+
+    wrapInstrumentation(operation: () => Promise<any>, config: InstrumentationConfig) {
+        const { withInstrumentation } = this;
+
+        if (withInstrumentation === undefined) {
+            return operation();
+        }
+
+        return withInstrumentation(operation, config);
     }
 }
 

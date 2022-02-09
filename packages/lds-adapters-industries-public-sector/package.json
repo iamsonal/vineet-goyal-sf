@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-public-sector",
-    "version": "1.38.0",
+    "version": "1.38.1",
     "description": "This has files related to Public Sector APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-public-sector.js",
@@ -30,13 +30,13 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.38.0"
+        "@salesforce/lds-bindings": "1.38.1"
     },
     "devDependencies": {
         "@luvio/cli": "0.73.5",
         "@luvio/compiler": "0.73.5",
         "@luvio/engine": "0.73.5",
         "@luvio/lwc-luvio": "0.73.5",
-        "@salesforce/lds-karma": "1.38.0"
+        "@salesforce/lds-karma": "1.38.1"
     }
 }

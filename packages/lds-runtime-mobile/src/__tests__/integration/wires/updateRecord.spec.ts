@@ -396,12 +396,16 @@ describe('mobile runtime integration tests', () => {
 
             const callbackSpy = jest.fn();
             // subscribe to getRecord snapshot
-            luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
+            const { waitForCallback, callback } = callbackObserver<any>();
+            luvio.storeSubscribe(getRecordSnapshot, (snapshot) => {
+                callback(snapshot);
+                callbackSpy(snapshot);
+            });
 
             // update the reference field
             await updateRecord({ recordId: opportunityId, fields: { OwnerId: updatedOwnerId } });
 
-            await flushPromises();
+            await waitForCallback(1);
 
             expect(callbackSpy).toBeCalledTimes(1);
             const updatedOppy = callbackSpy.mock.calls[0][0].data as RecordRepresentation;

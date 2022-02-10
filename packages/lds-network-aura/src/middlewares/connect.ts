@@ -314,15 +314,15 @@ const GET_ORCHESTRATION_INSTANCE_COLLECTION_PATH = new RegExp(
 const SITES_SEARCH_PATH = new RegExp(`${CONNECT_BASE_URI}/sites/([A-Z0-9]){15,18}/search`, 'i');
 
 const INTERACTION_RUNTIME_RUN_FLOW_PATH = new RegExp(
-    `^${INTERACTION_BASE_URI}/runtime/.+/startFlow$`,
+    `^${INTERACTION_BASE_URI}/runtime/startFlow$`,
     'i'
 );
 const INTERACTION_RUNTIME_NAVIGATE_FLOW_PATH = new RegExp(
-    `^${INTERACTION_BASE_URI}/runtime/.+/navigateFlow$`,
+    `^${INTERACTION_BASE_URI}/runtime/navigateFlow$`,
     'i'
 );
 const INTERACTION_RUNTIME_RESUME_FLOW_PATH = new RegExp(
-    `^${INTERACTION_BASE_URI}/runtime/.+/resumeFlow$`,
+    `^${INTERACTION_BASE_URI}/runtime/resumeFlow$`,
     'i'
 );
 

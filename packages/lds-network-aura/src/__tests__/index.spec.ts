@@ -8221,14 +8221,16 @@ describe('routes', () => {
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/startFlow`,
+                basePath: `/interaction/runtime/startFlow`,
                 body: {
+                    flowDevName: 'flow1',
                     flowVersionId: '123',
                 },
             },
             [
                 'FlowRuntimeConnectController.startFlow',
                 {
+                    flowDevName: 'flow1',
                     flowVersionId: '123',
                 },
                 { background: false, hotspot: true, longRunning: false },
@@ -8268,13 +8270,16 @@ describe('routes', () => {
         testRejectFetchResponse({
             method: 'post',
             baseUri: CONNECT_BASE_URI,
-            basePath: `/interaction/runtime/flow1/startFlow`,
+            basePath: `/interaction/runtime/startFlow`,
         });
         testResolveResponse(
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/startFlow`,
+                basePath: `/interaction/runtime/startFlow`,
+                body: {
+                    flowDevName: 'flow1',
+                },
             },
             {}
         );
@@ -8285,7 +8290,7 @@ describe('routes', () => {
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/navigateFlow`,
+                basePath: `/interaction/runtime/navigateFlow`,
                 body: {
                     action: 'NEXT',
                 },
@@ -8332,13 +8337,13 @@ describe('routes', () => {
         testRejectFetchResponse({
             method: 'post',
             baseUri: CONNECT_BASE_URI,
-            basePath: `/interaction/runtime/flow1/navigateFlow`,
+            basePath: `/interaction/runtime/navigateFlow`,
         });
         testResolveResponse(
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/navigateFlow`,
+                basePath: `/interaction/runtime/navigateFlow`,
             },
             {}
         );
@@ -8349,7 +8354,7 @@ describe('routes', () => {
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/resumeFlow`,
+                basePath: `/interaction/runtime/resumeFlow`,
                 body: {
                     pausedInterviewId: '123',
                 },
@@ -8396,13 +8401,13 @@ describe('routes', () => {
         testRejectFetchResponse({
             method: 'post',
             baseUri: CONNECT_BASE_URI,
-            basePath: `/interaction/runtime/flow1/resumeFlow`,
+            basePath: `/interaction/runtime/resumeFlow`,
         });
         testResolveResponse(
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/resumeFlow`,
+                basePath: `/interaction/runtime/resumeFlow`,
             },
             {}
         );

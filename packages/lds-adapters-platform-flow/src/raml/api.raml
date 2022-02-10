@@ -29,6 +29,9 @@ types:
   FlowRuntimeRunFlowRepresentation:
     type: object
     properties:
+      flowDevName:
+        type: string
+        required: true
       flowVersionId:
         type: string
         required: false
@@ -118,7 +121,7 @@ types:
         type: FlowRuntimeNavigationResult | nil
         required: false
 
-/connect/interaction/runtime/{flowDevName}/startFlow:
+/connect/interaction/runtime/startFlow:
   post:
     responses:
       '200':
@@ -129,12 +132,8 @@ types:
     body:
       application/json:
         type: FlowRuntimeRunFlowRepresentation
-  uriParameters:
-    flowDevName:
-      type: string
-      required: true
 
-/connect/interaction/runtime/{flowDevName}/navigateFlow:
+/connect/interaction/runtime/navigateFlow:
   post:
     responses:
       '200':
@@ -146,12 +145,8 @@ types:
       application/json:
         type: FlowRuntimeNavigateFlowWrapperRepresentation
         (oas-body-name): request
-  uriParameters:
-    flowDevName:
-      type: string
-      required: true
 
-/connect/interaction/runtime/{flowDevName}/resumeFlow:
+/connect/interaction/runtime/resumeFlow:
   post:
     responses:
       '200':
@@ -162,7 +157,3 @@ types:
     body:
       application/json:
         type: FlowRuntimeResumeFlowRepresentation
-  uriParameters:
-    flowDevName:
-      type: string
-      required: true

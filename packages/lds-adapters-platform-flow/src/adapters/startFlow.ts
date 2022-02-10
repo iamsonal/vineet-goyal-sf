@@ -1,7 +1,7 @@
 import {
-    createResourceRequest as resources_postConnectInteractionRuntimeStartFlowByFlowDevName_createResourceRequest,
+    createResourceRequest as resources_postConnectInteractionRuntimeStartFlow_createResourceRequest,
     getResponseCacheKeys,
-} from '../generated/resources/postConnectInteractionRuntimeStartFlowByFlowDevName';
+} from '../generated/resources/postConnectInteractionRuntimeStartFlow';
 import {
     Luvio as $64$luvio_engine_Luvio,
     ResourceRequestOverride as $64$luvio_engine_ResourceRequestOverride,
@@ -26,9 +26,7 @@ export function buildNetworkSnapshot(
 ): Promise<types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation> {
     const resourceParams = createResourceParams(config);
     const request =
-        resources_postConnectInteractionRuntimeStartFlowByFlowDevName_createResourceRequest(
-            resourceParams
-        );
+        resources_postConnectInteractionRuntimeStartFlow_createResourceRequest(resourceParams);
     return luvio
         .dispatchResourceRequest<types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation>(
             request,

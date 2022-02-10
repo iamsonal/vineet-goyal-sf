@@ -443,10 +443,10 @@ describe('ast-parser', () => {
             `WHERE ( ` +
             `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? COLLATE NOCASE AND ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.id') AND ` +
-            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' COLLATE NOCASE AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.id') AND ` +
-            `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' COLLATE NOCASE AND ` +
+            `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' ) ` +
             `)) ) as json`;
 
@@ -515,9 +515,9 @@ describe('ast-parser', () => {
             `join recordsCTE as 'TimeSheet.CreatedBy' ` +
             `WHERE ( ` +
             `json_extract("TimeSheet.CreatedBy.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.id') AND ` +
-            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' COLLATE NOCASE AND ` +
+            `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.fields.CreatedById.value') = json_extract("TimeSheet.CreatedBy.JSON", '$.data.id') AND ` +
-            `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' COLLATE NOCASE AND ` +
+            `json_extract("TimeSheet.CreatedBy.JSON", '$.data.apiName') = 'User' AND ` +
             `json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' AND ` +
             `NOT (json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? COLLATE NOCASE) AND ` +
             `json_extract("TimeSheet.CreatedBy.CreatedBy.JSON", '$.data.fields.Email.value') = ? COLLATE NOCASE ) ` +

@@ -137,7 +137,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, false)
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
@@ -190,7 +190,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, false)
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
@@ -271,7 +271,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, false)
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -333,7 +333,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, false)
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -386,7 +386,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, false)
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -478,7 +478,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, false)
+                    stringLiteral('User', true, true)
                 ),
                 comparison(
                     jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
@@ -488,7 +488,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User', true, false)
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(

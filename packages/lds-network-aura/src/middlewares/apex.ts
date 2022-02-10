@@ -1,5 +1,7 @@
-import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
-import { ActionConfig, executeGlobalController } from 'aura';
+import type { ResourceRequest } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
+import type { ActionConfig } from 'aura';
+import { executeGlobalController } from 'aura';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import appRouter from '../router';
 

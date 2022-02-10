@@ -1,5 +1,6 @@
-import { ResourceRequest, HttpStatusCode, FetchResponse } from '@luvio/engine';
-import {
+import type { ResourceRequest, FetchResponse } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
+import type {
     RecordRepresentation,
     BatchRepresentation,
     RelatedListRecordCollectionRepresentation,
@@ -13,7 +14,7 @@ import {
     ObjectKeys,
 } from '../../utils/language';
 
-import { GetRecordResult } from './makeNetworkChunkFieldsGetRecord';
+import type { GetRecordResult } from './makeNetworkChunkFieldsGetRecord';
 import { ScopedFieldsCollection } from './ScopedFields';
 
 export const MAX_STRING_LENGTH_PER_CHUNK = 10000;

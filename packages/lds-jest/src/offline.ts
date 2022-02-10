@@ -1,11 +1,13 @@
 import timekeeper from 'timekeeper';
-import { Luvio, Store, Environment, NetworkAdapter, AdapterFactory, Snapshot } from '@luvio/engine';
-import { makeDurable, DurableEnvironment } from '@luvio/environments';
+import type { NetworkAdapter, AdapterFactory, Snapshot } from '@luvio/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
+import { makeDurable } from '@luvio/environments';
+import type { MockPayload } from '@luvio/adapter-test-library';
 import {
     buildMockNetworkAdapter,
     MockDurableStore,
     getMockNetworkAdapterCallCount,
-    MockPayload,
 } from '@luvio/adapter-test-library';
 import { flushPromises } from './utils';
 

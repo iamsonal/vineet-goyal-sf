@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     Snapshot,
@@ -12,20 +12,20 @@ import {
     CoercedAdapterRequestContext,
 } from '@luvio/engine';
 
+import type { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
 import {
-    GetListViewSummaryCollectionConfig,
     validateAdapterConfig,
     getListViewSummaryCollection_ConfigPropertyNames,
     createResourceParams,
     adapterFragment,
 } from '../../generated/adapters/getListViewSummaryCollection';
+import type { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import {
-    ListViewSummaryCollectionRepresentation,
     paginationKeyBuilder,
     ingest as listViewSummaryCollectionRepresentationIngest,
 } from '../../generated/types/ListViewSummaryCollectionRepresentation';
+import type { ResourceRequestConfig } from '../../generated/resources/getUiApiListUiByObjectApiName';
 import {
-    ResourceRequestConfig,
     createResourceRequest,
     keyBuilder,
     getResponseCacheKeys,

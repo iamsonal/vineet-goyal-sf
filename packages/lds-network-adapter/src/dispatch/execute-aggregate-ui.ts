@@ -1,5 +1,6 @@
-import { FetchResponse, HttpStatusCode, NetworkAdapter, ResourceRequest } from '@luvio/engine';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import type { FetchResponse, NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
+import type { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { ArrayPrototypeJoin, ArrayPrototypePush, ObjectKeys } from '../language';
 import { instrumentation } from '../instrumentation';
 

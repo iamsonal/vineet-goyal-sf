@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     AdapterRequestContext,
     FetchResponse,
@@ -6,14 +6,12 @@ import {
     Luvio,
     Snapshot,
 } from '@luvio/engine';
-import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
-import { GetRecordConfig, validateAdapterConfig } from '../../generated/adapters/getRecord';
+import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import type { GetRecordConfig } from '../../generated/adapters/getRecord';
+import { validateAdapterConfig } from '../../generated/adapters/getRecord';
 import { createResourceRequest as getUiApiRecordsByRecordId } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
-import {
-    keyBuilder,
-    KeyParams,
-    RecordRepresentation,
-} from '../../generated/types/RecordRepresentation';
+import type { KeyParams, RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { keyBuilder } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import {
     getTrackedFields,
@@ -21,7 +19,8 @@ import {
     RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS,
 } from '../../util/records';
 import { getRecordByFields } from './GetRecordFields';
-import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
+import type { GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
+import { getRecordLayoutType } from './GetRecordLayoutType';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 import { instrumentation } from '../../instrumentation';

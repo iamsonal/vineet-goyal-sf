@@ -1,4 +1,4 @@
-import {
+import type {
     Luvio,
     Fragment,
     Reader,
@@ -9,13 +9,11 @@ import {
     ErrorSnapshot,
     CacheKeySet,
 } from '@luvio/engine';
-import {
-    ResourceRequestConfig,
-    createChildResourceParams as generatedCreateChildResourceParams,
-} from '../../generated/resources/postUiApiRelatedListRecordsBatchByParentRecordId';
+import type { createChildResourceParams as generatedCreateChildResourceParams } from '../../generated/resources/postUiApiRelatedListRecordsBatchByParentRecordId';
+import { ResourceRequestConfig } from '../../generated/resources/postUiApiRelatedListRecordsBatchByParentRecordId';
 // Single Wire Imports
+import type { ResourceRequestConfig as singleWireResourceRequestConfig } from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
-    ResourceRequestConfig as singleWireResourceRequestConfig,
     keyBuilder as singleWireKeyBuilder,
     ingestError as singleWireIngestError,
     getResponseCacheKeys as singleWireGetResponseCacheKeys,
@@ -26,9 +24,9 @@ import {
 } from '../../generated/uiapi/record-collection/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 
 // Generated Types
-import { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
-import { RelatedListRecordCollectionRepresentation } from '../../generated/types/RelatedListRecordCollectionRepresentation';
-import { CompositeRelatedListRecordCollectionResultRepresentation } from '../../generated/types/CompositeRelatedListRecordCollectionResultRepresentation';
+import type { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
+import type { RelatedListRecordCollectionRepresentation } from '../../generated/types/RelatedListRecordCollectionRepresentation';
+import type { CompositeRelatedListRecordCollectionResultRepresentation } from '../../generated/types/CompositeRelatedListRecordCollectionResultRepresentation';
 // Generated Adapter Utils
 import {
     ObjectFreeze,

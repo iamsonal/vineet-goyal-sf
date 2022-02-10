@@ -1,4 +1,4 @@
-import { getInstrumentation } from 'o11y/client';
+import type { getInstrumentation } from 'o11y/client';
 
 export type ReporterType = ReturnType<typeof getInstrumentation>;
 type Operation = () => Promise<any>;

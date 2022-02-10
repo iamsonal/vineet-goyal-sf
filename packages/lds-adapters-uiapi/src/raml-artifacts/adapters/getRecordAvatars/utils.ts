@@ -1,6 +1,6 @@
-import { Fragment, Luvio, Selector } from '@luvio/engine';
+import type { Fragment, Luvio, Selector } from '@luvio/engine';
 import { keyPrefix } from '../../../generated/adapters/adapter-utils';
-import { GetRecordAvatarsConfig as BaseGetRecordAvatarsConfig } from '../../../generated/adapters/getRecordAvatars';
+import type { GetRecordAvatarsConfig as BaseGetRecordAvatarsConfig } from '../../../generated/adapters/getRecordAvatars';
 import { selectChildren as selectChildrenAbstractRecordAvatarBatchRepresentation } from '../../../generated/types/AbstractRecordAvatarBatchRepresentation';
 
 // All of the avatars are ingested into

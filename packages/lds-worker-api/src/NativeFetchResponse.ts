@@ -1,4 +1,5 @@
-import { FetchResponse, HttpStatusCode, Headers } from '@luvio/engine';
+import type { FetchResponse, Headers } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
 
 export const NATIVE_ERROR_CODE = 'NATIVE_ERROR';
 export const NON_MUTATING_ADAPTER_MESSAGE = 'adapterId must be a mutating adapter';

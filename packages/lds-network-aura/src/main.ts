@@ -1,7 +1,7 @@
-import { ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
 import { JSONStringify } from './utils/language';
 import './middlewares';
-import { ControllerInvoker } from './middlewares/utils';
+import type { ControllerInvoker } from './middlewares/utils';
 import { default as appRouter } from './router';
 import salesforceNetworkAdapter from '@salesforce/lds-network-adapter';
 

@@ -1,4 +1,4 @@
-import { IdleDetectedListener, IdleDetector, IsBusyChecker } from 'o11y/client';
+import type { IdleDetectedListener, IdleDetector, IsBusyChecker } from 'o11y/client';
 
 function requestIdleDetectedCallback(_callback: IdleDetectedListener) {}
 

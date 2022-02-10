@@ -1,15 +1,16 @@
-import { GetRecordConfig } from '../../generated/adapters/getRecord';
+import type { GetRecordConfig } from '../../generated/adapters/getRecord';
 import { buildNetworkSnapshot as getRecordNetwork } from '../../wire/getRecord/GetRecordFields';
 import { buildNetworkSnapshot as getRecordsNetwork } from '../../generated/adapters/getRecords';
-import {
+import type {
     GetRecordsConfig,
     GetRecordsEntityConfiguration,
 } from '../../raml-artifacts/adapters/getRecords/GetRecordsConfig';
 
 import { ArrayPrototypePush, ArrayPrototypeReduce, ObjectKeys } from '../../util/language';
-import { RecordFieldTrie, convertTrieToFields } from '../../util/records';
+import type { RecordFieldTrie } from '../../util/records';
+import { convertTrieToFields } from '../../util/records';
 import { instrumentation } from '../../instrumentation';
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 
 export interface RecordConflict {
     recordId: string;

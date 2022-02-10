@@ -1,5 +1,5 @@
-import { Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
+import type { Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createLDSAction } from '../actionHandlers/LDSActionHandler';
@@ -17,7 +17,7 @@ import {
     prefixForRecordId,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
-import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+import type { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 /**
  * Checks if a provided resource request is a POST operation on the record

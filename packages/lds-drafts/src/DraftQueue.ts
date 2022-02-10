@@ -1,6 +1,6 @@
-import { FetchResponse } from '@luvio/engine';
-import { ActionHandler } from './actionHandlers/ActionHandler';
-import { CustomActionExecutor } from './actionHandlers/CustomActionHandler';
+import type { FetchResponse } from '@luvio/engine';
+import type { ActionHandler } from './actionHandlers/ActionHandler';
+import type { CustomActionExecutor } from './actionHandlers/CustomActionHandler';
 
 export enum DraftActionStatus {
     Pending = 'pending',

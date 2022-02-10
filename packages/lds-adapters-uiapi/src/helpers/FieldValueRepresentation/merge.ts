@@ -1,6 +1,6 @@
-import { FieldValueRepresentationNormalized } from '../../generated/types/FieldValueRepresentation';
-import { Luvio, IngestPath } from '@luvio/engine';
-import { RecordRepresentationNormalized } from '../../generated/types/RecordRepresentation';
+import type { FieldValueRepresentationNormalized } from '../../generated/types/FieldValueRepresentation';
+import type { Luvio, IngestPath } from '@luvio/engine';
+import type { RecordRepresentationNormalized } from '../../generated/types/RecordRepresentation';
 import { instrumentation } from '../../instrumentation';
 
 export default function merge(

@@ -10,7 +10,7 @@ import { nimbusDraftQueue } from './nimbusDraftQueue';
 import { draftQueue, draftManager } from './draftQueueImplementation';
 import { setUiApiRecordTTL, setMetadataTTL } from './ttl';
 import { withDefaultLuvio } from 'native/ldsEngineMobile';
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 
 if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-undef

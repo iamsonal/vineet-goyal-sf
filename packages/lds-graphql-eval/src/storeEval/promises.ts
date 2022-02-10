@@ -1,6 +1,7 @@
 import type { SqlStore } from '@salesforce/lds-store-sql';
-import { indicesSql, objectInfoSql, SqlMappingInput, tableAttrs } from '../ast-to-sql';
-import { ObjectInfoMap } from '../info-types';
+import type { SqlMappingInput } from '../ast-to-sql';
+import { indicesSql, objectInfoSql, tableAttrs } from '../ast-to-sql';
+import type { ObjectInfoMap } from '../info-types';
 
 type GetTableAttrs = (sqlStore: SqlStore) => Promise<SqlMappingInput | undefined>;
 

@@ -1,5 +1,6 @@
-import { LuvioOperationDefinitionNode } from '@luvio/graphql-parser';
-import { GraphQLVariables, validateVariableDefinitions } from './Variable';
+import type { LuvioOperationDefinitionNode } from '@luvio/graphql-parser';
+import type { GraphQLVariables } from './Variable';
+import { validateVariableDefinitions } from './Variable';
 
 export { createRead } from '../util/read';
 export { createIngest } from '../util/ingest';

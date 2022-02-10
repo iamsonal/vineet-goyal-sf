@@ -1,5 +1,7 @@
-import { Environment, Luvio, Store, NetworkAdapter } from '@luvio/engine';
-import { DurableStore, makeDurable } from '@luvio/environments';
+import type { Store, NetworkAdapter } from '@luvio/engine';
+import { Environment, Luvio } from '@luvio/engine';
+import type { DurableStore } from '@luvio/environments';
+import { makeDurable } from '@luvio/environments';
 import {
     getRecordAdapterFactory,
     getObjectInfoAdapterFactory,

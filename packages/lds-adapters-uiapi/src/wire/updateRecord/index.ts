@@ -1,16 +1,14 @@
-import { Luvio, Snapshot, FetchResponse, ResourceIngest } from '@luvio/engine';
+import type { Luvio, Snapshot, FetchResponse, ResourceIngest } from '@luvio/engine';
 
 import { deepFreeze } from '../../util/deep-freeze';
 import { buildSelectionFromRecord } from '../../selectors/record';
 
-import {
-    RecordRepresentation,
-    keyBuilder as recordRepresentationKeyBuilder,
-} from '../../generated/types/RecordRepresentation';
+import type { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { keyBuilder as recordRepresentationKeyBuilder } from '../../generated/types/RecordRepresentation';
+import type { UpdateRecordConfig } from '../../generated/adapters/updateRecord';
 import {
     updateRecord_ConfigPropertyNames,
     validateAdapterConfig,
-    UpdateRecordConfig,
     createResourceParams,
 } from '../../generated/adapters/updateRecord';
 import {
@@ -20,10 +18,8 @@ import {
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
-import {
-    RecordConflictMap,
-    resolveConflict,
-} from '../../helpers/RecordRepresentation/resolveConflict';
+import type { RecordConflictMap } from '../../helpers/RecordRepresentation/resolveConflict';
+import { resolveConflict } from '../../helpers/RecordRepresentation/resolveConflict';
 
 export interface ClientOptions {
     ifUnmodifiedSince?: string;

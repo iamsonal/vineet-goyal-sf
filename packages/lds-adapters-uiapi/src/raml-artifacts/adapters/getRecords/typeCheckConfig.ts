@@ -1,15 +1,14 @@
+import type { UncoercedConfiguration, Untrusted } from '../../../generated/adapters/adapter-utils';
 import {
     ArrayIsArray,
     ArrayPrototypePush,
-    UncoercedConfiguration,
-    Untrusted,
     untrustedIsObject,
 } from '../../../generated/adapters/adapter-utils';
 import { default as primitives_FieldIdArray_coerce_default } from '../../../primitives/FieldIdArray/coerce';
 import { default as primitives_RecordId18_coerce_default } from '../../../primitives/RecordId18/coerce';
 import { ObjectAssign } from '../../../util/language';
 import { dedupe } from '../../../validation/utils';
-import { GetRecordsEntityConfiguration, GetRecordsConfig } from './GetRecordsConfig';
+import type { GetRecordsEntityConfiguration, GetRecordsConfig } from './GetRecordsConfig';
 
 export function coerceRecordId18Array(value: unknown): Array<string> | undefined {
     const valueArray = ArrayIsArray(value) ? value : [value];

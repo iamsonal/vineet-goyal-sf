@@ -1,5 +1,5 @@
-import { PredicateError } from './Error';
-import { PredicateContainer } from './Predicate';
+import type { PredicateError } from './Error';
+import type { PredicateContainer } from './Predicate';
 
 export type PredicateResult = Result<PredicateContainer, PredicateError[]>;
 

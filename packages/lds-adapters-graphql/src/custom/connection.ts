@@ -1,4 +1,4 @@
-import {
+import type {
     IngestPath,
     Luvio,
     Reader,
@@ -7,25 +7,25 @@ import {
     Store,
     StoreLink,
 } from '@luvio/engine';
-import {
+import type {
     LuvioFieldNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
 } from '@luvio/graphql-parser';
 import { followLink, getLuvioFieldNodeSelection, resolveLink } from '../type/Selection';
-import { GqlRecord } from './record';
+import type { GqlRecord } from './record';
 import { render as renderArguments } from '../type/Argument';
-import { GraphQLVariables } from '../type/Variable';
+import type { GraphQLVariables } from '../type/Variable';
 import { render as renderField } from '../type/Field';
 import { namespace } from '../util/adapter';
 import { readScalarFieldSelection } from '../type/ScalarField';
 import { createIngest as genericCreateIngest, publishIfChanged } from '../util/ingest';
+import type { SerializeState } from '../util/serialize';
 import {
     isLuvioFieldNodeObjectFieldNode,
     serializeArguments,
     serializeFieldNode,
     serializeFieldNodeName,
-    SerializeState,
 } from '../util/serialize';
 
 interface GqlEdge {

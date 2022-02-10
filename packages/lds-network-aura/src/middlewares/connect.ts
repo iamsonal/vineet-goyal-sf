@@ -1,4 +1,5 @@
-import { ApiFamily, registerApiFamilyRoutes } from './utils';
+import type { ApiFamily } from './utils';
+import { registerApiFamilyRoutes } from './utils';
 import {
     CONNECT_BASE_URI,
     COMMERCE_BASE_URI,

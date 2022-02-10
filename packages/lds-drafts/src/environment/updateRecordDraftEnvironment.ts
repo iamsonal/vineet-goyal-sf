@@ -1,10 +1,7 @@
-import { Adapter, Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
-import {
-    keyBuilderRecord,
-    RecordRepresentation,
-    GetRecordConfig,
-} from '@salesforce/lds-adapters-uiapi';
+import type { Adapter, Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
+import type { RecordRepresentation, GetRecordConfig } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createLDSAction } from '../actionHandlers/LDSActionHandler';
 import {
@@ -14,6 +11,7 @@ import {
     createOkResponse,
 } from '../DraftFetchResponse';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
+import type { RequestFields } from '../utils/records';
 import {
     ensureReferencedIdsAreCached,
     extractRecordIdFromResourceRequest,
@@ -23,9 +21,8 @@ import {
     getRecordKeyFromRecordRequest,
     prefixForRecordId,
     RECORD_ENDPOINT_REGEX,
-    RequestFields,
 } from '../utils/records';
-import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+import type { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 export interface UpdateRecordDraftEnvironmentOptions extends DraftEnvironmentOptions {
     getRecord: Adapter<GetRecordConfig, RecordRepresentation>;

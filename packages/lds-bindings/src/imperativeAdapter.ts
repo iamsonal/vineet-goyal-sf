@@ -1,4 +1,4 @@
-import {
+import type {
     Adapter,
     AdapterRequestContext,
     FetchResponse,
@@ -8,7 +8,7 @@ import {
     UnfulfilledSnapshot,
     Unsubscribe,
 } from '@luvio/engine';
-import { AdapterMetadata } from './ldsAdapter';
+import type { AdapterMetadata } from './ldsAdapter';
 import { ObjectDefineProperty } from './utils/lanugage';
 import { isErrorSnapshot, isPendingSnapshot } from './utils/snapshotType';
 import { isPromise } from './utils/utils';

@@ -1,12 +1,12 @@
 import { deepFreeze } from '../../util/deep-freeze';
-import { Snapshot, Luvio, FetchResponse, ResourceRequest } from '@luvio/engine';
-import { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
+import type { Snapshot, Luvio, FetchResponse, ResourceRequest } from '@luvio/engine';
+import type { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
 import { buildCachedSnapshot as cacheLookupGetLayoutUserState } from '../../raml-artifacts/adapters/getLayoutUserState/buildCachedSnapshot';
-import { GetLayoutUserStateConfig as GetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserStateConfig';
+import type { GetLayoutUserStateConfig as GetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserStateConfig';
 import { validateAdapterConfig as coerceGetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/validateAdapterConfig';
 import { getLayoutUserState_ConfigPropertyNames } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserState_ConfigPropertyNames';
+import type { RecordLayoutUserStateRepresentation } from '../../generated/types/RecordLayoutUserStateRepresentation';
 import {
-    RecordLayoutUserStateRepresentation,
     keyBuilder,
     ingest,
     getTypeCacheKeys,
@@ -16,7 +16,7 @@ import patchUiApiLayoutUserStateByObjectApiName from '../../generated/resources/
 import { validate as validateRecordLayoutUserStateInput } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
 import { JSONParse, JSONStringify, ObjectKeys } from '../../util/language';
 import { isFulfilledSnapshot } from '../../util/snapshot';
-import { RecordLayoutSectionUserStateRepresentation } from '../../generated/types/RecordLayoutSectionUserStateRepresentation';
+import type { RecordLayoutSectionUserStateRepresentation } from '../../generated/types/RecordLayoutSectionUserStateRepresentation';
 
 // Hack method- this should be removed eventually when layoutUserState raml is fixed.
 function addAdditionalFieldsForNorming(

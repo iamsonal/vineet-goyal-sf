@@ -1,25 +1,24 @@
 import { deepFreeze } from '../../util/deep-freeze';
-import { Luvio, Snapshot, FetchResponse } from '@luvio/engine';
+import type { Luvio, Snapshot, FetchResponse } from '@luvio/engine';
 import {
     updateRecordAvatar_ConfigPropertyNames as updateRecordAvatarConfigProperties,
     validateAdapterConfig,
 } from '../../generated/adapters/updateRecordAvatar';
+import type { AbstractRecordAvatarRepresentation } from '../../generated/types/AbstractRecordAvatarRepresentation';
 import {
-    AbstractRecordAvatarRepresentation,
     keyBuilderFromType,
     getTypeCacheKeys,
 } from '../../generated/types/AbstractRecordAvatarRepresentation';
-import postUiApiRecordAvatarsAssociationByRecordId, {
-    ResourceRequestConfig,
-} from '../../generated/resources/postUiApiRecordAvatarsAssociationByRecordId';
+import type { ResourceRequestConfig } from '../../generated/resources/postUiApiRecordAvatarsAssociationByRecordId';
+import postUiApiRecordAvatarsAssociationByRecordId from '../../generated/resources/postUiApiRecordAvatarsAssociationByRecordId';
+import type { PhotoRecordAvatarRepresentation } from '../../generated/types/PhotoRecordAvatarRepresentation';
 import {
     select as photoSelector,
-    PhotoRecordAvatarRepresentation,
     ingest as photoIngest,
 } from '../../generated/types/PhotoRecordAvatarRepresentation';
+import type { ThemeRecordAvatarRepresentation } from '../../generated/types/ThemeRecordAvatarRepresentation';
 import {
     select as themeSelector,
-    ThemeRecordAvatarRepresentation,
     ingest as themeIngest,
 } from '../../generated/types/ThemeRecordAvatarRepresentation';
 

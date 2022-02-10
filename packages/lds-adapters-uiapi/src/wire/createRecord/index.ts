@@ -1,23 +1,20 @@
-import { Luvio, FetchResponse, Snapshot, ResourceIngest } from '@luvio/engine';
+import type { Luvio, FetchResponse, Snapshot, ResourceIngest } from '@luvio/engine';
 
 import { deepFreeze } from '../../util/deep-freeze';
 import { buildSelectionFromRecord } from '../../selectors/record';
 
-import {
-    RecordRepresentation,
-    keyBuilder as recordRepresentationKeyBuilder,
-} from '../../generated/types/RecordRepresentation';
+import type { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { keyBuilder as recordRepresentationKeyBuilder } from '../../generated/types/RecordRepresentation';
 import {
     getResponseCacheKeys,
     default as postUiApiRecords,
 } from '../../generated/resources/postUiApiRecords';
-import { createResourceParams, CreateRecordConfig } from '../../generated/adapters/createRecord';
+import type { CreateRecordConfig } from '../../generated/adapters/createRecord';
+import { createResourceParams } from '../../generated/adapters/createRecord';
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
-import {
-    RecordConflictMap,
-    resolveConflict,
-} from '../../helpers/RecordRepresentation/resolveConflict';
+import type { RecordConflictMap } from '../../helpers/RecordRepresentation/resolveConflict';
+import { resolveConflict } from '../../helpers/RecordRepresentation/resolveConflict';
 
 function onResponseSuccess(
     luvio: Luvio,

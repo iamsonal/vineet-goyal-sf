@@ -1,5 +1,5 @@
 import getLayoutType from '../LayoutType/coerce';
-import { LayoutType } from '../LayoutType';
+import type { LayoutType } from '../LayoutType';
 import { ArrayPrototypePush, ArrayIsArray } from '../../util/language';
 import { dedupe } from '../../validation/utils';
 

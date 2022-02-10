@@ -1,11 +1,13 @@
-import { Luvio, Store, Environment, RecordSource } from '@luvio/engine';
+import type { RecordSource } from '@luvio/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
-import { storeEvalFactory, StoreEval } from '@salesforce/lds-graphql-eval';
+import type { StoreEval } from '@salesforce/lds-graphql-eval';
+import { storeEvalFactory } from '@salesforce/lds-graphql-eval';
 
+import type { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import {
-    RecordRepresentation,
     ingestRecord,
     keyBuilderRecord,
     buildSelectionFromRecord,

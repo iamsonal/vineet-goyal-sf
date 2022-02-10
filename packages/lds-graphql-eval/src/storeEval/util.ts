@@ -1,4 +1,4 @@
-import { DurableStoreChange } from '@luvio/environments';
+import type { DurableStoreChange } from '@luvio/environments';
 
 export const DefaultDurableSegment = 'DEFAULT';
 

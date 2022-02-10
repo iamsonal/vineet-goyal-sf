@@ -1,13 +1,15 @@
-import { IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
+import type { IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
 import { keyPrefix } from '../../..//generated/adapters/adapter-utils';
-import {
-    validate,
+import type {
     DynamicIngestParams,
-    keyBuilderFromType,
     QuickActionDefaultsRepresentation,
     QuickActionDefaultsRepresentationNormalized,
-    dynamicNormalize,
     dynamicIngest as generatedDynamicIngest,
+} from '../../../generated/types/QuickActionDefaultsRepresentation';
+import {
+    validate,
+    keyBuilderFromType,
+    dynamicNormalize,
     equals,
     TTL,
     RepresentationType,

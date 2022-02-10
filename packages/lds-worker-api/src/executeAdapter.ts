@@ -1,25 +1,24 @@
-import { AdapterRequestContext, CachePolicy, FetchResponse } from '@luvio/engine';
+import type { AdapterRequestContext, CachePolicy, FetchResponse } from '@luvio/engine';
 import { parseAndVisit as gqlParse } from '@luvio/graphql-parser';
 import * as gqlApi from 'force/ldsAdaptersGraphql';
 import { getInstrumentation } from 'o11y/client';
 
 import { JSONParse, ObjectKeys } from './language';
+import type { AdapterCallback, AdapterCallbackValue } from './lightningAdapterApi';
 import {
     imperativeAdapterMap,
     dmlAdapterMap,
     UNSTABLE_ADAPTER_PREFIX,
     IMPERATIVE_ADAPTER_SUFFIX,
-    AdapterCallback,
-    AdapterCallbackValue,
 } from './lightningAdapterApi';
-import { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
+import type { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
 import { draftManager } from './draftQueueImplementation';
+import type { NativeFetchResponse } from './NativeFetchResponse';
 import {
     createNativeErrorResponse,
     NON_MUTATING_ADAPTER_MESSAGE,
     NO_DRAFT_CREATED_MESSAGE,
     DRAFT_DOESNT_EXIST_MESSAGE,
-    NativeFetchResponse,
 } from './NativeFetchResponse';
 import { debugLog } from 'native/ldsEngineMobile';
 

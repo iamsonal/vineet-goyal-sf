@@ -1,16 +1,18 @@
-import { ProxyGraphNode, GraphNode } from '@luvio/engine';
-import { FieldRepresentation } from '../generated/types/FieldRepresentation';
-import {
+import type { ProxyGraphNode, GraphNode } from '@luvio/engine';
+import type { FieldRepresentation } from '../generated/types/FieldRepresentation';
+import type {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
 } from '../generated/types/FieldValueRepresentation';
-import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
-import { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
-import { RecordInputRepresentation } from '../generated/types/RecordInputRepresentation';
-import {
-    keyBuilder as recordRepresentationKeyBuilder,
+import type { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
+import type { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
+import type { RecordInputRepresentation } from '../generated/types/RecordInputRepresentation';
+import type {
     RecordRepresentation,
     RecordRepresentationNormalized,
+} from '../generated/types/RecordRepresentation';
+import {
+    keyBuilder as recordRepresentationKeyBuilder,
     TTL as RecordRepresentationTTL,
 } from '../generated/types/RecordRepresentation';
 import {
@@ -23,19 +25,16 @@ import {
     StringPrototypeEndsWith,
     ObjectCreate,
 } from './language';
-import { FieldId, splitQualifiedFieldApiName } from '../primitives/FieldId';
+import type { FieldId } from '../primitives/FieldId';
+import { splitQualifiedFieldApiName } from '../primitives/FieldId';
 import getFieldApiName from '../primitives/FieldId/coerce';
 import { dedupe } from '../validation/utils';
 import { MASTER_RECORD_TYPE_ID } from './layout';
 import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
 import { isSpanningRecord } from '../selectors/record';
 import { keyPrefix, ObjectFreeze } from '../generated/adapters/adapter-utils';
-import {
-    FieldMapRepresentation,
-    insertFieldsIntoTrie,
-    MAX_RECORD_DEPTH,
-    FieldMapRepresentationNormalized,
-} from './fields';
+import type { FieldMapRepresentation, FieldMapRepresentationNormalized } from './fields';
+import { insertFieldsIntoTrie, MAX_RECORD_DEPTH } from './fields';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 

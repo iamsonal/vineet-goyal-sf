@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import { createLDSAdapter } from '@salesforce/lds-bindings';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 import {

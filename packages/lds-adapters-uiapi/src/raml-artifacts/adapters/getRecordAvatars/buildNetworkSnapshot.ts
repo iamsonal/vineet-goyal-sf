@@ -1,4 +1,4 @@
-import {
+import type {
     FetchResponse,
     Luvio,
     Snapshot,
@@ -12,14 +12,15 @@ import {
     onResourceResponseSuccess,
     onResourceResponseError,
 } from '../../../generated/adapters/getRecordAvatars';
-import { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
-import { RecordAvatarBulkRepresentation } from '../../../generated/types/RecordAvatarBulkRepresentation';
+import type { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import type { RecordAvatarBulkRepresentation } from '../../../generated/types/RecordAvatarBulkRepresentation';
 import {
     createResourceRequest,
     getResponseCacheKeys,
 } from '../../../generated/resources/getUiApiRecordAvatarsBatchByRecordIds';
-import { RecordAvatarBatchRepresentation } from '../../../generated/types/RecordAvatarBatchRepresentation';
-import { KEY, GetRecordAvatarsConfig } from './utils';
+import type { RecordAvatarBatchRepresentation } from '../../../generated/types/RecordAvatarBatchRepresentation';
+import type { GetRecordAvatarsConfig } from './utils';
+import { KEY } from './utils';
 import { buildCachedSnapshot } from './buildCachedSnapshot';
 
 // Track in-flight xrequests so we known when to send out our fake response

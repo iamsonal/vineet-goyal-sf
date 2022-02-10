@@ -1,15 +1,17 @@
-import { CustomActionResult } from './actionHandlers/CustomActionHandler';
+import type { CustomActionResult } from './actionHandlers/CustomActionHandler';
 import { isLDSDraftAction } from './actionHandlers/LDSActionHandler';
-import {
+import type {
     DraftActionStatus,
     DraftQueue,
     DraftAction,
+    DraftActionMetadata,
+    DraftQueueEvent,
+} from './DraftQueue';
+import {
     isDraftError,
     DraftQueueState,
     DraftQueueEventType,
-    DraftActionMetadata,
     isDraftQueueStateChangeEvent,
-    DraftQueueEvent,
 } from './DraftQueue';
 import { ArrayIsArray, JSONStringify } from './utils/language';
 

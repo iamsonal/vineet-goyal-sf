@@ -1,4 +1,4 @@
-import { CustomSelection, Reader } from '@luvio/engine';
+import type { CustomSelection, Reader } from '@luvio/engine';
 
 export function records(
     key: string,

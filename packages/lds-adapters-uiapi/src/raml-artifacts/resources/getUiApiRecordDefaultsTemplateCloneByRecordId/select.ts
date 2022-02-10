@@ -1,5 +1,5 @@
-import { Fragment, Luvio } from '@luvio/engine';
-import {
+import type { Fragment, Luvio } from '@luvio/engine';
+import type {
     ResourceRequestConfig,
     select as generatedSelect,
 } from '../../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';

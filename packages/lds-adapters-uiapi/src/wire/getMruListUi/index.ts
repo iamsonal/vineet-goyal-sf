@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Fragment,
     Luvio,
@@ -10,8 +10,8 @@ import {
     AdapterRequestContext,
     StoreLookup,
 } from '@luvio/engine';
+import type { GetMruListUiConfig } from '../../generated/adapters/getMruListUi';
 import {
-    GetMruListUiConfig,
     getMruListUi_ConfigPropertyNames,
     validateAdapterConfig,
     createResourceParams,
@@ -22,11 +22,13 @@ import {
     createPaginationParams as getUiApiMruListUiByObjectApiName_createPaginationParams,
     keyBuilder,
 } from '../../generated/resources/getUiApiMruListUiByObjectApiName';
-import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
+import type { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
 import { createResourceParams as createMruListUiResourceParams } from '../../generated/adapters/getMruListUi';
-import {
+import type {
     DynamicSelectParams as types_ListRecordCollectionRepresentation_DynamicSelectParams,
     ListRecordCollectionRepresentation,
+} from '../../generated/types/ListRecordCollectionRepresentation';
+import {
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
     keyBuilderFromType as ListRecordCollectionRepresentation_keyBuilderFromType,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
@@ -34,9 +36,11 @@ import {
     dynamicSelect as types_ListRecordCollectionRepresentation_dynamicSelect,
     getTypeCacheKeys as types_ListRecordCollectionRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListRecordCollectionRepresentation';
-import {
+import type {
     DynamicSelectParams as types_ListUiRepresentation_DynamicSelectParams,
     ListUiRepresentation,
+} from '../../generated/types/ListUiRepresentation';
+import {
     keyBuilder as listUiRepresentation_keyBuilder,
     keyBuilderFromType as listUiRepresentation_keyBuilderFromType,
     ingest as types_ListUiRepresentation_ingest,
@@ -44,7 +48,8 @@ import {
     getTypeCacheKeys as types_ListUiRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListUiRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
-import { getListInfo, ListFields, listFields } from '../../util/lists';
+import type { ListFields } from '../../util/lists';
+import { getListInfo, listFields } from '../../util/lists';
 import { minimizeRequest } from '../../util/pagination';
 import { isFulfilledSnapshot, isStaleSnapshot } from '../../util/snapshot';
 import { buildNotFetchableNetworkSnapshot } from '../../util/cache-policy';

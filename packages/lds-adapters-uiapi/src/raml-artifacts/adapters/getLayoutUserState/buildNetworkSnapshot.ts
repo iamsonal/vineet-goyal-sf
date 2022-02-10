@@ -1,15 +1,13 @@
-import {
+import type {
     Snapshot,
     ResourceRequestOverride,
     Luvio,
     FetchResponse,
     ResourceResponse,
 } from '@luvio/engine';
-import {
-    RecordLayoutUserStateRepresentation,
-    keyBuilder,
-} from '../../../generated/types/RecordLayoutUserStateRepresentation';
-import { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
+import type { RecordLayoutUserStateRepresentation } from '../../../generated/types/RecordLayoutUserStateRepresentation';
+import { keyBuilder } from '../../../generated/types/RecordLayoutUserStateRepresentation';
+import type { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
 
 import {
     default as resources_getUiApiLayoutUserStateByObjectApiName_default,

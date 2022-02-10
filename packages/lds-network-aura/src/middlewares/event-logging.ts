@@ -1,5 +1,5 @@
 import { getEnvironmentSetting, EnvironmentSettings } from '@salesforce/lds-environment-settings';
-import { InstrumentationRejectCallback, InstrumentationResolveCallback } from './utils';
+import type { InstrumentationRejectCallback, InstrumentationResolveCallback } from './utils';
 
 export enum CrudEventType {
     CREATE = 'create',

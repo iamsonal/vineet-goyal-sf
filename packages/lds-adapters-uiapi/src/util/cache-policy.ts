@@ -1,4 +1,4 @@
-import { BuildNetworkSnapshot, Luvio } from '@luvio/engine';
+import type { BuildNetworkSnapshot, Luvio } from '@luvio/engine';
 
 /**
  * Returns a BuildNetworkSnapshot function that always returns a Promise<ErrorSnapshot>.

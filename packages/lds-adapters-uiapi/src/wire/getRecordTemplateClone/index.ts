@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     Snapshot,
@@ -11,24 +11,24 @@ import {
     AdapterRequestContext,
     CoercedAdapterRequestContext,
 } from '@luvio/engine';
+import type {
+    buildCachedSnapshot as generatedBuildCachedSnapshot,
+    buildNetworkSnapshot as generatedBuildNetworkSnapshot,
+    GetRecordTemplateCloneConfig,
+} from '../../generated/adapters/getRecordTemplateClone';
 import {
     validateAdapterConfig,
     getRecordTemplateClone_ConfigPropertyNames,
     createResourceParams,
-    buildCachedSnapshot as generatedBuildCachedSnapshot,
-    buildNetworkSnapshot as generatedBuildNetworkSnapshot,
-    GetRecordTemplateCloneConfig,
 } from '../../generated/adapters/getRecordTemplateClone';
 import {
     createResourceRequest,
     getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCloneByRecordId/select';
-import {
-    RecordDefaultsTemplateCloneRepresentation,
-    TTL as RecordTemplateCloneTTL,
-} from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
-import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
+import type { RecordDefaultsTemplateCloneRepresentation } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
+import { TTL as RecordTemplateCloneTTL } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
+import type { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import { keyBuilder as templateRecordKeyBuilder } from '../../generated/types/RecordTemplateCloneRepresentation';
 import {
     BLANK_RECORD_FIELDS_TRIE,

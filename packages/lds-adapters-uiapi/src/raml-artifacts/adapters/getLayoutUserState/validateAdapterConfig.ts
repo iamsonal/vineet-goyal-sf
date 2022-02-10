@@ -1,9 +1,9 @@
 import { validateAdapterConfig as originalValidateAdapterConfig } from '../../../generated/adapters/getLayoutUserState';
-import { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
+import type { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
 import { LayoutMode } from '../../../primitives/LayoutMode';
 import { LayoutType } from '../../../primitives/LayoutType';
 
-import { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
+import type { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
 
 export function validateAdapterConfig(
     untrustedConfig: unknown,

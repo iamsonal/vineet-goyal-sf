@@ -1,4 +1,4 @@
-import { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
+import type { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
 
 // FYI stricter required set than RAML defines, matches lds222 behavior
 export const getLayoutUserState_ConfigPropertyNames: AdapterValidationConfig = {

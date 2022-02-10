@@ -1,11 +1,11 @@
-import {
+import type {
     LuvioArgumentNode,
     LuvioListValueNode,
     LuvioObjectValueNode,
     LuvioValueNode,
     StringValueNode,
 } from '@luvio/graphql-parser';
-import {
+import type {
     BooleanValueNode,
     EnumValueNode,
     FloatValueNode,
@@ -13,15 +13,12 @@ import {
     ListValueNode,
     NullValueNode,
 } from 'graphql/language';
-import { message, PredicateError } from './Error';
-import { DataType, ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
-import {
+import type { PredicateError } from './Error';
+import { message } from './Error';
+import type { DataType, ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
+import type {
     BooleanLiteral,
-    ComparisonOperator,
-    CompoundOperator,
     DateArray,
-    DateEnumType,
-    DateFunction,
     DateFunctionPredicate,
     DateInput,
     DateRange,
@@ -32,35 +29,27 @@ import {
     IntLiteral,
     JsonExtract,
     NotPredicate,
-    NullComparisonOperator,
     NullValue,
     NumberArray,
     Predicate,
     PredicateContainer,
-    PredicateType,
     RelativeDate,
     StringArray,
     StringLiteral,
-    ValueType,
 } from './Predicate';
 import {
-    errors,
-    failure,
-    flattenResults,
-    isFailure,
-    isSuccess,
-    PredicateResult,
-    Result,
-    success,
-    values,
-} from './Result';
-import {
-    ExtractKind,
-    is,
-    isCompoundOperator,
-    isListValueNode,
-    isObjectValueNode,
-} from './type-guards';
+    ComparisonOperator,
+    CompoundOperator,
+    DateEnumType,
+    DateFunction,
+    NullComparisonOperator,
+    PredicateType,
+    ValueType,
+} from './Predicate';
+import type { PredicateResult, Result } from './Result';
+import { errors, failure, flattenResults, isFailure, isSuccess, success, values } from './Result';
+import type { ExtractKind } from './type-guards';
+import { is, isCompoundOperator, isListValueNode, isObjectValueNode } from './type-guards';
 import {
     combinePredicates,
     comparison,

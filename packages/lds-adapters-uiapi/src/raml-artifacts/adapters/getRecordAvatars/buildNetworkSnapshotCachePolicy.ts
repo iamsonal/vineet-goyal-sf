@@ -1,7 +1,7 @@
-import { CoercedAdapterRequestContext, Snapshot } from '@luvio/engine';
-import { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import type { CoercedAdapterRequestContext, Snapshot } from '@luvio/engine';
+import type { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
-import { BuildSnapshotContext } from './utils';
+import type { BuildSnapshotContext } from './utils';
 
 export function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,

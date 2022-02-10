@@ -1,4 +1,4 @@
-import { NetworkAdapter } from '@luvio/engine';
+import type { NetworkAdapter } from '@luvio/engine';
 import { makeNetworkChunkFieldsGetRecord } from './makeNetworkChunkFieldsGetRecord';
 import { makeNetworkChunkFieldsGetRecordsBatch } from './makeNetworkChunkFieldsGetRecordsBatch';
 import { makeNetworkChunkFieldsGetRelatedListRecords } from './makeNetworkChunkFieldsGetRelatedListRecords';

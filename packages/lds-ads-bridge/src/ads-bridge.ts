@@ -1,13 +1,15 @@
-import { Luvio, ProxyGraphNode, GraphNode } from '@luvio/engine';
-import {
-    ingestRecord,
-    keyBuilderRecord,
-    keyBuilderObjectInfo,
+import type { Luvio, ProxyGraphNode, GraphNode } from '@luvio/engine';
+import type {
     RecordRepresentation,
     RecordRepresentationNormalized,
     ObjectInfoRepresentation,
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
+} from '@salesforce/lds-adapters-uiapi';
+import {
+    ingestRecord,
+    keyBuilderRecord,
+    keyBuilderObjectInfo,
 } from '@salesforce/lds-adapters-uiapi';
 
 import {

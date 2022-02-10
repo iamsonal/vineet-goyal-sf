@@ -1,16 +1,11 @@
-import { LuvioArgumentNode } from '@luvio/graphql-parser';
-import { ParserInput } from './ast-parser';
-import { message, PredicateError } from './Error';
-import {
-    Predicate,
-    PredicateType,
-    ComparisonOperator,
-    ValueType,
-    ExistsPredicate,
-    CompoundPredicate,
-    CompoundOperator,
-} from './Predicate';
-import { Result, success, failure } from './Result';
+import type { LuvioArgumentNode } from '@luvio/graphql-parser';
+import type { ParserInput } from './ast-parser';
+import type { PredicateError } from './Error';
+import { message } from './Error';
+import type { Predicate, ExistsPredicate, CompoundPredicate } from './Predicate';
+import { PredicateType, ComparisonOperator, ValueType, CompoundOperator } from './Predicate';
+import type { Result } from './Result';
+import { success, failure } from './Result';
 import { getFieldInfo, extractPath, comparison, stringLiteral } from './util';
 
 export function scopeFilter(

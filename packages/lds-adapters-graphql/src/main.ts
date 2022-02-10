@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     AdapterRequestContext,
     CacheKeySet,
@@ -15,18 +15,19 @@ import {
     StoreLookup,
     TTLStrategy,
 } from '@luvio/engine';
-import { LuvioDocumentNode } from '@luvio/graphql-parser';
+import type { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { astToString } from './util/ast-to-string';
 import { deepFreeze, namespace, representationName, untrustedIsObject } from './util/adapter';
 import { ObjectKeys, ObjectCreate } from './util/language';
+import type { GraphQL } from './type/Document';
 import {
-    GraphQL,
     createIngest,
     createRead,
     validate as documentValidate,
     isLuvioDocumentNode,
 } from './type/Document';
-import { GraphQLVariables, isGraphQLVariables } from './type/Variable';
+import type { GraphQLVariables } from './type/Variable';
+import { isGraphQLVariables } from './type/Variable';
 import { storeEval } from './configuration';
 
 export { namespace, representationName } from './util/adapter';

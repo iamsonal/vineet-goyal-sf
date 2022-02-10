@@ -1,4 +1,5 @@
-import auraStorage, { AuraStorage, AuraStorageConfig } from 'aura-storage';
+import type { AuraStorage, AuraStorageConfig } from 'aura-storage';
+import auraStorage from 'aura-storage';
 
 // The VERSION environment variable is replaced by rollup during the bundling and replaces it with
 // the commit hash. This avoid having a cache hit on data that has been stored by a previous

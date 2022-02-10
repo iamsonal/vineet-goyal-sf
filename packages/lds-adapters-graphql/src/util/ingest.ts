@@ -1,5 +1,5 @@
-import { IngestPath, Luvio, Store } from '@luvio/engine';
-import {
+import type { IngestPath, Luvio, Store } from '@luvio/engine';
+import type {
     LuvioOperationDefinitionNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
@@ -8,7 +8,7 @@ import { render as renderField } from '../type/Field';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { createIngest as customFieldCreateIngest } from '../type/CustomField';
 import merge from './merge';
-import { GraphQLVariables } from '../type/Variable';
+import type { GraphQLVariables } from '../type/Variable';
 import { equals } from './equal';
 import { namespace } from './adapter';
 

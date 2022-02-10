@@ -1,5 +1,5 @@
-import { RecordLayoutRepresentation } from '../generated/types/RecordLayoutRepresentation';
-import { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
+import type { RecordLayoutRepresentation } from '../generated/types/RecordLayoutRepresentation';
+import type { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
 
 const FIELD_ID = 'Id';
 const FIELD_NAME = 'Name';

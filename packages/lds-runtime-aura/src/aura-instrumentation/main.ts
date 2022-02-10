@@ -1,18 +1,15 @@
-import { Luvio, Store, Adapter, UnfulfilledSnapshot } from '@luvio/engine';
+import type { Luvio, Store, Adapter, UnfulfilledSnapshot } from '@luvio/engine';
 import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@salesforce/lds-bindings';
+import type { CacheStatsLogger, Counter, MetricsKey, Timer } from 'instrumentation/service';
 import {
-    CacheStatsLogger,
-    Counter,
     counter,
     interaction,
     mark as instrumentationServiceMark,
-    MetricsKey,
     perfStart,
     perfEnd,
     registerCacheStats,
     registerPeriodicLogger,
     timer,
-    Timer,
 } from 'instrumentation/service';
 import {
     incrementCounterMetric,

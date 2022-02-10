@@ -1,8 +1,11 @@
-import { executeGlobalController, ActionConfig } from 'aura';
-import { AuraStorage } from 'aura-storage';
-import { registerCacheStats, CacheStatsLogger } from 'instrumentation/service';
+import type { ActionConfig } from 'aura';
+import { executeGlobalController } from 'aura';
+import type { AuraStorage } from 'aura-storage';
+import type { CacheStatsLogger } from 'instrumentation/service';
+import { registerCacheStats } from 'instrumentation/service';
 
-import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 
 import appRouter from '../router';

@@ -1,8 +1,6 @@
-import { Luvio, FetchResponse } from '@luvio/engine';
-import {
-    buildNetworkSnapshot as generatedBuildNetworkSnapshot,
-    DeleteDatasetConfig,
-} from '../../../generated/adapters/deleteDataset';
+import type { Luvio, FetchResponse } from '@luvio/engine';
+import type { DeleteDatasetConfig } from '../../../generated/adapters/deleteDataset';
+import { buildNetworkSnapshot as generatedBuildNetworkSnapshot } from '../../../generated/adapters/deleteDataset';
 import { datasetNameToIdCache } from '../../utils/datasetNameToIdCache';
 
 export function buildNetworkSnapshot(

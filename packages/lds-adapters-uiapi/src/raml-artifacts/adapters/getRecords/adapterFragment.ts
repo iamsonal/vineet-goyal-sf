@@ -1,6 +1,6 @@
-import { Fragment, Luvio } from '@luvio/engine';
+import type { Fragment, Luvio } from '@luvio/engine';
 import { selectChildResourceParams } from '../../resources/getUiApiRecordsBatchByRecordIds/selectChildResourceParams';
-import { GetRecordsConfig } from './GetRecordsConfig';
+import type { GetRecordsConfig } from './GetRecordsConfig';
 import { createChildResourceParams } from './createChildResourceParams';
 import { createResourceParams } from './createResourceParams';
 

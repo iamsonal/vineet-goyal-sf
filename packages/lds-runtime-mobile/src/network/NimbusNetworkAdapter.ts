@@ -1,7 +1,7 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import { ResourceRequest, FetchResponse, NetworkAdapter } from '@luvio/engine';
+import type { ResourceRequest, FetchResponse, NetworkAdapter } from '@luvio/engine';
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from './networkUtils';
 
 import { idleDetector } from 'o11y/client';

@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterRequestContext,
     Luvio,
     PathSelection,
@@ -13,23 +13,22 @@ import {
     getRecordByFields,
 } from './GetRecordFields';
 import { buildCachedSnapshotCachePolicy as buildCachedSnapshotCachePolicy_getObjectInfo } from '../../generated/adapters/getObjectInfo';
-import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
+import type { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
+import type { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
 import {
     keyBuilder as keyBuilder_RecordLayoutRepresentation,
-    RecordLayoutRepresentation,
     select as select_RecordLayoutRepresentation,
 } from '../../generated/types/RecordLayoutRepresentation';
-import {
-    keyBuilder as keyBuilder_RecordRepresentation,
-    RecordRepresentation,
-} from '../../generated/types/RecordRepresentation';
-import { RecordUiRepresentation } from '../../generated/types/RecordUiRepresentation';
+import type { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { keyBuilder as keyBuilder_RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import type { RecordUiRepresentation } from '../../generated/types/RecordUiRepresentation';
 import { buildNetworkSnapshot as buildNetworkSnapshot_getRecordUi } from '../getRecordUi';
 import { LayoutMode } from '../../primitives/LayoutMode';
-import { LayoutType } from '../../primitives/LayoutType';
+import type { LayoutType } from '../../primitives/LayoutType';
 import { ObjectKeys } from '../../util/language';
 import { getQualifiedFieldApiNamesFromLayout } from '../../util/layouts';
-import { getRecordTypeId, RecordLayoutFragment } from '../../util/records';
+import type { RecordLayoutFragment } from '../../util/records';
+import { getRecordTypeId } from '../../util/records';
 import {
     isErrorSnapshot,
     isFulfilledSnapshot,

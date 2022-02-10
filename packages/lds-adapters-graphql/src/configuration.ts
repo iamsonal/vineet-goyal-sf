@@ -1,5 +1,5 @@
-import { Snapshot, TTLStrategy } from '@luvio/engine';
-import { LuvioDocumentNode } from '@luvio/graphql-parser';
+import type { Snapshot, TTLStrategy } from '@luvio/engine';
+import type { LuvioDocumentNode } from '@luvio/graphql-parser';
 
 export type StoreEval = (
     ast: LuvioDocumentNode,

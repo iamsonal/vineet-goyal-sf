@@ -1,6 +1,6 @@
-import { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
-import { GetLayoutConfig } from '../../../generated/adapters/getLayout';
-import { Luvio } from '@luvio/engine';
+import type { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
+import type { GetLayoutConfig } from '../../../generated/adapters/getLayout';
+import type { Luvio } from '@luvio/engine';
 export type GetLayoutConfigWithDefaults = Omit<Required<GetLayoutConfig>, 'formFactor'>;
 
 export type BuildSnapshotContext = {

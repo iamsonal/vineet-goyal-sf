@@ -1,4 +1,4 @@
-import {
+import type {
     Luvio,
     Fragment,
     Reader,
@@ -20,8 +20,8 @@ import {
     getFetchResponseStatusText,
 } from '../../generated/adapters/adapter-utils';
 
+import type { ResourceRequestConfig as getUiApiListInfoByListViewApiNameAndObjectApiName_ResourceRequestConfig } from '../../generated/resources/getUiApiListInfoByListViewApiNameAndObjectApiName';
 import {
-    ResourceRequestConfig as getUiApiListInfoByListViewApiNameAndObjectApiName_ResourceRequestConfig,
     keyBuilder as getUiApiListInfoByListViewApiNameAndObjectApiName_keyBuilder,
     select as getUiApiListInfoByListViewApiNameAndObjectApiName_select,
     getResponseCacheKeys as getUiApiListInfoByListViewApiNameAndObjectApiName_getResponseCacheKeys,
@@ -29,12 +29,10 @@ import {
     ingestError as getUiApiListInfoByListViewApiNameAndObjectApiName_ingestError,
 } from '../../generated/resources/getUiApiListInfoByListViewApiNameAndObjectApiName';
 
-import { ListInfoBatchRepresentation as types_ListInfoBatchRepresentation_ListInfoBatchRepresentation } from '../../generated/types/ListInfoBatchRepresentation';
-import {
-    ListInfoRepresentation as types_ListInfoRepresentation_ListInfoRepresentation,
-    TTL as types_ListInfoRepresentation_TTL,
-} from '../../generated/types/ListInfoRepresentation';
-import { SimpleListInfoResultRepresentation as types_SimpleListInfoResultRepresentation_SimpleListInfoResultRepresentation } from '../../generated/types/SimpleListInfoResultRepresentation';
+import type { ListInfoBatchRepresentation as types_ListInfoBatchRepresentation_ListInfoBatchRepresentation } from '../../generated/types/ListInfoBatchRepresentation';
+import type { ListInfoRepresentation as types_ListInfoRepresentation_ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
+import { TTL as types_ListInfoRepresentation_TTL } from '../../generated/types/ListInfoRepresentation';
+import type { SimpleListInfoResultRepresentation as types_SimpleListInfoResultRepresentation_SimpleListInfoResultRepresentation } from '../../generated/types/SimpleListInfoResultRepresentation';
 const nonCachedErrors: {
     [key: string]: { expiration: number; response: FetchResponse<any>; status: number } | undefined;
 } = ObjectCreate(null);

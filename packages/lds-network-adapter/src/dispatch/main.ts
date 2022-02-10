@@ -1,4 +1,4 @@
-import { FetchResponse, NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import type { FetchResponse, NetworkAdapter, ResourceRequest } from '@luvio/engine';
 import { matchRecordsHandlers } from './records';
 
 export interface SalesforceResourceRequest {

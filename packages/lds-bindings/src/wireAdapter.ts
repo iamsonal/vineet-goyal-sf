@@ -1,10 +1,10 @@
-import { Adapter, Luvio } from '@luvio/engine';
+import type { Adapter, Luvio } from '@luvio/engine';
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
     createInfiniteScrollingWireAdapterConstructor as lwcLdsCreateInfiniteScrollingWireAdapterConstructor,
 } from '@luvio/lwc-luvio';
-import { WireAdapterConstructor } from '@lwc/engine-core';
-import { AdapterMetadata } from './ldsAdapter';
+import type { WireAdapterConstructor } from '@lwc/engine-core';
+import type { AdapterMetadata } from './ldsAdapter';
 
 export function createWireAdapterConstructor<C, D>(
     luvio: Luvio,

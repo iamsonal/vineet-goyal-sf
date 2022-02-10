@@ -1,6 +1,6 @@
 import { ArrayIsArray } from '../../../generated/adapters/adapter-utils';
-import { ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsByRecordId';
-import { GetRecordsConfig } from './GetRecordsConfig';
+import type { ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsByRecordId';
+import type { GetRecordsConfig } from './GetRecordsConfig';
 
 export function createChildResourceParams(config: GetRecordsConfig) {
     const childResources: ResourceRequestConfig[] = [];

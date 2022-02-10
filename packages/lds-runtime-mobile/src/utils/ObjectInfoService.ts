@@ -1,6 +1,6 @@
-import { Adapter } from '@luvio/engine';
-import { DurableStore, DurableStoreEntries } from '@luvio/environments';
-import {
+import type { Adapter } from '@luvio/engine';
+import type { DurableStore, DurableStoreEntries } from '@luvio/environments';
+import type {
     ObjectInfoRepresentation,
     getObjectInfoAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';

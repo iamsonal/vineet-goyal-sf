@@ -1,4 +1,4 @@
-import {
+import type {
     LuvioArgumentNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionNode,
@@ -6,13 +6,19 @@ import {
     LuvioDocumentNode,
 } from '@luvio/graphql-parser';
 import { removeDuplicateFields } from './comparison';
-import { message, missingObjectInfo, PredicateError } from './Error';
+import type { PredicateError } from './Error';
+import { message, missingObjectInfo } from './Error';
 
 import { recordFilter } from './filter-parser';
-import { RelationshipInfo, ReferenceFieldInfo, ObjectInfoMap, ReferenceToInfo } from './info-types';
+import type {
+    RelationshipInfo,
+    ReferenceFieldInfo,
+    ObjectInfoMap,
+    ReferenceToInfo,
+} from './info-types';
 import { parseOrderBy } from './orderby-parser';
 
-import {
+import type {
     RecordQuery,
     RootQuery,
     ScalarField,
@@ -21,12 +27,10 @@ import {
     ChildField,
     JsonExtract,
     Predicate,
-    FieldType,
-    CompoundOperator,
-    ComparisonOperator,
-    ValueType,
 } from './Predicate';
-import { errors, failure, isFailure, isSuccess, Result, success, values } from './Result';
+import { FieldType, CompoundOperator, ComparisonOperator, ValueType } from './Predicate';
+import type { Result } from './Result';
+import { errors, failure, isFailure, isSuccess, success, values } from './Result';
 import { scopeFilter } from './scope-parser';
 
 import {

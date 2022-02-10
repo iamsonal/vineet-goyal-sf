@@ -1,4 +1,4 @@
-import {
+import type {
     Luvio,
     Selector,
     Snapshot,
@@ -10,16 +10,15 @@ import {
     ResourceRequestOverride,
     CoercedAdapterRequestContext,
 } from '@luvio/engine';
-import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
+import type { GetRecordConfig } from '../../generated/adapters/getRecord';
+import { createResourceParams } from '../../generated/adapters/getRecord';
 import {
     keyBuilder,
     getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordsByRecordId';
 import { createResourceRequest } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
-import {
-    keyBuilder as recordRepresentationKeyBuilder,
-    RecordRepresentation,
-} from '../../generated/types/RecordRepresentation';
+import type { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { keyBuilder as recordRepresentationKeyBuilder } from '../../generated/types/RecordRepresentation';
 import {
     getTrackedFields,
     convertFieldsToTrie,

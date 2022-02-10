@@ -1,6 +1,7 @@
-import { NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import type { NetworkAdapter, ResourceRequest } from '@luvio/engine';
 import { ArrayPrototypePush, JSONParse, JSONStringify, ObjectEntries } from '../language';
-import { Dispatcher, getDisaptcher, SalesforceResourceRequest } from './main';
+import type { Dispatcher, SalesforceResourceRequest } from './main';
+import { getDisaptcher } from './main';
 interface RequestHandlers {
     resolve: (response: any) => void;
     reject: (error: Error) => void;

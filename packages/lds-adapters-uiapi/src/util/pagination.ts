@@ -1,4 +1,4 @@
-import { CustomSelection, PathSelection, Reader } from '@luvio/engine';
+import type { CustomSelection, PathSelection, Reader } from '@luvio/engine';
 
 function paginatedDataCustomReader(
     key: string,

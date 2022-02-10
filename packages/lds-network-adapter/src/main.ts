@@ -1,6 +1,7 @@
-import { NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import type { NetworkAdapter, ResourceRequest } from '@luvio/engine';
 import { dedupeRequest } from './dispatch/dedupe';
-import { getDisaptcher, SalesforceResourceRequest } from './dispatch/main';
+import type { SalesforceResourceRequest } from './dispatch/main';
+import { getDisaptcher } from './dispatch/main';
 import tokenBucket from './token-bucket';
 import { instrumentation } from './instrumentation';
 

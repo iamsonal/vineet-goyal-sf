@@ -1,9 +1,16 @@
-import { EnumValueNode } from 'graphql/language';
-import { LuvioArgumentNode, LuvioObjectValueNode, LuvioValueNode } from '@luvio/graphql-parser';
-import { message, PredicateError } from './Error';
-import { ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
-import { ComparisonOperator, JsonExtract, OrderBy, OrderByContainer, ValueType } from './Predicate';
-import { failure, isSuccess, Result, success } from './Result';
+import type { EnumValueNode } from 'graphql/language';
+import type {
+    LuvioArgumentNode,
+    LuvioObjectValueNode,
+    LuvioValueNode,
+} from '@luvio/graphql-parser';
+import type { PredicateError } from './Error';
+import { message } from './Error';
+import type { ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
+import type { JsonExtract, OrderBy, OrderByContainer } from './Predicate';
+import { ComparisonOperator, ValueType } from './Predicate';
+import type { Result } from './Result';
+import { failure, isSuccess, success } from './Result';
 import { is, isObjectValueNode } from './type-guards';
 import { comparison, extractPath, getFieldInfo, referencePredicate, stringLiteral } from './util';
 

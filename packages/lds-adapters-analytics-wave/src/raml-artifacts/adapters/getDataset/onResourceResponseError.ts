@@ -1,9 +1,7 @@
-import { Luvio, FetchResponse } from '@luvio/engine';
-import {
-    GetDatasetConfig,
-    onResourceResponseError as generatedOnResourceResponseError,
-} from '../../../generated/adapters/getDataset';
-import { ResourceRequestConfig } from '../../../generated/resources/getWaveDatasetsByDatasetIdOrApiName';
+import type { Luvio, FetchResponse } from '@luvio/engine';
+import type { GetDatasetConfig } from '../../../generated/adapters/getDataset';
+import { onResourceResponseError as generatedOnResourceResponseError } from '../../../generated/adapters/getDataset';
+import type { ResourceRequestConfig } from '../../../generated/resources/getWaveDatasetsByDatasetIdOrApiName';
 import { datasetNameToIdCache } from '../../utils/datasetNameToIdCache';
 
 export function onResourceResponseError(

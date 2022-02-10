@@ -1,17 +1,19 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import {
-    DefaultDurableSegment,
+import type {
     DurableStore,
     DurableStoreChange,
     DurableStoreEntries,
     DurableStoreEntry,
     DurableStoreOperation as LuvioOperation,
-    DurableStoreOperationType as LuvioOperationType,
     OnDurableStoreChangedListener,
 } from '@luvio/environments';
 import {
+    DefaultDurableSegment,
+    DurableStoreOperationType as LuvioOperationType,
+} from '@luvio/environments';
+import type {
     DurableStoreChange as NimbusDurableStoreChange,
     DurableStoreOperation as NimbusOperation,
     DurableStoreOperationType as NimbusOperationType,
@@ -19,7 +21,8 @@ import {
 } from '@mobileplatform/nimbus-plugin-lds';
 
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
-import { METRIC_NAME, InstrumentationConfig, WithInstrumentation } from './utils/observability';
+import type { InstrumentationConfig, WithInstrumentation } from './utils/observability';
+import { METRIC_NAME } from './utils/observability';
 
 import { idleDetector } from 'o11y/client';
 

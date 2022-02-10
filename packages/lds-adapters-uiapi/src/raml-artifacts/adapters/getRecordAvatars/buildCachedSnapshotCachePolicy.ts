@@ -1,8 +1,9 @@
-import { Snapshot, StoreLookup } from '@luvio/engine';
-import { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import type { Snapshot, StoreLookup } from '@luvio/engine';
+import type { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
 import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-utils';
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
-import { recordAvatarsSelector, BuildSnapshotContext } from './utils';
+import type { BuildSnapshotContext } from './utils';
+import { recordAvatarsSelector } from './utils';
 import { isUnfulfilledSnapshot } from '../../../util/snapshot';
 import { ObjectKeys } from '../../../util/language';
 

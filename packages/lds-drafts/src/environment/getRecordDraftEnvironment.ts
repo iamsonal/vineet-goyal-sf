@@ -1,5 +1,5 @@
-import { FetchResponse, ResourceRequest } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
+import type { FetchResponse, ResourceRequest } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createBadRequestResponse } from '../DraftFetchResponse';
@@ -9,7 +9,7 @@ import {
     getRecordKeyFromResourceRequest,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
-import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+import type { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 /**
  * Checks if a resource request is a GET method on the record endpoint

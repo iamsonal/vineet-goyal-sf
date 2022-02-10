@@ -1,13 +1,11 @@
-import { FulfilledSnapshot, Luvio, ResourceResponse } from '@luvio/engine';
+import type { FulfilledSnapshot, Luvio, ResourceResponse } from '@luvio/engine';
 import { buildNetworkSnapshot } from '../../../generated/adapters/getRecords';
 import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-utils';
-import {
-    ResourceRequestConfig,
-    keyBuilder,
-} from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
-import { BatchRepresentation } from '../../../generated/types/BatchRepresentation';
+import type { ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
+import { keyBuilder } from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
+import type { BatchRepresentation } from '../../../generated/types/BatchRepresentation';
 import { ingestSuccessChildResourceParams } from '../../resources/getUiApiRecordsBatchByRecordIds/ingestSuccessChildResourceParams';
-import { GetRecordsConfig } from './GetRecordsConfig';
+import type { GetRecordsConfig } from './GetRecordsConfig';
 import { adapterFragment } from './adapterFragment';
 import { createChildResourceParams } from './createChildResourceParams';
 

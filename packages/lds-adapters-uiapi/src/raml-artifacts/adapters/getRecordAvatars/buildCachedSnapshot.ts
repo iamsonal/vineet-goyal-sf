@@ -1,8 +1,9 @@
-import { Luvio, Snapshot } from '@luvio/engine';
-import { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import type { Luvio, Snapshot } from '@luvio/engine';
+import type { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
 import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-utils';
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
-import { GetRecordAvatarsConfig, recordAvatarsSelector } from './utils';
+import type { GetRecordAvatarsConfig } from './utils';
+import { recordAvatarsSelector } from './utils';
 
 export function buildCachedSnapshot(
     luvio: Luvio,

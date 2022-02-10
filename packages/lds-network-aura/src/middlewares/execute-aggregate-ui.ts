@@ -1,8 +1,8 @@
 import { HttpStatusCode } from '@luvio/engine';
-import { DispatchActionConfig } from './utils';
+import type { DispatchActionConfig } from './utils';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import { executeGlobalController } from 'aura';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import type { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 
 interface AggregateUiParams {
     input: {

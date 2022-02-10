@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
 import { isSuperset } from '../../util/records';
 import { ArrayIsArray, ObjectKeys } from '../../util/language';
 

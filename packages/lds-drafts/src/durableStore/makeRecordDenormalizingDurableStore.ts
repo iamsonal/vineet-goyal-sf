@@ -1,29 +1,27 @@
-import { RecordSource, Store, StoreLink } from '@luvio/engine';
-import {
-    DefaultDurableSegment,
+import type { RecordSource, Store, StoreLink } from '@luvio/engine';
+import type {
     DurableStore,
     DurableStoreEntries,
     DurableStoreEntry,
     DurableStoreOperation,
-    DurableStoreOperationType,
 } from '@luvio/environments';
-import {
+import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
+import type {
     FieldValueRepresentation,
-    keyBuilderRecord,
     RecordRepresentationNormalized,
 } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import {
     buildRecordFieldStoreKey,
     extractRecordIdFromStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
 import { ObjectAssign, ObjectCreate, ObjectKeys } from '../utils/language';
-import {
+import type {
     DraftRecordRepresentation,
     DurableRecordEntry,
     DurableRecordRepresentation,
-    isEntryDurableRecordRepresentation,
-    isStoreRecordError,
 } from '../utils/records';
+import { isEntryDurableRecordRepresentation, isStoreRecordError } from '../utils/records';
 
 /**
  * Records are stored in the durable store with scalar fields denormalized. This function takes that denoramlized

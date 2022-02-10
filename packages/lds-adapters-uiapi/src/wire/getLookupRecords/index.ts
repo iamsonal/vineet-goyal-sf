@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     FetchResponse,
@@ -10,22 +10,22 @@ import {
     CoercedAdapterRequestContext,
 } from '@luvio/engine';
 
-import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
-import { AdapterValidationConfig, untrustedIsObject } from '../../generated/adapters/adapter-utils';
-import {
-    validateAdapterConfig,
-    GetLookupRecordsConfig,
-} from '../../generated/adapters/getLookupRecords';
-import { getFieldId, FieldId } from '../../primitives/FieldId';
+import type { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
+import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
+import type { GetLookupRecordsConfig } from '../../generated/adapters/getLookupRecords';
+import { validateAdapterConfig } from '../../generated/adapters/getLookupRecords';
+import type { FieldId } from '../../primitives/FieldId';
+import { getFieldId } from '../../primitives/FieldId';
 import { isSpanningRecord } from '../../selectors/record';
-import { ObjectId } from '../../primitives/ObjectId';
+import type { ObjectId } from '../../primitives/ObjectId';
+import type { ResourceRequestConfig } from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import getLookupRecordsResourceRequest, {
     keyBuilder,
-    ResourceRequestConfig,
     getResponseCacheKeys,
 } from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import { deepFreeze } from '../../util/deep-freeze';
-import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import type { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 import { isPromise } from '../../util/promise';
 
 interface GetLookupRecordsConfigRequestParams {

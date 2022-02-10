@@ -1,21 +1,20 @@
-import {
-    DefaultDurableSegment,
+import type {
     DurableStore,
     DurableStoreEntries,
     DurableStoreEntry,
     DurableStoreOperation,
-    DurableStoreOperationType,
 } from '@luvio/environments';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
+import type { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
-import { DraftAction, DraftActionStatus } from '../DraftQueue';
+import type { DraftAction } from '../DraftQueue';
+import { DraftActionStatus } from '../DraftQueue';
 import { DRAFT_SEGMENT } from '../DurableDraftQueue';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
+import type { DurableRecordEntry, GetDraftActionsForRecords } from '../utils/records';
 import {
     buildSyntheticRecordRepresentation,
-    DurableRecordEntry,
     extractRecordKeyFromDraftDurableStoreKey,
-    GetDraftActionsForRecords,
     getDraftResolutionInfoForRecordSet,
     getObjectApiNamesFromDraftCreateEntries,
     isDraftActionStoreRecordKey,
@@ -23,7 +22,7 @@ import {
     removeDrafts,
     replayDraftsOnRecord,
 } from '../utils/records';
-import { ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
 import { getObjectInfos } from '../utils/objectInfo';
 
 function persistDraftCreates(

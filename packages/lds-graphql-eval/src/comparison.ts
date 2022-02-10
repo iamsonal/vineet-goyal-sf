@@ -1,13 +1,5 @@
-import {
-    Expression,
-    FieldType,
-    OrderBy,
-    Predicate,
-    PredicateType,
-    RecordQuery,
-    RecordQueryField,
-    ValueType,
-} from './Predicate';
+import type { Expression, OrderBy, Predicate, RecordQuery, RecordQueryField } from './Predicate';
+import { FieldType, PredicateType, ValueType } from './Predicate';
 
 export function isExpressionEqual(lh: Expression, rh: Expression): boolean {
     if (lh.type === ValueType.StringLiteral && rh.type === ValueType.StringLiteral) {

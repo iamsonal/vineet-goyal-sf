@@ -1,10 +1,12 @@
-import { StoreLink, IngestPath, Luvio, Store } from '@luvio/engine';
-import {
+import type { StoreLink, IngestPath, Luvio, Store } from '@luvio/engine';
+import type {
     RecordAvatarBulkMapRepresentation,
+    ingest as generatedIngest,
+} from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import {
     validate,
     normalize,
     equals,
-    ingest as generatedIngest,
 } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
 import { createLink } from '../../../generated/types/type-utils';
 import { default as helpers_RecordAvatarBulkRepresentation_merge_default } from '../../../helpers/RecordAvatarBulkRepresentation/merge';

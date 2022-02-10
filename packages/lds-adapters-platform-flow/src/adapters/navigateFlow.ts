@@ -2,16 +2,14 @@ import {
     createResourceRequest as resources_postConnectInteractionRuntimeNavigateFlow_createResourceRequest,
     getResponseCacheKeys,
 } from '../generated/resources/postConnectInteractionRuntimeNavigateFlow';
-import {
+import type {
     Luvio as $64$luvio_engine_Luvio,
     ResourceRequestOverride as $64$luvio_engine_ResourceRequestOverride,
 } from '@luvio/engine';
+import type { FlowRuntimeResponseRepresentation as types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation } from '../generated/types/FlowRuntimeResponseRepresentation';
+import { deepFreeze } from '../generated/types/FlowRuntimeResponseRepresentation';
+import type { NavigateFlowConfig } from '../generated/adapters/navigateFlow';
 import {
-    FlowRuntimeResponseRepresentation as types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation,
-    deepFreeze,
-} from '../generated/types/FlowRuntimeResponseRepresentation';
-import {
-    NavigateFlowConfig,
     createResourceParams,
     navigateFlow_ConfigPropertyNames,
     validateAdapterConfig,

@@ -1,4 +1,4 @@
-import {
+import type {
     Adapter,
     AdapterContext,
     AdapterRequestContext,
@@ -14,21 +14,18 @@ import {
     StaleSnapshot,
     StoreLookup,
 } from '@luvio/engine';
+import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
 import {
-    AdapterValidationConfig,
     snapshotRefreshOptions,
     stableJSONStringify,
 } from '../../generated/adapters/adapter-utils';
-import {
-    createResourceRequest,
-    ResourceRequestConfig,
-} from '../../generated/resources/getByApexMethodAndApexClass';
+import type { ResourceRequestConfig } from '../../generated/resources/getByApexMethodAndApexClass';
+import { createResourceRequest } from '../../generated/resources/getByApexMethodAndApexClass';
 import { ObjectCreate } from '../../util/language';
+import type { ApexAdapterConfig, ApexInvokerParams, BuildSnapshotContext } from '../../util/shared';
 import {
     apexResponseIngest,
     apexClassnameBuilder,
-    ApexAdapterConfig,
-    ApexInvokerParams,
     configBuilder,
     keyBuilder,
     KEY_DELIM,
@@ -37,7 +34,6 @@ import {
     SHARED_ADAPTER_CONTEXT_ID,
     shouldCache,
     validateAdapterConfig,
-    BuildSnapshotContext,
 } from '../../util/shared';
 
 export const adapterName = 'getByApexMethodAndApexClass';

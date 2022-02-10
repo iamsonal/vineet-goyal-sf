@@ -1,4 +1,4 @@
-import {
+import type {
     FulfilledSnapshot,
     Luvio,
     PendingSnapshot,
@@ -6,13 +6,10 @@ import {
     SnapshotRefresh,
     StaleSnapshot,
 } from '@luvio/engine';
-import { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import type { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
 import { ingest } from '../../types/RecordAvatarBulkMapRepresentation/ingest';
-import {
-    recordAvatarsSelector,
-    KEY,
-    GetRecordAvatarsConfig,
-} from '../../adapters/getRecordAvatars/utils';
+import type { GetRecordAvatarsConfig } from '../../adapters/getRecordAvatars/utils';
+import { recordAvatarsSelector, KEY } from '../../adapters/getRecordAvatars/utils';
 
 interface ResourceRequestConfig {
     urlParams: {

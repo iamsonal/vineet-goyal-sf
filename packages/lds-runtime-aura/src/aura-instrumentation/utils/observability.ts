@@ -10,7 +10,7 @@
  * [2] https://salesforce.quip.com/1dFvAba1b0eq
  */
 
-import { MetricsKey } from 'instrumentation/service';
+import type { MetricsKey } from 'instrumentation/service';
 import { NORMALIZED_APEX_ADAPTER_NAME } from '../main';
 
 export const OBSERVABILITY_NAMESPACE = 'LIGHTNING.lds.service';

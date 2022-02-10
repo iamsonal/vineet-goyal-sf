@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import { API_NAMESPACE, RECORD_REPRESENTATION_NAME } from '@salesforce/lds-uiapi-record-utils';
 import { withDefaultLuvio } from 'native/ldsEngineMobile';
 

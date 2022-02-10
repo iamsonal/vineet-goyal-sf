@@ -1,12 +1,12 @@
+import type { RecordLayoutRepresentation } from '../../../generated/types/RecordLayoutRepresentation';
 import {
     keyBuilder as recordLayoutRepresentationKeyBuilder,
-    RecordLayoutRepresentation,
     select,
 } from '../../../generated/types/RecordLayoutRepresentation';
 import { buildNetworkSnapshot } from '../../../generated/adapters/getLayout';
 import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-utils';
-import { BuildSnapshotContext } from './utils';
-import { Selector, StoreLookup, Snapshot } from '@luvio/engine';
+import type { BuildSnapshotContext } from './utils';
+import type { Selector, StoreLookup, Snapshot } from '@luvio/engine';
 
 export function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,

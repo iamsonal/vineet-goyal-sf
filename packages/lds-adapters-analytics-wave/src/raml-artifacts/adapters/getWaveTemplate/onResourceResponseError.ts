@@ -1,9 +1,7 @@
-import { Luvio, FetchResponse } from '@luvio/engine';
-import {
-    GetWaveTemplateConfig,
-    onResourceResponseError as generatedOnResourceResponseError,
-} from '../../../generated/adapters/getWaveTemplate';
-import { ResourceRequestConfig } from '../../../generated/resources/getWaveTemplatesByTemplateIdOrApiName';
+import type { Luvio, FetchResponse } from '@luvio/engine';
+import type { GetWaveTemplateConfig } from '../../../generated/adapters/getWaveTemplate';
+import { onResourceResponseError as generatedOnResourceResponseError } from '../../../generated/adapters/getWaveTemplate';
+import type { ResourceRequestConfig } from '../../../generated/resources/getWaveTemplatesByTemplateIdOrApiName';
 import { templateNameToIdCache } from '../../utils/templateNameToIdCache';
 
 export function onResourceResponseError(

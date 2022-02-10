@@ -1,4 +1,4 @@
-import {
+import type {
     Adapter,
     CacheKeySet,
     Environment,
@@ -7,30 +7,29 @@ import {
     SnapshotRebuild,
     Store,
 } from '@luvio/engine';
-import {
-    DefaultDurableSegment,
+import type {
     DurableEnvironment,
     DurableStoreChange,
     DurableStoreEntry,
-    publishDurableStoreEntries,
 } from '@luvio/environments';
-import {
+import { DefaultDurableSegment, publishDurableStoreEntries } from '@luvio/environments';
+import type {
     DraftAction,
     DraftActionMap,
     DraftIdMappingEntry,
     DraftQueue,
     DraftQueueCompleteEvent,
     DraftQueueEvent,
-    DraftQueueEventType,
 } from '../DraftQueue';
-import {
+import { DraftQueueEventType } from '../DraftQueue';
+import type {
     FieldValueRepresentationNormalized,
     GetObjectInfoConfig,
-    keyBuilderRecord,
     ObjectInfoRepresentation,
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import {
     extractRecordIdFromStoreKey,
     isStoreKeyRecordField,
@@ -38,13 +37,11 @@ import {
 } from '@salesforce/lds-uiapi-record-utils';
 import { getRecordDraftEnvironment } from './getRecordDraftEnvironment';
 import { createRecordDraftEnvironment } from './createRecordDraftEnvironment';
-import {
-    updateRecordDraftEnvironment,
-    UpdateRecordDraftEnvironmentOptions,
-} from './updateRecordDraftEnvironment';
+import type { UpdateRecordDraftEnvironmentOptions } from './updateRecordDraftEnvironment';
+import { updateRecordDraftEnvironment } from './updateRecordDraftEnvironment';
 import { deleteRecordDraftEnvironment } from './deleteRecordDraftEnvironment';
 import { getRecordsDraftEnvironment } from './getRecordsDraftEnvironment';
-import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
+import type { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
 import { DRAFT_ID_MAPPINGS_SEGMENT } from '../DurableDraftQueue';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import { isLDSDraftAction, LDS_ACTION_METADATA_API_NAME } from '../actionHandlers/LDSActionHandler';

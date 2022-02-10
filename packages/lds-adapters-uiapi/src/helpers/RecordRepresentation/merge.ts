@@ -1,21 +1,20 @@
-import { Luvio, IngestPath, StoreRecordError } from '@luvio/engine';
-import {
+import type { Luvio, IngestPath, StoreRecordError } from '@luvio/engine';
+import type {
     RecordRepresentationNormalized,
     RecordRepresentation,
-    keyBuilder as recordRepKeyBuilder,
 } from '../../generated/types/RecordRepresentation';
+import { keyBuilder as recordRepKeyBuilder } from '../../generated/types/RecordRepresentation';
 import { buildNetworkSnapshot as getRecordFieldsNetwork } from '../../wire/getRecord/GetRecordFields';
+import type { RecordFieldTrie, TrackedFieldsConfig } from '../../util/records';
 import {
     isGraphNode,
     isSupportedEntity,
     extractTrackedFieldsToTrie,
-    RecordFieldTrie,
     convertTrieToFields,
     isSuperRecordFieldTrie,
-    TrackedFieldsConfig,
 } from '../../util/records';
 import { ObjectKeys } from '../../util/language';
-import { RecordConflictMap } from './resolveConflict';
+import type { RecordConflictMap } from './resolveConflict';
 import { configuration } from '../../configuration';
 import { instrumentation } from '../../instrumentation';
 

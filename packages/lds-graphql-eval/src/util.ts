@@ -1,14 +1,20 @@
 import { removeDuplicatePredicates } from './comparison';
-import { missingObjectInfo, PredicateError } from './Error';
-import { FieldInfo, ObjectInfo, RelationshipInfo } from './info-types';
-import {
+import type { PredicateError } from './Error';
+import { missingObjectInfo } from './Error';
+import type { FieldInfo, ObjectInfo, RelationshipInfo } from './info-types';
+import type {
     BooleanLiteral,
-    ComparisonOperator,
     ComparisonPredicate,
     CompoundOperator,
     DoubleLiteral,
     Expression,
     IntLiteral,
+    JsonExtract,
+    Predicate,
+    StringLiteral,
+} from './Predicate';
+import {
+    ComparisonOperator,
     isBetweenPredicate,
     isComparisonPredicate,
     isCompoundPredicate,
@@ -16,13 +22,11 @@ import {
     isExistsPredicate,
     isNotPredicate,
     isNullComparisonPredicate,
-    JsonExtract,
-    Predicate,
     PredicateType,
-    StringLiteral,
     ValueType,
 } from './Predicate';
-import { failure, Result, success } from './Result';
+import type { Result } from './Result';
+import { failure, success } from './Result';
 
 import { flatten } from './util/flatten';
 

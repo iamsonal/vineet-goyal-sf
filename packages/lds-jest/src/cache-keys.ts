@@ -1,11 +1,5 @@
-import {
-    AdapterFactory,
-    CacheKeySet,
-    Environment,
-    FetchResponse,
-    Luvio,
-    Store,
-} from '@luvio/engine';
+import type { AdapterFactory, CacheKeySet, FetchResponse } from '@luvio/engine';
+import { Environment, Luvio, Store } from '@luvio/engine';
 
 function clone<T>(theObj: T): T {
     return JSON.parse(JSON.stringify(theObj));

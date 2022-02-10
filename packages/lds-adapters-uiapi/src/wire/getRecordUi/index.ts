@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     AdapterRequestContext,
     CacheKeySet,
@@ -12,20 +12,22 @@ import {
     StoreLookup,
     UnfulfilledSnapshot,
 } from '@luvio/engine';
-import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
-import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
+import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import { keyPrefix } from '../../generated/adapters/adapter-utils';
+import type { GetRecordUiConfig } from '../../generated/adapters/getRecordUi';
+import { validateAdapterConfig } from '../../generated/adapters/getRecordUi';
 import getUiApiRecordUiByRecordIds from '../../generated/resources/getUiApiRecordUiByRecordIds';
-import { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
+import type { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
+import type { RecordUiRepresentation } from '../../generated/types/RecordUiRepresentation';
 import {
-    RecordUiRepresentation,
     TTL as RecordUiRepresentationTTL,
     ingest,
 } from '../../generated/types/RecordUiRepresentation';
-import {
-    keyBuilder as recordRepresentationKeyBuilder,
+import type {
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
+import { keyBuilder as recordRepresentationKeyBuilder } from '../../generated/types/RecordRepresentation';
 import { dependencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
 import {
     ArrayPrototypePush,
@@ -41,11 +43,12 @@ import {
     isGraphNode,
 } from '../../util/records';
 import { dedupe } from '../../validation/utils';
-import { buildRecordUiSelector, RecordDef } from './selectors';
+import type { RecordDef } from './selectors';
+import { buildRecordUiSelector } from './selectors';
 import { getRecordTypeId } from '../../util/records';
 import { isFulfilledSnapshot, isStaleSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
-import { LayoutType } from '../../primitives/LayoutType';
-import { LayoutMode } from '../../primitives/LayoutMode';
+import type { LayoutType } from '../../primitives/LayoutType';
+import type { LayoutMode } from '../../primitives/LayoutMode';
 import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
 import { buildNotFetchableNetworkSnapshot } from '../../util/cache-policy';
 import { isPromise } from '../../util/promise';

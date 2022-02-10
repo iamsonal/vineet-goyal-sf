@@ -1,10 +1,9 @@
-import {
-    GetLayoutConfig,
-    validateAdapterConfig as baseValidateAdapterConfig,
-} from '../../../generated/adapters/getLayout';
+import type { GetLayoutConfig } from '../../../generated/adapters/getLayout';
+import { validateAdapterConfig as baseValidateAdapterConfig } from '../../../generated/adapters/getLayout';
 import { MASTER_RECORD_TYPE_ID } from '../../../util/layout';
-import { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
-import { getLayout_ConfigPropertyNames, GetLayoutConfigWithDefaults } from './utils';
+import type { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
+import type { GetLayoutConfigWithDefaults } from './utils';
+import { getLayout_ConfigPropertyNames } from './utils';
 
 export function validateAdapterConfig(
     untrustedConfig: unknown,

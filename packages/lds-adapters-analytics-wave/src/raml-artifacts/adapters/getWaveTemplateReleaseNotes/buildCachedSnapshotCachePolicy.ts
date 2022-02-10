@@ -1,9 +1,7 @@
-import { Luvio, Snapshot, StoreLookup } from '@luvio/engine';
-import {
-    buildCachedSnapshotCachePolicy as generatedBuildCachedSnapshotCachePolicy,
-    GetWaveTemplateReleaseNotesConfig,
-} from '../../../generated/adapters/getWaveTemplateReleaseNotes';
-import { TemplateReleaseNotesRepresentation } from '../../../generated/types/TemplateReleaseNotesRepresentation';
+import type { Luvio, Snapshot, StoreLookup } from '@luvio/engine';
+import type { GetWaveTemplateReleaseNotesConfig } from '../../../generated/adapters/getWaveTemplateReleaseNotes';
+import { buildCachedSnapshotCachePolicy as generatedBuildCachedSnapshotCachePolicy } from '../../../generated/adapters/getWaveTemplateReleaseNotes';
+import type { TemplateReleaseNotesRepresentation } from '../../../generated/types/TemplateReleaseNotesRepresentation';
 import { templateNameToIdCache } from '../../utils/templateNameToIdCache';
 
 export function buildCachedSnapshotCachePolicy(

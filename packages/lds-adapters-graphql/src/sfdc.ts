@@ -1,6 +1,6 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
+import type { AdapterMetadata } from '@salesforce/lds-bindings';
 import {
-    AdapterMetadata,
     createImperativeAdapter,
     createInstrumentedAdapter,
     createLDSAdapter,

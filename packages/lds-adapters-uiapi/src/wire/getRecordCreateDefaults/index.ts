@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     PathSelection,
@@ -13,25 +13,21 @@ import {
     CoercedAdapterRequestContext,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
+import type { ResourceRequestConfig } from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
-    ResourceRequestConfig,
     keyBuilder,
     getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
 import { createResourceParams } from '../../generated/adapters/getRecordCreateDefaults';
-import {
-    RecordDefaultsRepresentation,
-    ingest,
-} from '../../generated/types/RecordDefaultsRepresentation';
+import type { RecordDefaultsRepresentation } from '../../generated/types/RecordDefaultsRepresentation';
+import { ingest } from '../../generated/types/RecordDefaultsRepresentation';
 import { select as recordLayoutRepresentationSelect } from '../../generated/types/RecordLayoutRepresentation';
 import { select as objectInfoRepresentationSelect } from '../../generated/types/ObjectInfoRepresentation';
 import { FormFactor } from '../../primitives/FormFactor';
 import { buildSelectionFromRecord } from '../../selectors/record';
 import { MASTER_RECORD_TYPE_ID } from '../../util/layout';
-import {
-    GetRecordCreateDefaultsConfig,
-    getRecordCreateDefaults_ConfigPropertyNames,
-} from '../../generated/adapters/getRecordCreateDefaults';
+import type { GetRecordCreateDefaultsConfig } from '../../generated/adapters/getRecordCreateDefaults';
+import { getRecordCreateDefaults_ConfigPropertyNames } from '../../generated/adapters/getRecordCreateDefaults';
 
 const layoutSelections = recordLayoutRepresentationSelect();
 const objectInfoSelections = objectInfoRepresentationSelect();

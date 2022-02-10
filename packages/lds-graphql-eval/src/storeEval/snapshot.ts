@@ -1,11 +1,11 @@
-import {
+import type {
     FulfilledSnapshot,
     StaleSnapshot,
     StoreMetadata,
-    StoreResolveResultState,
     TTLStrategy,
     UnfulfilledSnapshot,
 } from '@luvio/engine';
+import { StoreResolveResultState } from '@luvio/engine';
 
 import { isObject } from './util';
 const GRAPHQL_ROOT_KEY = `GraphQL::graphql`;

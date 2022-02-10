@@ -1,7 +1,8 @@
-import { DefaultDurableSegment, DurableStoreEntry } from '@luvio/environments';
+import type { DurableStoreEntry } from '@luvio/environments';
+import { DefaultDurableSegment } from '@luvio/environments';
 import { isEntryDurableRecordRepresentation } from '@salesforce/lds-drafts';
-import { DurableStoreSetEntryPlugin } from './DurableStorePlugins';
-import { ObjectInfoRepresentation } from '@salesforce/lds-adapters-uiapi';
+import type { DurableStoreSetEntryPlugin } from './DurableStorePlugins';
+import type { ObjectInfoRepresentation } from '@salesforce/lds-adapters-uiapi';
 
 type EnsureCachedObjectInfoFunction = (
     apiName: string,

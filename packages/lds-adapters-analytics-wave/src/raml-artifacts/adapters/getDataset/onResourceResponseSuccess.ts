@@ -1,10 +1,8 @@
-import { Luvio, ResourceResponse } from '@luvio/engine';
-import {
-    GetDatasetConfig,
-    onResourceResponseSuccess as generatedOnResourceResponseSuccess,
-} from '../../../generated/adapters/getDataset';
-import { ResourceRequestConfig } from '../../../generated/resources/getWaveDatasetsByDatasetIdOrApiName';
-import { DatasetRepresentation } from '../../../generated/types/DatasetRepresentation';
+import type { Luvio, ResourceResponse } from '@luvio/engine';
+import type { GetDatasetConfig } from '../../../generated/adapters/getDataset';
+import { onResourceResponseSuccess as generatedOnResourceResponseSuccess } from '../../../generated/adapters/getDataset';
+import type { ResourceRequestConfig } from '../../../generated/resources/getWaveDatasetsByDatasetIdOrApiName';
+import type { DatasetRepresentation } from '../../../generated/types/DatasetRepresentation';
 import { datasetNameToIdCache } from '../../utils/datasetNameToIdCache';
 
 export function onResourceResponseSuccess(

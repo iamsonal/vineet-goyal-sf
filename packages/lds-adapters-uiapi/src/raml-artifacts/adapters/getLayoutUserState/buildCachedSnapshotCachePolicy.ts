@@ -1,12 +1,9 @@
-import { Luvio, Snapshot, StoreLookup, Selector } from '@luvio/engine';
+import type { Luvio, Snapshot, StoreLookup, Selector } from '@luvio/engine';
 
-import {
-    RecordLayoutUserStateRepresentation,
-    keyBuilder,
-    select,
-} from '../../../generated/types/RecordLayoutUserStateRepresentation';
+import type { RecordLayoutUserStateRepresentation } from '../../../generated/types/RecordLayoutUserStateRepresentation';
+import { keyBuilder, select } from '../../../generated/types/RecordLayoutUserStateRepresentation';
 
-import { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
+import type { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
 
 type BuildSnapshotContext = {

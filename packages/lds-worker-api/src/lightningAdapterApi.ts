@@ -22,7 +22,7 @@ import * as unstableLightningRelatedListApi from 'lightning/unstable_uiRelatedLi
 // graphql adapter is not yet exposed behind lightning namespace but will be part
 // of the lightning platform some day... for now put it here with the rest of these
 import * as gqlApi from 'force/ldsAdaptersGraphql';
-import { AdapterRequestContext } from '@luvio/engine';
+import type { AdapterRequestContext } from '@luvio/engine';
 
 export const IMPERATIVE_ADAPTER_SUFFIX = '_imperative';
 export const UNSTABLE_ADAPTER_PREFIX = 'unstable_';

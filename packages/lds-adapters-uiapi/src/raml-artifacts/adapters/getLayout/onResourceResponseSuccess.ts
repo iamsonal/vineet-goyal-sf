@@ -1,15 +1,15 @@
 import { ingest as recordLayoutRepresentationIngest } from '../../../generated/types/RecordLayoutRepresentation';
+import type { RecordLayoutRepresentation } from '../../../generated/types/RecordLayoutRepresentation';
 import {
     keyBuilder as recordLayoutRepresentationKeyBuilder,
-    RecordLayoutRepresentation,
     select,
 } from '../../../generated/types/RecordLayoutRepresentation';
-import { GetLayoutConfigWithDefaults } from './utils';
-import { ResourceRequestConfig } from '../../../generated/resources/getUiApiLayoutByObjectApiName';
+import type { GetLayoutConfigWithDefaults } from './utils';
+import type { ResourceRequestConfig } from '../../../generated/resources/getUiApiLayoutByObjectApiName';
 import { buildNetworkSnapshot } from '../../../generated/adapters/getLayout';
 import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-utils';
 
-import { Luvio, ResourceResponse } from '@luvio/engine';
+import type { Luvio, ResourceResponse } from '@luvio/engine';
 
 export function onResourceResponseSuccess(
     luvio: Luvio,

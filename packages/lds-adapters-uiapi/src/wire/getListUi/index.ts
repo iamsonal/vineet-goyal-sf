@@ -1,4 +1,4 @@
-import {
+import type {
     Adapter,
     AdapterFactory,
     FetchResponse,
@@ -13,20 +13,20 @@ import {
     StoreLookup,
 } from '@luvio/engine';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
+import type { GetListUiByApiNameConfig } from '../../generated/adapters/getListUiByApiName';
 import {
-    GetListUiByApiNameConfig,
     getListUiByApiName_ConfigPropertyNames,
     validateAdapterConfig as getListUiByApiName_validateAdapterConfig,
     createResourceParams as getListUiByApiName_createResourceParams,
 } from '../../generated/adapters/getListUiByApiName';
+import type { GetListUiByListViewIdConfig } from '../../generated/adapters/getListUiByListViewId';
 import {
-    GetListUiByListViewIdConfig,
     getListUiByListViewId_ConfigPropertyNames,
     validateAdapterConfig as getListUiByListViewId_validateAdapterConfig,
     createResourceParams as getListUiByListViewId_createResourceParams,
 } from '../../generated/adapters/getListUiByListViewId';
-import { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
-import { GetMruListUiConfig } from '../../generated/adapters/getMruListUi';
+import type { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
+import type { GetMruListUiConfig } from '../../generated/adapters/getMruListUi';
 import getUiApiListRecordsByListViewId from '../../generated/resources/getUiApiListRecordsByListViewId';
 import getUiApiListRecordsByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListRecordsByListViewApiNameAndObjectApiName';
 
@@ -39,10 +39,12 @@ import {
     createPaginationParams as getUiApiListUiByListViewId_createPaginationParams,
 } from '../../generated/resources/getUiApiListUiByListViewId';
 
-import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
-import {
+import type { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
+import type {
     DynamicSelectParams as types_ListRecordCollectionRepresentation_DynamicSelectParams,
     ListRecordCollectionRepresentation,
+} from '../../generated/types/ListRecordCollectionRepresentation';
+import {
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
     keyBuilderFromType as ListRecordCollectionRepresentation_keyBuilderFromType,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
@@ -50,17 +52,20 @@ import {
     dynamicSelect as types_ListRecordCollectionRepresentation_dynamicSelect,
     getTypeCacheKeys as types_ListRecordCollectionRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListRecordCollectionRepresentation';
-import {
+import type {
     DynamicSelectParams as types_ListUiRepresentation_DynamicSelectParams,
     ListUiRepresentation,
+} from '../../generated/types/ListUiRepresentation';
+import {
     keyBuilder as listUiRepresentation_keyBuilder,
     keyBuilderFromType as listUiRepresentation_keyBuilderFromType,
     ingest as types_ListUiRepresentation_ingest,
     dynamicSelect as types_ListUiRepresentation_dynamicSelect,
     getTypeCacheKeys as types_ListUiRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListUiRepresentation';
-import { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
+import type { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
+import type { ListFields } from '../../util/lists';
 import {
     addListReference,
     addServerDefaults,
@@ -68,7 +73,6 @@ import {
     getListReference,
     getServerDefaults,
     listFields,
-    ListFields,
 } from '../../util/lists';
 import { minimizeRequest } from '../../util/pagination';
 import { isFulfilledSnapshot, isStaleSnapshot } from '../../util/snapshot';

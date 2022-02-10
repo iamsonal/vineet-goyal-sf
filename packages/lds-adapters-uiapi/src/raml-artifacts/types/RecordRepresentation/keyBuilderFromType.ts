@@ -1,7 +1,5 @@
-import {
-    RecordRepresentation,
-    keyBuilderFromType as generatedKeyBuilderFromType,
-} from '../../../generated/types/RecordRepresentation';
+import type { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
+import { keyBuilderFromType as generatedKeyBuilderFromType } from '../../../generated/types/RecordRepresentation';
 import { keyPrefix } from '../../../generated/adapters/adapter-utils';
 
 const VIEW_ENTITY_API_NAME = 'Name';

@@ -1,10 +1,6 @@
-import {
-    DurableStore,
-    DurableStoreEntries,
-    DurableStoreOperation,
-    DurableStoreOperationType,
-} from '@luvio/environments';
-import { DurableStoreSetEntryPlugin } from './plugins/DurableStorePlugins';
+import type { DurableStore, DurableStoreEntries, DurableStoreOperation } from '@luvio/environments';
+import { DurableStoreOperationType } from '@luvio/environments';
+import type { DurableStoreSetEntryPlugin } from './plugins/DurableStorePlugins';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 
 interface PluginEnabledDurableStore extends DurableStore {

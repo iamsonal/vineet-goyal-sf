@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     FetchResponse,
@@ -17,8 +17,8 @@ import {
 import getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName, {
     getResponseCacheKeys,
 } from '../../generated/resources/getUiApiObjectInfoPicklistValuesByFieldApiNameAndObjectApiNameAndRecordTypeId';
+import type { PicklistValuesRepresentation } from '../../generated/types/PicklistValuesRepresentation';
 import {
-    PicklistValuesRepresentation,
     keyBuilder as picklistValuesKeyBuilder,
     select as picklistValuesRepresentationSelect,
     ingest as picklistValuesRepresentationIngest,

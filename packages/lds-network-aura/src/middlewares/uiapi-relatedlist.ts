@@ -1,20 +1,12 @@
-import { ResourceRequest } from '@luvio/engine';
-import { RelatedListRecordCollectionRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { RelatedListRecordCollectionBatchRepresentation } from '@salesforce/lds-adapters-uiapi';
+import type { ResourceRequest } from '@luvio/engine';
+import type { RelatedListRecordCollectionRepresentation } from '@salesforce/lds-adapters-uiapi';
+import type { RelatedListRecordCollectionBatchRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { UI_API_BASE_URI } from './uiapi-base';
-import {
-    buildUiApiParams,
-    dispatchAction,
-    InstrumentationRejectConfig,
-    InstrumentationResolveConfig,
-} from './utils';
+import type { InstrumentationRejectConfig, InstrumentationResolveConfig } from './utils';
+import { buildUiApiParams, dispatchAction } from './utils';
 import appRouter from '../router';
-import {
-    CrudEventState,
-    CrudEventType,
-    forceRecordTransactionsDisabled,
-    RelatedListInstrumentationCallbacks,
-} from './event-logging';
+import type { RelatedListInstrumentationCallbacks } from './event-logging';
+import { CrudEventState, CrudEventType, forceRecordTransactionsDisabled } from './event-logging';
 import { instrumentation } from '../instrumentation';
 
 enum UiApiRecordController {

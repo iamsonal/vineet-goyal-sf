@@ -1,5 +1,5 @@
-import { LuvioDocumentNode } from '@luvio/graphql-parser';
-import {
+import type { LuvioDocumentNode } from '@luvio/graphql-parser';
+import type {
     BooleanValueNode,
     FloatValueNode,
     IntValueNode,
@@ -15,7 +15,8 @@ import {
     LuvioListValueNode,
     LuvioTypeNode,
 } from '@luvio/graphql-parser';
-import { SerializeState, TYPENAME_FIELD, serializeSelections } from './serialize';
+import type { SerializeState } from './serialize';
+import { TYPENAME_FIELD, serializeSelections } from './serialize';
 import { ObjectKeys } from './language';
 
 type LiteralValueNode = BooleanValueNode | FloatValueNode | IntValueNode;

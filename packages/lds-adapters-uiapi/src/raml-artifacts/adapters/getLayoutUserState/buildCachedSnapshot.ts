@@ -1,11 +1,8 @@
-import { Selector, Luvio } from '@luvio/engine';
-import {
-    RecordLayoutUserStateRepresentation,
-    keyBuilder,
-    select,
-} from '../../../generated/types/RecordLayoutUserStateRepresentation';
+import type { Selector, Luvio } from '@luvio/engine';
+import type { RecordLayoutUserStateRepresentation } from '../../../generated/types/RecordLayoutUserStateRepresentation';
+import { keyBuilder, select } from '../../../generated/types/RecordLayoutUserStateRepresentation';
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
-import { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
+import type { GetLayoutUserStateConfig } from './getLayoutUserStateConfig';
 
 export function buildCachedSnapshot(luvio: Luvio, config: GetLayoutUserStateConfig) {
     const { objectApiName, recordTypeId, layoutType, mode } = config;

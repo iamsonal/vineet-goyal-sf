@@ -1,13 +1,12 @@
-import { ResourceRequest, StoreLink, StoreRecordError, Adapter } from '@luvio/engine';
-import {
+import type { ResourceRequest, StoreLink, StoreRecordError, Adapter } from '@luvio/engine';
+import type {
     RecordRepresentation,
-    keyBuilderRecord,
     FieldValueRepresentation,
-    buildSelectionFromFields,
     RecordRepresentationNormalized,
     GetObjectInfoConfig,
     ObjectInfoRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord, buildSelectionFromFields } from '@salesforce/lds-adapters-uiapi';
 import {
     ArrayIsArray,
     ArrayPrototypeShift,
@@ -15,23 +14,20 @@ import {
     JSONStringify,
     ObjectKeys,
 } from './language';
-import { Selector, PathSelection } from '@luvio/engine';
-import { CompletedDraftAction, DraftAction } from '../main';
+import type { Selector, PathSelection } from '@luvio/engine';
+import type { CompletedDraftAction, DraftAction } from '../main';
 import {
     buildRecordFieldStoreKey,
     extractRecordIdFromStoreKey,
     isStoreKeyRecordId,
 } from '@salesforce/lds-uiapi-record-utils';
-import { DraftActionMap, QueueOperation, QueueOperationType } from '../DraftQueue';
+import type { DraftActionMap, QueueOperation } from '../DraftQueue';
+import { QueueOperationType } from '../DraftQueue';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
-import {
-    DefaultDurableSegment,
-    DurableStore,
-    DurableStoreEntries,
-    DurableStoreEntry,
-} from '@luvio/environments';
+import type { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
+import { DefaultDurableSegment } from '@luvio/environments';
 import { getObjectInfosForRecords } from './objectInfo';
-import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
+import type { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
 
 type ScalarFieldType = boolean | number | string | null;
 type DraftFields = { [key: string]: ScalarFieldType };

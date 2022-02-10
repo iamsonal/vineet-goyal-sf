@@ -1,4 +1,4 @@
-import {
+import type {
     Luvio,
     PathSelection,
     AdapterContext,
@@ -7,15 +7,15 @@ import {
     StaleSnapshot,
     StoreLookup,
 } from '@luvio/engine';
+import type { ListInfoRepresentation } from '../generated/types/ListInfoRepresentation';
 import {
     keyBuilder as ListInfoRepresentation_keyBuilder,
-    ListInfoRepresentation,
     select as ListInfoRepresentation_select,
 } from '../generated/types/ListInfoRepresentation';
 import { keyBuilder as ListRecordCollection_keyBuilder } from '../generated/types/ListRecordCollectionRepresentation';
-import { ListReferenceRepresentation } from '../generated/types/ListReferenceRepresentation';
-import { ListUiRepresentation } from '../generated/types/ListUiRepresentation';
-import { RecordRepresentation } from '../generated/types/RecordRepresentation';
+import type { ListReferenceRepresentation } from '../generated/types/ListReferenceRepresentation';
+import type { ListUiRepresentation } from '../generated/types/ListUiRepresentation';
+import type { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { ObjectKeys } from './language';
 import { isGraphNode } from './records';
 

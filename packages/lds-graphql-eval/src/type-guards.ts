@@ -1,4 +1,4 @@
-import {
+import type {
     LuvioDefinitionNode,
     LuvioListValueNode,
     LuvioObjectValueNode,
@@ -9,7 +9,7 @@ import {
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
 } from '@luvio/graphql-parser';
-import { DataType, FieldInfo } from './info-types';
+import type { DataType, FieldInfo } from './info-types';
 import { ComparisonOperator, CompoundOperator } from './Predicate';
 
 export function isListValueNode(node: LuvioValueNode): node is LuvioListValueNode {

@@ -1,5 +1,5 @@
+import type { ingestSuccess as generatedIngestSuccess } from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
-    ingestSuccess as generatedIngestSuccess,
     ResourceRequestConfig,
     select,
     keyBuilder as generatedKeyBuilder,
@@ -9,7 +9,7 @@ import {
     createPaginationParams,
     getResponseCacheKeys,
 } from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
-import {
+import type {
     Luvio,
     SnapshotRefresh,
     FulfilledSnapshot,
@@ -17,12 +17,10 @@ import {
     StoreLink,
 } from '@luvio/engine';
 import { markMissingOptionalFields, isGraphNode } from '../../util/records';
-import {
-    RelatedListRecordCollectionRepresentation,
-    ingest as types_RelatedListRecordCollectionRepresentation_ingest,
-} from '../../generated/types/RelatedListRecordCollectionRepresentation';
+import type { RelatedListRecordCollectionRepresentation } from '../../generated/types/RelatedListRecordCollectionRepresentation';
+import { ingest as types_RelatedListRecordCollectionRepresentation_ingest } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
-import {
+import type {
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';

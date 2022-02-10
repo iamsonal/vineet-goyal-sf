@@ -1,4 +1,4 @@
-import {
+import type {
     Adapter,
     AdapterContext,
     AdapterRequestContext,
@@ -15,15 +15,12 @@ import {
     StoreLookup,
 } from '@luvio/engine';
 import { stableJSONStringify } from '../../util/utils';
-import {
-    createResourceRequest,
-    ResourceRequestConfig,
-} from '../../generated/resources/postByApexMethodAndApexClass';
+import type { ResourceRequestConfig } from '../../generated/resources/postByApexMethodAndApexClass';
+import { createResourceRequest } from '../../generated/resources/postByApexMethodAndApexClass';
+import type { ApexAdapterConfig, ApexInvokerParams, BuildSnapshotContext } from '../../util/shared';
 import {
     apexResponseIngest,
     apexClassnameBuilder,
-    ApexAdapterConfig,
-    ApexInvokerParams,
     configBuilder,
     keyBuilder,
     KEY_DELIM,
@@ -31,7 +28,6 @@ import {
     setCacheControlAdapterContext,
     shouldCache,
     SHARED_ADAPTER_CONTEXT_ID,
-    BuildSnapshotContext,
     isCacheable,
 } from '../../util/shared';
 

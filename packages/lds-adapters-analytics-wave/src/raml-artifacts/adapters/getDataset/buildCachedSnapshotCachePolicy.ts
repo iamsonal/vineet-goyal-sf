@@ -1,9 +1,7 @@
-import { Luvio, Snapshot, StoreLookup } from '@luvio/engine';
-import {
-    buildCachedSnapshotCachePolicy as generatedBuildCachedSnapshotCachePolicy,
-    GetDatasetConfig,
-} from '../../../generated/adapters/getDataset';
-import { DatasetRepresentation } from '../../../generated/types/DatasetRepresentation';
+import type { Luvio, Snapshot, StoreLookup } from '@luvio/engine';
+import type { GetDatasetConfig } from '../../../generated/adapters/getDataset';
+import { buildCachedSnapshotCachePolicy as generatedBuildCachedSnapshotCachePolicy } from '../../../generated/adapters/getDataset';
+import type { DatasetRepresentation } from '../../../generated/types/DatasetRepresentation';
 import { datasetNameToIdCache } from '../../utils/datasetNameToIdCache';
 
 export function buildCachedSnapshotCachePolicy(

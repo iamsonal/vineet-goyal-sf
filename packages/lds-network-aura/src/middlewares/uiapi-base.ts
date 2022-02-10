@@ -1,4 +1,4 @@
-import { DispatchActionConfig } from './utils';
+import type { DispatchActionConfig } from './utils';
 
 export const UI_API_BASE_URI = '/services/data/v55.0/ui-api';
 

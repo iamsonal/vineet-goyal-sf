@@ -1,4 +1,4 @@
-import { Activity, MetricsTags, Schema, SchematizedData } from 'o11y/client';
+import type { Activity, MetricsTags, Schema, SchematizedData } from 'o11y/client';
 import { activity } from './activity';
 
 function log(_schema: Schema, _data?: SchematizedData) {}

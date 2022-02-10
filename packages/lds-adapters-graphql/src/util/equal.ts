@@ -1,5 +1,5 @@
-import { StoreLink } from '@luvio/engine';
-import {
+import type { StoreLink } from '@luvio/engine';
+import type {
     LuvioSelectionCustomFieldNode,
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
@@ -7,7 +7,7 @@ import {
 } from '@luvio/graphql-parser';
 import { render as renderFieldNode } from '../type/Field';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
-import { GraphQLVariables } from '../type/Variable';
+import type { GraphQLVariables } from '../type/Variable';
 
 type LuvioNormalizedSelectionNode = LuvioSelectionObjectFieldNode | LuvioSelectionCustomFieldNode;
 

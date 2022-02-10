@@ -1,13 +1,13 @@
 import { GetApexInvoker, GetApexWireAdapterFactory } from './main';
+import type { AdapterMetadata } from '@salesforce/lds-bindings';
 import {
-    AdapterMetadata,
     bindWireRefresh,
     createWireAdapterConstructor,
     createInstrumentedAdapter,
     createLDSAdapter,
     refresh,
 } from '@salesforce/lds-bindings';
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 
 const REFRESH_APEX_KEY = 'refreshApex';

@@ -1,4 +1,4 @@
-import { LuvioVariableDefinitionNode, LuvioValueNode } from '@luvio/graphql-parser';
+import type { LuvioVariableDefinitionNode, LuvioValueNode } from '@luvio/graphql-parser';
 import { untrustedIsObject } from '../util/adapter';
 
 export type GraphQLVariables = Record<string, unknown>;

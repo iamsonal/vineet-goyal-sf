@@ -1,10 +1,8 @@
-import { Luvio, ResourceResponse } from '@luvio/engine';
-import {
-    GetWaveTemplateReleaseNotesConfig,
-    onResourceResponseSuccess as generatedOnResourceResponseSuccess,
-} from '../../../generated/adapters/getWaveTemplateReleaseNotes';
-import { ResourceRequestConfig } from '../../../generated/resources/getWaveTemplatesReleasenotesByTemplateIdOrApiName';
-import { TemplateReleaseNotesRepresentation } from '../../../generated/types/TemplateReleaseNotesRepresentation';
+import type { Luvio, ResourceResponse } from '@luvio/engine';
+import type { GetWaveTemplateReleaseNotesConfig } from '../../../generated/adapters/getWaveTemplateReleaseNotes';
+import { onResourceResponseSuccess as generatedOnResourceResponseSuccess } from '../../../generated/adapters/getWaveTemplateReleaseNotes';
+import type { ResourceRequestConfig } from '../../../generated/resources/getWaveTemplatesReleasenotesByTemplateIdOrApiName';
+import type { TemplateReleaseNotesRepresentation } from '../../../generated/types/TemplateReleaseNotesRepresentation';
 import { templateApiName, templateNameToIdCache } from '../../utils/templateNameToIdCache';
 
 export function onResourceResponseSuccess(

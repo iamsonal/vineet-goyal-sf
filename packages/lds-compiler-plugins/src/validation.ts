@@ -1,14 +1,14 @@
-import {
+import type {
     ModelInfo,
     ParseError,
     PluginResult,
     NodeShapeDefinition,
     ShapeDefinition,
-    ShapeTypes,
     ShapePrivate,
     ArrayShapeDefinition,
     UnionShapeDefinition,
 } from '@luvio/compiler';
+import { ShapeTypes } from '@luvio/compiler';
 
 function validateUnion(
     node: UnionShapeDefinition,

@@ -4,12 +4,15 @@ import type { LuvioDocumentNode } from '@luvio/graphql-parser';
 import type { SqlStore, SqlDurableStore } from '@salesforce/lds-store-sql';
 
 import { transform } from '../ast-parser';
-import { sql, SqlMappingInput } from '../ast-to-sql';
-import { message, PredicateError } from '../Error';
-import { failure, Result } from '../Result';
+import type { SqlMappingInput } from '../ast-to-sql';
+import { sql } from '../ast-to-sql';
+import type { PredicateError } from '../Error';
+import { message } from '../Error';
+import type { Result } from '../Result';
+import { failure } from '../Result';
 import { queryTableAttrs, durableObjectInfo, updateIndices } from './promises';
-import { ObjectInfoMap } from '../info-types';
-import { RootQuery } from '../Predicate';
+import type { ObjectInfoMap } from '../info-types';
+import type { RootQuery } from '../Predicate';
 import { hasObjectInfoChanges } from './util';
 import { createSnapshot } from './snapshot';
 

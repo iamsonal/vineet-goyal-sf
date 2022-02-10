@@ -1,4 +1,4 @@
-import { FieldId } from '../types';
+import type { FieldId } from '../types';
 import { ArrayIsArray, JSONStringify, ObjectKeys } from './language';
 
 /**

@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import { createImperativeAdapter as ldsBindingsCreateImperativeAdapter } from '@salesforce/lds-bindings';
 
 export function createLDSAdapter(luvio: Luvio, name: string, factory: any) {

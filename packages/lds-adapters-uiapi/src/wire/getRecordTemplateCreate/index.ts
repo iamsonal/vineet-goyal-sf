@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     Snapshot,
@@ -14,22 +14,24 @@ import {
     AdapterRequestContext,
     CoercedAdapterRequestContext,
 } from '@luvio/engine';
-import {
-    validateAdapterConfig,
-    getRecordTemplateCreate_ConfigPropertyNames,
-    createResourceParams,
+import type {
     buildNetworkSnapshot as generatedBuildNetworkSnapshot,
     GetRecordTemplateCreateConfig,
 } from '../../generated/adapters/getRecordTemplateCreate';
 import {
+    validateAdapterConfig,
+    getRecordTemplateCreate_ConfigPropertyNames,
+    createResourceParams,
+} from '../../generated/adapters/getRecordTemplateCreate';
+import type { ResourceRequestConfig } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
+import {
     createResourceRequest,
     keyBuilder,
     ingestError,
-    ResourceRequestConfig,
     getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 import { adapterFragment } from '../../generated/fields/adapters/getRecordTemplateCreate';
-import { RecordDefaultsTemplateCreateRepresentation } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
+import type { RecordDefaultsTemplateCreateRepresentation } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
 import { keyBuilder as recordTemplateKeyBuilder } from '../../generated/types/RecordTemplateCreateRepresentation';
 import {
     BLANK_RECORD_FIELDS_TRIE,

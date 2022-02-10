@@ -1,6 +1,9 @@
-import { DefaultDurableSegment, DurableStore, DurableStoreEntries } from '@luvio/environments';
-import { DurableRecordEntry, isStoreRecordError } from './records';
-import { ObjectInfoRepresentation, keyBuilderObjectInfo } from '@salesforce/lds-adapters-uiapi';
+import type { DurableStore, DurableStoreEntries } from '@luvio/environments';
+import { DefaultDurableSegment } from '@luvio/environments';
+import type { DurableRecordEntry } from './records';
+import { isStoreRecordError } from './records';
+import type { ObjectInfoRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderObjectInfo } from '@salesforce/lds-adapters-uiapi';
 import { ObjectKeys } from './language';
 
 /**

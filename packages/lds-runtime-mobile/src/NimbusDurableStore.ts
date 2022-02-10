@@ -19,7 +19,7 @@ import {
 } from '@mobileplatform/nimbus-plugin-lds';
 
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
-import { METRIC_NAME, InstrumentationConfig } from './utils/observabilityUtils';
+import { METRIC_NAME, InstrumentationConfig, WithInstrumentation } from './utils/observability';
 
 import { idleDetector } from 'o11y/client';
 
@@ -71,10 +71,6 @@ function toNativeEntries(entries: DurableStoreEntries<unknown>): { [key: string]
     return putEntries;
 }
 
-type WithInstrumentation = (
-    operation: () => Promise<any>,
-    config: InstrumentationConfig
-) => Promise<any>;
 interface NimbusDurableStoreConfig {
     withInstrumentation: WithInstrumentation;
 }

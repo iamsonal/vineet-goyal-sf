@@ -34,9 +34,7 @@ import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledD
 import { makeDebugEnvironment } from './debug/makeDebugEnvironment';
 import { NimbusSqlDurableStore } from './NimbusSqlDurableStore';
 import { getInstrumentation } from 'o11y/client';
-import { withInstrumentation } from './utils/observabilityUtils';
-
-const O11Y_NAMESPACE_LDS_MOBILE = 'lds-mobile';
+import { withInstrumentation, O11Y_NAMESPACE_LDS_MOBILE } from './utils/observability';
 
 let luvio: Luvio;
 

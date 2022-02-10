@@ -1,4 +1,4 @@
-import { ReporterType, withInstrumentation } from '../../utils/observabilityUtils';
+import { ReporterType, withInstrumentation } from '../../utils/observability';
 
 describe('observabilityUtils', () => {
     describe('withInstrumentation', () => {

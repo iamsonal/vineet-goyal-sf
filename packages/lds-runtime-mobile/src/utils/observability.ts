@@ -2,6 +2,12 @@ import { getInstrumentation } from 'o11y/client';
 
 export type ReporterType = ReturnType<typeof getInstrumentation>;
 type Operation = () => Promise<any>;
+
+export type WithInstrumentation = (
+    operation: () => Promise<any>,
+    config: InstrumentationConfig
+) => Promise<any>;
+
 export interface InstrumentationConfig {
     tags: Record<string, string>;
     metricName: string;
@@ -14,13 +20,23 @@ export const METRIC_NAME = {
     DURABLE_STORE: 'durable-store',
 };
 
+export const O11Y_NAMESPACE_LDS_MOBILE = 'lds-mobile';
+
 /**
- * Relays errors to the instrumentation framework and tracks call counts with and without error
+ * Higher order function that instruments any async operation
  *
- * @param {Object} config Counter metric with tags, metricName and async method to be instrumented
+ * @param {Object} reporter Instrumentation reporter
  */
 export const withInstrumentation =
-    (reporter: ReporterType) => (operation: Operation, config?: InstrumentationConfig) => {
+    (reporter: ReporterType) =>
+    /**
+     * Relays errors to the instrumentation framework and tracks call counts with and without error
+     *
+     * @param {Function} operation Async method that needs to be instrumented
+     * @param {Object} config Metric name and Tags that needs be sent during reporting
+     * @returns
+     */
+    (operation: Operation, config?: InstrumentationConfig): Promise<any> => {
         if (reporter === undefined || config === undefined) {
             // No instrumentation is needed for the method. Return as is.
             return operation();

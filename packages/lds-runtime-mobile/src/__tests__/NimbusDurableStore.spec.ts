@@ -9,7 +9,7 @@ import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environ
 import { DurableStoreChange } from '@mobileplatform/nimbus-plugin-lds';
 
 import { getInstrumentation } from 'o11y/client';
-import { withInstrumentation } from '../utils/observabilityUtils';
+import { withInstrumentation } from '../utils/observability';
 type Instrumentation = ReturnType<typeof getInstrumentation>;
 
 const testSegment = 'testSegment';

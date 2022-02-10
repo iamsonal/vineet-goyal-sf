@@ -250,14 +250,19 @@ jobs:
 
       - stop_sauce_connect
 
-  perf_and_compare:
-    circleci_ip_ranges: true
-    <<: *env_perf
+  test_size_and_memory:
+    <<: *env_default
     steps:
       - load_workspace
 
       - test_size
       - test_memory
+
+  perf_and_compare:
+    circleci_ip_ranges: true
+    <<: *env_perf
+    steps:
+      - load_workspace
 
       - setup_best_environment
       - run_best
@@ -286,6 +291,9 @@ workflows:
           requires:
             - build
       - test_unit:
+          requires:
+            - build
+      - test_size_and_memory:
           requires:
             - build
       - perf_and_compare:

@@ -22,6 +22,7 @@ import * as unstableLightningRelatedListApi from 'lightning/unstable_uiRelatedLi
 // graphql adapter is not yet exposed behind lightning namespace but will be part
 // of the lightning platform some day... for now put it here with the rest of these
 import * as gqlApi from 'force/ldsAdaptersGraphql';
+import { AdapterRequestContext } from '@luvio/engine';
 
 export const IMPERATIVE_ADAPTER_SUFFIX = '_imperative';
 export const UNSTABLE_ADAPTER_PREFIX = 'unstable_';
@@ -60,7 +61,26 @@ const adapterMap = Object.assign(
     unstableLightningRelatedListApi
 );
 
-const imperativeAdapterMap: Record<string, Record<'invoke' | 'subscribe', any>> = {};
+export type AdapterCallbackValue = {
+    data: unknown | undefined;
+    error: unknown | undefined;
+};
+
+export type AdapterCallback = (value: AdapterCallbackValue) => void;
+
+type Invoke = (
+    config: any,
+    requestContext: AdapterRequestContext | undefined,
+    onResponse: (value: AdapterCallbackValue) => void
+) => void;
+
+type Subscribe = (
+    config: any,
+    requestContext: AdapterRequestContext | undefined,
+    onResponse: (value: AdapterCallbackValue) => void
+) => () => void;
+
+const imperativeAdapterMap: Record<string, { invoke: Invoke; subscribe: Subscribe }> = {};
 
 const imperativeAdapterNames = ObjectKeys(adapterMap).filter((name) =>
     name.endsWith(IMPERATIVE_ADAPTER_SUFFIX)

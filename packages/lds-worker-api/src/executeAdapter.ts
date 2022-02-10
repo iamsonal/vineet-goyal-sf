@@ -1,4 +1,4 @@
-import { AdapterRequestContext, FetchResponse } from '@luvio/engine';
+import { AdapterRequestContext, CachePolicy, FetchResponse } from '@luvio/engine';
 import { parseAndVisit as gqlParse } from '@luvio/graphql-parser';
 import * as gqlApi from 'force/ldsAdaptersGraphql';
 import { getInstrumentation } from 'o11y/client';
@@ -9,6 +9,8 @@ import {
     dmlAdapterMap,
     UNSTABLE_ADAPTER_PREFIX,
     IMPERATIVE_ADAPTER_SUFFIX,
+    AdapterCallback,
+    AdapterCallbackValue,
 } from './lightningAdapterApi';
 import { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
 import { draftManager } from './draftQueueImplementation';
@@ -25,17 +27,56 @@ let adapterCounter = 0;
 
 const instr = getInstrumentation('lds-worker-api');
 
-type CallbackValue = {
+// Native Type Definitions
+type NativeCallbackValue = {
     data: any | undefined;
     error: NativeFetchResponse<unknown> | undefined;
 };
+type NativeOnSnapshot = (value: NativeCallbackValue) => void;
+type NativeOnResponse = (value: NativeCallbackValue) => void;
+type Unsubscribe = () => void;
+type NativeCachePolicy = CachePolicy;
+type NativeAdapterRequestPriority = 'high' | 'normal' | 'background';
+interface NativeAdapterRequestContext {
+    cachePolicy?: NativeCachePolicy;
+    priority?: NativeAdapterRequestPriority;
+}
 
-export type OnSnapshot = (value: CallbackValue) => void;
-export type OnResponse = (value: CallbackValue) => void;
+/**
+ * Coerces a cache policy passed in from native to a luvio cache policy
+ * @param nativeCachePolicy The cache policy passed in from native
+ * @returns A coerced luvio cache policy
+ */
+function buildCachePolicy(
+    nativeCachePolicy: NativeCachePolicy | undefined
+): CachePolicy | undefined {
+    if (nativeCachePolicy === undefined) {
+        return undefined;
+    }
 
-export type Unsubscribe = () => void;
+    // currently the types match exactly, if we ever decide to deviate then we should coerce here
+    return nativeCachePolicy as CachePolicy;
+}
 
-function buildInvalidConfigError(error: unknown): CallbackValue {
+/**
+ * Coerces a request context passed in from native to a luvio request context
+ * @param nativeRequestContext request context passed in from native
+ * @returns Coerced luvio request context
+ */
+function buildAdapterRequestContext(
+    nativeRequestContext: NativeAdapterRequestContext | undefined
+): AdapterRequestContext | undefined {
+    if (nativeRequestContext === undefined) {
+        return undefined;
+    }
+    const { cachePolicy, priority } = nativeRequestContext;
+    return {
+        cachePolicy: buildCachePolicy(cachePolicy),
+        priority,
+    };
+}
+
+function buildInvalidConfigError(error: unknown): NativeCallbackValue {
     return {
         data: undefined,
         error: {
@@ -46,6 +87,11 @@ function buildInvalidConfigError(error: unknown): CallbackValue {
             headers: {},
         },
     };
+}
+
+function buildNativeCallbackValue(adapterCallbackValue: AdapterCallbackValue): NativeCallbackValue {
+    // currently no coercion required, just retype
+    return adapterCallbackValue as NativeCallbackValue;
 }
 
 /**
@@ -76,8 +122,8 @@ function generateAdapterUniqueId() {
 export function subscribeToAdapter(
     adapterId: string,
     config: string,
-    onSnapshot: OnSnapshot,
-    requestContext?: AdapterRequestContext
+    onSnapshot: NativeOnSnapshot,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ): Unsubscribe {
     const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
     const imperativeAdapter = imperativeAdapterMap[imperativeAdapterIdentifier];
@@ -92,13 +138,13 @@ export function subscribeToAdapter(
         config,
     });
 
-    const onResponseDelegate: OnSnapshot = (value) => {
+    const onResponseDelegate: AdapterCallback = (value) => {
         debugLog({
             type: 'adapter-callback',
             timestamp: Date.now(),
             adapterId: adapterUuid,
         });
-        onSnapshot(value);
+        onSnapshot(buildNativeCallbackValue(value));
     };
 
     if (imperativeAdapter === undefined) {
@@ -131,7 +177,11 @@ export function subscribeToAdapter(
     }
 
     try {
-        return imperativeAdapter.subscribe(configObject, requestContext, onResponseDelegate);
+        return imperativeAdapter.subscribe(
+            configObject,
+            buildAdapterRequestContext(nativeAdapterRequestContext),
+            onResponseDelegate
+        );
     } catch (err) {
         onResponseDelegate(buildInvalidConfigError(err));
         return () => {};
@@ -145,7 +195,7 @@ export function subscribeToAdapter(
  * @param configObject : parsed config
  * @param onResponse : OnResponse
  */
-function invokeDmlAdapter(adapter: any, configObject: any, onResponse: OnResponse) {
+function invokeDmlAdapter(adapter: any, configObject: any, onResponse: NativeOnResponse) {
     try {
         adapter(configObject).then(
             (data: any) => {
@@ -173,7 +223,7 @@ export function invokeAdapterWithDraftToReplace(
     adapterId: string,
     config: string,
     draftIdToReplace: string,
-    onResponse: OnResponse
+    onResponse: NativeOnResponse
 ) {
     draftManager.getQueue().then((draftInfo) => {
         const draftIds = draftInfo.items.map((draft) => draft.id);
@@ -219,7 +269,7 @@ export function invokeAdapterWithDraftToReplace(
                         onResponse(responseValue);
                     });
                 } else {
-                    let response: CallbackValue = responseValue;
+                    let response: NativeCallbackValue = responseValue;
                     response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
                     onResponse(response);
                 }
@@ -241,7 +291,7 @@ export function invokeAdapterWithMetadata(
     adapterId: string,
     config: string,
     metadata: DraftQueueItemMetadata,
-    onResponse: OnResponse
+    onResponse: NativeOnResponse
 ) {
     const adapter = dmlAdapterMap[adapterId];
     if (adapter === undefined) {
@@ -272,7 +322,7 @@ export function invokeAdapterWithMetadata(
                     onResponse(responseValue);
                 });
             } else {
-                let response: CallbackValue = responseValue;
+                let response: NativeCallbackValue = responseValue;
                 response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
                 onResponse(response);
             }
@@ -290,7 +340,7 @@ function invokeAdapterWithMetadataDeleteRecord(
     adapter: any,
     config: string,
     metadata: DraftQueueItemMetadata,
-    onResponse: OnResponse
+    onResponse: NativeOnResponse
 ) {
     const targetedRecordId = JSONParse(config);
     let priorDraftIds: string[] | undefined;
@@ -309,7 +359,7 @@ function invokeAdapterWithMetadataDeleteRecord(
                         return isNew && targetIdMatches;
                     });
                     if (addedDrafts.length !== 1) {
-                        let response: CallbackValue = responseValue;
+                        let response: NativeCallbackValue = responseValue;
                         response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
                         onResponse(response);
                     } else {
@@ -319,7 +369,7 @@ function invokeAdapterWithMetadataDeleteRecord(
                     }
                 });
             } else {
-                let response: CallbackValue = responseValue;
+                let response: NativeCallbackValue = responseValue;
                 response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
                 onResponse(response);
             }
@@ -337,7 +387,7 @@ function invokeAdapterWithDraftToReplaceDeleteRecord(
     adapter: any,
     config: string,
     draftIdToReplace: string,
-    onResponse: OnResponse
+    onResponse: NativeOnResponse
 ) {
     const targetedRecordId = JSONParse(config);
     let priorDraftIds: string[] | undefined;
@@ -356,7 +406,7 @@ function invokeAdapterWithDraftToReplaceDeleteRecord(
                         return isNew && targetIdMatches;
                     });
                     if (addedDrafts.length !== 1) {
-                        let response: CallbackValue = responseValue;
+                        let response: NativeCallbackValue = responseValue;
                         response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
                         onResponse(response);
                     } else {
@@ -366,7 +416,7 @@ function invokeAdapterWithDraftToReplaceDeleteRecord(
                     }
                 });
             } else {
-                let response: CallbackValue = responseValue;
+                let response: NativeCallbackValue = responseValue;
                 response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
                 onResponse(response);
             }
@@ -374,7 +424,7 @@ function invokeAdapterWithDraftToReplaceDeleteRecord(
     });
 }
 
-function draftIdsForResponseValue(response: CallbackValue): string[] | undefined {
+function draftIdsForResponseValue(response: NativeCallbackValue): string[] | undefined {
     if (
         response.data !== undefined &&
         response.data.drafts !== undefined &&
@@ -395,8 +445,8 @@ function draftIdsForResponseValue(response: CallbackValue): string[] | undefined
 export function invokeAdapter(
     adapterId: string,
     config: string,
-    onResponse: OnResponse,
-    requestContext?: AdapterRequestContext
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
     const adapterUuid = generateAdapterUniqueId();
 
@@ -408,13 +458,13 @@ export function invokeAdapter(
         config,
     });
 
-    const onResponseDelegate: OnResponse = (value) => {
+    const onResponseDelegate: AdapterCallback = (value) => {
         debugLog({
             type: 'adapter-callback',
             timestamp: Date.now(),
             adapterId: adapterUuid,
         });
-        onResponse(value);
+        onResponse(buildNativeCallbackValue(value));
     };
 
     const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
@@ -435,13 +485,17 @@ export function invokeAdapter(
                 instr.error(parseError as Error, 'gql-parse-error');
                 onResponseDelegate({
                     data: undefined,
-                    error: parseError as NativeFetchResponse<unknown>,
+                    error: parseError,
                 });
                 return;
             }
         }
         try {
-            imperativeAdapter.invoke(configObject, requestContext, onResponseDelegate);
+            imperativeAdapter.invoke(
+                configObject,
+                buildAdapterRequestContext(nativeAdapterRequestContext),
+                onResponseDelegate
+            );
         } catch (err) {
             onResponseDelegate(buildInvalidConfigError(err));
         }
@@ -465,7 +519,7 @@ export function invokeAdapter(
 export function executeAdapter(
     adapterId: string,
     config: string,
-    onSnapshot: OnSnapshot
+    onSnapshot: NativeOnSnapshot
 ): Unsubscribe {
     return subscribeToAdapter(adapterId, config, onSnapshot);
 }
@@ -478,7 +532,7 @@ export function executeAdapter(
 export function executeMutatingAdapter(
     adapterId: string,
     config: string,
-    onResult: OnResponse
+    onResult: NativeOnResponse
 ): void {
     invokeAdapter(adapterId, config, onResult);
 }

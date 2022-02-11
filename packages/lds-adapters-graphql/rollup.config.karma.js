@@ -1,4 +1,4 @@
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
 
 import {

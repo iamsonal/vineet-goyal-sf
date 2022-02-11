@@ -7,7 +7,7 @@
 import { sfdcConfiguration, localConfiguration } from '../../scripts/rollup/rollup.config.adapters';
 import path from 'path';
 import typescript from 'rollup-plugin-typescript2';
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import copy from 'rollup-plugin-copy';
 
 import * as packageJson from './package.json';

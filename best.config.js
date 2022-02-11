@@ -2,7 +2,7 @@ module.exports = {
     projectName: 'lds-lightning-platform',
     benchmarkIterations: 30,
     plugins: [
-        'rollup-plugin-node-resolve',
+        'rollup-plugin-node-resolve', // best still requires rollup-plugin-node-resolve
         '<rootDir>/best/rollup-plugin-mocks/index.js',
         ['rollup-plugin-replace', { 'process.env.NODE_ENV': JSON.stringify('production') }],
     ],

@@ -1,7 +1,7 @@
 import type { SqlStore } from '@salesforce/lds-store-sql';
 
 import { updateIndices, durableObjectInfo, queryTableAttrs } from '../../storeEval/promises';
-import { indicesSql, objectInfoSql, SqlMappingInput, tableAttrs } from '../../ast-to-sql';
+import { indicesSql, objectInfoSql, SqlMappingInput, tableAttrsSql } from '../../ast-to-sql';
 import { TABLE_ATTRS_DB_RESULT, TABLE_ATTRS_JSON } from './util';
 
 function setup(evalResult: string) {
@@ -26,16 +26,15 @@ const mappingInput: SqlMappingInput = {
 
 describe('promises', () => {
     describe('getDurableObjectInfo', () => {
-        it('rejects if mapping input is not available', () => {
+        it('returns undefined if mapping input is not available', async () => {
             expect.assertions(1);
             const { store } = setup('{}');
             const tableAttrs = (_: SqlStore) => Promise.resolve(undefined);
 
             const { query: promise } = durableObjectInfo(tableAttrs);
 
-            return promise(store).catch((e) => {
-                expect(e).toEqual('Undefined table attributes.');
-            });
+            const result = await promise(store);
+            expect(result).toBeUndefined();
         });
 
         it('shares promise if one is already pending', async () => {
@@ -100,7 +99,7 @@ describe('promises', () => {
 
             expect(result).toEqual(TABLE_ATTRS_JSON);
             expect(store.evaluateSQL).toHaveBeenCalledTimes(1);
-            expect(store.evaluateSQL).toHaveBeenNthCalledWith(1, tableAttrs, []);
+            expect(store.evaluateSQL).toHaveBeenNthCalledWith(1, tableAttrsSql, []);
         });
 
         it('rejects if table attributes are missing LdsSoupValue', async () => {

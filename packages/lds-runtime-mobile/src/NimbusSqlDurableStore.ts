@@ -16,9 +16,9 @@ export class NimbusSqlDurableStore extends NimbusDurableStore implements SqlDura
         return __nimbus.plugins.LdsDurableStore.updateIndices(indices);
     }
 
-    evaluateSQL(sql: string): Promise<string> {
+    evaluateSQL(sql: string, params: string[]): Promise<string> {
         return new Promise((resolve, reject) => {
-            __nimbus.plugins.LdsDurableStore.evaluateSQL(sql, resolve, reject);
+            __nimbus.plugins.LdsDurableStore.evaluateSQL(sql, params, resolve, reject);
         });
     }
 }

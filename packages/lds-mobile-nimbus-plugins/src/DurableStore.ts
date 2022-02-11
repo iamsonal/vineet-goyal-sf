@@ -38,6 +38,7 @@ export interface DurableStore {
      */
     evaluateSQL(
         sql: string,
+        params: string[],
         onResult: (result: string) => void,
         onError: (message: string) => void
     ): Promise<void>;

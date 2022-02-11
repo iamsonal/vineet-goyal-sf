@@ -70,7 +70,7 @@ describe('order by sql', () => {
         ['empty order by', '{TimeSheetNumber: {order: DESC, nulls: LAST}}', NullsLast, Descending],
     ])('returns correct sql %s', (_, source, nullsOrder, order) => {
         const expected =
-            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
             `(SELECT json_group_array(json_set('{}', '$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), ` +
             `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
@@ -114,7 +114,7 @@ describe('multiple order by', () => {
         });
 
         const expected =
-            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.Account.edges', (SELECT json_group_array(json_set('{}', '$.node.Name.value', ` +
             `(json_extract("Account.JSON", '$.data.fields.Name.value')), '$.node.CreatedDate.value', (json_extract("Account.JSON", '$.data.fields.CreatedDate.value')), ` +
             `'$.node._drafts', (json_extract("Account.JSON", '$.data.drafts')), '$.node.Id', (json_extract("Account.JSON", '$.data.id')), '$.node._metadata', ` +
@@ -160,7 +160,7 @@ describe('multiple order by', () => {
         });
 
         const expected =
-            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.Account.edges', (SELECT json_group_array(json_set('{}', '$.node.Name.value', ` +
             `(json_extract("Account.JSON", '$.data.fields.Name.value')), '$.node.CreatedDate.value', (json_extract("Account.JSON", '$.data.fields.CreatedDate.value')), ` +
             `'$.node._drafts', (json_extract("Account.JSON", '$.data.drafts')), '$.node.Id', (json_extract("Account.JSON", '$.data.id')), '$.node._metadata', ` +
@@ -208,7 +208,7 @@ describe('multiple order by', () => {
         });
 
         const expected =
-            `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+            `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
             `SELECT json_set('{}', '$.data.uiapi.query.Account.edges', (SELECT json_group_array(json_set('{}', '$.node.Name.value', ` +
             `(json_extract("Account.JSON", '$.data.fields.Name.value')), '$.node.CreatedDate.value', (json_extract("Account.JSON", '$.data.fields.CreatedDate.value')), ` +
             `'$.node._drafts', (json_extract("Account.JSON", '$.data.drafts')), '$.node.Id', (json_extract("Account.JSON", '$.data.id')), '$.node._metadata', ` +

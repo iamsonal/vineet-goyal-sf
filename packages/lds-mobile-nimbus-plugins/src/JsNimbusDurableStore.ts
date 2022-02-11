@@ -13,6 +13,13 @@ export interface BackingStore {
     delete(key: string, segment: string): Promise<void>;
     getAllKeys(segment: string): Promise<string[]>;
 
+    evaluateSQL(
+        sql: string,
+        params: string[],
+        onResult: (result: string) => void,
+        onError: (message: string) => void
+    ): Promise<void>;
+
     // resets the entire store, clears all segments
     reset(): Promise<void>;
 }
@@ -33,11 +40,12 @@ export class JsNimbusDurableStore implements DurableStore {
     }
 
     evaluateSQL(
-        _sql: string,
-        _onResult: (result: string) => void,
-        _onError: (message: string) => void
+        sql: string,
+        params: string[],
+        onResult: (result: string) => void,
+        onError: (message: string) => void
     ): Promise<void> {
-        return Promise.resolve();
+        return this.backingStore.evaluateSQL(sql, params, onResult, onError);
     }
 
     updateIndices(_indices: string[]): Promise<void> {

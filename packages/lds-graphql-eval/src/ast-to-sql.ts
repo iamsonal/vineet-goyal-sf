@@ -51,7 +51,7 @@ const recordsCTE = 'recordsCTE';
 function cteSql(mappingInput: SqlMappingInput): string {
     return (
         `WITH ${recordsCTE} AS ` +
-        `(select ${mappingInput.jsonColumn} from ${mappingInput.jsonTable} where ${mappingInput.keyColumn} like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\')`
+        `(select ${mappingInput.jsonColumn} from "${mappingInput.jsonTable}" where ${mappingInput.keyColumn} like 'UiApi::RecordRepresentation%')`
     );
 }
 
@@ -443,23 +443,23 @@ function comparisonOperatorToSql(operator: ComparisonOperator): string {
 }
 
 export function objectInfoSql(mappingInput: SqlMappingInput): string {
-    return `WITH objectInfoCTE AS (select ${mappingInput.jsonColumn} from ${mappingInput.jsonTable} where ${mappingInput.keyColumn} like 'UiApi\\%3A\\%3AObjectInfo%' ESCAPE '\\')
-    select json_group_object( json_extract(${mappingInput.jsonColumn}, '$.data.apiName'), 
+    return `WITH objectInfoCTE AS (select ${mappingInput.jsonColumn} as valueColumn from "${mappingInput.jsonTable}" where ${mappingInput.keyColumn} like 'UiApi::ObjectInfo%' ESCAPE '\\')
+    select json_group_object( json_extract(valueColumn, '$.data.apiName'), 
         json_object(
             'fields',
-            (select json_group_object( key,  value )
+            (select json_group_object( groupObjectKey,  groupObjectValue )
             from (
-                select json_extract(value, '$.apiName') as key, json_object('dataType', json_extract(value, '$.dataType'), 'apiName', json_extract(value, '$.apiName'), 'referenceToInfos', json_extract(value, '$.referenceToInfos'),  'relationshipName', json_extract(value, '$.relationshipName')) as value
-                from  json_each(json_extract(${mappingInput.jsonColumn}, '$.data.fields'))
+                select json_extract(each.value, '$.apiName') as groupObjectKey, json_object('dataType', json_extract(each.value, '$.dataType'), 'apiName', json_extract(each.value, '$.apiName'), 'referenceToInfos', json_extract(each.value, '$.referenceToInfos'),  'relationshipName', json_extract(each.value, '$.relationshipName')) as groupObjectValue
+                from  json_each(json_extract(valueColumn, '$.data.fields')) as each
             )),
             'childRelationships',
-            (select json_group_array( value )
+            (select json_group_array( groupArrayValue )
             from (
-                select json_object('fieldName', json_extract(value, '$.fieldName'), 'childObjectApiName', json_extract(value, '$.childObjectApiName'),  'relationshipName', json_extract(value, '$.relationshipName')) as value
-                from  json_each(json_extract(${mappingInput.jsonColumn}, '$.data.childRelationships'))
+                select json_object('fieldName', json_extract(each.value, '$.fieldName'), 'childObjectApiName', json_extract(each.value, '$.childObjectApiName'),  'relationshipName', json_extract(each.value, '$.relationshipName')) as groupArrayValue
+                from  json_each(json_extract(valueColumn, '$.data.childRelationships')) as each
             ))
         )
-    )  from (select ${mappingInput.jsonColumn} FROM objectInfoCTE)`;
+    )  from (select valueColumn FROM objectInfoCTE) as json`;
 }
 
 export function indicesSql(mappingInput: SqlMappingInput): string[] {
@@ -472,4 +472,4 @@ export function indicesSql(mappingInput: SqlMappingInput): string[] {
     ];
 }
 
-export const tableAttrs = `select json_group_object(key, value) from  (select path as key, columnName as value from soup_index_map  where soupName = 'DEFAULT'  union select 'LdsSoupTable' as key, 'TABLE_' || id as value from soup_attrs where soupName = 'DEFAULT')`;
+export const tableAttrsSql = `select json_group_object(key, value) from  (select path as key, columnName as value from soup_index_map  where soupName = 'DEFAULT'  union select 'LdsSoupTable' as key, 'TABLE_' || id as value from soup_attrs where soupName = 'DEFAULT')`;

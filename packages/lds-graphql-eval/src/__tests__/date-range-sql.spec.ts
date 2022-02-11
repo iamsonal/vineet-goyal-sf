@@ -71,7 +71,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for last_n_months range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -87,7 +87,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for last_n_months range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -117,7 +117,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for next_n_month range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -133,7 +133,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for next_n_months range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -159,7 +159,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for all last_n_days range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -175,7 +175,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for last_n_days range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -201,7 +201,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for all next_n_days range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -217,7 +217,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for next_n_days range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -247,7 +247,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for all last_n_months datetime range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -263,7 +263,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for last_n_months range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -293,7 +293,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for all next_n_month range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -309,7 +309,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for next_n_months range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -335,7 +335,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for all last_n_days range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -351,7 +351,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for last_n_days range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -377,7 +377,7 @@ describe('date range to sql parser', () => {
             'returns correct sql for all next_n_days range scalar operator %s',
             (op, expectedComp, expectedBindings) => {
                 const expected =
-                    `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                    `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                     `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                     `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                     `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
@@ -393,7 +393,7 @@ describe('date range to sql parser', () => {
 
         it('returns correct sql for next_n_days range scalar operator ne', () => {
             const expected =
-                `WITH recordsCTE AS (select TABLE_1_1 from TABLE_1 where TABLE_1_0 like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\') ` +
+                `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
                 `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', ` +
                 `(SELECT json_group_array(json_set('{}', '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), '$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), ` +
                 `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +

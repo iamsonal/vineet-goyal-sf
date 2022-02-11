@@ -1,0 +1,38 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "Account": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Id": "001xx000003Gn4WAAS",
+                                "WeakEtag": 1590674450000,
+                                "Name": {
+                                    "value": "Burlington Textiles Corp of America",
+                                    "displayValue": null
+                                },
+                                "__typename": "Account",
+                                "ApiName": "Account",
+                                "DisplayValue": "Burlington Textiles Corp of America",
+                                "SystemModstamp": {
+                                    "value": "2021-03-11T20:15:39.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005xx000001XL1tAAG"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-03-11T20:15:39.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012000000000000AAA"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

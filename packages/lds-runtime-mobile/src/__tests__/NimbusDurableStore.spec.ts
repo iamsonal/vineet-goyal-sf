@@ -31,7 +31,7 @@ describe('Nimbus durable store tests', () => {
                 [recordId]: recordData,
             };
             await durableStore.setEntries(setData, testSegment);
-            expect(setEntriesSpy).toBeCalledTimes(1);
+            expect(setEntriesSpy).toHaveBeenCalledTimes(1);
             expect(setEntriesSpy.mock.calls[0][0]).toBeDefined();
             expect(setEntriesSpy.mock.calls[0][1]).toEqual(testSegment);
         });

@@ -1,6 +1,6 @@
 import type { SqlStore } from '@salesforce/lds-store-sql';
 import type { SqlMappingInput } from '../ast-to-sql';
-import { indicesSql, objectInfoSql, tableAttrs } from '../ast-to-sql';
+import { indicesSql, objectInfoSql, tableAttrsSql } from '../ast-to-sql';
 import type { ObjectInfoMap } from '../info-types';
 
 type GetTableAttrs = (sqlStore: SqlStore) => Promise<SqlMappingInput | undefined>;
@@ -16,10 +16,10 @@ type GetTableAttrs = (sqlStore: SqlStore) => Promise<SqlMappingInput | undefined
  * When the promise completes a new promise can be attempted
  */
 export function durableObjectInfo(getTableAttrs: GetTableAttrs): {
-    query: (sqlStore: SqlStore) => Promise<ObjectInfoMap>;
+    query: (sqlStore: SqlStore) => Promise<ObjectInfoMap | undefined>;
     saved: () => ObjectInfoMap | undefined;
 } {
-    let getDurableObjectInfoPromise: Promise<ObjectInfoMap> | undefined = undefined;
+    let getDurableObjectInfoPromise: Promise<ObjectInfoMap | undefined> | undefined = undefined;
     let lastObjectInfoMap: ObjectInfoMap | undefined = undefined;
 
     //creates work
@@ -28,7 +28,7 @@ export function durableObjectInfo(getTableAttrs: GetTableAttrs): {
             getDurableObjectInfoPromise = getTableAttrs(sqlStore)
                 .then((mappingInput) => {
                     if (mappingInput === undefined) {
-                        return Promise.reject('Undefined table attributes.');
+                        return Promise.resolve(undefined);
                     }
 
                     const sql = objectInfoSql(mappingInput);
@@ -36,9 +36,12 @@ export function durableObjectInfo(getTableAttrs: GetTableAttrs): {
                     return sqlStore.evaluateSQL(sql, []).then(JSON.parse);
                 })
                 .then((info) => {
-                    lastObjectInfoMap = info;
+                    if (info !== undefined) {
+                        lastObjectInfoMap = info;
+                    }
                     return info;
                 })
+                .catch(() => {})
                 .finally(() => {
                     //clear the promise so it can be run again
                     getDurableObjectInfoPromise = undefined;
@@ -70,7 +73,7 @@ export function queryTableAttrs(): GetTableAttrs {
     return (sqlStore: SqlStore) => {
         if (tableAttrsPromise === undefined) {
             tableAttrsPromise = sqlStore
-                .evaluateSQL(tableAttrs, [])
+                .evaluateSQL(tableAttrsSql, [])
                 .then((result) => {
                     const attrs = JSON.parse(result);
                     const jsonColumn = attrs['LdsSoupValue'];

@@ -14,22 +14,27 @@ export function mockNimbusStoreGlobal(mockNimbusStore: JsNimbusDurableStore) {
 export function resetNimbusStoreGlobal() {
     global.__nimbus = undefined;
 }
-
-let db: sqlite.Database;
-const createDB = () => {
-    return new Promise<void>((resolve, _reject) => {
-        db = new sqlite.Database(':memory:', () => resolve());
-    });
-};
-
-beforeAll((done) => {
-    createDB().then(done);
-});
 export class InMemoryBackingStore implements BackingStore {
     totalWorkCount = 0;
     inProgressWork: { [id: string]: Promise<any> } = {};
 
     conditions: { test: (key: string) => boolean; resolve: () => void }[] = [];
+    db: sqlite.Database;
+
+    constructor() {
+        this.db = new sqlite.Database(':memory:');
+    }
+
+    backup(): Promise<void> {
+        return new Promise((resolve) => {
+            const backup = (this.db as any).backup('backup.db');
+
+            //-1 is sent to the underlying sqlite3_backup_step function
+            //so that all remaining db pages are copied to the file.
+            backup.step(-1, resolve);
+            backup.finish();
+        });
+    }
 
     flushPendingWork(): Promise<void> {
         return Promise.all(Object.values(this.inProgressWork)).then();
@@ -41,13 +46,49 @@ export class InMemoryBackingStore implements BackingStore {
         });
     }
 
+    evaluateSQL(
+        sql: string,
+        params: string[],
+        onResult: (result: string) => void,
+        _onError: (message: string) => void
+    ): Promise<void> {
+        this.totalWorkCount += 1;
+        const promiseId = `${this.totalWorkCount}`;
+        const workPromise = new Promise<void>((resolve, _reject) => {
+            const mappedParams = params.map(mapParams);
+            this.db.all(sql, mappedParams, (e, results) => {
+                if (results === undefined || results.length === 0) {
+                    resolve(undefined);
+                    onResult('');
+                    return;
+                }
+
+                const values = Object.values(results[0]);
+
+                if (values === undefined || values.length === 0) {
+                    resolve(undefined);
+                    onResult('');
+                    return;
+                }
+                onResult(values[0] as any);
+                resolve();
+            });
+        }).finally(() => {
+            delete this.inProgressWork[promiseId];
+        });
+
+        this.inProgressWork[promiseId] = workPromise;
+
+        return workPromise;
+    }
+
     get(key: string, segment: string): Promise<any> {
         const sql = getEntriesSql(segment, [key]);
 
         this.totalWorkCount += 1;
         const promiseId = `${this.totalWorkCount}`;
         const workPromise = new Promise<any>((resolve, _reject) => {
-            db.all(sql, [key], (e, results) => {
+            this.db.all(sql, [key], (e, results) => {
                 if (results === undefined || results.length === 0) {
                     resolve(undefined);
                     return;
@@ -70,9 +111,9 @@ export class InMemoryBackingStore implements BackingStore {
         const promiseId = `${this.totalWorkCount}`;
 
         const workPromise = new Promise<void>((resolve, reject) => {
-            db.serialize(function () {
-                db.run(createSegmentSQL);
-                db.run(sql, [key, value], (e) => {
+            this.db.serialize(function () {
+                this.run(createSegmentSQL);
+                this.run(sql, [key, value], (e) => {
                     if (e !== null) {
                         reject(e);
                         return;
@@ -96,12 +137,8 @@ export class InMemoryBackingStore implements BackingStore {
         this.totalWorkCount += 1;
         const promiseId = `${this.totalWorkCount}`;
 
-        const workPromise = new Promise<void>((resolve, reject) => {
-            db.run(sql, [key], (e) => {
-                if (e !== null) {
-                    reject(e);
-                    return;
-                }
+        const workPromise = new Promise<void>((resolve, _reject) => {
+            this.db.run(sql, [key], () => {
                 resolve();
             });
         }).finally(() => {
@@ -118,7 +155,7 @@ export class InMemoryBackingStore implements BackingStore {
         const promiseId = `${this.totalWorkCount}`;
 
         const workPromise = new Promise<string[]>((resolve, _reject) => {
-            db.all(sql, [], (e, results) => {
+            this.db.all(sql, [], (e, results) => {
                 if (e !== null) {
                     resolve([]);
                     return;
@@ -134,7 +171,9 @@ export class InMemoryBackingStore implements BackingStore {
     }
 
     reset(): Promise<void> {
-        return createDB();
+        //This is not implemented.  Instead a new instance of
+        //InMemoryBackingStore should be created.
+        return Promise.resolve();
     }
 }
 
@@ -143,6 +182,9 @@ export class MockNimbusDurableStore extends JsNimbusDurableStore {
         super(new InMemoryBackingStore());
     }
 
+    backup(): Promise<void> {
+        return (this.backingStore as InMemoryBackingStore).backup();
+    }
     set(key: string, segment: string, value: any): Promise<void> {
         return this.backingStore.set(key, segment, JSON.stringify(value));
     }
@@ -154,30 +196,59 @@ export class MockNimbusDurableStore extends JsNimbusDurableStore {
     waitForSet(test: (key: string) => boolean): Promise<void> {
         return (this.backingStore as InMemoryBackingStore).waitForSet(test);
     }
+
+    resetStore(): Promise<void> {
+        this.backingStore = new InMemoryBackingStore();
+        return Promise.resolve();
+    }
 }
 
+const keyColumnName = 'key';
+const valueColumnName = 'value';
 const deleteSql = (segment: string) => `
     DELETE FROM "${segment}" WHERE "${segment}".key = ?
 `;
 
 const createTableSql = (name: string) => `CREATE TABLE IF NOT EXISTS  "${name}" (
-    key TEXT PRIMARY KEY,
+    ${keyColumnName} TEXT PRIMARY KEY,
     value TEXT
 )`;
 
 const setEntrySql = (segment: string) => `
-    INSERT INTO '${segment}'(key, value) VALUES (?, ?)
-    ON CONFLICT(key) DO UPDATE SET value=excluded.value;
+    INSERT INTO '${segment}'(${keyColumnName}, ${valueColumnName}) VALUES (?, ?)
+    ON CONFLICT(${keyColumnName}) DO UPDATE SET ${valueColumnName}=excluded.${valueColumnName};
 `;
 
 const getKeysSql = (table: string) => `
-    SELECT "${table}".key
+    SELECT "${table}".${keyColumnName}
     FROM "${table}"
 `;
 
 const getEntriesSql = (table: string, keys: string[]) => `
-    SELECT "${table}".key, "${table}".value
+    SELECT "${table}".${keyColumnName}, "${table}".${valueColumnName}
     FROM "${table}"
-    WHERE "${table}".key
+    WHERE "${table}".${keyColumnName}
     IN (${keys.map(() => '?').join(', ')})
 `;
+
+const mapParams = (param: string) => {
+    const numValue = Number.parseFloat(param);
+
+    if (Number.isNaN(numValue) === false) {
+        return numValue;
+    }
+
+    if (param === 'true') {
+        return true;
+    }
+
+    if (param === 'false') {
+        return false;
+    }
+
+    if (param.length > 1 && param.startsWith("'") && param.endsWith("'")) {
+        return param.slice(1, -1);
+    }
+
+    return undefined;
+};

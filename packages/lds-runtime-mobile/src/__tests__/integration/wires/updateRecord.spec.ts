@@ -275,7 +275,7 @@ describe('mobile runtime integration tests', () => {
             await flushPromises();
 
             await waitForCallback(4);
-            expect(getRecordCallbackSpy).toBeCalledTimes(4);
+            expect(getRecordCallbackSpy).toHaveBeenCalledTimes(4);
 
             // should still contain the second draft data
             expect(getRecordCallbackSpy.mock.calls[2][0].data.fields.Name.value).toBe(

@@ -2,16 +2,20 @@ import type {
     AdapterFactory,
     AdapterRequestContext,
     FetchResponse,
-    GraphNode,
     Luvio,
     Snapshot,
 } from '@luvio/engine';
 import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import { ObjectKeys } from '../../generated/adapters/adapter-utils';
 import type { GetRecordConfig } from '../../generated/adapters/getRecord';
 import { validateAdapterConfig } from '../../generated/adapters/getRecord';
 import { createResourceRequest as getUiApiRecordsByRecordId } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
-import type { KeyParams, RecordRepresentation } from '../../generated/types/RecordRepresentation';
-import { keyBuilder } from '../../generated/types/RecordRepresentation';
+import type {
+    KeyParams,
+    RecordRepresentation,
+    RecordRepresentationNormalized,
+} from '../../generated/types/RecordRepresentation';
+import { keyBuilder, getTypeCacheKeys } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import {
     getTrackedFields,
@@ -24,6 +28,7 @@ import { getRecordLayoutType } from './GetRecordLayoutType';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 import { instrumentation } from '../../instrumentation';
+import type { FieldMapRepresentation, FieldMapRepresentationNormalized } from '../../util/fields';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {
@@ -77,64 +82,67 @@ function coerceKeyParams(config: KeyParams): KeyParams {
 
 export const notifyChangeFactory = (luvio: Luvio) => {
     return function getUiApiRecordsByRecordIdNotifyChange(configs: KeyParams[]): void {
-        for (let i = 0, len = configs.length; i < len; i++) {
-            // build key from input
-            const coercedConfig = coerceKeyParams(configs[i]);
-            const key = keyBuilder(coercedConfig);
-            // lookup GraphNode from store
-            const node = luvio.getNode<RecordRepresentation, RecordRepresentation>(key);
-            if (node === null || node.type === 'Error') {
-                continue;
+        const keys = configs.map((c) => keyBuilder(coerceKeyParams(c)));
+        luvio.getNotifyChangeStoreEntries<RecordRepresentation>(keys).then((entries) => {
+            const entryKeys = ObjectKeys(entries);
+            for (let i = 0, len = entryKeys.length; i < len; i++) {
+                const key = entryKeys[i];
+                const val = entries[key];
+
+                const node = luvio.wrapNormalizedGraphNode<
+                    FieldMapRepresentationNormalized,
+                    FieldMapRepresentation
+                >(val as RecordRepresentationNormalized);
+                const optionalFields = getTrackedFields(key, node, {
+                    maxDepth: configuration.getTrackedFieldDepthOnNotifyChange(),
+                    onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
+                });
+                const refreshRequest = createResourceRequestFromRepresentation(val, optionalFields);
+                const existingWeakEtag = val.weakEtag;
+
+                const fieldTrie = convertFieldsToTrie([], false);
+                const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
+
+                return luvio.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
+                    (response) => {
+                        return luvio.handleSuccessResponse(
+                            () => {
+                                const { body } = response;
+                                luvio.storeIngest<RecordRepresentation>(
+                                    key,
+                                    getRecordsResourceIngest({
+                                        fields: fieldTrie,
+                                        optionalFields: optionalFieldTrie,
+                                        trackedFields: optionalFieldTrie,
+                                        serverRequestCount: 1,
+                                    }),
+                                    body
+                                );
+                                luvio.storeBroadcast();
+                                instrumentation.getRecordNotifyChangeNetworkResult(
+                                    existingWeakEtag !== (body as RecordRepresentation).weakEtag
+                                );
+                                return undefined;
+                            },
+                            () => getTypeCacheKeys(response.body, () => key)
+                        );
+                    },
+                    (error: FetchResponse<unknown>) => {
+                        return luvio.handleErrorResponse(() => {
+                            const errorSnapshot = luvio.errorSnapshot(error);
+                            luvio.storeIngestError(
+                                key,
+                                errorSnapshot,
+                                RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS
+                            );
+                            luvio.storeBroadcast();
+                            instrumentation.getRecordNotifyChangeNetworkResult(null, true);
+                            return errorSnapshot;
+                        });
+                    }
+                );
             }
-            // retrieve data (Representation) from GraphNode and use createResourceRequestFromRepresentation to build refresh resource request from Representation
-            const representation: RecordRepresentation = (
-                node as GraphNode<RecordRepresentation>
-            ).retrieve();
-
-            const optionalFields = getTrackedFields(key, luvio.getNode(key), {
-                maxDepth: configuration.getTrackedFieldDepthOnNotifyChange(),
-                onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
-            });
-            const refreshRequest = createResourceRequestFromRepresentation(
-                representation,
-                optionalFields
-            );
-            const existingWeakEtag = representation.weakEtag;
-
-            const fieldTrie = convertFieldsToTrie([], false);
-            const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
-
-            // dispatch resource request, then ingest and broadcast
-            luvio.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
-                (response) => {
-                    const { body } = response;
-                    luvio.storeIngest<RecordRepresentation>(
-                        key,
-                        getRecordsResourceIngest({
-                            fields: fieldTrie,
-                            optionalFields: optionalFieldTrie,
-                            trackedFields: optionalFieldTrie,
-                            serverRequestCount: 1,
-                        }),
-                        body
-                    );
-                    luvio.storeBroadcast();
-                    instrumentation.getRecordNotifyChangeNetworkResult(
-                        existingWeakEtag !== (body as RecordRepresentation).weakEtag
-                    );
-                },
-                (error: FetchResponse<unknown>) => {
-                    const errorSnapshot = luvio.errorSnapshot(error);
-                    luvio.storeIngestError(
-                        key,
-                        errorSnapshot,
-                        RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS
-                    );
-                    luvio.storeBroadcast();
-                    instrumentation.getRecordNotifyChangeNetworkResult(null, true);
-                }
-            );
-        }
+        });
     };
 };
 

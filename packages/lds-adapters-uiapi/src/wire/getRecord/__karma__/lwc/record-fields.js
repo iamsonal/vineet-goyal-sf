@@ -37,5 +37,9 @@ export default class RecordFields extends LightningElement {
 
     @api notifyChange(recordIds) {
         getRecordNotifyChange(recordIds);
+
+        // notifyChange has a Promise to get store entries so we need to "flush"
+        // promises here
+        return new Promise((resolve) => setTimeout(resolve));
     }
 }

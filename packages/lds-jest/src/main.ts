@@ -5,5 +5,5 @@ export {
     populateDurableStore,
 } from './offline';
 export { customMatchers } from './matchers';
-export { flushPromises } from './utils';
+export { flushPromises, clone } from './utils';
 export { testResponseCacheKeysMatchIngestCacheKeys } from './cache-keys';

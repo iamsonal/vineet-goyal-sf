@@ -1,28 +1,48 @@
 {
-    "message": "SUCCESS",
     "isSuccess": true,
+    "message": "Search is a success",
     "searchResult": [
         {
             "searchFields": [
                 {
-                    "apiName": "name",
-                    "value": "Mister Tester",
-                    "dataType": "TEXT",
-                    "displayLabel": "Name"
+                    "developerName": "Sample_Account_Name",
+                    "value": "Test Value"
                 },
                 {
-                    "apiName": "id",
-                    "value": "001xx000003GYlTest",
-                    "dataType": "TEXT",
-                    "displayLabel": "Id"
+                    "developerName": "Sample_Phone_Number",
+                    "value": "09154892836"
                 },
                 {
-                    "apiName": "dob",
-                    "value": "01-Apr-1976",
-                    "dataType": "DATE",
-                    "displayLabel": "Date Of Birth"
+                    "developerName": "Sample_Postal_Code",
+                    "value": "786125"
+                },
+                {
+                    "developerName": "Id",
+                    "value": "001xx000003GYcFAAW"
                 }
             ]
+        }
+    ],
+    "searchResultHeader": [
+        {
+            "dataType": "Name",
+            "developerName": "Sample_Account_Name",
+            "displayLabel": "Account Name"
+        },
+        {
+            "dataType": "Phone",
+            "developerName": "Sample_Phone_Number",
+            "displayLabel": "Phone"
+        },
+        {
+            "dataType": "Text",
+            "developerName": "Sample_Postal_Code",
+            "displayLabel": "Sample_Postal_Code"
+        },
+        {
+            "dataType": "Lookup",
+            "developerName": "Id",
+            "displayLabel": "Account ID"
         }
     ]
 }

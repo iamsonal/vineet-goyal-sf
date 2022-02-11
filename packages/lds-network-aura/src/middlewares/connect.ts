@@ -510,8 +510,18 @@ const UNLOCK_RECORD_PATH = new RegExp(
     'i'
 );
 
+const IDENTIFY_VERIFICATION_BUILD_CONTEXT_PATH = new RegExp(
+    `${IDENTITY_VERIFICATION_BASE_URI}/build-context/([A-Za-z0-9])+`,
+    'i'
+);
+
 const IDENTIFY_VERIFICATION_SEARCH_PATH = new RegExp(
     `${IDENTITY_VERIFICATION_BASE_URI}/search`,
+    'i'
+);
+
+const IDENTIFY_VERIFICATION_VERIFY_RECORD_PATH = new RegExp(
+    `${IDENTITY_VERIFICATION_BASE_URI}/verification`,
     'i'
 );
 
@@ -1798,12 +1808,32 @@ const interesttagging: ApiFamily = {
 };
 
 const identityVerification: ApiFamily = {
+    buildVerificationContext: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) &&
+            IDENTIFY_VERIFICATION_BUILD_CONTEXT_PATH.test(path),
+        transport: {
+            controller: 'IdentityVerificationController.buildVerificationContext',
+        },
+    },
+
     searchRecords: {
         method: 'post',
         predicate: (path: string) =>
             path.startsWith(CONNECT_BASE_URI) && IDENTIFY_VERIFICATION_SEARCH_PATH.test(path),
         transport: {
             controller: 'IdentityVerificationController.searchRecords',
+        },
+    },
+
+    identityVerification: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) &&
+            IDENTIFY_VERIFICATION_VERIFY_RECORD_PATH.test(path),
+        transport: {
+            controller: 'IdentityVerificationController.identityVerification',
         },
     },
 };

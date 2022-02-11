@@ -1,0 +1,80 @@
+{
+    "isSuccess": true,
+    "message": "Fetched verification information successfully for User Id : 001xx000003GYcFAAW.",
+    "processDefinition": {
+        "layoutType": "Tab",
+        "processDetail": [
+            {
+                "apexClassName": "",
+                "dataSourceType": "Salesforce",
+                "optionalVerifierCount": 1,
+                "searchObjectName": "Account",
+                "searchResultFilter": "",
+                "searchResultSortOrder": "",
+                "searchResultUniqueIdField": "Id",
+                "searchSequenceNo": 1,
+                "searchType": "Text-Based",
+                "verificationProcessFieldList": {
+                    "verificationProcessFields": [
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "",
+                            "developerName": "Sample_Postal_Code",
+                            "fieldName": "BillingPostalCode",
+                            "fieldType": "requiredVerifier",
+                            "label": "Sample_Postal_Code"
+                        },
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "",
+                            "developerName": "Sample_Phone_Number",
+                            "fieldName": "Phone",
+                            "fieldType": "optionalVerifier",
+                            "label": "Phone"
+                        },
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "",
+                            "developerName": "Sample_Account_Name",
+                            "fieldName": "Name",
+                            "fieldType": "resultField",
+                            "label": "Account Name"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "selectedSearchResult": {
+        "objectName": "Account",
+        "selectedRecordId": "001xx000003GYcFAAW",
+        "selectedRecordObject": [
+            {
+                "developerName": "Sample_Postal_Code",
+                "value": "786125"
+            },
+            {
+                "developerName": "Sample_Phone_Number",
+                "value": "09156883836"
+            },
+            {
+                "developerName": "Sample_Account_Name",
+                "value": "Test Account Name"
+            }
+        ]
+    },
+    "verifiedResult": {
+        "optionalVerifiers": [
+            {
+                "developerName": "Sample_Phone_Number",
+                "verificationState": ""
+            }
+        ],
+        "requiredVerifiers": [
+            {
+                "developerName": "Sample_Postal_Code",
+                "verificationState": ""
+            }
+        ]
+    }
+}

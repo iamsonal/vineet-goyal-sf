@@ -9646,6 +9646,124 @@ describe('routes', () => {
         );
     });
 
+    describe('post /connect/identity-verification/build-context/{processDefinitionName}', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/build-context/SampleVerificationFlow`,
+                urlParams: {
+                    processDefinitionName: 'SampleVerificationFlow',
+                },
+                body: {
+                    BuildContextData: {
+                        selectedRecordId: 'sample-record-id',
+                        objectName: 'Account',
+                    },
+                },
+            },
+            [
+                'IdentityVerificationController.buildVerificationContext',
+                {
+                    processDefinitionName: 'SampleVerificationFlow',
+                    BuildContextData: {
+                        selectedRecordId: 'sample-record-id',
+                        objectName: 'Account',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: IDENTITY_VERIFICATION_BASE_URI,
+            basePath: `/build-context/SampleVerificationFlow`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/build-context/SampleVerificationFlow`,
+            },
+            {
+                isSuccess: true,
+                message:
+                    'Build Context for Identity Verification API called successfully for Process Definition: SampleVerificationFlow',
+                processDefinition: {
+                    layoutType: 'Tab',
+                    processDetail: [
+                        {
+                            dataSourceType: 'Salesforce',
+                            optionalVerifierCount: 1,
+                            searchObjectName: 'Account',
+                            searchResultSortOrder: 'Name',
+                            searchResultUniqueIdField: 'Id',
+                            searchSequenceNo: 1,
+                            searchType: 'Text-Based',
+                            searchResultFilter: '',
+                            apexClassName: '',
+                            verificationProcessFieldList: {
+                                verificationProcessFields: [
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Name',
+                                        developerName: 'SampleAccountName',
+                                        fieldName: 'Name',
+                                        fieldType: 'requiredVerifier',
+                                        label: 'Account Name',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Phone',
+                                        developerName: 'SamplePhone',
+                                        fieldName: 'Phone',
+                                        fieldType: 'optionalVerifier',
+                                        label: 'Phone',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Text',
+                                        developerName: 'SamplePostalCode',
+                                        fieldName: 'BillingPostalCode',
+                                        fieldType: 'optionalVerifier',
+                                        label: 'Billing Zip/Postal Code',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Name',
+                                        developerName: 'SampleAccount',
+                                        fieldName: 'Name',
+                                        fieldType: 'resultField',
+                                        label: 'Account Name',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Phone',
+                                        developerName: 'SamplePhoneNumber',
+                                        fieldName: 'Phone',
+                                        fieldType: 'resultField',
+                                        label: 'Phone',
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
+                selectedSearchResult: {
+                    objectName: 'Account',
+                    selectedRecordId: 'sample-record-id',
+                    selectedRecordObject: [],
+                },
+                verifiedResult: {
+                    optionalVerifiers: [],
+                    requiredVerifiers: [],
+                },
+            }
+        );
+    });
+
     describe('post /connect/identity-verification/search', () => {
         testControllerInput(
             {
@@ -9654,86 +9772,83 @@ describe('routes', () => {
                 basePath: `/search`,
                 body: {
                     SearchRecordsContextData: {
-                        searchTerm: 'test',
+                        searchTerm: 'Test',
                         verificationContext: {
                             processDefinition: {
-                                layoutType: 'Tab',
-                                processDetail: [
-                                    {
-                                        dataSourceType: 'Salesforce',
-                                        searchObjectName: 'Account',
-                                        searchSequenceNo: 0,
-                                        searchType: 'SOSL',
-                                        searchResultUniqueIdField: 'Id',
-                                        searchResultFilter: '',
-                                        searchResultSortOrder: '',
-                                        optionalVerifierCount: '1',
-                                        apexClassName: '',
-                                        verificationProcessFieldList: {
-                                            verificationProcessFields: [
-                                                {
-                                                    developerName: 'dob',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'RequiredVerifier',
-                                                    label: 'Date of Birth',
-                                                    fieldName: 'BirthDate',
-                                                },
-                                                {
-                                                    developerName: 'accountName',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'RequiredVerifier',
-                                                    label: 'Account Name',
-                                                    fieldName: 'Name',
-                                                },
-                                                {
-                                                    developerName: 'zip',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'OptionalVerifier',
-                                                    label: 'Zip',
-                                                    fieldName: 'ZipCode',
-                                                },
-                                                {
-                                                    developerName: 'name',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'ResultField',
-                                                    label: 'Account Name',
-                                                    fieldName: 'Name',
-                                                },
-                                            ],
+                                processDetail: {
+                                    processDetailList: [
+                                        {
+                                            verificationProcessFieldList: {
+                                                verificationProcessFields: [
+                                                    {
+                                                        label: 'Sample_Postal_Code',
+                                                        fieldType: 'requiredVerifier',
+                                                        fieldName: 'BillingPostalCode',
+                                                        developerName: 'Sample_Postal_Code',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Phone',
+                                                        fieldType: 'optionalVerifier',
+                                                        fieldName: 'Phone',
+                                                        developerName: 'Sample_Phone_Number',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Account Name',
+                                                        fieldType: 'resultField',
+                                                        fieldName: 'Name',
+                                                        developerName: 'Sample_Account_Name',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                ],
+                                            },
+                                            searchType: 'Text-Based',
+                                            searchSequenceNo: 1,
+                                            searchResultUniqueIdField: 'Id',
+                                            searchResultSortOrder: '',
+                                            searchResultFilter: '',
+                                            searchObjectName: 'Account',
+                                            optionalVerifierCount: 1,
+                                            dataSourceType: 'Salesforce',
+                                            apexClassName: '',
                                         },
-                                    },
-                                ],
+                                    ],
+                                },
+                                layoutType: 'Tab',
                             },
                             selectedSearchResult: {
-                                objectName: '',
                                 selectedRecordId: '',
-                                selectedRecordObject: [],
+                                objectName: '',
+                                selectedRecordObject: {
+                                    selectedRecordObjectList: [
+                                        {
+                                            developerName: '',
+                                            value: '',
+                                        },
+                                    ],
+                                },
                             },
                             verifiedResult: {
-                                requiredVerifiers: [
-                                    {
-                                        developerName: 'ssn',
-                                        verificationState: 'Yes',
-                                    },
-                                    {
-                                        developerName: 'dob',
-                                        verificationState: 'Yes',
-                                    },
-                                    {
-                                        developerName: 'accountName',
-                                        verificationState: 'Yes',
-                                    },
-                                ],
-                                optionalVerifiers: [
-                                    {
-                                        developerName: 'street',
-                                        verificationState: 'Unset',
-                                    },
-                                    {
-                                        developerName: 'zip',
-                                        verificationState: 'Yes',
-                                    },
-                                ],
+                                requiredVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
+                                optionalVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
                             },
                         },
                     },
@@ -9743,120 +9858,89 @@ describe('routes', () => {
                 'IdentityVerificationController.searchRecords',
                 {
                     SearchRecordsContextData: {
-                        searchTerm: 'test',
+                        searchTerm: 'Test',
                         verificationContext: {
                             processDefinition: {
-                                layoutType: 'Tab',
-                                processDetail: [
-                                    {
-                                        dataSourceType: 'Salesforce',
-                                        searchObjectName: 'Account',
-                                        searchSequenceNo: 0,
-                                        searchType: 'SOSL',
-                                        searchResultUniqueIdField: 'Id',
-                                        searchResultFilter: '',
-                                        searchResultSortOrder: '',
-                                        optionalVerifierCount: '1',
-                                        apexClassName: '',
-                                        verificationProcessFieldList: {
-                                            verificationProcessFields: [
-                                                {
-                                                    developerName: 'dob',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'RequiredVerifier',
-                                                    label: 'Date of Birth',
-                                                    fieldName: 'BirthDate',
-                                                },
-                                                {
-                                                    developerName: 'accountName',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'RequiredVerifier',
-                                                    label: 'Account Name',
-                                                    fieldName: 'Name',
-                                                },
-                                                {
-                                                    developerName: 'zip',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'OptionalVerifier',
-                                                    label: 'Zip',
-                                                    fieldName: 'ZipCode',
-                                                },
-                                                {
-                                                    developerName: 'name',
-                                                    dataSourceType: 'Salesforce',
-                                                    fieldType: 'ResultField',
-                                                    label: 'Account Name',
-                                                    fieldName: 'Name',
-                                                },
-                                            ],
+                                processDetail: {
+                                    processDetailList: [
+                                        {
+                                            verificationProcessFieldList: {
+                                                verificationProcessFields: [
+                                                    {
+                                                        label: 'Sample_Postal_Code',
+                                                        fieldType: 'requiredVerifier',
+                                                        fieldName: 'BillingPostalCode',
+                                                        developerName: 'Sample_Postal_Code',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Phone',
+                                                        fieldType: 'optionalVerifier',
+                                                        fieldName: 'Phone',
+                                                        developerName: 'Sample_Phone_Number',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Account Name',
+                                                        fieldType: 'resultField',
+                                                        fieldName: 'Name',
+                                                        developerName: 'Sample_Account_Name',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                ],
+                                            },
+                                            searchType: 'Text-Based',
+                                            searchSequenceNo: 1,
+                                            searchResultUniqueIdField: 'Id',
+                                            searchResultSortOrder: '',
+                                            searchResultFilter: '',
+                                            searchObjectName: 'Account',
+                                            optionalVerifierCount: 1,
+                                            dataSourceType: 'Salesforce',
+                                            apexClassName: '',
                                         },
-                                    },
-                                ],
+                                    ],
+                                },
+                                layoutType: 'Tab',
                             },
                             selectedSearchResult: {
-                                objectName: '',
                                 selectedRecordId: '',
-                                selectedRecordObject: [],
+                                objectName: '',
+                                selectedRecordObject: {
+                                    selectedRecordObjectList: [
+                                        {
+                                            developerName: '',
+                                            value: '',
+                                        },
+                                    ],
+                                },
                             },
                             verifiedResult: {
-                                requiredVerifiers: [
-                                    {
-                                        developerName: 'ssn',
-                                        verificationState: 'Yes',
-                                    },
-                                    {
-                                        developerName: 'dob',
-                                        verificationState: 'Yes',
-                                    },
-                                    {
-                                        developerName: 'accountName',
-                                        verificationState: 'Yes',
-                                    },
-                                ],
-                                optionalVerifiers: [
-                                    {
-                                        developerName: 'street',
-                                        verificationState: 'Unset',
-                                    },
-                                    {
-                                        developerName: 'zip',
-                                        verificationState: 'Yes',
-                                    },
-                                ],
+                                requiredVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
+                                optionalVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
                             },
                         },
                     },
                 },
                 { background: false, hotspot: true, longRunning: false },
-            ],
-            {
-                message: 'SUCCESS',
-                isSuccess: true,
-                searchResult: [
-                    {
-                        searchFields: [
-                            {
-                                apiName: 'name',
-                                value: 'Mister Tester',
-                                dataType: 'TEXT',
-                                displayLabel: 'Name',
-                            },
-                            {
-                                apiName: 'id',
-                                value: '001xx000003GYlTest',
-                                dataType: 'TEXT',
-                                displayLabel: 'Id',
-                            },
-                            {
-                                apiName: 'dob',
-                                value: '01-Apr-1976',
-                                dataType: 'DATE',
-                                displayLabel: 'Date Of Birth',
-                            },
-                        ],
-                    },
-                ],
-            }
+            ]
         );
 
         testRejectFetchResponse({
@@ -9872,32 +9956,321 @@ describe('routes', () => {
                 basePath: `/search`,
             },
             {
-                message: 'SUCCESS',
                 isSuccess: true,
+                message: 'Search is a success',
                 searchResult: [
                     {
                         searchFields: [
                             {
-                                apiName: 'name',
-                                value: 'Mister Tester',
-                                dataType: 'TEXT',
-                                displayLabel: 'Name',
+                                developerName: 'Sample_Account_Name',
+                                value: 'Test Value',
                             },
                             {
-                                apiName: 'id',
-                                value: '001xx000003GYlTest',
-                                dataType: 'TEXT',
-                                displayLabel: 'Id',
+                                developerName: 'Sample_Phone_Number',
+                                value: '09154892836',
                             },
                             {
-                                apiName: 'dob',
-                                value: '01-Apr-1976',
-                                dataType: 'DATE',
-                                displayLabel: 'Date Of Birth',
+                                developerName: 'Sample_Postal_Code',
+                                value: '786125',
+                            },
+                            {
+                                developerName: 'Id',
+                                value: '001xx000003GYcFAAW',
                             },
                         ],
                     },
                 ],
+                searchResultHeader: [
+                    {
+                        dataType: 'Name',
+                        developerName: 'Sample_Account_Name',
+                        displayLabel: 'Account Name',
+                    },
+                    {
+                        dataType: 'Phone',
+                        developerName: 'Sample_Phone_Number',
+                        displayLabel: 'Phone',
+                    },
+                    {
+                        dataType: 'Text',
+                        developerName: 'Sample_Postal_Code',
+                        displayLabel: 'Sample_Postal_Code',
+                    },
+                    {
+                        dataType: 'Lookup',
+                        developerName: 'Id',
+                        displayLabel: 'Account ID',
+                    },
+                ],
+            }
+        );
+    });
+
+    describe('post /connect/identity-verification/verification', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/verification`,
+                body: {
+                    IdentityVerificationContextData: {
+                        processDefinition: {
+                            processDetail: {
+                                processDetailList: [
+                                    {
+                                        verificationProcessFieldList: {
+                                            verificationProcessFields: [
+                                                {
+                                                    label: 'Sample_Postal_Code',
+                                                    fieldType: 'requiredVerifier',
+                                                    fieldName: 'BillingPostalCode',
+                                                    developerName: 'Sample_Postal_Code',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Phone',
+                                                    fieldType: 'optionalVerifier',
+                                                    fieldName: 'Phone',
+                                                    developerName: 'Sample_Phone_Number',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Account Name',
+                                                    fieldType: 'resultField',
+                                                    fieldName: 'Name',
+                                                    developerName: 'Sample_Account_Name',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                            ],
+                                        },
+                                        searchType: 'Text-Based',
+                                        searchSequenceNo: 1,
+                                        searchResultUniqueIdField: 'Id',
+                                        searchResultSortOrder: '',
+                                        searchResultFilter: '',
+                                        searchObjectName: 'Account',
+                                        optionalVerifierCount: 1,
+                                        dataSourceType: 'Salesforce',
+                                        apexClassName: '',
+                                    },
+                                ],
+                            },
+                            layoutType: 'Tab',
+                        },
+                        selectedSearchResult: {
+                            selectedRecordId: '001xx000003GYcFAAW',
+                            objectName: 'Account',
+                            selectedRecordObject: {
+                                selectedRecordObjectList: [
+                                    {
+                                        developerName: '',
+                                        value: '',
+                                    },
+                                ],
+                            },
+                        },
+                        verifiedResult: {
+                            requiredVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                            optionalVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+            [
+                'IdentityVerificationController.identityVerification',
+                {
+                    IdentityVerificationContextData: {
+                        processDefinition: {
+                            processDetail: {
+                                processDetailList: [
+                                    {
+                                        verificationProcessFieldList: {
+                                            verificationProcessFields: [
+                                                {
+                                                    label: 'Sample_Postal_Code',
+                                                    fieldType: 'requiredVerifier',
+                                                    fieldName: 'BillingPostalCode',
+                                                    developerName: 'Sample_Postal_Code',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Phone',
+                                                    fieldType: 'optionalVerifier',
+                                                    fieldName: 'Phone',
+                                                    developerName: 'Sample_Phone_Number',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Account Name',
+                                                    fieldType: 'resultField',
+                                                    fieldName: 'Name',
+                                                    developerName: 'Sample_Account_Name',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                            ],
+                                        },
+                                        searchType: 'Text-Based',
+                                        searchSequenceNo: 1,
+                                        searchResultUniqueIdField: 'Id',
+                                        searchResultSortOrder: '',
+                                        searchResultFilter: '',
+                                        searchObjectName: 'Account',
+                                        optionalVerifierCount: 1,
+                                        dataSourceType: 'Salesforce',
+                                        apexClassName: '',
+                                    },
+                                ],
+                            },
+                            layoutType: 'Tab',
+                        },
+                        selectedSearchResult: {
+                            selectedRecordId: '001xx000003GYcFAAW',
+                            objectName: 'Account',
+                            selectedRecordObject: {
+                                selectedRecordObjectList: [
+                                    {
+                                        developerName: '',
+                                        value: '',
+                                    },
+                                ],
+                            },
+                        },
+                        verifiedResult: {
+                            requiredVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                            optionalVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: IDENTITY_VERIFICATION_BASE_URI,
+            basePath: `/verification`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/verification`,
+            },
+            {
+                isSuccess: true,
+                message:
+                    'Fetched verification information successfully for User Id : 001xx000003GYcFAAW.',
+                processDefinition: {
+                    layoutType: 'Tab',
+                    processDetail: [
+                        {
+                            apexClassName: '',
+                            dataSourceType: 'Salesforce',
+                            optionalVerifierCount: 1,
+                            searchObjectName: 'Account',
+                            searchResultFilter: '',
+                            searchResultSortOrder: '',
+                            searchResultUniqueIdField: 'Id',
+                            searchSequenceNo: 1,
+                            searchType: 'Text-Based',
+                            verificationProcessFieldList: {
+                                verificationProcessFields: [
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: '',
+                                        developerName: 'Sample_Postal_Code',
+                                        fieldName: 'BillingPostalCode',
+                                        fieldType: 'requiredVerifier',
+                                        label: 'Sample_Postal_Code',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: '',
+                                        developerName: 'Sample_Phone_Number',
+                                        fieldName: 'Phone',
+                                        fieldType: 'optionalVerifier',
+                                        label: 'Phone',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: '',
+                                        developerName: 'Sample_Account_Name',
+                                        fieldName: 'Name',
+                                        fieldType: 'resultField',
+                                        label: 'Account Name',
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
+                selectedSearchResult: {
+                    objectName: 'Account',
+                    selectedRecordId: '001xx000003GYcFAAW',
+                    selectedRecordObject: [
+                        {
+                            developerName: 'Sample_Postal_Code',
+                            value: '786125',
+                        },
+                        {
+                            developerName: 'Sample_Phone_Number',
+                            value: '09154892836',
+                        },
+                        {
+                            developerName: 'Sample_Account_Name',
+                            value: 'Abhijeet Jha',
+                        },
+                    ],
+                },
+                verifiedResult: {
+                    optionalVerifiers: [
+                        {
+                            developerName: 'Sample_Phone_Number',
+                            verificationState: '',
+                        },
+                    ],
+                    requiredVerifiers: [
+                        {
+                            developerName: 'Sample_Postal_Code',
+                            verificationState: '',
+                        },
+                    ],
+                },
             }
         );
     });

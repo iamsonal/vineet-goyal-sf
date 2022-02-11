@@ -1,0 +1,80 @@
+{
+    "IdentityVerificationContextData": {
+        "processDefinition": {
+            "processDetail": {
+                "processDetailList": [
+                    {
+                        "verificationProcessFieldList": {
+                            "verificationProcessFields": [
+                                {
+                                    "label": "Sample_Postal_Code",
+                                    "fieldType": "requiredVerifier",
+                                    "fieldName": "BillingPostalCode",
+                                    "developerName": "Sample_Postal_Code",
+                                    "dataSourceType": "Salesforce",
+                                    "dataType": ""
+                                },
+                                {
+                                    "label": "Phone",
+                                    "fieldType": "optionalVerifier",
+                                    "fieldName": "Phone",
+                                    "developerName": "Sample_Phone_Number",
+                                    "dataSourceType": "Salesforce",
+                                    "dataType": ""
+                                },
+                                {
+                                    "label": "Account Name",
+                                    "fieldType": "resultField",
+                                    "fieldName": "Name",
+                                    "developerName": "Sample_Account_Name",
+                                    "dataSourceType": "Salesforce",
+                                    "dataType": ""
+                                }
+                            ]
+                        },
+                        "searchType": "Text-Based",
+                        "searchSequenceNo": 1,
+                        "searchResultUniqueIdField": "Id",
+                        "searchResultSortOrder": "",
+                        "searchResultFilter": "",
+                        "searchObjectName": "Account",
+                        "optionalVerifierCount": 1,
+                        "dataSourceType": "Salesforce",
+                        "apexClassName": ""
+                    }
+                ]
+            },
+            "layoutType": "Tab"
+        },
+        "selectedSearchResult": {
+            "selectedRecordId": "001xx000003GYcFAAW",
+            "objectName": "Account",
+            "selectedRecordObject": {
+                "selectedRecordObjectList": [
+                    {
+                        "developerName": "",
+                        "value": ""
+                    }
+                ]
+            }
+        },
+        "verifiedResult": {
+            "requiredVerifiers": {
+                "verifiersList": [
+                    {
+                        "developerName": "",
+                        "verificationState": ""
+                    }
+                ]
+            },
+            "optionalVerifiers": {
+                "verifiersList": [
+                    {
+                        "developerName": "",
+                        "verificationState": ""
+                    }
+                ]
+            }
+        }
+    }
+}

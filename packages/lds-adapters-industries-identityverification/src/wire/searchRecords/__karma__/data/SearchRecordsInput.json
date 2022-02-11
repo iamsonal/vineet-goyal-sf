@@ -1,84 +1,83 @@
 {
-    "searchTerm": "test",
-    "verificationContext": {
-        "processDefinition": {
-            "layoutType": "Tab",
-            "processDetail": [
-                {
-                    "dataSourceType": "Salesforce",
-                    "searchObjectName": "Account",
-                    "searchSequenceNo": 0,
-                    "searchType": "SOSL",
-                    "searchResultUniqueIdField": "Id",
-                    "searchResultFilter": "",
-                    "searchResultSortOrder": "",
-                    "optionalVerifierCount": "1",
-                    "apexClassName": "",
-                    "verificationProcessFieldList": {
-                        "verificationProcessFields": [
-                            {
-                                "developerName": "dob",
-                                "dataSourceType": "Salesforce",
-                                "fieldType": "RequiredVerifier",
-                                "label": "Date of Birth",
-                                "fieldName": "BirthDate"
+    "SearchRecordsContextData": {
+        "searchTerm": "Test",
+        "verificationContext": {
+            "processDefinition": {
+                "processDetail": {
+                    "processDetailList": [
+                        {
+                            "verificationProcessFieldList": {
+                                "verificationProcessFields": [
+                                    {
+                                        "label": "Sample_Postal_Code",
+                                        "fieldType": "requiredVerifier",
+                                        "fieldName": "BillingPostalCode",
+                                        "developerName": "Sample_Postal_Code",
+                                        "dataSourceType": "Salesforce",
+                                        "dataType": ""
+                                    },
+                                    {
+                                        "label": "Phone",
+                                        "fieldType": "optionalVerifier",
+                                        "fieldName": "Phone",
+                                        "developerName": "Sample_Phone_Number",
+                                        "dataSourceType": "Salesforce",
+                                        "dataType": ""
+                                    },
+                                    {
+                                        "label": "Account Name",
+                                        "fieldType": "resultField",
+                                        "fieldName": "Name",
+                                        "developerName": "Sample_Account_Name",
+                                        "dataSourceType": "Salesforce",
+                                        "dataType": ""
+                                    }
+                                ]
                             },
-                            {
-                                "developerName": "accountName",
-                                "dataSourceType": "Salesforce",
-                                "fieldType": "RequiredVerifier",
-                                "label": "Account Name",
-                                "fieldName": "Name"
-                            },
-                            {
-                                "developerName": "zip",
-                                "dataSourceType": "Salesforce",
-                                "fieldType": "OptionalVerifier",
-                                "label": "Zip",
-                                "fieldName": "ZipCode"
-                            },
-                            {
-                                "developerName": "name",
-                                "dataSourceType": "Salesforce",
-                                "fieldType": "ResultField",
-                                "label": "Account Name",
-                                "fieldName": "Name"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "selectedSearchResult": {
-            "objectName": "",
-            "selectedRecordId": "",
-            "selectedRecordObject": []
-        },
-        "verifiedResult": {
-            "requiredVerifiers": [
-                {
-                    "developerName": "ssn",
-                    "verificationState": "Yes"
+                            "searchType": "Text-Based",
+                            "searchSequenceNo": 1,
+                            "searchResultUniqueIdField": "Id",
+                            "searchResultSortOrder": "",
+                            "searchResultFilter": "",
+                            "searchObjectName": "Account",
+                            "optionalVerifierCount": 1,
+                            "dataSourceType": "Salesforce",
+                            "apexClassName": ""
+                        }
+                    ]
                 },
-                {
-                    "developerName": "dob",
-                    "verificationState": "Yes"
-                },
-                {
-                    "developerName": "accountName",
-                    "verificationState": "Yes"
+                "layoutType": "Tab"
+            },
+            "selectedSearchResult": {
+                "selectedRecordId": "",
+                "objectName": "",
+                "selectedRecordObject": {
+                    "selectedRecordObjectList": [
+                        {
+                            "developerName": "",
+                            "value": ""
+                        }
+                    ]
                 }
-            ],
-            "optionalVerifiers": [
-                {
-                    "developerName": "street",
-                    "verificationState": "Unset"
+            },
+            "verifiedResult": {
+                "requiredVerifiers": {
+                    "verifiersList": [
+                        {
+                            "developerName": "",
+                            "verificationState": ""
+                        }
+                    ]
                 },
-                {
-                    "developerName": "zip",
-                    "verificationState": "Yes"
+                "optionalVerifiers": {
+                    "verifiersList": [
+                        {
+                            "developerName": "",
+                            "verificationState": ""
+                        }
+                    ]
                 }
-            ]
+            }
         }
     }
 }

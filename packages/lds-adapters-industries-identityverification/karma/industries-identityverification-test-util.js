@@ -22,6 +22,41 @@ export function mockSearchRecordsNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+export function mockBuildVerificationContextNetworkOnce(config, mockData) {
+    const paramMatch = buildVerificationContextMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockBuildVerificationContextNetworkErrorOnce(config, mockData) {
+    const paramMatch = buildVerificationContextMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockIdentityVerificationNetworkOnce(config, mockData) {
+    const paramMatch = identityVerificationMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockIdentityVerificationNetworkErrorOnce(config, mockData) {
+    const paramMatch = identityVerificationMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function buildVerificationContextMatcher(config) {
+    let { buildVerificationContextData } = config;
+
+    return sinon.match({
+        body: {
+            buildVerificationContextData,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: CONNECT_BASE_URI,
+        basePath: '/connect/identity-verification/build-context/SampleVerificationFlow',
+        queryParams: {},
+    });
+}
+
 function searchRecordsMatcher(config) {
     let { searchRecordsContextData } = config;
 
@@ -33,6 +68,21 @@ function searchRecordsMatcher(config) {
         method: 'post',
         baseUri: CONNECT_BASE_URI,
         basePath: '/connect/identity-verification/search',
+        queryParams: {},
+    });
+}
+
+function identityVerificationMatcher(config) {
+    let { identityVerificationContextData } = config;
+
+    return sinon.match({
+        body: {
+            identityVerificationContextData,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: CONNECT_BASE_URI,
+        basePath: '/connect/identity-verification/verification',
         queryParams: {},
     });
 }

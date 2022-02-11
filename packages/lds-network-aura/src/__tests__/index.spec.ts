@@ -3367,6 +3367,37 @@ describe('routes', () => {
             }
         );
     });
+    describe('post /bei/recalculate/{recordId}', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/bei/recalculate/0o3xx0000000001AAA`,
+                urlParams: {
+                    recordId: '0o3xx0000000001AAA',
+                },
+            },
+            [
+                'SustainabilityFamilyController.performBuildingEnergyIntensityCalculation',
+                {
+                    recordId: '0o3xx0000000001AAA',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/bei/recalculate/0o3xx0000000001AAA`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
     describe('get /consumer-goods/tenant-registration', () => {
         testControllerInput(
             {

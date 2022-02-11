@@ -486,6 +486,10 @@ const UPLOAD_REFERENCE_DATA_PATH = new RegExp(
     `${CONNECT_BASE_URI}/sustainability/reference-data/([A-Z]){2,40}/upload$`,
     'i'
 );
+const BEI_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/sustainability/bei/recalculate/([A-Z0-9]){1,18}$`,
+    'i'
+);
 const RCG_TPM_MANAGEMENT_PATH = new RegExp(
     `${RCG_TENANTMANAGEMENT_BASE_URI}/tenant-registration$`,
     'i'
@@ -911,6 +915,13 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && UPLOAD_REFERENCE_DATA_PATH.test(path),
         transport: {
             controller: 'SustainabilityFamilyController.uploadReferenceData',
+        },
+    },
+    bei: {
+        method: 'post',
+        predicate: (path) => path.startsWith(CONNECT_BASE_URI) && BEI_PATH.test(path),
+        transport: {
+            controller: 'SustainabilityFamilyController.performBuildingEnergyIntensityCalculation',
         },
     },
     recalculate: {

@@ -1,0 +1,51 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  SustainabilityBeiCalculationRepresentation:
+    description: Output object for Sustainability Bei recalculation
+    type: object
+    properties:
+      code:
+        description: return code
+        type: integer
+      message:
+        description: return message
+        type: string
+/connect/sustainability:
+  /bei/recalculate/{recordId}:
+    post:
+      description: Building Energy Intensity recalculation for the record Id
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: SustainabilityBeiCalculationRepresentation
+    uriParameters:
+      recordId:
+        type: string
+        required: true

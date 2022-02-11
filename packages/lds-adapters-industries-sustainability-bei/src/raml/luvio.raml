@@ -1,0 +1,18 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'sustainability-bei'
+types:
+  SustainabilityBeiCalculationRepresentation:
+    (luvio.ttl): 300
+    (luvio.opaque): true
+    (luvio.key):
+      message: message
+
+/connect/sustainability/bei/recalculate/{recordId}:
+  post:
+    (luvio.adapter):
+      name: performBuildingEnergyIntensityCalculation

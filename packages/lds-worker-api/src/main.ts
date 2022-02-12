@@ -11,6 +11,7 @@ import { draftQueue, draftManager } from './draftQueueImplementation';
 import { setUiApiRecordTTL, setMetadataTTL } from './ttl';
 import { withDefaultLuvio } from 'native/ldsEngineMobile';
 import type { Luvio } from '@luvio/engine';
+import { initializeStoreEval } from './storeEval';
 
 if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-undef
@@ -21,8 +22,7 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-// TODO [W-10385519]: add initialize back in when integration tests are added
-// initializeStoreEval();
+initializeStoreEval();
 
 export {
     subscribeToAdapter,

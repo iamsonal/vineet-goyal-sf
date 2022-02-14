@@ -207,7 +207,7 @@ describe('mobile runtime integration tests', () => {
             const callCount = networkAdapter.sentRequests.length;
             expect(callCount).toBe(0);
 
-            //metadata is lost after drafts are written.
+            // TODO [W-10696735] - metadata is lost after drafts are written.
             //publishChangesToDurableStore writes again but loses metadata because
             //ingestStore.metadata does not include metadata for the record
             expect(snapshot.state).toEqual('Fulfilled');

@@ -15,7 +15,7 @@ import { DraftRecordRepresentation } from '@salesforce/lds-drafts/dist/utils/rec
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import mockOpportunityObjectInfo from './data/object-Opportunity.json';
-import { flushPromises } from '../../testUtils';
+import { callbackObserver, flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOppy from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
 import { populateL2WithUser, setup, resetLuvioStore } from './integrationTestSetup';
@@ -71,7 +71,6 @@ describe('mobile runtime integration tests', () => {
         expect(snapshot.state).toBe('Fulfilled');
 
         (luvio as any).environment.storeReset();
-        await flushPromises();
 
         return snapshot.data as RecordRepresentation;
     }
@@ -125,7 +124,6 @@ describe('mobile runtime integration tests', () => {
                 ],
                 ''
             );
-            await flushPromises();
 
             // Act & Assert
             await expect(createRecord({ apiName, fields: { Name: 'Justin' } })).rejects.toEqual({
@@ -183,7 +181,8 @@ describe('mobile runtime integration tests', () => {
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
 
-            const callbackSpy = jest.fn();
+            const { waitForCallback, callback } = callbackObserver<any>();
+            const callbackSpy = jest.fn().mockImplementation((snapshot) => callback(snapshot));
             // subscribe to getRecord snapshot
             luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
 
@@ -195,8 +194,9 @@ describe('mobile runtime integration tests', () => {
 
             // upload the draft and respond with a record with more fields and a new id
             const result = await draftQueue.processNextAction();
-            await flushPromises();
             expect(result).toBe(ProcessActionResult.ACTION_SUCCEEDED);
+
+            await waitForCallback(1);
 
             expect(callbackSpy).toBeCalledTimes(1);
             // ensure the callback id value has the updated canonical server id
@@ -267,9 +267,9 @@ describe('mobile runtime integration tests', () => {
             // expect the snapshot to be fulfilled
             expect(oppySnap.state).toBe('Fulfilled');
 
-            await flushPromises();
             // subscribe to snapshot
-            const getRecordSpy = jest.fn();
+            const { waitForCallback, callback } = callbackObserver<any>();
+            const getRecordSpy = jest.fn().mockImplementation((snapshot) => callback(snapshot));
             luvio.storeSubscribe(oppySnap, getRecordSpy);
             // process next draft queue item
             networkAdapter.setMockResponse({
@@ -280,9 +280,9 @@ describe('mobile runtime integration tests', () => {
 
             await draftQueue.processNextAction();
 
-            await flushPromises();
-
             const canonicalOppyId = mockOppy.id;
+
+            await waitForCallback(1);
 
             // expect snapshot to be called back with updated ids
             expect(getRecordSpy).toHaveBeenCalledTimes(1);
@@ -314,9 +314,9 @@ describe('mobile runtime integration tests', () => {
             // expect the snapshot to be fulfilled
             expect(oppySnap.state).toBe('Fulfilled');
 
-            await flushPromises();
             // subscribe to snapshot
-            const getRecordSpy = jest.fn();
+            const { waitForCallback, callback } = callbackObserver<any>();
+            const getRecordSpy = jest.fn().mockImplementation((snapshot) => callback(snapshot));
             luvio.storeSubscribe(oppySnap, getRecordSpy);
 
             // process next draft action to create the parent account
@@ -329,7 +329,7 @@ describe('mobile runtime integration tests', () => {
             await draftQueue.processNextAction();
 
             // flush
-            await flushPromises();
+            await waitForCallback(1);
 
             const canonicalRecordId = mockAccount.id;
             // expect snapshot to be called back with ids updated

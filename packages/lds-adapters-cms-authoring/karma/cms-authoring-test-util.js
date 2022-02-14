@@ -108,14 +108,27 @@ function getCreateDeploymentsMatcher(config) {
 }
 
 function getManagedContentMatcher(config) {
-    let { contentKeyOrId } = config;
+    let { contentKeyOrId, language, version } = config;
+
+    let queryParams = {};
+    if (language) {
+        queryParams.language = language;
+    }
+
+    if (version) {
+        queryParams.version = version;
+    }
+
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/cms/contents/${contentKeyOrId}`,
-        queryParams: {},
+        urlParams: {
+            contentKeyOrId: contentKeyOrId,
+        },
+        queryParams: queryParams,
     });
 }
 

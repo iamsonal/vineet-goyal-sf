@@ -1,4 +1,9 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import {
+    getMock as globalGetMock,
+    setupElement,
+    assertNetworkCallCount,
+    resetNetworkStub,
+} from 'test-util';
 import {
     mockGetManagedContent,
     mockGetManagedContentErrorOnce,
@@ -45,6 +50,136 @@ describe('basic', () => {
         const el = await setupElement(TEST_CONFIG, GetManagedContent);
         expect(el.pushCount()).toBe(1);
         expect(el.content).toEqual(mock);
+    });
+
+    it(
+        'request for primary managed content document with the content key and language params hits the cache ' +
+            'if it was loaded before only using contnet key',
+        async () => {
+            const enUSContent = getMock('content');
+            mockGetManagedContent({ contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM' }, enUSContent);
+
+            // Get managed content document using only content key.
+            // It should return primary variant and cache it using "content key + language" as a cache key even though
+            // managed content document was requested with content key only.
+            const el1 = await setupElement(
+                { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM' },
+                GetManagedContent
+            );
+            expect(el1.pushCount()).toBe(1);
+            expect(el1.content).toEqual(enUSContent);
+
+            // Get the same managed content, but this time provide primary language in addition to the content key.
+            // No server request should be made and managed content document should be retrieved from cache since it was cached
+            // with "content key + language" as a cache key after previous request.
+            const el2 = await setupElement(
+                { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'en_US' },
+                GetManagedContent
+            );
+            expect(el2.pushCount()).toBe(1);
+            expect(el2.content).toEqual(enUSContent);
+        }
+    );
+
+    it(
+        'request for primary managed content document with the content key sends server request even ' +
+            'if it was loaded before using contnet key and language params',
+        async () => {
+            const enUSContent = getMock('content');
+            mockGetManagedContent(
+                { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'en_US' },
+                enUSContent
+            );
+
+            // Get primary managed content document using content key and language.
+            // It should return primary managed content document and cache it using "content key + language".
+            const el1 = await setupElement(
+                { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'en_US' },
+                GetManagedContent
+            );
+            expect(el1.pushCount()).toBe(1);
+            expect(el1.content).toEqual(enUSContent);
+
+            assertNetworkCallCount();
+
+            resetNetworkStub();
+
+            mockGetManagedContent({ contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM' }, enUSContent);
+
+            // Get the same managed content, but this time provide only content key.
+            // Server request should be made, since previos request was cached with "content key + language", and this request provides only content key.
+            const el2 = await setupElement(
+                { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM' },
+                GetManagedContentWithContentkey
+            );
+            expect(el2.pushCount()).toBe(1);
+            expect(el2.content).toEqual(enUSContent);
+
+            assertNetworkCallCount();
+        }
+    );
+
+    it('seconds request for translated managed content document is cache hit', async () => {
+        const esESContent = getMock('content-es_ES');
+        mockGetManagedContent(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'es_ES' },
+            esESContent
+        );
+
+        const el1 = await setupElement(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'es_ES' },
+            GetManagedContent
+        );
+        expect(el1.pushCount()).toBe(1);
+        expect(el1.content).toEqual(esESContent);
+
+        const el2 = await setupElement(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'es_ES' },
+            GetManagedContent
+        );
+        expect(el2.pushCount()).toBe(1);
+        expect(el2.content).toEqual(esESContent);
+    });
+
+    it('every translated managed content document request is a server request, and then a cache hit', async () => {
+        const esESContent = getMock('content-es_ES');
+        const enUSContent = getMock('content');
+        mockGetManagedContent(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'es_ES' },
+            esESContent
+        );
+        mockGetManagedContent(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'en_US' },
+            enUSContent
+        );
+
+        const el1 = await setupElement(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'en_US' },
+            GetManagedContent
+        );
+        expect(el1.pushCount()).toBe(1);
+        expect(el1.content).toEqual(enUSContent);
+
+        const el2 = await setupElement(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'en_US' },
+            GetManagedContent
+        );
+        expect(el2.pushCount()).toBe(1);
+        expect(el2.content).toEqual(enUSContent);
+
+        const el3 = await setupElement(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'es_ES' },
+            GetManagedContent
+        );
+        expect(el3.pushCount()).toBe(1);
+        expect(el3.content).toEqual(esESContent);
+
+        const el4 = await setupElement(
+            { contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM', language: 'es_ES' },
+            GetManagedContent
+        );
+        expect(el4.pushCount()).toBe(1);
+        expect(el4.content).toEqual(esESContent);
     });
 
     it('get managed content for contentKeyOrId without language and version params', async () => {

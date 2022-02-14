@@ -36,6 +36,7 @@ types:
         enum:
           - Custom
           - Link
+          - Lsf
           - NoAction
           - TlxModule
           - Video
@@ -53,6 +54,19 @@ types:
         type: string
       whenSeen:
         description: Input date of when the question was seen.
+        type: string
+  LightningAssistantCategoryRepresentation:
+    description: Lightning Assistant Category
+    type: object
+    properties:
+      developerName:
+        description: The id of the category
+        type: string
+      recommended:
+        description: The state (true/false) if this category is recommended
+        type: boolean
+      title:
+        description: The localized title for this category
         type: string
   LightningAssistantChoiceRepresentation:
     description: An question choice within a Lightning Assistant questionnaire
@@ -218,6 +232,29 @@ types:
       assistantTarget:
         description: The Lightning Assistant target
         type: string
+  LightningAssistantLsfActionRepresentation:
+    description: An LSF Action representation
+    discriminatorValue: Lsf
+    type: AbstractLightningAssistantActionRepresentation
+    properties:
+      customData:
+        description: Custom data to be used when creating the LSF
+        type: object
+        required: false # TODO Hand-rolled W-8253396
+        properties:
+          //:
+            type: string
+      iconName:
+        description: The icon name for the link action
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: The label for the button
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lsf:
+        description: The LSF component ref
+        type: string
   LightningAssistantNoActionRepresentation:
     description: A NoAction Representation
     discriminatorValue: NoAction
@@ -326,6 +363,11 @@ types:
       category:
         description: The category of the assistant
         type: string
+        required: false # TODO Hand-rolled W-8253396
+      categoryName:
+        description: The category name of the assistant
+        type: string
+        required: false # TODO Hand-rolled W-8253396
       completionDate:
         description: The completion date for the assistant
         type: string
@@ -434,6 +476,18 @@ types:
         enum:
           - None
           - Periodic
+  LightningAssistantTargetRepresentation:
+    description: Assistant Target descrition for Lightning Assistant Framework
+    type: object
+    properties:
+      developerName:
+        description: The developer name of this assistant target
+        type: string
+      categoryList:
+        description: The list of categories (in order) for this assistant target
+        type: array
+        items:
+          type: LightningAssistantCategoryRepresentation
   LightningAssistantTrailheadActionRepresentation:
     description: A Trailhead Action Representation
     discriminatorValue: TlxModule
@@ -568,6 +622,19 @@ types:
         type: string
         required: true
   /{assistantTarget}:
+    /info:
+      get:
+        description: Retrieve Lightning Assistant Target Resource
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantTargetRepresentation
+      uriParameters:
+        assistantTarget:
+          type: string
+          required: true
     /initialize:
       put:
         description: Initiate Asynchronous Initialization

@@ -24,6 +24,10 @@ types:
     (luvio.key):
       assistant_target: assistantTarget
 
+  LightningAssistantTargetRepresentation:
+    (luvio.key):
+      assistant_target: developerName
+
   LightningAssistantStepRepresentation:
     (luvio.key):
       step_id: id
@@ -63,6 +67,12 @@ types:
         (luvio.key):
           assistant_name: urlParams.assistantName
   /{assistantTarget}:
+    /info:
+      get:
+        (luvio.adapter):
+          name: getAssistantTarget
+        (luvio.key):
+          assistant_target: urlParams.assistantTarget
     /initialize:
       put:
         (luvio.adapter):

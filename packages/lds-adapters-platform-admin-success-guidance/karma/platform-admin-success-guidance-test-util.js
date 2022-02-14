@@ -63,6 +63,16 @@ export function mockSaveQuestionnaireNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+export function mockGetAssistantTargetNetworkOnce(config, mockData) {
+    const paramMatch = getAssistantTargetMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockGetAssistantTargetNetworkErrorOnce(config, mockData) {
+    const paramMatch = getAssistantTargetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 export function mockGetAssistantListNetworkOnce(config, mockData) {
     const paramMatch = getAssistantListMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -164,6 +174,19 @@ function getSaveQuestionnaireMatcher(config) {
         method: 'patch',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/questionnaire/${questionnaireName}`,
+        queryParams: {},
+    });
+}
+
+function getAssistantTargetMatcher(config) {
+    const { assistantTarget } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/${assistantTarget}/info`,
         queryParams: {},
     });
 }

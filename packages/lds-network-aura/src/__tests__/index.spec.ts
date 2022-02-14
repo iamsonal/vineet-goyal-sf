@@ -5329,6 +5329,30 @@ describe('routes', () => {
         );
     });
 
+    describe('get /{assistantTarget}/info', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/info`,
+            },
+            [
+                'LightningExperienceAssistantPlatformController.getAssistantTarget',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/info`,
+            },
+            {}
+        );
+    });
+
     describe('get /{assistantTarget}/list', () => {
         testControllerInput(
             {

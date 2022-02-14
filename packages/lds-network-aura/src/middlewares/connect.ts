@@ -66,6 +66,11 @@ const GET_LEARNING_CONTENT_PLATFORM_RECOMMENDED_LIST_PATH = new RegExp(
     'i'
 );
 
+const GET_GUIDANCE_ASSISTANT_TARGET_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}/info$`,
+    'i'
+);
+
 const GET_GUIDANCE_ASSISTANT_LIST_PATH = new RegExp(
     `${GUIDANCE_BASE_URI}/([A-Z0-9_]){2,80}/list$`,
     'i'
@@ -1036,6 +1041,14 @@ const learningContentPlatform: ApiFamily = {
 };
 
 const guidance: ApiFamily = {
+    getGuidanceAssistantTarget: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_ASSISTANT_TARGET_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.getAssistantTarget',
+        },
+    },
     getGuidanceAssistantList: {
         method: 'get',
         predicate: (path: string) =>

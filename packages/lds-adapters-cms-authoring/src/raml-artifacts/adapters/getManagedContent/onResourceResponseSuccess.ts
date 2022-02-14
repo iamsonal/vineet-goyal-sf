@@ -1,10 +1,8 @@
-import { Luvio, ResourceResponse } from '@luvio/engine';
-import {
-    GetManagedContentConfig,
-    onResourceResponseSuccess as generatedOnResourceResponseSuccess,
-} from '../../../generated/adapters/getManagedContent';
-import { ResourceRequestConfig } from '../../../generated/resources/getConnectCmsContentsByContentKeyOrId';
-import { ManagedContentDocumentRepresentation } from '../../../generated/types/ManagedContentDocumentRepresentation';
+import type { Luvio, ResourceResponse } from '@luvio/engine';
+import type { GetManagedContentConfig } from '../../../generated/adapters/getManagedContent';
+import { onResourceResponseSuccess as generatedOnResourceResponseSuccess } from '../../../generated/adapters/getManagedContent';
+import type { ResourceRequestConfig } from '../../../generated/resources/getConnectCmsContentsByContentKeyOrId';
+import type { ManagedContentDocumentRepresentation } from '../../../generated/types/ManagedContentDocumentRepresentation';
 
 export function onResourceResponseSuccess(
     luvio: Luvio,

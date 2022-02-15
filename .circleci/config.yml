@@ -7,6 +7,9 @@ parameters:
   run-full-compat-test:
     type: boolean
     default: false
+  run-priming-performance-tests:
+    type: boolean
+    default: false
 
 orbs:
   build-tools: circleci/build-tools@3.0.0
@@ -269,6 +272,31 @@ jobs:
       # - compare_best_results
       - store_best_artifacts
 
+  high-volume-priming-performance-tests:
+    <<: *env_default
+    steps:
+      - run:
+          name: Download git lfs
+          command: curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+      - run:
+          name: Install lfs
+          command: sudo apt-get install git-lfs
+      - checkout
+      - run:
+          name: LFS init repo
+          command: git lfs install
+      - run:
+          name: Pull files
+          command: git lfs pull
+      - restore_yarn_cache
+      - install
+      - save_yarn_cache
+      - build
+      - run:
+          name: Priming Performance Tests
+          command: yarn test:priming:perf
+          no_output_timeout: 1h
+
 # Workflows definition
 # ====================
 
@@ -313,3 +341,8 @@ workflows:
       - test_integration_compat:
           requires:
             - build
+
+  priming-performance-tests:
+    when: << pipeline.parameters.run-priming-performance-tests >>
+    jobs:
+      - high-volume-priming-performance-tests

@@ -9,3 +9,5 @@ build
 .rpt2_cache
 generated
 lib
+
+**/__performance__/data

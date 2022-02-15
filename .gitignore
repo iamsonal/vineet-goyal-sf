@@ -21,3 +21,5 @@ build
 .rpt2_cache
 generated
 core-package
+**/__performance__/data/**
+!**/__performance__/data/**/*.zip

@@ -166,10 +166,24 @@ describe('instrumentAdapter', () => {
         });
     });
     describe('luvio store (L1) cache hit', () => {
-        const mockAdapter = ((config) => {
+        const mockAdapter = ((config, context) => {
+            const observer = context.eventObservers[0];
             if (config.error === true) {
                 throw new Error('error');
             }
+            observer.onLuvioEvent({
+                type: 'adapter-lookup-start',
+                cachePolicy: config.cachePolicy,
+            });
+            observer.onLuvioEvent({ type: 'cache-lookup-start' });
+            observer.onLuvioEvent({
+                type: 'cache-lookup-end',
+                wasResultAsync: false,
+                hasError: false,
+                snapshotState: 'Fulfilled',
+            });
+            observer.onLuvioEvent({ type: 'adapter-lookup-end', hasError: false });
+
             return {};
         }) as Adapter<any, any>;
         const instrumentedAdapter = instrumentAdapter(mockAdapter, {
@@ -209,10 +223,30 @@ describe('instrumentAdapter', () => {
         xit('logs error', () => {});
     });
     describe('luvio store (L1) cache miss', () => {
-        const mockAdapter = ((config) => {
+        const mockAdapter = ((config, context) => {
             if (config.error === true) {
-                return Promise.reject({});
+                return Promise.reject('adapter threw');
             } else {
+                const observer = context.eventObservers[0];
+                observer.onLuvioEvent({
+                    type: 'adapter-lookup-start',
+                    cachePolicy: config.cachePolicy,
+                });
+                observer.onLuvioEvent({ type: 'cache-lookup-start' });
+                observer.onLuvioEvent({
+                    type: 'cache-lookup-end',
+                    wasResultAsync: false,
+                    hasError: false,
+                    snapshotState: 'Unfulfilled',
+                });
+                observer.onLuvioEvent({
+                    type: 'network-lookup-start',
+                });
+                observer.onLuvioEvent({
+                    type: 'network-lookup-end',
+                    hasError: false,
+                });
+                observer.onLuvioEvent({ type: 'adapter-lookup-end', hasError: false });
                 return Promise.resolve({} as any);
             }
         }) as Adapter<any, any>;
@@ -255,6 +289,56 @@ describe('instrumentAdapter', () => {
             expect(o11yActivitySpies.error).toHaveBeenCalled();
             expect(o11yActivitySpies.stop).toHaveBeenCalled();
             expect(o11yActivitySpies.stop).toHaveBeenCalledWith('cache-miss');
+        });
+    });
+
+    describe('durable store (L2) cache hit', () => {
+        const mockAdapter = ((config, context) => {
+            const observer = context.eventObservers[0];
+
+            observer.onLuvioEvent({
+                type: 'adapter-lookup-start',
+                cachePolicy: config.cachePolicy,
+            });
+            observer.onLuvioEvent({ type: 'cache-lookup-start' });
+            observer.onLuvioEvent({
+                type: 'cache-lookup-end',
+                wasResultAsync: true,
+                hasError: false,
+                snapshotState: config.isStale ? 'Stale' : 'Fulfilled',
+            });
+            observer.onLuvioEvent({ type: 'adapter-lookup-end', hasError: false });
+
+            return {};
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        it('increments L2 cache hit markers', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-hit-l2-count', 1, undefined, undefined],
+                ['cache-hit-l2-count.UiApi.getFoo', 1, undefined, undefined],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('includes stale tag when data is stale', () => {
+            instrumentedAdapter({ isStale: true });
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-hit-l2-count', 1, undefined, { stale: true }],
+                ['cache-hit-l2-count.UiApi.getFoo', 1, undefined, { stale: true }],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
         });
     });
     it('logs cache miss when adapter returns a Promise', async () => {
@@ -602,7 +686,7 @@ describe('instrumentation', () => {
     });
 
     describe('getApex cardinality', () => {
-        it('should aggregate all dynamic metrics under getApex', () => {
+        it('should aggregate all dynamic metrics under getApex', async () => {
             const mockGetApexAdapter: any = () => {
                 return new Promise((resolve) => {
                     setTimeout(() => resolve({}));
@@ -625,8 +709,8 @@ describe('instrumentation', () => {
                 'getApex__AccountController_getAccountList_true__instrumented'
             );
 
-            instrumentedGetApexAdapterOne({ name: 'LDS', foo: 'bar' });
-            instrumentedGetApexAdapterTwo({ name: 'LDS', foo: 'baz' });
+            await instrumentedGetApexAdapterOne({ name: 'LDS', foo: 'bar' });
+            await instrumentedGetApexAdapterTwo({ name: 'LDS', foo: 'baz' });
 
             expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(
                 baseCacheMissCounterIncrement + baseCacheHitCounterIncrement

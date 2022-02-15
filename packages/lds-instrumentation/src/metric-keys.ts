@@ -1,5 +1,7 @@
 export const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
 export const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
+export const ADAPTER_CACHE_HIT_L2_COUNT_METRIC_NAME = 'cache-hit-l2-count';
+export const ADAPTER_CACHE_HIT_L2_DURATION_METRIC_NAME = 'cache-hit-l2-duration';
 export const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
 export const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
 export const ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME = 'cache-miss-out-of-ttl-count';
@@ -148,3 +150,5 @@ export const CACHE_POLICY_COUNTERS = {
     'valid-at': 'cache-policy-valid-at',
 };
 export const CACHE_POLICY_UNDEFINED_COUNTER = 'cache-policy-undefined';
+
+export const STALE_TAG = 'stale';

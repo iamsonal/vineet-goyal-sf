@@ -5,6 +5,7 @@ import type {
     Adapter,
     Snapshot,
     UnfulfilledSnapshot,
+    LuvioEventObserver,
 } from '@luvio/engine';
 import { ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 
@@ -40,6 +41,9 @@ import {
     STORE_TRIM_TASK_DURATION,
     CACHE_POLICY_UNDEFINED_COUNTER,
     CACHE_POLICY_COUNTERS,
+    ADAPTER_CACHE_HIT_L2_COUNT_METRIC_NAME,
+    ADAPTER_CACHE_HIT_L2_DURATION_METRIC_NAME,
+    STALE_TAG,
 } from './metric-keys';
 
 import {
@@ -197,11 +201,29 @@ export function instrumentAdapter<C, D>(
     );
 
     /**
+     * W-10490326
+     * Dynamically generated metric. Simple counter for L2 cache hits by adapter name.
+     */
+    const l2CacheHitCountByAdapterMetric = createMetricsKey(
+        ADAPTER_CACHE_HIT_L2_COUNT_METRIC_NAME,
+        adapterName
+    );
+
+    /**
      * W-7404607
      * Dynamically generated metric. Timer for cache hits by adapter name.
      */
     const cacheHitDurationByAdapterMetric = createMetricsKey(
         ADAPTER_CACHE_HIT_DURATION_METRIC_NAME,
+        adapterName
+    );
+
+    /**
+     * W-10490326
+     * Dynamically generated metric. Timer for L2 cache hits by adapter name.
+     */
+    const l2CacheHitDurationByAdapterMetric = createMetricsKey(
+        ADAPTER_CACHE_HIT_L2_DURATION_METRIC_NAME,
         adapterName
     );
 
@@ -247,12 +269,116 @@ export function instrumentAdapter<C, D>(
 
         // start collecting
         const startTime = Date.now();
+        // default to network
+        let lookupResult: 'l1' | 'l2' | 'network' = 'network';
+        let staleLookup = false;
+
         const activity = ldsInstrumentation.startActivity(adapterName);
+
+        // executed after adapter returns synchronously or asynchronously and luvio events have been emitted
+        const postProcessInstrumentationEvents = () => {
+            const executionTime = Date.now() - startTime;
+
+            if (lookupResult === 'l1') {
+                ldsInstrumentation.incrementCounter(ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, 1);
+                ldsInstrumentation.incrementCounter(cacheHitCountByAdapterMetric, 1);
+                ldsInstrumentation.trackValue(cacheHitDurationByAdapterMetric, executionTime);
+                // not tracking L1 cache hits with activities
+                activity.discard();
+                return;
+            }
+
+            if (lookupResult === 'l2') {
+                let tags: Record<string, boolean> | undefined = undefined;
+                if (staleLookup === true) {
+                    tags = { [STALE_TAG]: true };
+                }
+                ldsInstrumentation.incrementCounter(
+                    ADAPTER_CACHE_HIT_L2_COUNT_METRIC_NAME,
+                    1,
+                    undefined,
+                    tags
+                );
+                ldsInstrumentation.incrementCounter(
+                    l2CacheHitCountByAdapterMetric,
+                    1,
+                    undefined,
+                    tags
+                );
+                ldsInstrumentation.trackValue(
+                    l2CacheHitDurationByAdapterMetric,
+                    executionTime,
+                    undefined,
+                    tags
+                );
+                // not tracking L2 cache hits with activities
+                activity.discard();
+                return;
+            }
+
+            if (lookupResult === 'network') {
+                ldsInstrumentation.trackValue(
+                    cacheMissDurationByAdapterMetric,
+                    Date.now() - startTime
+                );
+                // TODO [W-10484306]: Remove typecasting after this type bug is solved
+                activity.stop('cache-miss' as any);
+
+                ldsInstrumentation.incrementCounter(ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, 1);
+                ldsInstrumentation.incrementCounter(cacheMissCountByAdapterMetric, 1);
+
+                if (ttl !== undefined) {
+                    logAdapterCacheMissOutOfTtlDuration(
+                        adapterName,
+                        config,
+                        Date.now(),
+                        ttl,
+                        cacheMissOutOfTtlCountByAdapterMetric,
+                        cacheMissOutOfTtlDurationByAdapterMetric
+                    );
+                }
+            }
+        };
+
+        const metricsEventObserver: LuvioEventObserver = {
+            onLuvioEvent: (ev) => {
+                switch (ev.type) {
+                    case 'cache-lookup-end':
+                        if (ev.wasResultAsync === false) {
+                            // L1 cache hit
+                            lookupResult = 'l1';
+                        } else {
+                            // L2 cache hit
+                            lookupResult = 'l2';
+                        }
+                        if (ev.snapshotState === 'Stale') {
+                            staleLookup = true;
+                        }
+                        break;
+                    case 'network-lookup-start':
+                        lookupResult = 'network';
+                        break;
+                    default:
+                        // ignore other events
+                        break;
+                }
+            },
+        };
+
+        // add metrics event observer to observer list (or create list and context if not defined)
+        let requestContextWithInstrumentationObserver = requestContext;
+        if (requestContextWithInstrumentationObserver === undefined) {
+            requestContextWithInstrumentationObserver = { eventObservers: [metricsEventObserver] };
+        }
+        if (requestContextWithInstrumentationObserver.eventObservers === undefined) {
+            requestContextWithInstrumentationObserver.eventObservers = [metricsEventObserver];
+        } else {
+            requestContextWithInstrumentationObserver.eventObservers.push(metricsEventObserver);
+        }
 
         try {
             // execute adapter logic
-            const result = adapter(config, requestContext);
-            const executionTime = Date.now() - startTime;
+            const result = adapter(config, requestContextWithInstrumentationObserver);
 
             // In the case where the adapter returns a non-Pending Snapshot it is constructed out of the store
             // (cache hit) whereas a Promise<Snapshot> or Pending Snapshot indicates a network request (cache miss).
@@ -274,41 +400,21 @@ export function instrumentAdapter<C, D>(
             if (isPromise(result)) {
                 // handle async resolved/rejected
                 result
-                    .then((_snapshot: Snapshot<D>) => {
-                        ldsInstrumentation.trackValue(
-                            cacheMissDurationByAdapterMetric,
-                            Date.now() - startTime
-                        );
-                        // TODO [W-10484306]: Remove typecasting after this type bug is solved
-                        activity.stop('cache-miss' as any);
+                    .then(() => {
+                        postProcessInstrumentationEvents();
                     })
                     .catch((error) => {
                         activity.error(error);
                         // TODO [W-10484306]: Remove typecasting after this type bug is solved
                         activity.stop('cache-miss' as any);
                     });
-                ldsInstrumentation.incrementCounter(ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, 1);
-                ldsInstrumentation.incrementCounter(cacheMissCountByAdapterMetric, 1);
-
-                if (ttl !== undefined) {
-                    logAdapterCacheMissOutOfTtlDuration(
-                        adapterName,
-                        config,
-                        Date.now(),
-                        ttl,
-                        cacheMissOutOfTtlCountByAdapterMetric,
-                        cacheMissOutOfTtlDurationByAdapterMetric
-                    );
+            } else {
+                if (result === null) {
+                    // not tracking adapters with incomplete configs with activities
+                    activity.discard();
+                } else {
+                    postProcessInstrumentationEvents();
                 }
-            } else if (result !== null) {
-                ldsInstrumentation.incrementCounter(ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, 1);
-                ldsInstrumentation.incrementCounter(cacheHitCountByAdapterMetric, 1);
-                ldsInstrumentation.trackValue(cacheHitDurationByAdapterMetric, executionTime);
-                // not tracking L1 cache hits with activities
-                activity.discard();
-            } else if (result === null) {
-                // not tracking adapters with incomplete configs with activities
-                activity.discard();
             }
 
             return result;

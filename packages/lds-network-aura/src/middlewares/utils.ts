@@ -4,13 +4,14 @@ import type { AuraStorage } from 'aura-storage';
 import type { CacheStatsLogger } from 'instrumentation/service';
 import { registerCacheStats } from 'instrumentation/service';
 
-import type { ResourceRequest } from '@luvio/engine';
+import type { FetchResponse, ResourceRequest } from '@luvio/engine';
 import { HttpStatusCode } from '@luvio/engine';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 
 import appRouter from '../router';
 
 import { ObjectKeys } from '../utils/language';
+import { instrumentation } from '../instrumentation';
 
 export type ControllerInvoker = (
     resourceRequest: ResourceRequest,
@@ -114,6 +115,26 @@ function createOkResponse(body: unknown): AuraFetchResponse<unknown> {
     return new AuraFetchResponse(HttpStatusCode.Ok, body);
 }
 
+type FetchFromNetwork = () => Promise<FetchResponse<unknown>>;
+/**
+ * Wraps the FetchFromNetwork function to provide instrumentation hooks
+ * for network requests and responses.
+ */
+function instrumentFetchFromNetwork(fetchFromNetwork: FetchFromNetwork): FetchFromNetwork {
+    return () => {
+        instrumentation.networkRequest();
+        return fetchFromNetwork()
+            .then((response: FetchResponse<unknown>) => {
+                instrumentation.networkResponse(() => response);
+                return response;
+            })
+            .catch((response: FetchResponse<unknown>) => {
+                instrumentation.networkResponse(() => response);
+                throw response;
+            });
+    };
+}
+
 /** Invoke an Aura controller with the pass parameters. */
 export function dispatchAction(
     endpoint: string,
@@ -123,7 +144,7 @@ export function dispatchAction(
 ): Promise<AuraFetchResponse<unknown>> {
     const { action: actionConfig, cache: cacheConfig } = config;
 
-    const fetchFromNetwork = () => {
+    const fetchFromNetwork = instrumentFetchFromNetwork(() => {
         return executeGlobalController(endpoint, params, actionConfig).then(
             (body: UiApiBody) => {
                 // If a cache is passed, store the action body in the cache before returning the
@@ -163,7 +184,7 @@ export function dispatchAction(
                 });
             }
         );
-    };
+    });
 
     // If no cache is passed or if the action should be refreshed, directly fetch the action from
     // the server.

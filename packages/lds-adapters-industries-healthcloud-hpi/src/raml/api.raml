@@ -47,6 +47,62 @@ types:
         type: array
         items:
           type: HpiActionsOutputRepresentationElement
+  PatientScoreDetail:
+    description: Representation an Element in the Patient Score List
+    type: object
+    properties:
+      currentScoreDateCalculated:
+        description: Patient Score Detail's date of current score calculation
+        type: string
+      percentageChange:
+        description: Patient Score Detail's percentage change
+        type: string
+      previousScore:
+        description: Patient Score Detail's previous score
+        type: string
+      previousScoreDateCalculated:
+        description: Patient Score Detail's date of previous score calculation
+        type: string
+      score:
+        description: Patient Score Detail's latest score
+        type: string
+      subjectId:
+        description: Patient Score Detail's subjectId
+        type: string
+      subjectName:
+        description: Patient Score Detail's subject name
+        type: string
+      subjectType:
+        description: Patient Score Detail's subject type
+        type: string
+  PatientScoreListOutputRepresentation:
+    description: Output representation UHS Patient Score List
+    type: object
+    properties:
+      limitBy:
+        description: Current number of items that are sent
+        type: string
+      recordType:
+        description: record type of account, lead or contact
+        type: string
+      scoreDetails:
+        description: List of score detail of patients
+        type: array
+        items:
+          type: PatientScoreDetail
+      scoreId:
+        description: Score Id filter
+        type: string
+      searchTerm:
+        description: Search on the name
+        type: string
+      startIndex:
+        description: the start index
+        type: string
+      range:
+        description: the range filter
+        type: string
+
 /connect:
   /health:
     /uhs:
@@ -72,3 +128,33 @@ types:
             recordId:
               type: string
               required: false
+    /uhslist/{scoreId}:
+      get:
+        description: GET verb to fetch the Patient Score list this has offset and limit
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: PatientScoreListOutputRepresentation
+        queryParameters:
+          range:
+            type: string
+            required: false
+          limitBy:
+            type: string
+            required: false
+          recordType:
+            type: string
+            required: false
+          searchTerm:
+            type: string
+            required: false
+          startIndex:
+            type: string
+            required: false
+      uriParameters:
+        scoreId:
+          description: Score Id
+          type: string
+          required: true

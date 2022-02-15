@@ -22,3 +22,20 @@ const getActionsDetails = (params) => {
         queryParams: { actions, formFactor, recordId },
     });
 };
+export const mockGetScoresErrorNetworkOnce = (config, mockData) => {
+    const paramMatch = getMorePatientScores(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+};
+export const mockGetScoresNetworkOnce = (config, mockData) => {
+    const paramMatch = getMorePatientScores(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+};
+const getMorePatientScores = (params) => {
+    const { scoreId, limitBy, searchTerm, recordType, startIndex, range } = params;
+    return sinon.match({
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/health/uhslist/${scoreId}`,
+        queryParams: { limitBy, searchTerm, recordType, startIndex, range },
+    });
+};

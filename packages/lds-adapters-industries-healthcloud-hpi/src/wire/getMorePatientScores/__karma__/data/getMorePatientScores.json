@@ -1,0 +1,30 @@
+{
+    "scoreDetails": [
+        {
+            "subjectId": "Subject",
+            "score": "10",
+            "previousScore": "10",
+            "percentageChange": "5",
+            "currentScoreDateCalculated": "CurrentScoreDateCalculated",
+            "previousScoreDateCalculated": "PreviousScoreDateCalculated",
+            "subjectName": "SubjectName",
+            "subjectType": "SubjectType"
+        },
+        {
+            "subjectId": "Subject",
+            "score": "10",
+            "previousScore": "10",
+            "percentageChange": "5",
+            "currentScoreDateCalculated": "CurrentScoreDateCalculated",
+            "previousScoreDateCalculated": "PreviousScoreDateCalculated",
+            "subjectName": "SubjectName",
+            "subjectType": "SubjectType"
+        }
+    ],
+    "scoreId": "hpi new tests",
+    "limitBy": "80",
+    "searchTerm": "searchTerm",
+    "recordType": "0",
+    "startIndex": "test",
+    "range": "15"
+}

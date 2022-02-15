@@ -450,6 +450,8 @@ const JOIN_CHIME_MEETING_PATH = new RegExp(
 
 const HPI_SCORE_PATH = new RegExp(`${CONNECT_BASE_URI}/health/uhs/actions`, 'i');
 
+const GET_PATIENT_LIST_SCORE = new RegExp(`${CONNECT_BASE_URI}/health/uhslist/[A-Z0-9_-]`, 'i');
+
 const GET_TAGS_BY_RECORD_PATH = new RegExp(
     `${CONNECT_BASE_URI}/interest-tags/assignments/entity/([A-Z0-9_]){1,80}$`,
     'i'
@@ -1782,6 +1784,14 @@ const hpiscore: ApiFamily = {
             controller: 'HolisticPatientIndexController.getActionsDetails',
         },
         predicate: (path: string) => path.startsWith(CONNECT_BASE_URI) && HPI_SCORE_PATH.test(path),
+    },
+    getMorePatientScores: {
+        method: 'get',
+        transport: {
+            controller: 'HolisticPatientIndexController.getMorePatientScores',
+        },
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_PATIENT_LIST_SCORE.test(path),
     },
 };
 

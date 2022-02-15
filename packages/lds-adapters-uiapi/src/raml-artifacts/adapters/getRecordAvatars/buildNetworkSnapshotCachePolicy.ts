@@ -1,11 +1,15 @@
-import type { CoercedAdapterRequestContext, Snapshot } from '@luvio/engine';
+import type {
+    CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
+    Snapshot,
+} from '@luvio/engine';
 import type { RecordAvatarBulkMapRepresentation } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
 import { buildNetworkSnapshot } from './buildNetworkSnapshot';
 import type { BuildSnapshotContext } from './utils';
 
 export function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordAvatarBulkMapRepresentation, any>> {
     const { luvio, config, uncachedRecordIds } = context;
 
@@ -13,13 +17,19 @@ export function buildNetworkSnapshotCachePolicy(
         config.uncachedRecordIds = uncachedRecordIds;
     }
 
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
 
-    return buildNetworkSnapshot(luvio, config, override);
+    return buildNetworkSnapshot(luvio, config, dispatchOptions);
 }

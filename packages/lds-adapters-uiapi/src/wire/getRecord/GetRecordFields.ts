@@ -7,8 +7,8 @@ import type {
     ResourceResponse,
     AdapterRequestContext,
     StoreLookup,
-    ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 import type { GetRecordConfig } from '../../generated/adapters/getRecord';
 import { createResourceParams } from '../../generated/adapters/getRecord';
@@ -159,11 +159,11 @@ export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetRecordConfig,
     serverRequestCount: number = 0,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) {
     const { request, key, allTrackedFields, resourceParams } = prepareRequest(luvio, config);
 
-    return luvio.dispatchResourceRequest<RecordRepresentation>(request, override).then(
+    return luvio.dispatchResourceRequest<RecordRepresentation>(request, options).then(
         (response) => {
             return luvio.handleSuccessResponse(
                 () =>
@@ -222,17 +222,23 @@ export function buildCachedSnapshotCachePolicy(
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordRepresentation>> {
     const { config, luvio } = context;
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(luvio, config, 0, override);
+    return buildNetworkSnapshot(luvio, config, 0, dispatchOptions);
 }
 
 export function getRecordByFields(

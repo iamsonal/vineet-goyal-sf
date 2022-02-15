@@ -1,6 +1,6 @@
 import type {
     Snapshot,
-    ResourceRequestOverride,
+    DispatchResourceRequestContext,
     Luvio,
     FetchResponse,
     ResourceResponse,
@@ -20,12 +20,12 @@ import { ingest } from '../../../generated/types/RecordLayoutUserStateRepresenta
 export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetLayoutUserStateConfig,
-    override?: ResourceRequestOverride
+    context?: DispatchResourceRequestContext
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation>> {
     const { resourceParams, request, key } = prepareRequest(config);
 
     return luvio
-        .dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request, override)
+        .dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request, context)
         .then(
             (response) => {
                 return luvio.handleSuccessResponse(

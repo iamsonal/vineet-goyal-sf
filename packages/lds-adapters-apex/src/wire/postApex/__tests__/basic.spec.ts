@@ -108,7 +108,7 @@ describe('isContinuation Header', () => {
                 'X-SFDC-Allow-Continuation': 'true',
             },
         };
-        expect(dispatchSpy).toHaveBeenCalledWith(expectedRequest);
+        expect(dispatchSpy).toHaveBeenCalledWith(expectedRequest, { requestCorrelator: undefined });
     });
 });
 

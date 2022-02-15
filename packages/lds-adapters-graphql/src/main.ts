@@ -3,12 +3,12 @@ import type {
     AdapterRequestContext,
     CacheKeySet,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
     FetchResponse,
     Luvio,
     Reader,
     ReaderFragment,
     ResourceRequest,
-    ResourceRequestOverride,
     Selector,
     Snapshot,
     SnapshotRefresh,
@@ -160,7 +160,7 @@ function buildNetworkSnapshot(
     luvio: Luvio,
     config: GraphQLConfig,
     fragment: ReaderFragment,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ): Promise<Snapshot<unknown, any>> {
     const { variables: queryVariables, query } = config;
 
@@ -180,7 +180,7 @@ function buildNetworkSnapshot(
 
     // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO - handle network error response
-    return luvio.dispatchResourceRequest<any>(request, override).then((resp) => {
+    return luvio.dispatchResourceRequest<any>(request, options).then((resp) => {
         return luvio.handleSuccessResponse(
             () => onResourceResponseSuccess(luvio, config, resp, fragment),
             () => getResponseCacheKeys(luvio, config, resp, fragment)
@@ -289,17 +289,23 @@ function buildInMemorySnapshot(
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<unknown, any>> {
     const { config, fragment, luvio } = context;
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(luvio, config, fragment, override);
+    return buildNetworkSnapshot(luvio, config, fragment, dispatchOptions);
 }
 
 export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (luvio: Luvio) =>

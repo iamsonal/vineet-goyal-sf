@@ -3,10 +3,10 @@ import type {
     AdapterContext,
     AdapterRequestContext,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
     FetchResponse,
     FulfilledSnapshot,
     Luvio,
-    ResourceRequestOverride,
     ResourceResponse,
     Selector,
     Snapshot,
@@ -153,11 +153,11 @@ export function buildNetworkSnapshot(
     luvio: Luvio,
     context: AdapterContext,
     config: ApexAdapterConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ): Promise<Snapshot<any>> {
     const resourceParams = createResourceParams(config);
     const request = createResourceRequest(resourceParams);
-    return luvio.dispatchResourceRequest<any>(request, override).then(
+    return luvio.dispatchResourceRequest<any>(request, options).then(
         (response) => {
             return luvio.handleSuccessResponse(
                 () => onResourceResponseSuccess(luvio, context, config, resourceParams, response),
@@ -177,17 +177,23 @@ export function buildNetworkSnapshot(
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<any, any>> {
     const { luvio, config, adapterContext } = context;
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(luvio, adapterContext, config, override);
+    return buildNetworkSnapshot(luvio, adapterContext, config, dispatchOptions);
 }
 
 export const invoker = (luvio: Luvio, invokerParams: ApexInvokerParams) => {

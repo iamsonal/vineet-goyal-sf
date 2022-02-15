@@ -169,7 +169,9 @@ describe('isContinuation Header', () => {
             },
         };
 
-        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledWith(expectedRequest, undefined);
+        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledWith(expectedRequest, {
+            resourceRequestContext: { requestCorrelator: undefined },
+        });
     });
 });
 

@@ -9,8 +9,8 @@ import type {
     AdapterContext,
     AdapterRequestContext,
     StoreLookup,
-    ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import type { ResourceRequestConfig } from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
@@ -77,7 +77,7 @@ export function buildNetworkSnapshot(
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordCreateDefaultsConfigWithDefaults,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) {
     const params: ResourceRequestConfig = createResourceParams(config);
     const request = getUiApiRecordDefaultsCreateByObjectApiName(params);
@@ -85,7 +85,7 @@ export function buildNetworkSnapshot(
     const key = keyBuilder(params);
     const selectorKey = buildSelectorKey(config);
 
-    return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request, override).then(
+    return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request, options).then(
         (response) => {
             return luvio.handleSuccessResponse(
                 () => {
@@ -194,17 +194,23 @@ function buildCachedSnapshotCachePolicy(
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordDefaultsRepresentation, any>> {
     const { config, adapterContext, luvio } = context;
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(luvio, adapterContext, config, override);
+    return buildNetworkSnapshot(luvio, adapterContext, config, dispatchOptions);
 }
 
 export const factory: AdapterFactory<

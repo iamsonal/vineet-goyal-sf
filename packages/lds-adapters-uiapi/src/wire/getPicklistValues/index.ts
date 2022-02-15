@@ -7,8 +7,8 @@ import type {
     ResourceResponse,
     AdapterRequestContext,
     StoreLookup,
-    ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 import {
     adapterName as getPicklistValuesAdapterName,
@@ -89,11 +89,11 @@ function onResponseError(
 export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetPicklistValuesConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ): Promise<Snapshot<PicklistValuesRepresentation>> {
     const { resourceParams, request, key } = buildRequestAndKey(config);
 
-    return luvio.dispatchResourceRequest<PicklistValuesRepresentation>(request, override).then(
+    return luvio.dispatchResourceRequest<PicklistValuesRepresentation>(request, options).then(
         (response) => {
             return luvio.handleSuccessResponse(
                 () => {
@@ -145,17 +145,23 @@ type BuildSnapshotContext = {
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<PicklistValuesRepresentation, any>> {
     const { config, luvio } = context;
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(luvio, config, override);
+    return buildNetworkSnapshot(luvio, config, dispatchOptions);
 }
 
 function buildCachedSnapshotCachePolicy(

@@ -8,8 +8,8 @@ import type {
     ResourceResponse,
     AdapterRequestContext,
     StoreLookup,
-    ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 
 import type { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
@@ -132,14 +132,14 @@ export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetListViewSummaryCollectionConfig,
     snapshot: Snapshot<ListViewSummaryCollectionRepresentation> | undefined,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) {
     const resourceParams = createResourceParams(config);
     const key = keyBuilder(resourceParams);
     const request = prepareRequest(luvio, config, resourceParams, snapshot);
 
     return luvio
-        .dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request, override)
+        .dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request, options)
         .then(
             (resp: FetchResponse<ListViewSummaryCollectionRepresentation>) => {
                 return luvio.handleSuccessResponse(
@@ -167,17 +167,23 @@ type BuildSnapshotContext = {
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<ListViewSummaryCollectionRepresentation, any>> {
     const { config, luvio, snapshot } = context;
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(luvio, config, snapshot, override);
+    return buildNetworkSnapshot(luvio, config, snapshot, dispatchOptions);
 }
 
 function buildCachedSnapshotCachePolicy(

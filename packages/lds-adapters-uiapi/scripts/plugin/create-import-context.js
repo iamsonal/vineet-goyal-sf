@@ -33,6 +33,10 @@ function createImportsMap(importContext) {
         UNFULFILLED_SNAPSHOT_IMPORT: namedImport('@luvio/engine', 'UnfulfilledSnapshot'),
         SNAPSHOT_REFRESH_TYPE: namedImport(`@luvio/engine`, 'SnapshotRefresh'),
         RESOURCE_REQUEST_OVERRIDE: namedImport(`@luvio/engine`, 'ResourceRequestOverride'),
+        DISPATCH_RESOURCE_REQUEST_CONTEXT: namedImport(
+            `@luvio/engine`,
+            'DispatchResourceRequestContext'
+        ),
         RESOURCE_INGEST_INTERFACE: namedImport(`@luvio/engine`, 'ResourceIngest'),
         RESOURCE_RESPONSE_INTERFACE: namedImport(`@luvio/engine`, 'ResourceResponse'),
 

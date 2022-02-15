@@ -8,7 +8,7 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
     const adapterKeyImport = importRamlArtifact(adapter.id, 'keyBuilder');
 
     const {
-        RESOURCE_REQUEST_OVERRIDE,
+        DISPATCH_RESOURCE_REQUEST_CONTEXT,
         FETCH_RESPONSE,
         FULFILLED_SNAPSHOT,
         BLANK_RECORD_FIELDS_TRIE,
@@ -65,14 +65,14 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
     const buildCachedSnapshot = importRamlArtifact(adapter.id, 'buildCachedSnapshot');
 
     return deindent`
-      export function buildNetworkSnapshot(luvio: ${LUVIO_IMPORT}, config: ${adapterConfigImport}, override?: ${RESOURCE_REQUEST_OVERRIDE}) {
+      export function buildNetworkSnapshot(luvio: ${LUVIO_IMPORT}, config: ${adapterConfigImport}, options?: ${DISPATCH_RESOURCE_REQUEST_CONTEXT}) {
           const resourceParams = ${createResourceParamsIdentifier}(config);
           const request = ${createResourceRequestIdentifier}(resourceParams);
           const key = ${adapterKeyImport}(luvio, config);
           const trackedFieldsConfig = ${trackedFieldsConfiguration};
           const optionalFieldsTrie = ${optionalFieldsTrieStatement};
           const fieldsTrie = ${fieldsTrieStatement};
-          return luvio.dispatchResourceRequest<${returnTypeInterface}>(request, override)
+          return luvio.dispatchResourceRequest<${returnTypeInterface}>(request, options)
               .then((response) => {
                   return luvio.handleSuccessResponse(() => {
                       const ingest = ${createFieldsIngestSuccessImport}({

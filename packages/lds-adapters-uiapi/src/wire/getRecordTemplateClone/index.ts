@@ -3,13 +3,13 @@ import type {
     Luvio,
     Snapshot,
     FulfilledSnapshot,
-    ResourceRequestOverride,
     Selector,
     FetchResponse,
     AdapterContext,
     StoreLookup,
     AdapterRequestContext,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 import type {
     buildCachedSnapshot as generatedBuildCachedSnapshot,
@@ -76,12 +76,12 @@ const buildNetworkSnapshot: (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) => ReturnType<typeof generatedBuildNetworkSnapshot> = (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) => {
     const resourceParams = createResourceParams(config);
     const recordTypeId = getRecordTypeId(config, context);
@@ -113,7 +113,7 @@ const buildNetworkSnapshot: (
               });
 
     return luvio
-        .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, override)
+        .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, options)
         .then(
             (response) => {
                 return luvio.handleSuccessResponse(
@@ -220,17 +220,23 @@ type BuildSnapshotContext = {
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordDefaultsTemplateCloneRepresentation, any>> {
     const { config, adapterContext, luvio } = context;
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(luvio, adapterContext, config, override);
+    return buildNetworkSnapshot(luvio, adapterContext, config, dispatchOptions);
 }
 
 function buildCachedSnapshotCachePolicy(

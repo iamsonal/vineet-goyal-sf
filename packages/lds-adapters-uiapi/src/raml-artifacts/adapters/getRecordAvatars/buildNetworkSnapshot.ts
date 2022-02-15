@@ -2,8 +2,8 @@ import type {
     FetchResponse,
     Luvio,
     Snapshot,
-    ResourceRequestOverride,
     ResourceResponse,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 import { ArrayPrototypeReduce } from '../../../util/language';
 import { ingest as recordAvatarBulkMapRepresentationIngest } from '../../types/RecordAvatarBulkMapRepresentation/ingest';
@@ -97,7 +97,7 @@ function isRecordAvatarBulkMapRepresentation(
 export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetRecordAvatarsConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ): Promise<Snapshot<RecordAvatarBulkMapRepresentation, any>> {
     const { uncachedRecordIds, recordIds } = config;
     const { recordIdsInFlight, recordIdsNotInFlight } = getRecordIdsFlightStatus(
@@ -112,7 +112,7 @@ export function buildNetworkSnapshot(
         const resourceParams = createResourceParams({ ...config, recordIds: recordIdsNotInFlight });
         const request = createResourceRequest(resourceParams);
         luvioResponse = luvio
-            .dispatchResourceRequest<RecordAvatarBulkMapRepresentation>(request, override)
+            .dispatchResourceRequest<RecordAvatarBulkMapRepresentation>(request, options)
             .then(
                 (response) => {
                     recordIdsNotInFlight.forEach((id) => IN_FLIGHT_REQUESTS.delete(id));

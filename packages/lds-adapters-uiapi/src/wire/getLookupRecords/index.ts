@@ -6,8 +6,8 @@ import type {
     StoreLookup,
     Snapshot,
     AdapterRequestContext,
-    ResourceRequestOverride,
     CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 
 import type { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
@@ -124,7 +124,7 @@ function removeEtags(recordRep: RecordRepresentation) {
 export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetLookupRecordsConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) {
     const { objectApiName, fieldApiName, targetApiName } = config;
     const resourceParams: ResourceRequestConfig = {
@@ -144,7 +144,7 @@ export function buildNetworkSnapshot(
     };
     const request = getLookupRecordsResourceRequest(resourceParams);
 
-    return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request, override).then(
+    return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request, options).then(
         (response) => {
             return luvio.handleSuccessResponse(
                 () => {
@@ -199,16 +199,22 @@ function buildCachedSnapshot(
 
 function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
-    requestContext: CoercedAdapterRequestContext
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<RecordCollectionRepresentation>> {
-    let override = undefined;
-    const { networkPriority } = requestContext;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
     if (networkPriority !== 'normal') {
-        override = {
+        dispatchOptions.overrides = {
             priority: networkPriority,
         };
     }
-    return buildNetworkSnapshot(context.luvio, context.config, override);
+    return buildNetworkSnapshot(context.luvio, context.config, dispatchOptions);
 }
 
 export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRepresentation> = (

@@ -1,4 +1,11 @@
-import type { Luvio, Store, Adapter, UnfulfilledSnapshot } from '@luvio/engine';
+import type {
+    FetchResponse,
+    Luvio,
+    Store,
+    Adapter,
+    UnfulfilledSnapshot,
+    HttpStatusCode,
+} from '@luvio/engine';
 import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@salesforce/lds-bindings';
 import type { CacheStatsLogger, Counter, MetricsKey, Timer } from 'instrumentation/service';
 import {
@@ -35,6 +42,7 @@ import {
     ADAPTER_INVOCATION_COUNT_METRIC_NAME,
     ADAPTER_ERROR_COUNT_METRIC_NAME,
     GET_APEX_REQUEST_COUNT,
+    NETWORK_ADAPTER_RESPONSE_METRIC_NAME,
     TOTAL_ADAPTER_ERROR_COUNT,
     TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT,
 } from './utils/observability';
@@ -543,6 +551,27 @@ export function timerMetricAddDuration(timer: Timer, duration: number) {
 }
 
 /**
+ * W-10315098
+ * Increments the counter associated with the request response. Counts are bucketed by status.
+ */
+const requestResponseMetricTracker: Record<HttpStatusCode, Counter> = ObjectCreate(null);
+export function incrementRequestResponseCount(cb: () => FetchResponse<unknown>) {
+    const status = cb().status;
+    let metric = requestResponseMetricTracker[status];
+    if (metric === undefined) {
+        metric = counter(
+            createMetricsKey(
+                OBSERVABILITY_NAMESPACE,
+                NETWORK_ADAPTER_RESPONSE_METRIC_NAME,
+                `${status.valueOf()}`
+            )
+        );
+        requestResponseMetricTracker[status] = metric;
+    }
+    metric.increment();
+}
+
+/**
  * Add a mark to the metrics service.
  *
  * @param name The mark name.
@@ -586,6 +615,7 @@ export function setAuraInstrumentationHooks() {
     });
     networkAuraInstrument({
         logCrud: logCRUDLightningInteraction,
+        networkResponse: incrementRequestResponseCount,
     });
     lwcBindingsInstrument({
         refreshCalled: instrumentation.handleRefreshApiCall.bind(instrumentation),

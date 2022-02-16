@@ -6,9 +6,10 @@
 import timekeeper from 'timekeeper';
 
 import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
-import { Adapter } from '@luvio/engine';
+import { Adapter, FetchResponse, HttpStatusCode } from '@luvio/engine';
 
 import {
+    incrementRequestResponseCount,
     log,
     AdapterUnfulfilledError,
     Instrumentation,
@@ -119,6 +120,33 @@ function testMetricInvocations(metricSpy: any, expectedCalls: any) {
 const baseCacheHitCounterIncrement = 2;
 const baseCacheMissCounterIncrement = 2;
 const GET_RECORD_TTL = 30000;
+
+describe('incrementRequestResponseCount', () => {
+    const mockFetchResponse200: FetchResponse<unknown> = {
+        status: HttpStatusCode.Ok,
+        body: {},
+        statusText: 'OK',
+        ok: true,
+        headers: undefined,
+    };
+    const mockFetchResponse400: FetchResponse<unknown> = {
+        status: HttpStatusCode.BadRequest,
+        body: {},
+        statusText: 'Bad Request',
+        ok: false,
+        headers: undefined,
+    };
+    it('should bucket counters based on status code', () => {
+        incrementRequestResponseCount(() => mockFetchResponse200);
+        incrementRequestResponseCount(() => mockFetchResponse400);
+        expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(2);
+        const expectedMetricCalls = [
+            { owner: 'LIGHTNING.lds.service', name: 'network-response.200' },
+            { owner: 'LIGHTNING.lds.service', name: 'network-response.400' },
+        ];
+        testMetricInvocations(instrumentationServiceSpies.counterIncrementSpy, expectedMetricCalls);
+    });
+});
 
 describe('instrumentation', () => {
     describe('log lines', () => {
@@ -746,5 +774,3 @@ describe('instrumentation', () => {
         });
     });
 });
-
-describe('setupInstrumentation', () => {});

@@ -1,0 +1,152 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  FilterInputRepresentation:
+    description: An input representing the filter object with key value pair
+    type: object
+    properties:
+      item:
+        description: item
+        type: string
+      value:
+        description: value
+        type: string
+  SustainabilityDGFDataGapFillerInputRepresentation:
+    description: An input representation of data gap filler
+    type: object
+    properties:
+      filters:
+        description: Different DGF filters
+        type: array
+        items:
+          type: object
+      methods:
+        description: Different methods
+        type: array
+        items:
+          type: string
+      recordId:
+        description: RecordId
+        type: string
+  SustainabilityDGFDataGapFillerRepresentation:
+    description: Output object for Sustainability data Gap Filler
+    type: object
+    properties:
+      code:
+        description: return code
+        type: integer
+      gaps:
+        description: return gaps
+        type: array
+        items:
+          type: SustainabilityDataGapRecordRepresentation
+      message:
+        description: return message
+        type: string
+  SustainabilityDataGapRecordRepresentation:
+    description: Output object for Sustainability data Gap filler
+    type: object
+    properties:
+      fillValues:
+        description: 'return fillValues '
+        type: object
+        properties:
+          //:
+            type: object
+            properties:
+              //:
+                type: object
+  SustainabilityDateIssueInputRepresentation:
+    description: An Input Representation for converting source object to sales agreement.
+    type: object
+    properties:
+      filters:
+        description: filters
+        type: array
+        items:
+          type: object
+      recordId:
+        description: RecordId
+        type: string
+      types:
+        description: types
+        type: array
+        items:
+          type: string
+  SustainabilityDateIssueRepresentation:
+    description: Output object for Sustainability Date issue calculation
+    type: object
+    properties:
+      code:
+        description: return code
+        type: integer
+      message:
+        description: return message
+        type: string
+      missingDatesRecords:
+        description: return missing date records
+        type: array
+        items:
+          type: string
+      outOfDateRangeRecords:
+        description: 'return out of range records '
+        type: array
+        items:
+          type: string
+      overlappingDatesRecords:
+        description: return overlapping date records
+        type: array
+        items:
+          type: string
+/connect/sustainability:
+  /dgf:
+    /compute-datagap-fillers:
+      post:
+        description: used for fetching the date issues for a given record Id
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SustainabilityDGFDataGapFillerRepresentation
+        body:
+          application/json:
+            type: SustainabilityDGFDataGapFillerInputRepresentation
+            (oas-body-name): DateIssueInput
+    /identify-date-issues:
+      post:
+        description: used for fetching the date issues for a given record Id
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SustainabilityDateIssueRepresentation
+        body:
+          application/json:
+            type: SustainabilityDateIssueInputRepresentation
+            (oas-body-name): DateIssueInput

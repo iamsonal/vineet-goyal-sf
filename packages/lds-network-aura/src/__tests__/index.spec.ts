@@ -3425,6 +3425,59 @@ describe('routes', () => {
         );
     });
 
+    describe('post /dgf/compute-datagap-fillers', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/compute-datagap-fillers`,
+            },
+            [
+                'SustainabilityFamilyController.getDataGapFillers',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/compute-datagap-fillers`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
+
+    describe('post /dgf/identify-date-issues', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/identify-date-issues`,
+            },
+            [
+                'SustainabilityFamilyController.fetchDateIssues',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/identify-date-issues`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
     describe('put /consumer-goods/tenant-registration', () => {
         testControllerInput(
             {

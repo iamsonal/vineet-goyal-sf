@@ -522,6 +522,16 @@ const IDENTIFY_VERIFICATION_BUILD_CONTEXT_PATH = new RegExp(
     'i'
 );
 
+const DGF_DATE_ISSUE_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/sustainability/dgf/identify-date-issues`,
+    'i'
+);
+
+const DGF_DATAGAP_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/sustainability/dgf/compute-datagap-fillers`,
+    'i'
+);
+
 const IDENTIFY_VERIFICATION_SEARCH_PATH = new RegExp(
     `${IDENTITY_VERIFICATION_BASE_URI}/search`,
     'i'
@@ -545,6 +555,20 @@ const connect: ApiFamily = {
         predicate: (path) => path.startsWith(CONNECT_BASE_URI) && UNLOCK_RECORD_PATH.test(path),
         transport: {
             controller: 'SustainabilityFamilyController.unlockRecord',
+        },
+    },
+    dgfDateIssue: {
+        method: 'post',
+        predicate: (path) => path.startsWith(CONNECT_BASE_URI) && DGF_DATE_ISSUE_PATH.test(path),
+        transport: {
+            controller: 'SustainabilityFamilyController.fetchDateIssues',
+        },
+    },
+    dgfDataGap: {
+        method: 'post',
+        predicate: (path) => path.startsWith(CONNECT_BASE_URI) && DGF_DATAGAP_PATH.test(path),
+        transport: {
+            controller: 'SustainabilityFamilyController.getDataGapFillers',
         },
     },
 

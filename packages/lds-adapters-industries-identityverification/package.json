@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-identityverification",
-    "version": "1.38.1",
+    "version": "1.39.0",
     "description": "Family for all Identity Verification related APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-identityverification.js",
@@ -27,13 +27,13 @@
         "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.38.1"
+        "@salesforce/lds-bindings": "1.39.0"
     },
     "devDependencies": {
         "@luvio/cli": "0.75.0",
         "@luvio/compiler": "0.75.0",
         "@luvio/engine": "0.75.0",
         "@luvio/lwc-luvio": "0.75.0",
-        "@salesforce/lds-karma": "1.38.1"
+        "@salesforce/lds-karma": "1.39.0"
     }
 }

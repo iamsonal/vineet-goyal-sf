@@ -66,11 +66,11 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
             ].filter(Boolean);
             metadata = `const ${adapterMetadataIdentifier} = { ${metadataInfo.join(', ')} };`;
 
-            ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
+            ldsAdapter = `const ${ldsAdapterIdentifier} =  ${CREATE_INSTRUMENTED_ADAPTER}(${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier}), ${adapterMetadataIdentifier})`;
             imperativeGetBind = `${imperativeAdapterNameIdentifier}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
             bind = `${name}: ${getWireConstructorName(
                 name
-            )}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
+            )}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
         } else {
             bind = `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier})`;
         }
@@ -102,8 +102,8 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
             ].filter(Boolean);
             metadata = `const ${adapterMetadataIdentifier} = { ${metadataInfo.join(', ')} };`;
 
-            ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
-            bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
+            ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_INSTRUMENTED_ADAPTER}(${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier}), ${adapterMetadataIdentifier})`;
+            bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
             imperativeGetBind = `${imperativeAdapterNameIdentifier}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
         } else if (method === 'post' || method === 'patch') {
             bind = `${name}: unwrapSnapshotData(${factoryIdentifier})`;

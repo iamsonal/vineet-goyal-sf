@@ -13,7 +13,7 @@ export function createInfiniteScrollingWireAdapterConstructor() {
     return jest.fn();
 }
 
-export function createInstrumentedAdapter(_luvio: Luvio, adapter: any, _metadata: any) {
+export function createInstrumentedAdapter(adapter: any, _metadata: any) {
     return adapter;
 }
 

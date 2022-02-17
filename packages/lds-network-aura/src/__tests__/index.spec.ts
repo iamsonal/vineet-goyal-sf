@@ -7234,6 +7234,38 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/soql', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: '/soql',
+                body: { query: 'SELECT Id,Name,Type,CreatedById FROM Account LIMIT 100' },
+            },
+            [
+                'WaveController.executeSoqlQueryPost',
+                { query: 'SELECT Id,Name,Type,CreatedById FROM Account LIMIT 100' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: WAVE_BASE_URI,
+            basePath: '/soql',
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: '/soql',
+                body: { query: 'SELECT Id,Name,Type,CreatedById FROM Account LIMIT 100' },
+            },
+            {}
+        );
+    });
+
     describe('get /asset/{assetId}/schedule', () => {
         testControllerInput(
             {

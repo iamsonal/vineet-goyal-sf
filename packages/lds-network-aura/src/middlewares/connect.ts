@@ -192,6 +192,8 @@ const DATAFLOW_JOB_NODE_PATH = new RegExp(
 
 const EXECUTE_QUERY_PATH = new RegExp(`${WAVE_BASE_URI}/query`, 'i');
 
+const EXECUTE_SOQL_QUERY_PATH = new RegExp(`${WAVE_BASE_URI}/soql`, 'i');
+
 const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
 
 const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9]){15,18}$`, 'i');
@@ -1535,6 +1537,16 @@ const analytics: ApiFamily = {
         },
     },
 };
+const analyticsPrivate: ApiFamily = {
+    executeSoqlQueryPost: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && EXECUTE_SOQL_QUERY_PATH.test(path),
+        transport: {
+            controller: 'WaveController.executeSoqlQueryPost',
+        },
+    },
+};
 const adats: ApiFamily = {
     getConnectors: {
         method: 'get',
@@ -1889,6 +1901,7 @@ registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
 registerApiFamilyRoutes(analytics);
+registerApiFamilyRoutes(analyticsPrivate);
 registerApiFamilyRoutes(adats);
 registerApiFamilyRoutes(scalecenter);
 registerApiFamilyRoutes(flow);

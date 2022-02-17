@@ -1,0 +1,73 @@
+#%RAML 1.0
+# This RAML has been modified and "ELT Foundation - Analytics" is responsible for maintaining it
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '52.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+
+types:
+  # TODO: Intentionally hand-rolled
+  # The java source has a single 'json' string field, but uses a custom serializer which outputs that as
+  # the actual json. The json output is not defined in the connect annotations.
+  # Similar to SaqlQueryResultsRepresentation in lds-adapters-analytics-wave
+  SoqlQueryResultRepresentation:
+    description: Represents a string of JSON content that will be serialized as-is.
+    type: object
+    properties:
+      totalSize:
+        type: number
+        required: false
+      done:
+        type: boolean
+        required: false
+      records:
+        description: The result records
+        type: array
+        items:
+          type: any
+      # depending on the type of query and the underlying data, there might be other properties
+      //:
+        type: any
+  SoqlQueryInputRepresentation:
+    description: A query input representation SOQL
+    type: object
+    properties:
+      query:
+        description: The query
+        type: string
+
+/wave:
+  /soql:
+    post:
+      description: Execute a query.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: SoqlQueryResultRepresentation
+      body:
+        application/json:
+          type: SoqlQueryInputRepresentation
+          (oas-body-name): query

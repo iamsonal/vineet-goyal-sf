@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-uiapi",
-    "version": "1.39.0",
+    "version": "1.39.1",
     "description": "Wire adapters for record related UI API endpoints",
     "license": "MIT",
     "main": "dist/umd/es2018/uiapi-records-service.js",
@@ -38,13 +38,13 @@
         ]
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.39.0"
+        "@salesforce/lds-bindings": "1.39.1"
     },
     "devDependencies": {
         "@databases/sqlite": "^3.0.0",
-        "@salesforce/lds-compiler-plugins": "1.39.0",
-        "@salesforce/lds-jest": "1.39.0",
-        "@salesforce/lds-karma": "1.39.0",
+        "@salesforce/lds-compiler-plugins": "1.39.1",
+        "@salesforce/lds-jest": "1.39.1",
+        "@salesforce/lds-karma": "1.39.1",
         "extract-zip": "^2.0.1"
     },
     "bundlesize": [

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-store-sql",
-    "version": "1.39.0",
+    "version": "1.39.1",
     "description": "Interfaces and classes for evaluating SQL against a store (most commonly a DurableStore)",
     "license": "MIT",
     "types": "dist/index.d.ts",

@@ -17,9 +17,9 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@luvio/engine": "0.75.0",
-        "@luvio/environments": "0.75.0",
-        "@luvio/graphql-parser": "0.75.0",
+        "@luvio/engine": "0.75.1",
+        "@luvio/environments": "0.75.1",
+        "@luvio/graphql-parser": "0.75.1",
         "@salesforce/lds-adapters-graphql": "1.39.0",
         "@salesforce/lds-store-sql": "1.39.0"
     }

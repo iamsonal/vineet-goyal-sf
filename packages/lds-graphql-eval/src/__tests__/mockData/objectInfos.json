@@ -8,6 +8,7 @@
             "Phone": { "apiName": "Phone", "dataType": "Phone" },
             "Signature": { "apiName": "Signature", "dataType": "TextArea" },
             "Street": { "apiName": "Street", "dataType": "TextArea" },
+            "IsActive": { "apiName": "IsActive", "dataType": "Boolean" },
             "CreatedById": {
                 "apiName": "CreatedById",
                 "dataType": "Reference",

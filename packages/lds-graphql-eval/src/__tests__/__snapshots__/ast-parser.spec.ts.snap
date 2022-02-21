@@ -224,6 +224,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {
@@ -372,6 +373,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {
@@ -381,6 +383,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.displayValue",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {
@@ -449,6 +452,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {
@@ -458,6 +462,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.displayValue",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {
@@ -526,6 +531,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {
@@ -535,6 +541,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.displayValue",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {
@@ -544,6 +551,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.OwnerId.value",
+          "targetDataType": "Reference",
           "type": "ScalarField",
         },
         Object {
@@ -553,6 +561,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.OwnerId.displayValue",
+          "targetDataType": "Reference",
           "type": "ScalarField",
         },
         Object {
@@ -562,6 +571,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.IsDeleted.value",
+          "targetDataType": "Boolean",
           "type": "ScalarField",
         },
         Object {
@@ -630,6 +640,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.CreatedBy.Email.value",
+          "targetDataType": "Email",
           "type": "ScalarField",
         },
         Object {
@@ -639,6 +650,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.CreatedBy.Email.displayValue",
+          "targetDataType": "Email",
           "type": "ScalarField",
         },
         Object {
@@ -736,6 +748,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.CreatedBy.Email.value",
+          "targetDataType": "Email",
           "type": "ScalarField",
         },
         Object {
@@ -745,6 +758,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.CreatedBy.Email.displayValue",
+          "targetDataType": "Email",
           "type": "ScalarField",
         },
         Object {
@@ -984,6 +998,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.CreatedBy.Email.value",
+          "targetDataType": "Email",
           "type": "ScalarField",
         },
         Object {
@@ -993,6 +1008,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.CreatedBy.Email.displayValue",
+          "targetDataType": "Email",
           "type": "ScalarField",
         },
         Object {
@@ -1098,6 +1114,7 @@ Object {
             "type": "JsonExtract",
           },
           "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
           "type": "ScalarField",
         },
         Object {

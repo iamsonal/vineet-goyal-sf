@@ -15,6 +15,7 @@ import type {
     ReferenceFieldInfo,
     ObjectInfoMap,
     ReferenceToInfo,
+    DataType,
 } from './info-types';
 import { parseOrderBy } from './orderby-parser';
 
@@ -145,7 +146,8 @@ function weakEtagField(jsonAlias: string, names: string[]): ScalarField {
 function scalarField(
     node: LuvioSelectionObjectFieldNode,
     names: string[],
-    jsonAlias: string
+    jsonAlias: string,
+    targetDataType: DataType
 ): ScalarField[] {
     const outputNames = names.concat(node.name);
 
@@ -157,7 +159,7 @@ function scalarField(
             const path = extractPath(node.name, field.name);
 
             const extract: JsonExtract = { type: Extract, jsonAlias, path };
-            return { type: FieldType.Scalar, extract, path: outputPath };
+            return { type: FieldType.Scalar, extract, path: outputPath, targetDataType };
         });
 }
 
@@ -207,7 +209,7 @@ function selectionToQueryField(
                 ]);
             }
 
-            return success(scalarField(selection, names, parentAlias));
+            return success(scalarField(selection, names, parentAlias, fieldInfo.dataType));
         }
 
         if (isIdField(fieldInfo)) {
@@ -226,7 +228,7 @@ function selectionToQueryField(
                 ]);
             }
 
-            return success(scalarField(node, names, parentAlias));
+            return success(scalarField(node, names, parentAlias, fieldInfo.dataType));
         }
 
         // If we've gotten this far, we're looking at a scalar field with a datatype

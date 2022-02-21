@@ -227,23 +227,9 @@ describe('ast-parser', () => {
             }
         `;
 
-        const expected =
-            `WITH recordsCTE AS (select TABLE_1_1 from "TABLE_1" where TABLE_1_0 like 'UiApi::RecordRepresentation%') ` +
-            `SELECT json_set('{}', '$.data.uiapi.query.TimeSheet.edges', (SELECT json_group_array(json_set('{}', ` +
-            `'$.node.TimeSheetNumber.value', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.value')), ` +
-            `'$.node.TimeSheetNumber.displayValue', (json_extract("TimeSheet.JSON", '$.data.fields.TimeSheetNumber.displayValue')), ` +
-            `'$.node.OwnerId.value', (json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.value')), ` +
-            `'$.node.OwnerId.displayValue', (json_extract("TimeSheet.JSON", '$.data.fields.OwnerId.displayValue')), ` +
-            `'$.node.IsDeleted.value', (json_extract("TimeSheet.JSON", '$.data.fields.IsDeleted.value')), ` +
-            `'$.node._drafts', (json_extract("TimeSheet.JSON", '$.data.drafts')), '$.node.Id', (json_extract("TimeSheet.JSON", '$.data.id')), ` +
-            `'$.node._metadata', (json_extract("TimeSheet.JSON", '$.metadata')) )) ` +
-            `FROM (SELECT 'TimeSheet'.TABLE_1_1 as 'TimeSheet.JSON' ` +
-            `FROM recordsCTE as 'TimeSheet'  ` +
-            `WHERE json_extract("TimeSheet.JSON", '$.data.apiName') = 'TimeSheet' )) ) as json`;
-
         const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
         const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
-        expect(sqlResult.sql).toEqual(expected);
+        expect(sqlResult.sql).toMatchSnapshot();
         expect(sqlResult.bindings).toEqual([]);
     });
 
@@ -553,6 +539,32 @@ describe('ast-parser', () => {
 
         const result = transform(parseAndVisit(query), { userId: 'MyId', objectInfoMap });
         const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+        expect(sqlResult.sql).toMatchSnapshot();
+        expect(sqlResult.bindings).toEqual([]);
+    });
+
+    it('should resolve boolean fields correctly', () => {
+        const query = /* GraphQL */ `
+            query etag {
+                uiapi {
+                    query {
+                        User @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    IsActive {
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const result = transform(parseAndVisit(query), { userId: 'MyId', objectInfoMap });
+        const sqlResult = sql(unwrappedValue(result), sqlMappingInput);
+
         expect(sqlResult.sql).toMatchSnapshot();
         expect(sqlResult.bindings).toEqual([]);
     });

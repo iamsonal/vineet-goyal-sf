@@ -1,3 +1,5 @@
+import type { DataType } from './info-types';
+
 export enum PredicateType {
     compound = 'compound',
     comparison = 'comparison',
@@ -206,6 +208,7 @@ export interface ScalarField {
     type: FieldType.Scalar;
     path: string;
     extract: JsonExtract;
+    targetDataType?: DataType;
 }
 
 export interface OrderBy {

@@ -1,3 +1,4 @@
+import type { DataType } from './info-types';
 import type {
     Expression,
     Predicate,
@@ -78,7 +79,7 @@ function fieldToSql(field: RecordQueryField, mappingInput: SqlMappingInput): Sql
         return { sql: `'${pathPrefix}.${path}', (${sql})`, bindings };
     }
 
-    const { sql, bindings } = expressionToSql(field.extract);
+    const { sql, bindings } = expressionToSql(field.extract, field.targetDataType);
     return { sql: `'${pathPrefix}.${path}', (${sql})`, bindings };
 }
 
@@ -284,13 +285,27 @@ function nullComparisonPredicateToSql(predicate: NullComparisonPredicate): SqlAn
     return { sql: `${leftSql} ${operator} NULL`, bindings };
 }
 
-function expressionToSql(expression: Expression): SqlAndBindings {
+function coerceToTargetDataType(initialSql: string, targetDataType: DataType): string {
+    if (targetDataType === 'Boolean') {
+        return `case when ${initialSql} = 1 then json('true') else json('false') end`;
+    } else {
+        return initialSql;
+    }
+}
+
+function expressionToSql(expression: Expression, targetDataType?: DataType): SqlAndBindings {
     switch (expression.type) {
-        case ValueType.Extract:
+        case ValueType.Extract: {
+            let sql = `json_extract("${expression.jsonAlias}.JSON", '${pathPrefix}.${expression.path}')`;
+
+            if (targetDataType !== undefined) {
+                sql = coerceToTargetDataType(sql, targetDataType);
+            }
             return {
-                sql: `json_extract("${expression.jsonAlias}.JSON", '${pathPrefix}.${expression.path}')`,
+                sql,
                 bindings: [],
             };
+        }
         case ValueType.BooleanLiteral:
         case ValueType.DoubleLiteral:
         case ValueType.IntLiteral:

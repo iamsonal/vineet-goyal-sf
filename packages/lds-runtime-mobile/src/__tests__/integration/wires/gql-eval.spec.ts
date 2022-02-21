@@ -3,6 +3,8 @@ import { setup, durableStore } from './integrationTestSetup';
 import { configuration } from '@salesforce/lds-adapters-graphql';
 
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
+import mockData_Account_fields_IsDeleted from './data/record-Account-fields-IsDeleted.json';
+
 import mockUser from './data/record-User-fields-User.Id,User.City.json';
 
 import mockData_Account_fields_Name from './data/gql/RecordQuery-Account2-fields-Name.json';
@@ -165,6 +167,65 @@ describe('mobile runtime integration tests', () => {
                                                 namespace: 'UiApi',
                                                 representationName: 'RecordRepresentation',
                                             },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            });
+        });
+
+        it('should have properly serialized data in the local snapshot', async () => {
+            const { graphQL } = await initEnv();
+
+            const query = parseAndVisit(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        # [W-10693499] Assert proper boolean serialization
+                                        IsDeleted {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+            const now = Date.now();
+            const expirationTimestamp = now + 100;
+            const metadata = makeMetadata([expirationTimestamp])[0];
+
+            await durableStore.set(keyBuilderRecord({ recordId }), DefaultDurableSegment, {
+                data: { ...mockData_Account_fields_IsDeleted },
+                metadata,
+            });
+
+            await durableStore.flushPendingWork();
+            const config = { query, variables: {} };
+
+            const snapshot = await graphQL(config);
+            expect(snapshot.state).toEqual('Fulfilled');
+            expect(snapshot.data).toEqual({
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: expect.any(String),
+                                            IsDeleted: {
+                                                value: false,
+                                            },
+                                            _drafts: expect.any(Object),
+                                            _metadata: expect.any(Object),
                                         },
                                     },
                                 ],

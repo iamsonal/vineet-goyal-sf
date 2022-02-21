@@ -8874,6 +8874,52 @@ describe('routes', () => {
         );
     });
 
+    describe('put /connect/health/video-visits/leave-chime-meeting', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/video-visits/leave-chime-meeting`,
+                body: {
+                    LeaveChimeMeetingInput: {
+                        attendeeId: '1234',
+                        externalMeetingId: '5678',
+                    },
+                },
+            },
+            [
+                'VideoVisitController.leaveChimeMeeting',
+                {
+                    LeaveChimeMeetingInput: {
+                        attendeeId: '1234',
+                        externalMeetingId: '5678',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                isSuccess: true,
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'put',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/health/video-visits/leave-chime-meeting`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/video-visits/leave-chime-meeting`,
+            },
+            {
+                isSuccess: true,
+            }
+        );
+    });
+
     describe('get /interest-tags/assignments/entity/${recordId}', () => {
         testControllerInput(
             {

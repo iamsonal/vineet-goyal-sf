@@ -450,6 +450,11 @@ const JOIN_CHIME_MEETING_PATH = new RegExp(
     'i'
 );
 
+const LEAVE_CHIME_MEETING_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/health/video-visits/leave-chime-meeting`,
+    'i'
+);
+
 const HPI_SCORE_PATH = new RegExp(`${CONNECT_BASE_URI}/health/uhs/actions`, 'i');
 
 const GET_PATIENT_LIST_SCORE = new RegExp(`${CONNECT_BASE_URI}/health/uhslist/[A-Z0-9_-]`, 'i');
@@ -1809,6 +1814,14 @@ const videovisits: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && JOIN_CHIME_MEETING_PATH.test(path),
         transport: {
             controller: 'VideoVisitController.chimeMeeting',
+        },
+    },
+    leaveChimeMeeting: {
+        method: 'put',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && LEAVE_CHIME_MEETING_PATH.test(path),
+        transport: {
+            controller: 'VideoVisitController.leaveChimeMeeting',
         },
     },
 };

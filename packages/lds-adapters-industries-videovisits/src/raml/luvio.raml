@@ -10,8 +10,17 @@ types:
     (luvio.key):
       isSuccess: isSuccess
     (luvio.ttl): 300
+  LeaveChimeMeetingResultRepresentation:
+    (luvio.key):
+      isSuccess: isSuccess
+    (luvio.ttl): 300
 
 /connect/health/video-visits/chime-meeting:
   post:
     (luvio.adapter):
       name: chimeMeeting
+
+/connect/health/video-visits/leave-chime-meeting:
+  put:
+    (luvio.adapter):
+      name: leaveChimeMeeting

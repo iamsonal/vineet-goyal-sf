@@ -22,6 +22,16 @@ export function mockJoinChimeMeetingNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+export function mockLeaveChimeMeetingNetworkOnce(config, mockData) {
+    const paramMatch = leaveChimeMeetingMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockLeaveChimeMeetingNetworkErrorOnce(config, mockData) {
+    const paramMatch = leaveChimeMeetingMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function joinChimeMeetingMatcher(config) {
     let { externalMeetingId, region } = config;
 
@@ -34,6 +44,22 @@ function joinChimeMeetingMatcher(config) {
         method: 'post',
         baseUri: CONNECT_BASE_URI,
         basePath: `/connect/health/video-visits/chime-meeting`,
+        queryParams: {},
+    });
+}
+
+function leaveChimeMeetingMatcher(config) {
+    let { attendeeId, externalMeetingId } = config;
+
+    return sinon.match({
+        body: {
+            attendeeId,
+            externalMeetingId,
+        },
+        headers: {},
+        method: 'put',
+        baseUri: CONNECT_BASE_URI,
+        basePath: `/connect/health/video-visits/leave-chime-meeting`,
         queryParams: {},
     });
 }

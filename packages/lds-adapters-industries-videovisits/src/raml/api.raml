@@ -126,19 +126,63 @@ types:
         description: JoinMeeting API meeting information
         type: ChimeMeetingResultRepresentation
         required: false
+  # TODO [W-10290611]: Hand Rolled due to due to issue in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+  LeaveChimeMeetingInputWrapperRepresentation:
+    description: Wrapper Input Representation for LeaveChimeMeetingInputRepresentation
+    type: object
+    properties:
+      LeaveChimeMeetingInput:
+        type: LeaveChimeMeetingInputRepresentation
+        description: Input representation for Leave Meeting Resource
+  LeaveChimeMeetingInputRepresentation:
+    description: Input representation for LeaveChimeMeeting
+    type: object
+    properties:
+      attendeeId:
+        description: Set Attendee for Video Call
+        type: string
+      externalMeetingId:
+        description: Set External Meeting Id for Video Call
+        type: string
+  LeaveChimeMeetingResultRepresentation:
+    description: Output representation of LeaveChimeMeeting Result
+    type: object
+    properties:
+      errorMessage:
+        description: LeaveMeeting error messages
+        type: string | nil # TODO [W-10290611]: Hand Rolled Change nil
+        required: false
+      isSuccess:
+        description: LeaveMeeting success flag
+        type: boolean
 /connect:
   /health:
-    /video-visits/chime-meeting:
-      post:
-        description: JoinMeeting API Resource
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: JoinChimeMeetingResultRepresentation
-        body:
-          application/json:
-            type: JoinChimeMeetingInputWrapperRepresentation
-            # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-            (oas-body-name): JoinChimeMeetingInput
+    /video-visits:
+      /chime-meeting:
+        post:
+          description: JoinMeeting API Resource
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: JoinChimeMeetingResultRepresentation
+          body:
+            application/json:
+              type: JoinChimeMeetingInputWrapperRepresentation
+              # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+              (oas-body-name): JoinChimeMeetingInput
+      /leave-chime-meeting:
+        put:
+          description: LeaveMeeting API Resource
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: LeaveChimeMeetingResultRepresentation
+          body:
+            application/json:
+              type: LeaveChimeMeetingInputWrapperRepresentation
+              # TODO [W-10290611]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+              (oas-body-name): LeaveChimeMeetingInput

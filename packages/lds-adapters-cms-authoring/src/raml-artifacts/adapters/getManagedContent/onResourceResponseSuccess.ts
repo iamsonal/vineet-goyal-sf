@@ -13,11 +13,11 @@ export function onResourceResponseSuccess(
     let updatedResourceParams = resourceParams;
     // If language is not provided in the request resource params use language returned in the response and update resource params with that language,
     // since this resource params will be used later to build a cache key.
-    if (updatedResourceParams.queryParams.language === undefined) {
-        updatedResourceParams = {
-            ...updatedResourceParams,
-            queryParams: { language: response.body.language },
-        };
+    if (
+        updatedResourceParams.queryParams.language === undefined ||
+        updatedResourceParams.queryParams.language === null
+    ) {
+        updatedResourceParams.queryParams.language = response.body.language;
     }
 
     return generatedOnResourceResponseSuccess(luvio, config, updatedResourceParams, response);

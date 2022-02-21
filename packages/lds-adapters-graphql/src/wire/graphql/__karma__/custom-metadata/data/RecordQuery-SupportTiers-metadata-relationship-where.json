@@ -1,0 +1,84 @@
+{
+    "data": {
+        "__typename": "Query",
+        "uiapi": {
+            "__typename": "UIAPI",
+            "query": {
+                "__typename": "RecordQuery",
+                "Support_Tier__mdt": {
+                    "__typename": "Support_Tier__mdtConnection",
+                    "edges": [
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Id": "m00xx000000bqGjAAI",
+                                "Label": {
+                                    "__typename": "StringValue",
+                                    "value": "Tier 2",
+                                    "displayValue": null
+                                },
+                                "Service_Level_Agreement__c": {
+                                    "__typename": "IDValue",
+                                    "value": "m01xx000003GchTAAS",
+                                    "displayValue": null
+                                },
+                                "Service_Level_Agreement__r": {
+                                    "Id": "m01xx000003GchTAAS",
+                                    "DisplayValue": "Level_3",
+                                    "Label": {
+                                        "__typename": "StringValue",
+                                        "value": "Level 3",
+                                        "displayValue": null
+                                    },
+                                    "Response_in_Hours__c": {
+                                        "__typename": "DoubleValue",
+                                        "value": 72,
+                                        "displayValue": "72"
+                                    },
+                                    "__typename": "Service_Level_Agreement__mdt",
+                                    "ApiName": "Service_Level_Agreement__mdt",
+                                    "WeakEtag": 0,
+                                    "SystemModstamp": {
+                                        "value": null
+                                    },
+                                    "LastModifiedById": {
+                                        "value": null
+                                    },
+                                    "LastModifiedDate": {
+                                        "value": null
+                                    },
+                                    "RecordTypeId": {
+                                        "value": null
+                                    }
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "DisplayValue": "Tier_2",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "LastModifiedDate": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6MA=="
+                        }
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
+                }
+            }
+        }
+    },
+    "errors": []
+}

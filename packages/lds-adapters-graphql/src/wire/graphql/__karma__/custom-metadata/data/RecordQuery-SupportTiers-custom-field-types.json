@@ -1,0 +1,240 @@
+{
+    "data": {
+        "__typename": "Query",
+        "uiapi": {
+            "__typename": "UIAPI",
+            "query": {
+                "__typename": "RecordQuery",
+                "Support_Tier__mdt": {
+                    "__typename": "Support_Tier__mdtConnection",
+                    "edges": [
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Id": "m00xx000000bqDVAAY",
+                                "Label": {
+                                    "__typename": "StringValue",
+                                    "value": "Tier 0",
+                                    "displayValue": null
+                                },
+                                "Is_Active__c": {
+                                    "__typename": "BooleanValue",
+                                    "value": true,
+                                    "displayValue": null
+                                },
+                                "Activation_Date__c": {
+                                    "__typename": "DateValue",
+                                    "value": "2022-02-11",
+                                    "displayValue": "2/11/2022"
+                                },
+                                "LastModifiedDate": {
+                                    "__typename": "DateTimeValue",
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Default_Email__c": {
+                                    "__typename": "EmailValue",
+                                    "value": "tier0@salesforce.com",
+                                    "displayValue": null
+                                },
+                                "Agents_Count__c": {
+                                    "__typename": "DoubleValue",
+                                    "value": 5,
+                                    "displayValue": "5"
+                                },
+                                "Utilization_Rate__c": {
+                                    "__typename": "PercentValue",
+                                    "value": 90,
+                                    "displayValue": "90"
+                                },
+                                "Default_Phone__c": {
+                                    "__typename": "PhoneNumberValue",
+                                    "value": "111-222-3333",
+                                    "displayValue": null
+                                },
+                                "Language": {
+                                    "__typename": "PicklistValue",
+                                    "value": "en_US",
+                                    "displayValue": "English"
+                                },
+                                "Additional_Details__c": {
+                                    "__typename": "LongTextAreaValue",
+                                    "value": "Tier 0 Details",
+                                    "displayValue": null
+                                },
+                                "Default_Support_URL__c": {
+                                    "__typename": "UrlValue",
+                                    "value": "salesforce.com",
+                                    "displayValue": null
+                                },
+                                "Service_Level_Agreement__c": {
+                                    "__typename": "IDValue",
+                                    "value": "m01xx000003GccdAAC",
+                                    "displayValue": null
+                                },
+                                "Service_Level_Agreement__r": {
+                                    "Id": "m01xx000003GccdAAC",
+                                    "DisplayValue": "Level_0",
+                                    "Label": {
+                                        "__typename": "StringValue",
+                                        "value": "Level 0",
+                                        "displayValue": null
+                                    },
+                                    "Response_in_Hours__c": {
+                                        "__typename": "DoubleValue",
+                                        "value": 4,
+                                        "displayValue": "4"
+                                    },
+                                    "__typename": "Service_Level_Agreement__mdt",
+                                    "ApiName": "Service_Level_Agreement__mdt",
+                                    "WeakEtag": 0,
+                                    "SystemModstamp": {
+                                        "value": null
+                                    },
+                                    "LastModifiedById": {
+                                        "value": null
+                                    },
+                                    "LastModifiedDate": {
+                                        "value": null
+                                    },
+                                    "RecordTypeId": {
+                                        "value": null
+                                    }
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "DisplayValue": "Tier_0",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6MA=="
+                        },
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Id": "m00xx000000bqF7AAI",
+                                "Label": {
+                                    "__typename": "StringValue",
+                                    "value": "Tier 1",
+                                    "displayValue": null
+                                },
+                                "Is_Active__c": {
+                                    "__typename": "BooleanValue",
+                                    "value": false,
+                                    "displayValue": null
+                                },
+                                "Activation_Date__c": {
+                                    "__typename": "DateValue",
+                                    "value": "2021-01-11",
+                                    "displayValue": "1/11/2021"
+                                },
+                                "LastModifiedDate": {
+                                    "__typename": "DateTimeValue",
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Default_Email__c": {
+                                    "__typename": "EmailValue",
+                                    "value": "tier1@salesforce.com",
+                                    "displayValue": null
+                                },
+                                "Agents_Count__c": {
+                                    "__typename": "DoubleValue",
+                                    "value": 10,
+                                    "displayValue": "10"
+                                },
+                                "Utilization_Rate__c": {
+                                    "__typename": "PercentValue",
+                                    "value": 75.89,
+                                    "displayValue": "75.89"
+                                },
+                                "Default_Phone__c": {
+                                    "__typename": "PhoneNumberValue",
+                                    "value": "(333) 444-5555",
+                                    "displayValue": null
+                                },
+                                "Language": {
+                                    "__typename": "PicklistValue",
+                                    "value": "en_US",
+                                    "displayValue": "English"
+                                },
+                                "Additional_Details__c": {
+                                    "__typename": "LongTextAreaValue",
+                                    "value": "Tier 1 Details",
+                                    "displayValue": null
+                                },
+                                "Default_Support_URL__c": {
+                                    "__typename": "UrlValue",
+                                    "value": "salesforce.com/tier1",
+                                    "displayValue": null
+                                },
+                                "Service_Level_Agreement__c": {
+                                    "__typename": "IDValue",
+                                    "value": "m01xx000003GceFAAS",
+                                    "displayValue": null
+                                },
+                                "Service_Level_Agreement__r": {
+                                    "Id": "m01xx000003GceFAAS",
+                                    "DisplayValue": "Level_1",
+                                    "Label": {
+                                        "__typename": "StringValue",
+                                        "value": "Level 1",
+                                        "displayValue": null
+                                    },
+                                    "Response_in_Hours__c": {
+                                        "__typename": "DoubleValue",
+                                        "value": 8,
+                                        "displayValue": "8"
+                                    },
+                                    "__typename": "Service_Level_Agreement__mdt",
+                                    "ApiName": "Service_Level_Agreement__mdt",
+                                    "WeakEtag": 0,
+                                    "SystemModstamp": {
+                                        "value": null
+                                    },
+                                    "LastModifiedById": {
+                                        "value": null
+                                    },
+                                    "LastModifiedDate": {
+                                        "value": null
+                                    },
+                                    "RecordTypeId": {
+                                        "value": null
+                                    }
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "DisplayValue": "Tier_1",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6MQ=="
+                        }
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 2
+                }
+            }
+        }
+    },
+    "errors": []
+}

@@ -1,0 +1,33 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'assetcreation'
+
+types:
+  StarterTemplateListRepresentation:
+    (luvio.ttl): 3000
+
+  StarterTemplateDetailRepresentation:
+    (luvio.ttl): 1000
+
+  AssetOutputRepresentation:
+    (luvio.ttl): 1000
+    (luvio.key):
+      id: id
+
+/asset-creation:
+  /starter-templates:
+    get:
+      (luvio.adapter):
+        name: getStarterTemplates
+  /starter-templates/{starterTemplateId}:
+    get:
+      (luvio.adapter):
+        name: getStarterTemplateById
+  /objects:
+    post:
+      (luvio.adapter):
+        name: createAsset

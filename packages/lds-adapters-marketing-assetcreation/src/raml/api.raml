@@ -1,0 +1,168 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  AssetInputWrapperRepresentation:
+    description: Wrapper Input Representation for AssetInputRepresentation
+    type: object
+    properties:
+      AssetInput:
+        type: AssetInputRepresentation
+        description: Input representation for Create Asset Resource
+  AssetInputRepresentation:
+    description: Object to create an easy asset
+    type: object
+    properties:
+      fields:
+        description: A map of asset specific fields that are used during asset creation
+        type: object
+        properties:
+          //:
+            type: string
+      starterTemplateId:
+        description: Starter Template id to clone
+        type: string
+      type:
+        description: Asset type
+        type: string
+        enum:
+          - EmailContent
+          - EmailTemplate
+          - LandingPage
+  AssetOutputRepresentation:
+    description: Representation of a created template object.
+    type: object
+    properties:
+      contentBuilderUrl:
+        description: Url to load the specified resource in content builder.
+        type: string
+      id:
+        description: Id of the created object.
+        type: string
+  StarterTemplateDetailRepresentation:
+    description: Representation of the details of a starter template to be displayed.
+    type: object
+    properties:
+      createdBy:
+        description: Creator of the object.
+        type: string
+      createdOn:
+        description: Created date of the object.
+        type: string
+      description:
+        description: Description of the object.
+        type: string
+      html:
+        description: HTML content of the object.
+        type: string
+      id:
+        description: Id of the object.
+        type: string
+      name:
+        description: Name of the object.
+        type: string
+  StarterTemplateListRepresentation:
+    description: Representation of a list of starter templates.
+    type: object
+    properties:
+      starterTemplateList:
+        description: List of Starter Templates.
+        type: array
+        items:
+          type: StarterTemplateRepresentation
+  StarterTemplateRepresentation:
+    description: Representation of a starter template object.
+    type: object
+    properties:
+      description:
+        description: Description of the object.
+        type: string
+      id:
+        description: Id of the object.
+        type: string
+      name:
+        description: Name of the object.
+        type: string
+      thumbnailUrl:
+        description: Url to thumbnail image.
+        type: string
+/asset-creation:
+  /objects:
+    post:
+      description: Create an asset from a starter template
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: AssetOutputRepresentation
+      body:
+        application/json:
+          # TODO Hand-rolled W-8334626: Hand Rolled Change to use wrapper
+          type: AssetInputWrapperRepresentation
+          # required: false [W-9109412]: Property 'required' not supported in a RAML 1.0 object node
+          (oas-body-name): AssetInput
+  /starter-templates:
+    get:
+      description: API to fetch all starter template objects for a given type.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: StarterTemplateListRepresentation
+      queryParameters:
+        filter:
+          type: string
+          required: false
+        type:
+          type: string
+          required: false
+          enum:
+            - EmailContent
+            - EmailTemplate
+            - LandingPage
+  /starter-templates/{starterTemplateId}:
+    get:
+      description: API to fetch a starter template given an id.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: StarterTemplateDetailRepresentation
+      queryParameters:
+        type:
+          type: string
+          required: false
+          enum:
+            - EmailContent
+            - EmailTemplate
+            - LandingPage
+    uriParameters:
+      starterTemplateId:
+        type: string
+        required: true

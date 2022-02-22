@@ -1,0 +1,9 @@
+{
+    "starterTemplateId": "100",
+    "type": "emailtemplate",
+    "fields": {
+        "name": "New email template",
+        "description": "Marketing campaign 123",
+        "folder": "Private"
+    }
+}

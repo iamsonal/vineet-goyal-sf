@@ -20,6 +20,7 @@ import {
     ADATS_SYNC_BASE_URI,
     ADATS_CATALOG_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
+    ASSETCREATION_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -10473,6 +10474,108 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: CONNECT_BASE_URI,
                 basePath: `/health/uhslist/scoreId`,
+            },
+            {}
+        );
+    });
+
+    describe('get /asset-creation/starter-templates', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates`,
+            },
+            [
+                'AssetCreationController.getStarterTemplates',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates`,
+            },
+            {}
+        );
+    });
+
+    describe('get /asset-creation/starter-templates/{starterTemplateId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates/123`,
+                urlParams: {
+                    starterTemplateId: '123',
+                },
+                queryParams: {
+                    type: 'emailtemplate',
+                },
+            },
+            [
+                'AssetCreationController.getStarterTemplateById',
+                {
+                    starterTemplateId: '123',
+                    type: 'emailtemplate',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates/123`,
+            },
+            {}
+        );
+    });
+
+    describe('post /asset-creation/objects', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/objects`,
+                body: {
+                    assetInput: {
+                        starterTemplateId: '100',
+                        type: 'emailtemplate',
+                        fields: {
+                            name: 'New email template',
+                            description: 'Marketing campaign 123',
+                            folder: 'Private',
+                        },
+                    },
+                },
+            },
+            [
+                'AssetCreationController.createAsset',
+                {
+                    assetInput: {
+                        starterTemplateId: '100',
+                        type: 'emailtemplate',
+                        fields: {
+                            name: 'New email template',
+                            description: 'Marketing campaign 123',
+                            folder: 'Private',
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/objects`,
             },
             {}
         );

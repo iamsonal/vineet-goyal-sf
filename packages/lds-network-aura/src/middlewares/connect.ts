@@ -19,6 +19,7 @@ import {
     IDENTITY_VERIFICATION_BASE_URI,
     PSS_SOCIAL_CARE_BASE_URI,
     LEARNING_CONTENT_PLATFORM_BASE_URI,
+    ASSETCREATION_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_MICROBATCHING_PATH = new RegExp(
@@ -548,6 +549,15 @@ const IDENTIFY_VERIFICATION_VERIFY_RECORD_PATH = new RegExp(
     `${IDENTITY_VERIFICATION_BASE_URI}/verification`,
     'i'
 );
+
+const GET_STARTER_TEMPLATE_BYID_PATH = new RegExp(
+    `${ASSETCREATION_BASE_URI}/starter-templates/([A-Z0-9]){1,18}$`,
+    'i'
+);
+
+const GET_STARTER_TEMPLATES_PATH = new RegExp(`${ASSETCREATION_BASE_URI}/starter-templates$`, 'i');
+
+const POST_ASSET_OBJECT_PATH = new RegExp(`${ASSETCREATION_BASE_URI}/objects`, 'i');
 
 const connect: ApiFamily = {
     lockRecord: {
@@ -1910,6 +1920,35 @@ const identityVerification: ApiFamily = {
     },
 };
 
+const assetCreation: ApiFamily = {
+    getStarterTemplates: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(ASSETCREATION_BASE_URI) && GET_STARTER_TEMPLATES_PATH.test(path),
+        transport: {
+            controller: 'AssetCreationController.getStarterTemplates',
+        },
+    },
+
+    getStarterTemplateById: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(ASSETCREATION_BASE_URI) && GET_STARTER_TEMPLATE_BYID_PATH.test(path),
+        transport: {
+            controller: 'AssetCreationController.getStarterTemplateById',
+        },
+    },
+
+    createAsset: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(ASSETCREATION_BASE_URI) && POST_ASSET_OBJECT_PATH.test(path),
+        transport: {
+            controller: 'AssetCreationController.createAsset',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
@@ -1925,3 +1964,4 @@ registerApiFamilyRoutes(interesttagging);
 registerApiFamilyRoutes(identityVerification);
 registerApiFamilyRoutes(hpiscore);
 registerApiFamilyRoutes(learningContentPlatform);
+registerApiFamilyRoutes(assetCreation);

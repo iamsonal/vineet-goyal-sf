@@ -1,0 +1,38 @@
+{
+    "name": "@salesforce/lds-adapters-platform-flow-builder",
+    "version": "1.38.1",
+    "description": "API related to flow builder",
+    "license": "MIT",
+    "main": "dist/umd/es2018/platform-flow-builder.js",
+    "module": "dist/es/es2018/platform-flow-builder.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
+    "contributors": [
+        "aavramo@salesforce.com"
+    ],
+    "scripts": {
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+        "build:services": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        "start": "karma start",
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat",
+        "test:unit": "jest"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "1.38.1"
+    },
+    "devDependencies": {
+        "@luvio/cli": "0.73.7",
+        "@luvio/compiler": "0.73.7",
+        "@luvio/engine": "0.73.7",
+        "@luvio/lwc-luvio": "0.73.7",
+        "@salesforce/lds-karma": "1.38.1"
+    }
+}

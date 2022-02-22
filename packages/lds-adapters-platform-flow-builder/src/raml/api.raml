@@ -1,0 +1,442 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  FlowOperatorParameterRepresentation:
+    description: Parameter on the left or right hand side of an operation
+    type: object
+    properties:
+      canBeApexProperty:
+        description: Whether or not this parameter can be an Apex property
+        type: string | nil
+      canBeSobjectField:
+        description: Whether or not this parameter can be an SObject field
+        type: string | nil
+      canBeSystemVariable:
+        description: Whether or not this parameter can be a System variable
+        type: string | nil
+      cannotBeElements:
+        description: List of elements this parameter cannot be
+        type: array
+        items:
+          type: string
+      dataType:
+        description: Parameter Data type (if param type is Data)
+        type: string | nil
+      isCollection:
+        description: Whether or not this parameter is a collection
+        type: boolean
+      isNull:
+        description: Whether or not this parameter is nullable
+        type: boolean
+      mustBeElements:
+        description: List of elements this parameter must be
+        type: array
+        items:
+          type: string
+      paramType:
+        description: Parameter type (Data, Element)
+        type: string | nil
+  FlowOperatorRepresentation:
+    description: Operator in rules
+    type: object
+    properties:
+      value:
+        description: Operator value
+        type: string | nil
+  FlowOperatorRuleCollectionRepresentation:
+    description: Collection of Flow Operator rules
+    type: object
+    properties:
+      rules:
+        description: Collection of Flow Operator rules
+        type: array
+        items:
+          type: FlowOperatorRuleRepresentation
+  FlowOperatorRuleRepresentation:
+    description: 'Flow operator rule: LHS parameter type, operator, RHS parameter
+      types, list of elements it can be applied to'
+    type: object
+    properties:
+      assignmentOperator:
+        description: Assignment operator or null if it is not an assignment
+        type: FlowOperatorRepresentation
+      comparisonOperator:
+        description: Comparison operator or null if it is not a comparison
+        type: FlowOperatorRepresentation
+      excludeElems:
+        description: List of elements to be excluded
+        type: array
+        items:
+          type: string
+      includeElems:
+        description: List of available elements for this rules
+        type: array
+        items:
+          type: string
+      left:
+        description: Left parameter of the rule
+        type: FlowOperatorParameterRepresentation
+      rhsParams:
+        description: List of available rhs parameters
+        type: array
+        items:
+          type: FlowOperatorParameterRepresentation
+      ruleType:
+        description: Rule type (assignment, comparison)
+        type: string
+      validationType:
+        description: Validation type (info, warning, error)
+        type: string | nil
+  FlowOrchestrationInstanceCollectionRepresentation:
+    description: Information about a collection of Orchestration instances.
+    type: object
+    properties:
+      instances:
+        description: Collection of Orchestration instances
+        type: array
+        items:
+          type: FlowOrchestrationInstanceRepresentation
+  FlowOrchestrationInstanceRepresentation:
+    description: Information about an Orchestration instance.
+    type: object
+    properties:
+      flowDefinitionDeveloperName:
+        description: Developer name of the flow definition
+        type: string | nil
+      flowDefinitionId:
+        description: Id of the flow definition
+        type: string | nil
+      flowDefinitionName:
+        description: Name of the flow definition
+        type: string | nil
+      id:
+        description: Orchestrator instance id
+        type: string
+      interviewId:
+        description: Id of the interview to resume
+        type: string | nil
+      stageInstances:
+        description: The Orchestrator Instance stages
+        type: array
+        items:
+          type: FlowOrchestrationStageInstanceRepresentation
+      status:
+        description: The Orchestrator Instance status
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+  FlowOrchestrationStageInstanceRepresentation:
+    description: Information about an Orchestration stage instance.
+    type: object
+    properties:
+      id:
+        description: Orchestration stage instance id
+        type: string
+      label:
+        description: Orchestration stage instance label
+        type: string | nil
+      name:
+        description: Orchestration stage instance name
+        type: string | nil
+      status:
+        description: The Orchestration Stage Instance status
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+      stepInstances:
+        description: Orchestration stage instance steps
+        type: array
+        items:
+          type: FlowOrchestrationStepInstanceRepresentation
+  FlowOrchestrationStepInstanceRepresentation:
+    description: Information about an Orchestration step instance.
+    type: object
+    properties:
+      id:
+        description: Orchestration step instance id
+        type: string
+      label:
+        description: Orchestration step instance label
+        type: string | nil
+      name:
+        description: Orchestration step instance name
+        type: string | nil
+      status:
+        description: The Orchestration Step Instance status
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+      stepType:
+        description: The Orchestration Step Instance step type
+        type: string
+        enum:
+          - AsynchronousBackgroundStep
+          - BackgroundStep
+          - InteractiveStep
+      workItems:
+        description: Orchestration step instance work items
+        type: array
+        items:
+          type: FlowOrchestrationWorkItemRepresentation
+  FlowOrchestrationWorkItemRepresentation:
+    description: Information about an Orchestration work item.
+    type: object
+    properties:
+      assigneeId:
+        description: The assignee for this Orchestrator work item
+        type: string
+      description:
+        description: Description for this Orchestration work item
+        type: string | nil
+      id:
+        description: Orchestration work item id
+        type: string
+      label:
+        description: Label key for this work item
+        type: string | nil
+      relatedRecordId:
+        description: The record this work item is related to
+        type: string | nil
+      screenFlowDeveloperName:
+        description: Developer name of the screen flow to start when assignees work
+          on this work item
+        type: string
+      screenFlowId:
+        description: Id of the screen flow to start when assignees work on this work
+          item
+        type: string
+      screenFlowInputs:
+        description: Input parameters for the screen flow
+        type: string
+      status:
+        description: This work item status
+        type: string
+        enum:
+          - Assigned
+          - Completed
+  FlowRuntimeNavigateRequestRepresentation:
+    description: Flow navigate request
+    type: object
+    properties:
+      action:
+        description: Navigate action
+        type: string
+      enableTrace:
+        description: Enable trace
+        type: boolean
+      fields:
+        description: Values of input fields on a flow screen
+        type: array
+        items:
+          type: object
+      lcErrors:
+        description: Lightning components errors
+        type: object
+        properties:
+          //:
+            type: object
+      serializedState:
+        description: Serialized state
+        type: string
+      uiElementVisited:
+        description: Element visited
+        type: boolean
+  FlowRuntimeNavigationFieldValueRepresentation:
+    description: A value of an input field on a flow screen
+    type: object
+    properties:
+      field:
+        description: Field
+        type: string
+      isVisible:
+        description: Is the field visible?
+        type: boolean
+      value:
+        description: Value
+        type: object
+  FlowRuntimeResponseRepresentation:
+    description: Flow Runtime Response Representation
+    type: object
+    properties:
+      error:
+        description: Error
+        type: object
+      response:
+        description: Navigation Result
+        type: object
+/connect/interaction:
+  /builder/rules:
+    get:
+      description: Retrieves the list of all rules for given process type, trigger
+        type and record trigger type
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FlowOperatorRuleCollectionRepresentation
+      queryParameters:
+        flowProcessType:
+          type: string
+          required: false
+          enum:
+            - ActionCadenceFlow
+            - ActionPlan
+            - Appointments
+            - AutoLaunchedFlow
+            - CartAsyncFlow
+            - CheckoutFlow
+            - CmsOrchestrator
+            - ContactRequestFlow
+            - CustomEvent
+            - CustomerLifecycle
+            - DigitalForm
+            - EvaluationFlow
+            - FieldServiceMobile
+            - FieldServiceWeb
+            - Flow
+            - FscLending
+            - InvocableProcess
+            - Journey
+            - JourneyBuilderIntegration
+            - LoginFlow
+            - LoyaltyManagementFlow
+            - ManagedContentFlow
+            - OfflineFlow
+            - OrchestrationFlow
+            - Orchestrator
+            - RecommendationStrategy
+            - RoutingFlow
+            - ServiceCatalogItemFlow
+            - Survey
+            - SurveyEnrich
+            - TransactionSecurityFlow
+            - UserProvisioningFlow
+            - Workflow
+        flowTriggerType:
+          type: string
+          required: false
+          enum:
+            - None
+            - PlatformEvent
+            - RecordAfterSave
+            - RecordBeforeDelete
+            - RecordBeforeSave
+            - Scheduled
+            - ScheduledJourney
+        recordTriggerType:
+          type: string
+          required: false
+          enum:
+            - Create
+            - CreateAndUpdate
+            - Delete
+            - None
+            - Update
+  /orchestration/instances:
+    get:
+      description: Retrieves a collection of Orchestration instances
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FlowOrchestrationInstanceCollectionRepresentation
+      queryParameters:
+        relatedRecordId:
+          type: string
+          required: false
+  /runtime/{flowDevName}:
+    /navigateFlow:
+      post:
+        description: Navigate a flow
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: FlowRuntimeResponseRepresentation
+        body:
+          application/json:
+            type: FlowRuntimeNavigateRequestRepresentation
+            (oas-body-name): request
+      uriParameters:
+        flowDevName:
+          type: string
+          required: true
+    /resumeFlow:
+      post:
+        description: Resume a flow
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: FlowRuntimeResponseRepresentation
+        queryParameters:
+          pausedInterviewId:
+            type: string
+            required: false
+      uriParameters:
+        flowDevName:
+          type: string
+          required: true
+    /startFlow:
+      post:
+        description: Starts a flow
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: FlowRuntimeResponseRepresentation
+        queryParameters:
+          arguments:
+            type: string
+            required: false
+          debugAsUserId:
+            type: string
+            required: false
+          enableRollbackMode:
+            type: boolean
+            required: false
+          enableTrace:
+            type: boolean
+            required: false
+          flowVersionId:
+            type: string
+            required: false
+      uriParameters:
+        flowDevName:
+          type: string
+          required: true

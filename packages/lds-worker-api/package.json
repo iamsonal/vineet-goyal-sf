@@ -28,7 +28,7 @@
         "@salesforce/lds-drafts": "1.39.1",
         "@salesforce/lds-runtime-mobile": "1.39.1",
         "nimbus-types": "^2.0.0-alpha1",
-        "o11y": "^238.1.4"
+        "o11y": "238.5.1"
     },
     "bundlesize": [
         {

@@ -13246,18 +13246,18 @@ nwsapi@^2.2.0:
   resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.0.tgz#204879a9e3d068ff2a55139c2c772780681a38b7"
   integrity sha512-h2AatdwYH+JHiZpv7pt/gSX1XoRGb7L/qSIeuqA6GwYoF9w1vP1cw42TO0aI2pNyshRK5893hNSl+1//vHK7hQ==
 
-o11y@^238.1.4:
-  version "238.1.4"
-  resolved "https://registry.yarnpkg.com/o11y/-/o11y-238.1.4.tgz#65683e81b299b2986ea1953c4f6551b54e82fd8c"
-  integrity sha512-Zt4kv3hrtDmwiH+bZoMs9SsYVmw0uIon4za49Nvu3FnCpP+3a4uJOPzZRjcQn4+LZ/bi8KVXSntb+v5Pppd6dA==
+o11y@238.5.1:
+  version "238.5.1"
+  resolved "https://registry.npmjs.org/o11y/-/o11y-238.5.1.tgz#c42921f89a7e17c3c0bd69589e0515465ad8874d"
+  integrity sha512-EpVn7ZMFeLLFrZtihFWQHgRPhfjHZY+o9CqwcVkaGOGKaZKyAz40pNSZ7Yr7Bb2RJGpfxFjIlHgX/lHibKbouw==
   dependencies:
-    o11y_schema "238.0.0"
+    o11y_schema "238.10.0"
     protobufjs "6.10.2"
 
-o11y_schema@238.0.0:
-  version "238.0.0"
-  resolved "https://registry.yarnpkg.com/o11y_schema/-/o11y_schema-238.0.0.tgz#a9d11b46b94e3dc680dcf86b1dbf72d62e0a2688"
-  integrity sha512-Cc0fNK4Xmvcq+LS/hzn0cOhYJi718vmz4Ynmue8YNT9KbxdGrxE9W4lZCcQtS3HiG7n5z44dkDZ7+J95boA4vw==
+o11y_schema@238.10.0:
+  version "238.10.0"
+  resolved "https://registry.npmjs.org/o11y_schema/-/o11y_schema-238.10.0.tgz#262a95071b354b3715d344aca07f9148398512f6"
+  integrity sha512-HcwMJK24MSUSZTekVEOoJT2uHtSa71UwCj6D0UdoRmCY5Whw/EEvgz/SWNUtEYLRTPp8AN6Ca8qnVrUjg/GzlA==
 
 oauth-sign@~0.9.0:
   version "0.9.0"

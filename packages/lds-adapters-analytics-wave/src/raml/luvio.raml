@@ -8,6 +8,8 @@ uses:
 (luvio.ttl): 2592000000
 
 types:
+  ActionCollectionRepresentation:
+    (luvio.ttl): 300
   BaseWaveAssetRepresentation:
     (luvio.ttl): 5000
     (luvio.key):
@@ -93,6 +95,10 @@ types:
     (luvio.ttl): 300
 
 /wave:
+  /actions/{entityId}:
+    get:
+      (luvio.adapter):
+        name: getActions
   /asset/{assetId}/schedule:
     get:
       (luvio.adapter):

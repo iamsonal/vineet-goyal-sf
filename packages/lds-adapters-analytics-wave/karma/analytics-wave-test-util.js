@@ -36,6 +36,34 @@ function getExecuteQueryMatcher(config) {
     });
 }
 
+// Actions
+function mockGetActionsNetworkOnce(config, mockData) {
+    const paramMatch = getActionsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetActionsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getActionsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getActionsMatcher(config) {
+    let { entityId } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/actions/${entityId}`,
+        queryParams: {},
+    });
+}
+
 // Analytics Limits
 function mockGetAnalyticsLimitsNetworkOnce(config, mockData) {
     const paramMatch = getAnalyticsLimitsMatcher(config);
@@ -1475,6 +1503,8 @@ function expireAsset() {
 
 export {
     URL_BASE,
+    mockGetActionsNetworkOnce,
+    mockGetActionsNetworkErrorOnce,
     mockExecuteQueryNetworkOnce,
     mockExecuteQueryNetworkErrorOnce,
     mockGetAnalyticsLimitsNetworkOnce,

@@ -1,0 +1,134 @@
+{
+    "actions": [
+        {
+            "apiName": "FeedItem.TextPost",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/share_post_120.png",
+            "label": "Post",
+            "primaryColor": "65CAE4",
+            "subType": "Post"
+        },
+        {
+            "apiName": "FeedItem.ContentPost",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/share_file_120.png",
+            "label": "File",
+            "primaryColor": "BAAC93",
+            "subType": "Post"
+        },
+        {
+            "apiName": "FeedItem.MobileSmartActions",
+            "label": "Mobile Smart Actions",
+            "subType": "Post"
+        },
+        {
+            "apiName": "FeedItem.RypplePost",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/share_thanks_120.png",
+            "label": "Thanks",
+            "primaryColor": "E9696E",
+            "subType": "Post"
+        },
+        {
+            "apiName": "FeedItem.LinkPost",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/share_link_120.png",
+            "label": "Link",
+            "primaryColor": "7A9AE6",
+            "subType": "Post"
+        },
+        {
+            "apiName": "FeedItem.PollPost",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/share_poll_120.png",
+            "label": "Poll",
+            "primaryColor": "699BE1",
+            "subType": "Post"
+        },
+        {
+            "apiName": "FeedItem.QuestionPost",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/question_post_action_120.png",
+            "label": "Question",
+            "primaryColor": "32AF5C",
+            "subType": "Post"
+        },
+        {
+            "apiName": "Global.LogACall",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/log_a_call_120.png",
+            "label": "Log a Call",
+            "primaryColor": "48C3CC",
+            "subType": "LogACall"
+        },
+        {
+            "apiName": "Global.NewAccount",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_account_120.png",
+            "label": "New Account",
+            "primaryColor": "236FBD",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewCase",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_case_120.png",
+            "label": "New Case",
+            "primaryColor": "B7A752",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewContact",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_contact_120.png",
+            "label": "New Contact",
+            "primaryColor": "56458C",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewEvent",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_event_120.png",
+            "label": "New Event",
+            "primaryColor": "1797C0",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewGroup",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_group_120.png",
+            "label": "New Group",
+            "primaryColor": "5e87de",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewLead",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_lead_120.png",
+            "label": "New Lead",
+            "primaryColor": "E39321",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewNote",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_note_120.png",
+            "label": "New Note",
+            "primaryColor": "E6D478",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewOpportunity",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_opportunity_120.png",
+            "label": "New Opportunity",
+            "primaryColor": "E5C130",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.NewTask",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_task_120.png",
+            "label": "New Task",
+            "primaryColor": "1797C0",
+            "subType": "Create"
+        },
+        {
+            "apiName": "Global.SendEmail",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/email_120.png",
+            "label": "Email",
+            "primaryColor": "95AEC5",
+            "subType": "SendEmail"
+        },
+        {
+            "apiName": "ChangeOwnerOne",
+            "iconUrl": "https://test1com5.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/change_owner_120.png",
+            "label": "Change Owner",
+            "primaryColor": "0070d2"
+        }
+    ]
+}

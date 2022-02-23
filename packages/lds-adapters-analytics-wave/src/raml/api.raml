@@ -98,6 +98,37 @@ types:
           false). There can be only one unique ID for any dataset.
         type: boolean
         required: false # TODO Hand-rolled W-8253396
+  ActionCollectionRepresentation:
+    description: Wave action collection representation.
+    type: object
+    properties:
+      actions:
+        description: Get all Actions
+        type: array
+        items:
+          type: ActionRepresentation
+  ActionRepresentation:
+    description: Wave action representation.
+    type: object
+    properties:
+      apiName:
+        description: api name
+        type: string
+      iconUrl:
+        description: icon Url
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: label
+        type: string
+      primaryColor:
+        description: primary color
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      subType:
+        description: sub type
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   AdvancedPropertyRepresentation:
     description: An advanced property is an object-level replication property for
       a data source.
@@ -5199,6 +5230,19 @@ types:
         required: false # TODO Hand-rolled W-8253396
 
 /wave:
+  /actions/{entityId}:
+    get:
+      description: Get a Actions resource representation.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ActionCollectionRepresentation
+    uriParameters:
+      entityId:
+        type: string
+        required: true
   /asset/{assetId}/schedule:
     get:
       description: Retrieves the schedule for an asset.

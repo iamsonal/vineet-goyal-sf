@@ -221,3 +221,6 @@ export { debugLog } from './debug/DebugLog';
 
 // so adapter modules can find our luvio instance
 export { withDefaultLuvio } from '@salesforce/lds-default-luvio';
+
+// re-export type to avoid leaky abstraction
+export type { ObservabilityContext } from '@mobileplatform/nimbus-plugin-lds';

@@ -1,7 +1,12 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import type { ResourceRequest, FetchResponse, NetworkAdapter } from '@luvio/engine';
+import type {
+    ResourceRequest,
+    FetchResponse,
+    NetworkAdapter,
+    ResourceRequestContext,
+} from '@luvio/engine';
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from './networkUtils';
 
 import { idleDetector } from 'o11y/client';
@@ -9,13 +14,14 @@ import { idleDetector } from 'o11y/client';
 const tasker = idleDetector.declareNotifierTaskMulti('NimbusNetworkAdapter');
 
 export const NimbusNetworkAdapter: NetworkAdapter = (
-    request: ResourceRequest
+    request: ResourceRequest,
+    resourceRequestContext?: ResourceRequestContext
 ): Promise<FetchResponse<any>> => {
     tasker.add();
     return new Promise<FetchResponse<any>>((resolve, reject) => {
         try {
             __nimbus.plugins.LdsNetworkAdapter.sendRequest(
-                buildNimbusNetworkPluginRequest(request),
+                buildNimbusNetworkPluginRequest(request, resourceRequestContext),
                 (response) => {
                     const ldsResponse = buildLdsResponse(response);
 

@@ -20,6 +20,7 @@ import {
     NO_DRAFT_CREATED_MESSAGE,
     DRAFT_DOESNT_EXIST_MESSAGE,
 } from './NativeFetchResponse';
+import type { ObservabilityContext } from 'native/ldsEngineMobile';
 import { debugLog } from 'native/ldsEngineMobile';
 
 let adapterCounter = 0;
@@ -36,9 +37,15 @@ type NativeOnResponse = (value: NativeCallbackValue) => void;
 type Unsubscribe = () => void;
 type NativeCachePolicy = CachePolicy;
 type NativeAdapterRequestPriority = 'high' | 'normal' | 'background';
+
+// currently these types match up exactly, if they ever change we'll require
+// a coerce function to adapt them
+type NativeObservabilityContext = ObservabilityContext;
+
 interface NativeAdapterRequestContext {
     cachePolicy?: NativeCachePolicy;
     priority?: NativeAdapterRequestPriority;
+    observabilityContext?: NativeObservabilityContext;
 }
 
 /**
@@ -68,11 +75,19 @@ function buildAdapterRequestContext(
     if (nativeRequestContext === undefined) {
         return undefined;
     }
-    const { cachePolicy, priority } = nativeRequestContext;
-    return {
+    const { cachePolicy, priority, observabilityContext } = nativeRequestContext;
+
+    const requestContext: AdapterRequestContext = {
         cachePolicy: buildCachePolicy(cachePolicy),
         priority,
     };
+
+    if (observabilityContext !== undefined) {
+        requestContext.requestCorrelator = {
+            observabilityContext,
+        };
+    }
+    return requestContext;
 }
 
 function buildInvalidConfigError(error: unknown): NativeCallbackValue {

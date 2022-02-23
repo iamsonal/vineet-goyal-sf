@@ -1,5 +1,5 @@
-import type { Request, Response } from '@mobileplatform/nimbus-plugin-lds';
-import type { ResourceRequest, FetchResponse } from '@luvio/engine';
+import type { Request, Response, ObservabilityContext } from '@mobileplatform/nimbus-plugin-lds';
+import type { ResourceRequest, FetchResponse, ResourceRequestContext } from '@luvio/engine';
 import { HttpStatusCode } from '@luvio/engine';
 import {
     ArrayIsArray,
@@ -108,8 +108,28 @@ function parseIfPresent(value: string | null): any | null {
     return JSONParse(value);
 }
 
-export function buildNimbusNetworkPluginRequest(resourceRequest: ResourceRequest): Request {
+interface RequestCorrelator {
+    observabilityContext?: ObservabilityContext;
+}
+
+export function buildNimbusNetworkPluginRequest(
+    resourceRequest: ResourceRequest,
+    resourceRequestContext?: ResourceRequestContext
+): Request {
     const { basePath, baseUri, method, headers, queryParams, body } = resourceRequest;
+
+    let observabilityContext: ObservabilityContext | null = null;
+
+    if (
+        resourceRequestContext !== undefined &&
+        resourceRequestContext.requestCorrelator !== undefined &&
+        (resourceRequestContext.requestCorrelator as RequestCorrelator).observabilityContext !==
+            undefined
+    ) {
+        ({ observabilityContext = null } =
+            resourceRequestContext.requestCorrelator as RequestCorrelator);
+    }
+
     return {
         method: methodFromResourceRequestMethod(method),
         body: stringifyIfPresent(body),
@@ -117,6 +137,7 @@ export function buildNimbusNetworkPluginRequest(resourceRequest: ResourceRequest
         queryParams: ldsParamsToString(queryParams),
         path: `${baseUri}${basePath}`,
         priority: priorityFromResourceRequest(resourceRequest),
+        observabilityContext,
     };
 }
 

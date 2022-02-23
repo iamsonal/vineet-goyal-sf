@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@luvio/engine';
+import { ResourceRequest, ResourceRequestContext } from '@luvio/engine';
 import { Response } from '@mobileplatform/nimbus-plugin-lds';
 
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from '../network/networkUtils';
@@ -21,6 +21,49 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
+                body: '{}',
+                headers: { 'Foo-Header': 'Bar' },
+                path: '/base/uri/foo/123',
+                priority: 'normal',
+                queryParams: { q1: 'q1Value', q2: 'q2Value' },
+            });
+        });
+
+        it('properly builds the observability context', () => {
+            // Arrange
+            const resourceRequest: ResourceRequest = {
+                baseUri: '/base/uri',
+                basePath: '/foo/123',
+                method: 'get',
+                priority: 'normal',
+                body: {},
+                headers: { 'Foo-Header': 'Bar' },
+                queryParams: { q1: 'q1Value', q2: 'q2Value' },
+                urlParams: { id: '123' },
+            };
+
+            const resourceRequestContext: ResourceRequestContext = {
+                requestCorrelator: {
+                    observabilityContext: {
+                        rootId: 'app-priming',
+                        isRootActivitySampled: true,
+                        traceId: 'uuid-some-uuid',
+                    },
+                },
+            };
+
+            // Act
+            const result = buildNimbusNetworkPluginRequest(resourceRequest, resourceRequestContext);
+
+            // Assert
+            expect(result).toEqual({
+                method: 'GET',
+                observabilityContext: {
+                    rootId: 'app-priming',
+                    isRootActivitySampled: true,
+                    traceId: 'uuid-some-uuid',
+                },
                 body: '{}',
                 headers: { 'Foo-Header': 'Bar' },
                 path: '/base/uri/foo/123',
@@ -45,6 +88,7 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
                 body: null,
                 headers: {},
                 path: '/base/uri/foo',
@@ -69,6 +113,7 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
                 body: null,
                 headers: {},
                 path: '/base/uri/foo',
@@ -93,6 +138,7 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
                 body: null,
                 headers: {},
                 priority: 'normal',
@@ -118,6 +164,7 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'POST',
+                observabilityContext: null,
                 body: JSON.stringify(body),
                 headers: {},
                 path: '/base/uri/foo',

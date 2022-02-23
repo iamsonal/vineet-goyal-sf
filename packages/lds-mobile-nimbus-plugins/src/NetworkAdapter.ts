@@ -9,10 +9,37 @@ declare module 'nimbus-types' {
 }
 
 /**
+ *  ObservabilityContext helps us trace the path of a request
+ *  through the Native and JS layers
+ */
+export interface ObservabilityContext {
+    /**
+     * Uniquely identify a root activity like Priming, Navigation etc
+     * Multiple adapter calls can be tied to one root activity
+     *
+     * Optional
+     */
+    rootId?: string;
+
+    /**
+     * Should we transmit the activity from the client side
+     *
+     * Required if rootId is provided.
+     */
+    isRootActivitySampled?: boolean;
+
+    /**
+     * Uniquely identifies each adapter call
+     *
+     * Optional
+     */
+    traceId?: string;
+}
+
+/**
  * A `NetworkError` represents a type of transient request error and an associated message
  * if one is available.
  */
-
 export interface NetworkError {
     type: 'timeout' | 'unspecified';
     message: string | null;
@@ -56,6 +83,7 @@ export interface Request {
     headers: { [key: string]: string };
     queryParams: { [key: string]: string };
     body: string | null;
+    observabilityContext: ObservabilityContext | null;
 }
 
 /**

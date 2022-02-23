@@ -3,7 +3,7 @@ import { MASTER_RECORD_TYPE_ID, mockGetPicklistValuesNetwork } from 'uiapi-test-
 
 import GetPicklistValues from '../lwc/get-picklist-values';
 
-const MOCK_PREFIX = 'wire/getPicklistValues/__karma__/discriminator/data/';
+const MOCK_PREFIX = 'raml-artifacts/getPicklistValues/__karma__/discriminator/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);

@@ -1,19 +1,15 @@
 import type {
-    AdapterFactory,
     Luvio,
     FetchResponse,
     Snapshot,
     SnapshotRefresh,
     ResourceResponse,
-    AdapterRequestContext,
     StoreLookup,
     CoercedAdapterRequestContext,
     DispatchResourceRequestContext,
 } from '@luvio/engine';
-import {
-    adapterName as getPicklistValuesAdapterName,
-    validateAdapterConfig,
-} from '../../generated/adapters/getPicklistValues';
+import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import { validateAdapterConfig as validateAdapterConfigOriginal } from '../../generated/adapters/getPicklistValues';
 import getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName, {
     getResponseCacheKeys,
 } from '../../generated/resources/getUiApiObjectInfoPicklistValuesByFieldApiNameAndObjectApiNameAndRecordTypeId';
@@ -143,7 +139,7 @@ type BuildSnapshotContext = {
     luvio: Luvio;
 };
 
-function buildNetworkSnapshotCachePolicy(
+export function buildNetworkSnapshotCachePolicy(
     context: BuildSnapshotContext,
     coercedAdapterRequestContext: CoercedAdapterRequestContext
 ): Promise<Snapshot<PicklistValuesRepresentation, any>> {
@@ -164,7 +160,7 @@ function buildNetworkSnapshotCachePolicy(
     return buildNetworkSnapshot(luvio, config, dispatchOptions);
 }
 
-function buildCachedSnapshotCachePolicy(
+export function buildCachedSnapshotCachePolicy(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<PicklistValuesRepresentation>
 ): Snapshot<PicklistValuesRepresentation, any> {
@@ -196,29 +192,13 @@ function buildCachedSnapshotCachePolicy(
 }
 
 const picklistValuesConfigPropertyNames = {
-    displayName: getPicklistValuesAdapterName,
+    displayName: 'getPicklistValues',
     parameters: {
         required: ['recordTypeId', 'fieldApiName'],
         optional: [],
     },
 };
 
-export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepresentation> = (
-    luvio: Luvio
-) =>
-    function getPicklistValues(untrusted: unknown, requestContext?: AdapterRequestContext) {
-        const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);
-        if (config === null) {
-            return null;
-        }
-
-        return luvio.applyCachePolicy(
-            requestContext || {},
-            {
-                luvio,
-                config,
-            },
-            buildCachedSnapshotCachePolicy,
-            buildNetworkSnapshotCachePolicy
-        );
-    };
+export function validateAdapterConfig(untrusted: unknown, _config: AdapterValidationConfig) {
+    return validateAdapterConfigOriginal(untrusted, picklistValuesConfigPropertyNames);
+}

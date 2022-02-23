@@ -214,10 +214,16 @@ const RAML_ARTIFACTS = {
     ],
     '/adapters/getPicklistValues': [
         {
-            identifier: 'getPicklistValuesAdapterFactory',
-            path: path.join('src', 'wire', 'getPicklistValues', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'validateAdapterConfig',
+            path: path.join('src', 'raml-artifacts', 'getPicklistValues', 'index.ts'),
+        },
+        {
+            identifier: 'buildNetworkSnapshotCachePolicy',
+            path: path.join('src', 'raml-artifacts', 'getPicklistValues', 'index.ts'),
+        },
+        {
+            identifier: 'buildCachedSnapshotCachePolicy',
+            path: path.join('src', 'raml-artifacts', 'getPicklistValues', 'index.ts'),
         },
     ],
     '/adapters/getRecordAvatars': [

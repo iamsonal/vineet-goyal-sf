@@ -1,4 +1,4 @@
-import { factory as getPicklistValues } from '../index';
+import { getPicklistValuesAdapterFactory as getPicklistValues } from '../../../generated/adapters/getPicklistValues';
 
 describe('validation', () => {
     it('throws a TypeError if the fieldApiName and recordTypeId is not defined', () => {

@@ -8,7 +8,7 @@ import { getPicklistValues_imperative } from 'lds-adapters-uiapi';
 
 import GetPicklistValues from '../lwc/get-picklist-values';
 
-const MOCK_PREFIX = 'wire/getPicklistValues/__karma__/basic/data/';
+const MOCK_PREFIX = 'raml-artifacts/getPicklistValues/__karma__/basic/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);

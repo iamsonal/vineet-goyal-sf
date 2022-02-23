@@ -1,7 +1,7 @@
 import { buildSuccessMockPayload, MockPayload } from '@luvio/adapter-test-library';
 import { testDataEmittedWhenStale, testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
 
-import { factory as getPicklistValues } from '../index';
+import { getPicklistValuesAdapterFactory as getPicklistValues } from '../../../generated/adapters/getPicklistValues';
 import picklistResponse from './mockData/picklist-Account-MasterRecordTypeId-fieldApiName-Type.json';
 import { TTL } from '../../../generated/types/PicklistValuesRepresentation';
 

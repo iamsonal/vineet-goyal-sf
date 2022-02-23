@@ -7,7 +7,7 @@ import {
 } from 'uiapi-test-util';
 
 import GetPicklistValuesByRecordType from '../lwc/get-picklist-values-by-record-type';
-import GetPicklistValues from '../../../getPicklistValues/__karma__/lwc/get-picklist-values';
+import GetPicklistValues from '../../../../raml-artifacts/getPicklistValues/__karma__/lwc/get-picklist-values';
 
 const MOCK_PREFIX = 'wire/getPicklistValuesByRecordType/__karma__/basic/data/';
 

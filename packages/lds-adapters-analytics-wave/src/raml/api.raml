@@ -2977,6 +2977,13 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  RestoreDatasetVersionInputRepresentation:
+    description: Input representation for Restore Dataset Version.
+    type: object
+    properties:
+      sourceVersion:
+        description: Source Version to which restore should happen
+        type: AssetReferenceInputRepresentation # TODO Hand-rolled W-8988482
   RestoreDatasetVersionRepresentation:
     description: Representation of a dataset version restore.
     type: object
@@ -5735,6 +5742,18 @@ types:
             body:
               application/json:
                 type: DatasetVersionCollectionRepresentation
+      post:
+        description: Post a dataset version as the current version.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RestoreDatasetVersionRepresentation
+        body:
+          application/json:
+            type: RestoreDatasetVersionInputRepresentation
+            (oas-body-name): sourceVersion
       /{versionId}:
         get:
           description: Get a dataset version resource representation.

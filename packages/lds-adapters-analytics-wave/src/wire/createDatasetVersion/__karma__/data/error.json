@@ -1,0 +1,11 @@
+{
+    "ok": false,
+    "status": 404,
+    "statusText": "NOT_FOUND",
+    "body": [
+        {
+            "errorCode": "269",
+            "message": "Can't find connector by ID 0ItS7000000xxxxxxx"
+        }
+    ]
+}

@@ -6444,6 +6444,44 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/datasets/{datasetIdOrApiName}/versions', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CKKCA2/versions`,
+                body: {
+                    sourceVersion: {
+                        id: '0Fcxx0000004C92CAE',
+                    },
+                },
+            },
+            [
+                'WaveController.createDatasetVersion',
+                {
+                    sourceVersion: {
+                        id: '0Fcxx0000004C92CAE',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CKKCA2/versions`,
+                body: {
+                    sourceVersion: {
+                        id: '0Fcxx0000004C92CAE',
+                    },
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}', () => {
         testControllerInput(
             {

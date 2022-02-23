@@ -222,6 +222,11 @@ const DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/datasets$`, 'i');
 
 const DATASET_PATH = new RegExp(`${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}$`, 'i');
 
+const DATASET_VERSIONS_PATH = new RegExp(
+    `${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}/versions$`,
+    'i'
+);
+
 const DATASET_VERSION_PATH = new RegExp(
     `${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}/versions/([A-Z0-9_]){15,18}$`,
     'i'
@@ -1432,6 +1437,14 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATASET_VERSION_PATH.test(path),
         transport: {
             controller: 'WaveController.updateDatasetVersion',
+        },
+    },
+    createDatasetVersion: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATASET_VERSIONS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.createDatasetVersion',
         },
     },
     getSecurityCoverageDatasetVersion: {

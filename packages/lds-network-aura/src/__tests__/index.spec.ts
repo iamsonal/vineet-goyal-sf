@@ -10516,7 +10516,6 @@ describe('routes', () => {
             {}
         );
     });
-
     describe('get /asset-creation/starter-templates', () => {
         testControllerInput(
             {
@@ -10616,6 +10615,98 @@ describe('routes', () => {
                 basePath: `/objects`,
             },
             {}
+        );
+    });
+    describe('post /connect/aiaccelerator/predictions', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/aiaccelerator/predictions`,
+                body: {
+                    predictionInput: {
+                        usecaseDefiniton: '0sIx00000000006EAA',
+                        predictionDefinition: '1ORx00000004C98GAE',
+                        inputType: 'ExtractedRecordOverrides',
+                        records: ['a00x0000000CHGYAA4'],
+                        enableScoreInsightsPersistence: false,
+                        enableSuggestionPersistence: false,
+                        enableFeaturePersistence: false,
+                        async: false,
+                    },
+                },
+            },
+            [
+                'AIAcceleratorConnectFamilyController.predictions',
+                {
+                    predictionInput: {
+                        usecaseDefiniton: '0sIx00000000006EAA',
+                        predictionDefinition: '1ORx00000004C98GAE',
+                        inputType: 'ExtractedRecordOverrides',
+                        records: ['a00x0000000CHGYAA4'],
+                        enableScoreInsightsPersistence: false,
+                        enableSuggestionPersistence: false,
+                        enableFeaturePersistence: false,
+                        async: false,
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/aiaccelerator/predictions`,
+            },
+
+            {
+                inputType: 'ExtractedRecordOverrides',
+                insightsSettings: {
+                    prescriptionImpactPercentage: 0,
+                    maxPrescriptions: 1,
+                    maxInsights: 1,
+                },
+                predictionDefinition: '1ORx0000000CaR7GAK',
+                predictionPlatform: 'Einstein Discovery',
+                predictionPurpose: 'FTestSampleMLUsecase',
+                predictions: [
+                    {
+                        model: {
+                            id: '1Otx0000000CaR7CAK',
+                        },
+                        prediction: {
+                            insights: [
+                                {
+                                    columns: [
+                                        {
+                                            columnName: 'DemoModel__c.Sales_Units__c',
+                                            columnValue: '376',
+                                        },
+                                    ],
+                                    value: 682.7992309704471,
+                                },
+                            ],
+                            score: 1368.8337623808916,
+                        },
+                        prescriptions: [
+                            {
+                                columns: [
+                                    {
+                                        columnName: 'DemoModel__c.Sales_PPG__c',
+                                        columnValue: '01tx00000006j2FAAQ',
+                                    },
+                                ],
+                                value: 1243.3972104607365,
+                            },
+                        ],
+                        status: 'Success',
+                    },
+                ],
+                primaryResponseObjRecordIds: [null],
+                secondaryResponseObjRecordIds: ['a01x00000009qltAAA'],
+            }
         );
     });
 

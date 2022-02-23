@@ -1,0 +1,74 @@
+{
+    "featureExtractor": "SampleApexFeatureExtractor",
+    "featureExtractorType": "APEX",
+    "inputType": "ExtractedRecordOverrides",
+    "insightsSettings": {
+        "prescriptionImpactPercentage": 0,
+        "maxPrescriptions": 2,
+        "maxInsights": 2
+    },
+    "predictionDefinition": "1ORx00000004C98GAE",
+    "predictionPlatform": "Einstein Discovery",
+    "predictionPurpose": "FTestSampleMLUsecase",
+    "predictions": [
+        {
+            "model": {
+                "id": "1Otx00000004C98CAE"
+            },
+            "prediction": {
+                "insights": [
+                    {
+                        "columns": [
+                            {
+                                "columnName": "Sobeys_Small_Data__c.sap_ppg_id__c",
+                                "columnValue": "01tx00000006j2DAAQ"
+                            },
+                            {
+                                "columnName": "Sobeys_Small_Data__c.sales_units__c",
+                                "columnValue": "20"
+                            }
+                        ],
+                        "value": -543.7967075787816
+                    },
+                    {
+                        "columns": [
+                            {
+                                "columnName": "Sobeys_Small_Data__c.sap_source_id__c",
+                                "columnValue": "0YQx0000000CaS8GAK"
+                            },
+                            {
+                                "columnName": "Sobeys_Small_Data__c.sales_units__c",
+                                "columnValue": "20"
+                            }
+                        ],
+                        "value": -266.7549444809931
+                    }
+                ],
+                "score": -196.02606563424106
+            },
+            "prescriptions": [
+                {
+                    "columns": [
+                        {
+                            "columnName": "Sobeys_Small_Data__c.sales_units__c",
+                            "columnValue": "335 - 1783"
+                        }
+                    ],
+                    "value": 1303.1628706615768
+                },
+                {
+                    "columns": [
+                        {
+                            "columnName": "Sobeys_Small_Data__c.sales_units__c",
+                            "columnValue": "213 - 334"
+                        }
+                    ],
+                    "value": 1090.4908662274909
+                }
+            ],
+            "status": "Success"
+        }
+    ],
+    "primaryResponseObjRecordIds": [null],
+    "secondaryResponseObjRecordIds": [null]
+}

@@ -555,6 +555,8 @@ const IDENTIFY_VERIFICATION_VERIFY_RECORD_PATH = new RegExp(
     'i'
 );
 
+const AI_ACCELERATOR_PREDICTIONS = new RegExp(`${CONNECT_BASE_URI}/aiaccelerator/predictions`, 'i');
+
 const GET_STARTER_TEMPLATE_BYID_PATH = new RegExp(
     `${ASSETCREATION_BASE_URI}/starter-templates/([A-Z0-9]){1,18}$`,
     'i'
@@ -565,6 +567,14 @@ const GET_STARTER_TEMPLATES_PATH = new RegExp(`${ASSETCREATION_BASE_URI}/starter
 const POST_ASSET_OBJECT_PATH = new RegExp(`${ASSETCREATION_BASE_URI}/objects`, 'i');
 
 const connect: ApiFamily = {
+    predictions: {
+        method: 'post',
+        predicate: (path) =>
+            path.startsWith(CONNECT_BASE_URI) && AI_ACCELERATOR_PREDICTIONS.test(path),
+        transport: {
+            controller: 'AIAcceleratorConnectFamilyController.predictions',
+        },
+    },
     lockRecord: {
         method: 'put',
         predicate: (path) => path.startsWith(CONNECT_BASE_URI) && LOCK_RECORD_PATH.test(path),

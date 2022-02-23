@@ -1,0 +1,10 @@
+{
+    "predictionInput": {
+        "usecaseDefinition": "0sIx00000000006EAA",
+        "predictionDefinition": "1ORx00000004C98GAE",
+        "inputType": "Records",
+        "records": {
+            "wrappedList": ["a00x0000000CHa0AAG", "a00x0000000CHa1AAG"]
+        }
+    }
+}

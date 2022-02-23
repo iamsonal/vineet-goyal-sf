@@ -1,0 +1,21 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'Einstein-AIAccelerator'
+(luvio.ttl): 36000
+
+types:
+  PredictionOutputRepresentation:
+    (luvio.ttl): 1000
+    (luvio.opaque): true
+    (luvio.key):
+      predictionDefinition: predictionDefinition
+
+/connect:
+  /aiaccelerator/predictions:
+    post:
+      (luvio.adapter):
+        name: predictions

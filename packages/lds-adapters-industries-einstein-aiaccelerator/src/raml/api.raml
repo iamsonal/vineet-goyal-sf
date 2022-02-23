@@ -1,0 +1,464 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  Column:
+    description: .
+    type: object
+    properties:
+      columnLabel:
+        description: .
+        type: string | nil
+        required: false
+      columnName:
+        description: .
+        type: string | nil
+        required: false
+      columnValue:
+        description: .
+        type: string | nil
+        required: false
+      initialValue:
+        description: .
+        type: string | nil
+        required: false
+  ColumnMapWrap:
+    description: ColumnMapWrap wrapper object for use in PredictionInputRepresentation.
+    type: object
+    properties:
+      columnMap:
+        description: Map of the Field Map.
+        type: object
+        properties:
+          //:
+            type: string
+        required: false
+  FeatureExtractionParametersList:
+    description: featureExtractionParametersList wrapper object for use in PredictionInputRepresentation.
+    type: object
+    properties:
+      featureExtractionParameters:
+        description: FeatureExtractionParameters
+        type: array
+        items:
+          type: object
+        required: false
+  FeatureExtractionParametersMapValue:
+    description: featureExtractionParameterMapValue wrapper object for use as child
+      wrapper of FeatureExtractionParametersMap.
+    type: object
+    properties:
+      featureExtractionParametersMapValue:
+        description: Map of the Field Map.
+        type: object
+        required: false
+  Insight:
+    description: .
+    type: object
+    properties:
+      columns:
+        description: .
+        type: array
+        items:
+          type: Column | nil
+        required: false
+      value:
+        description: .
+        format: double
+        type: number
+        required: false
+  InsightsSettingsMap:
+    description: InsightsSettingsMap wrapper object for use in PredictionInputRepresentation.
+    type: object
+    properties:
+      insightsSettings:
+        description: insightsSettings
+        type: object
+        properties:
+          //:
+            type: integer
+        required: false
+  ModelFeature:
+    description: .
+    type: object
+    properties:
+      label:
+        description: Model field label
+        type: string | nil
+        required: false
+      name:
+        description: Model field name
+        type: string | nil
+        required: false
+      type:
+        description: Model field type
+        type: string | nil
+        required: false
+  Prediction:
+    description: .
+    type: object
+    properties:
+      historyRefPointScore:
+        description: .
+        format: double
+        type: number
+        required: false
+      insights:
+        description: .
+        type: array
+        items:
+          type: Insight | nil
+        required: false
+      missingColumns:
+        description: .
+        type: array
+        items:
+          type: string | nil
+        required: false
+      outOfBoundsColumns:
+        description: .
+        type: array
+        items:
+          type: Column | nil
+        required: false
+      score:
+        description: .
+        format: double
+        type: number
+        required: false
+
+  PredictionInputWrapperRepresentation:
+    description: Wrapper for PredictInputRepresentation.
+    type: object
+    properties:
+      predictionInput:
+        description: oas body name.
+        type: PredictionInputRepresentation
+  PredictionInputRepresentation:
+    description: Request for which predictions are fetched.
+    type: object
+    properties:
+      async:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      columnNames:
+        description: .
+        type: WrappedList
+        required: false # TODO Hand-rolled W-9314597
+      enableFeaturePersistence:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      enableInsightPersistence:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      enableScorePersistence:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      enableSuggestionPersistence:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      enrichModelClassification:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      enrichModelFeatures:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      enrichPredictionDefinition:
+        description: .
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      featureColumnMap:
+        description: .
+        type: ColumnMapWrap
+        required: false # TODO Hand-rolled W-9314597
+      featureExtractionParameters:
+        description: .
+        type: FeatureExtractionParametersList
+        required: false # TODO Hand-rolled W-9314597
+      featureExtractorId:
+        description: .
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      historyReferencePoint:
+        description: .
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      inputType:
+        description: .
+        type: string
+        required: true # TODO Hand-rolled W-9314597
+      insightColumnMap:
+        description: .
+        type: ColumnMapWrap
+        required: false # TODO Hand-rolled W-9314597
+      insightsSettings:
+        description: .
+        type: InsightsSettingsMap
+        required: false # TODO Hand-rolled W-9314597
+      predictionDefinition:
+        description: .
+        type: string
+        required: true # TODO Hand-rolled W-9314597
+      rawData:
+        description: .
+        type: RawDataList
+        required: false # TODO Hand-rolled W-9314597
+      records:
+        description: .
+        type: WrappedList
+        required: false # TODO Hand-rolled W-9314597
+      scorePersistenceColumn:
+        description: .
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      suggestionColumnMap:
+        description: .
+        type: ColumnMapWrap
+        required: false # TODO Hand-rolled W-9314597
+      usecaseDefinition:
+        description: .
+        type: string
+        required: true # TODO Hand-rolled W-9314597
+  PredictionObject:
+    description: .
+    type: object
+    properties:
+      model:
+        description: .
+        type: object
+        properties:
+          //:
+            type: string | nil
+      prediction:
+        description: .
+        type: Prediction | nil
+        required: false
+      status:
+        description: .
+        type: string | nil
+      suggestions:
+        description: .
+        type: array
+        items:
+          type: Suggestion | nil
+        required: false
+  PredictionOutputRepresentation:
+    description: Predictions for a given request
+    type: object
+    properties:
+      classificationThreshold:
+        description: Classification Threshold Value
+        format: double
+        type: number
+        required: false
+      classificationType:
+        description: Classification model type
+        type: string | nil
+        required: false
+      executionModeWarning:
+        description: Indicates the change in execution mode from user specified to
+          default mode configuration
+        type: string | nil
+        required: false
+      featureExtractor:
+        description: Indicates Feature Extractor Implementation class used for a request
+        type: string | nil
+        required: false
+      featureExtractorType:
+        description: Indicates Feature Extractor Type used for a request
+        type: string | nil
+        required: false
+      inputType:
+        description: .
+        type: string | nil
+      insightsSettings:
+        description: .
+        type: object
+        properties:
+          //:
+            type: integer
+        required: true
+      modelFeatures:
+        description: Columns + values that are out of bounds. These values were not
+          used when training the model
+        type: array
+        items:
+          type: ModelFeature | nil
+        required: false
+      outcomeGoal:
+        description: Indicates whether predDef maximizes or minimizes the field value.
+        type: string | nil
+        required: false
+      predictionDefinition:
+        description: .
+        type: string
+      predictionDefinitionLabel:
+        description: Label corresponding to the prediction definiton ID used for prediction
+        type: string | nil
+        required: false
+      predictionPersistenceErrorMessage:
+        description: Indicates the condition that all the entities failed to persist
+          via persistence manager
+        type: string | nil
+        required: false
+      predictionPlatform:
+        description: .
+        type: string | nil
+      predictionPurpose:
+        description: .
+        type: string | nil
+        required: false
+      predictions:
+        description: .
+        type: array
+        items:
+          type: PredictionObject | nil
+      primaryResponseObjRecordIds:
+        description: Indicates the list of recordIds where the response is persisted
+          in primary response object
+        type: array
+        items:
+          type: string | nil
+        required: false
+      requestId:
+        description: .
+        type: string | nil
+        required: false
+      secondaryResponseObjRecordIds:
+        description: Indicates the list of recordIds where the response is persisted
+          in secondary response object
+        type: array
+        items:
+          type: string | nil
+        required: false
+      status:
+        description: Indicates whether the call succeeded or failed, and in case of
+          failure also provides the reason.
+        type: Status
+        required: false
+  Prescription:
+    description: .
+    type: object
+    properties:
+      columns:
+        description: .
+        type: array
+        items:
+          type: Column | nil
+      value:
+        description: .
+        format: double
+        type: number
+  RawDataInputRepresentation:
+    description: RawDataInputRepresentation wrapper object for use as child wrapper
+      of  RawDataRep.
+    type: object
+    properties:
+      rawDataInput:
+        description: RawDataInput
+        type: array
+        items:
+          type: string
+  RawDataInputWrap:
+    description: RawDataInputWrap wrapper object for use as child wrapper of  RawDataList.
+    type: object
+    properties:
+      rawDataInputWrap:
+        description: .
+        type: array
+        items:
+          type: string
+  RawDataList:
+    description: RawDataList wrapper object for use in PredictionInputRepresentation.
+    type: object
+    properties:
+      rawData:
+        description: RawData
+        type: array
+        items:
+          type: object
+  Status:
+    description: The output representation of the Status of the request.
+    type: object
+    properties:
+      code:
+        description: get Code.
+        type: string | nil
+      message:
+        description: Get Error Message
+        type: string | nil
+      successCount:
+        description: Get success count.
+        type: integer | nil
+      totalRecommendations:
+        description: Get total recommendations.
+        type: integer | nil
+  Suggestion:
+    description: .
+    type: object
+    properties:
+      columns:
+        description: .
+        type: array
+        items:
+          type: Column | nil
+      value:
+        description: .
+        format: double
+        type: number
+  WrappedList:
+    description: WrappedList wrapper object for use in PredictionInputRepresentation.
+    type: object
+    properties:
+      wrappedList:
+        description: wrappedList
+        type: array
+        items:
+          type: string
+/connect:
+  /aiaccelerator/predictions:
+    post:
+      description: POST resource to fetch the predictions that need to be performed
+        at the store by the sales rep.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: PredictionOutputRepresentation
+      body:
+        application/json:
+          # TODO Hand-rolled W-10128739. Original type: PredictionInputRepresentation
+          type: PredictionInputWrapperRepresentation
+          #required: false  # TODO Hand-rolled W-9271732
+          (oas-body-name): predictionInput

@@ -1,0 +1,92 @@
+{
+    "predictionInput": {
+        "usecaseDefinition": "0sIxx00000006Gj",
+        "predictionDefinition": "1ORxx0000004IpY",
+        "inputType": "ExtractedRecordOverrides",
+        "records": {
+            "wrappedList": ["a00x0000000CHa0AAG", "a00x0000000CHa1AAG"]
+        },
+        "columnNames": {
+            "wrappedList": [
+                "corp_year_week__c",
+                "sap_source_id__c",
+                "sap_ppg_id__c",
+                "sales_units__c"
+            ]
+        },
+        "rawData": {
+            "rawData": [
+                {
+                    "rawDataInputWrap": {
+                        "rawDataInput": ["202016", "0YQx0000000CaS8GAK", "01tx00000006j2DAAQ", "20"]
+                    }
+                },
+                {
+                    "rawDataInputWrap": {
+                        "rawDataInput": [
+                            "202016",
+                            "0YQx0000000CaS8GAK",
+                            "01tx00000006j2DAAQ",
+                            "20000"
+                        ]
+                    }
+                }
+            ]
+        },
+        "insightsSettings": {
+            "insightsSettings": {
+                "maxSuggestionCount": 1,
+                "maxInsights": 1,
+                "suggestionImpactMinimumPct": 0
+            }
+        },
+        "featureColumnMap": {
+            "columnMap": {
+                "corp_year_week__c": "Demo__c.YearWeekFeature__c",
+                "sap_source_id__c": "Demo__c.StoreIdFeature__c",
+                "sap_ppg_id__c": "Demo__c.ProductIdFeature__c",
+                "sales_units__c": "Demo__c.SalesUnitsFeatureOverride__c"
+            }
+        },
+        "insightColumnMap": {
+            "columnMap": {
+                "INSIGHT1.Name": "Demo__c.InsightName1Override__c",
+                "INSIGHT1.Value": "Demo__c.InsightValue1__c",
+                "INSIGHT1.Impact": "Demo__c.InsightImpact1__c"
+            }
+        },
+        "suggestionColumnMap": {
+            "columnMap": {
+                "SUGGESTION1.Name": "Demo__c.RecommendationName1__c",
+                "SUGGESTION1.Value": "Demo__c.RecommendationValue1__c",
+                "SUGGESTION1.Impact": "Demo__c.RecommendationImpact1Override__c"
+            }
+        },
+        "featureExtractionParameters": {
+            "featureExtractionParameters": [
+                {
+                    "featureExtractionParametersMapValue": {
+                        "rawData": {
+                            "corp_year_week__c": "202016",
+                            "sap_source_id__c": "0YQx0000000CaS8GAK",
+                            "sap_ppg_id__c": "01tx00000006j2DAAQ",
+                            "sales_units__c": "20"
+                        }
+                    }
+                },
+                {
+                    "featureExtractionParametersMapValue": {
+                        "rawData": {
+                            "corp_year_week__c": "2020161",
+                            "sap_source_id__c": "0YQx0000000CaS8GAK1",
+                            "sap_ppg_id__c": "01tx00000006j2DAAQ1",
+                            "sales_units__c": "201"
+                        }
+                    }
+                }
+            ]
+        },
+        "enableSuggestionPersistence": false,
+        "async": false
+    }
+}

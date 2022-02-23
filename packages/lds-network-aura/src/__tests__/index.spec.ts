@@ -8574,14 +8574,14 @@ describe('routes', () => {
                         filterCriteria: [
                             {
                                 objectName: 'PaymentScheduleItem',
-                                fieldName: 'PaymentRunBatch',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
                                 value: 'Batch1',
                                 criteriaSequence: 1,
                             },
                             {
                                 objectName: 'PaymentScheduleItem',
-                                fieldName: 'PaymentRunBatch',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
                                 value: 'Batch2',
                                 criteriaSequence: 1,
@@ -8606,14 +8606,14 @@ describe('routes', () => {
                         filterCriteria: [
                             {
                                 objectName: 'PaymentScheduleItem',
-                                fieldName: 'PaymentRunBatch',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
                                 value: 'Batch1',
                                 criteriaSequence: 1,
                             },
                             {
                                 objectName: 'PaymentScheduleItem',
-                                fieldName: 'PaymentRunBatch',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
                                 value: 'Batch2',
                                 criteriaSequence: 1,

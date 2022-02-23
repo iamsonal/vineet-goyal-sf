@@ -1,0 +1,24 @@
+{
+    "id": "1stS70000004C93IAE",
+    "name": "Service plan template name",
+    "status": "SUCCESS",
+    "servicePlanTemplateGoals": [
+        {
+            "id": "1tgxx0000000001AAA",
+            "associatedGoalDefinition": {
+                "id": "",
+                "name": ""
+            }
+        }
+    ],
+    "servicePlanTemplateBenefits": [
+        {
+            "id": "1tgxx0000000002AAA",
+            "associatedBenefit": {
+                "id": "",
+                "name": "",
+                "isActive": true
+            }
+        }
+    ]
+}

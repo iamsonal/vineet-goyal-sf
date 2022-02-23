@@ -43,5 +43,6 @@
     "startDate": "2022-02-03",
     "endDate": "2023-02-03",
     "caseId": "0jiS70000000001IAA",
+    "name": "caseServicePlan",
     "servicePlanTemplateId": "1stS70000004C93IAE"
 }

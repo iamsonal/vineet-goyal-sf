@@ -9,8 +9,10 @@
             "associatedGoalDefinition": {
                 "id": "",
                 "name": "",
-                "status": ""
-            }
+                "status": "",
+                "type": "Global"
+            },
+            "sptBenefitIdList": "1tgxx0000000002AAA,1tgxx0000000002AAA"
         }
     ],
     "servicePlanTemplateBenefits": [

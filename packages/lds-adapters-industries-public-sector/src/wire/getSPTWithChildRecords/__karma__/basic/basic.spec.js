@@ -7,6 +7,8 @@ import {
 } from 'industries-public-sector-test-util';
 const MOCK_PREFIX = 'wire/getSPTWithChildRecords/__karma__/data/';
 const MOCK_SPT_WITH_CHILD_RECORDS_JSON = 'getSPTWithChildRecords';
+const MOCK_SPT_WITH_CHILD_RECORDS_WITH_REQUIRED_FIELDS_JSON =
+    'getSPTWithChildRecordsWithRequiredValues';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -14,6 +16,17 @@ function getMock(filename) {
 describe('basic', () => {
     it('fetches results for service plan template successfully using a valid configuration', async () => {
         const mock = getMock(MOCK_SPT_WITH_CHILD_RECORDS_JSON);
+        const config = {
+            servicePlanTemplateId: '1stS70000004C93IAE',
+        };
+        mockGetSPTWithChildRecordsNetworkOnce(config, mock);
+        const el = await setupElement(config, SptWithChildRecords);
+        expect(el.pushCount()).toBe(1);
+        expect(clone(el.getWiredSPTWithChildRecords())).toEqual(mock);
+    });
+
+    it('fetches results for service plan template successfully using minimum valid configuration', async () => {
+        const mock = getMock(MOCK_SPT_WITH_CHILD_RECORDS_WITH_REQUIRED_FIELDS_JSON);
         const config = {
             servicePlanTemplateId: '1stS70000004C93IAE',
         };

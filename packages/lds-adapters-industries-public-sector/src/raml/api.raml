@@ -154,6 +154,9 @@ types:
       name:
         description: Name of the Case Service Plan
         type: string
+      participantId:
+        description: ParticipantId of CaseServicePlan record
+        type: string
         required: false
       publicServiceGoals:
         description: List of PublicServiceGoal associated with this CaseServicePlan
@@ -162,6 +165,7 @@ types:
       servicePlanTemplateId:
         description: Service Plan Template Id for this CaseServicePlan
         type: string
+        required: false
       startDate:
         description: Start Date of CaseServicePlan record
         type: string
@@ -169,7 +173,6 @@ types:
       status:
         description: Status of CaseServicePlan record
         type: string
-        required: false
   EnrolleeBenefitListRepresentation:
     description: List Representation of EnrolleeBenefit
     type: object
@@ -321,6 +324,11 @@ types:
       status:
         description: Status of Goal Definition
         type: string
+        required: false
+      type:
+        description: Type of Goal Definition
+        type: string
+        required: false
   GoalDefinitionRepresentation:
     description: Output Representation of Goal Definition
     type: object
@@ -437,6 +445,10 @@ types:
         description: Priority of ServicePlanTemplateGoal Record
         type: string
         required: false
+      sptBenefitIdList:
+        description: Comma separated list of Benefit Ids
+        type: string
+        required: false
   ServicePlanTemplateRepresentation:
     description: ServicePlanTemplate record and it's related ServicePlanTemplateGoals
       and ServicePlanTemplateBenefits
@@ -475,6 +487,13 @@ types:
     properties:
       id:
         description: Id of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      name:
+        description: Name of the CaseServicePlan
+        type: string
+      participantId:
+        description: Participant of the CaseServicePlan
         type: string
         required: false # TODO Hand-rolled W-9314597
       caseId:

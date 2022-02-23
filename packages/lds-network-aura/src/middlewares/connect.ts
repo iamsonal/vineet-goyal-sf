@@ -19,6 +19,7 @@ import {
     IDENTITY_VERIFICATION_BASE_URI,
     PSS_SOCIAL_CARE_BASE_URI,
     LEARNING_CONTENT_PLATFORM_BASE_URI,
+    SMART_DATA_DISCOVERY_BASE_URI,
     ASSETCREATION_BASE_URI,
 } from './connect-base';
 
@@ -134,6 +135,8 @@ const ADATS_CATALOG_SCHEMA_PATH = new RegExp(
 
 const ADATS_CATALOG_TABLES_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/tables$`, 'i');
 const ADATS_CATALOG_TABLE_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/tables/[a-zA-Z.0-9_-]+$`);
+
+const STORIES_PATH = new RegExp(`${SMART_DATA_DISCOVERY_BASE_URI}/stories$`, 'i');
 
 const ADATS_GRANTS_PATH = new RegExp(`${ADATS_CATALOG_BASE_URI}/grants$`);
 
@@ -1765,6 +1768,17 @@ const adats: ApiFamily = {
     },
 };
 
+const smartDataDiscovery: ApiFamily = {
+    getStories: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(SMART_DATA_DISCOVERY_BASE_URI) && STORIES_PATH.test(path),
+        transport: {
+            controller: 'SmartDataDiscoveryController.getStories',
+        },
+    },
+};
+
 const flow: ApiFamily = {
     startFlow: {
         method: 'post',
@@ -1987,4 +2001,5 @@ registerApiFamilyRoutes(interesttagging);
 registerApiFamilyRoutes(identityVerification);
 registerApiFamilyRoutes(hpiscore);
 registerApiFamilyRoutes(learningContentPlatform);
+registerApiFamilyRoutes(smartDataDiscovery);
 registerApiFamilyRoutes(assetCreation);

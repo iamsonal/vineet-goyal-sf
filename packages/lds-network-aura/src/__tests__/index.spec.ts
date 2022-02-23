@@ -20,6 +20,7 @@ import {
     ADATS_SYNC_BASE_URI,
     ADATS_CATALOG_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
+    SMART_DATA_DISCOVERY_BASE_URI,
     ASSETCREATION_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
@@ -7604,6 +7605,70 @@ describe('routes', () => {
                 });
             });
         });
+    });
+
+    describe('get /smartdatadiscovery/stories', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+                basePath: `/stories`,
+            },
+            [
+                'SmartDataDiscoveryController.getStories',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+                    basePath: `/stories`,
+                    queryParams: {
+                        folderId: 'folderId',
+                        inputId: 'inputId',
+                        page: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'query',
+                        scope: 'CreatedByMe',
+                        sourceType: 'AnalyticsDataset',
+                        sourceTypes: 'AnalyticsDataset,Report',
+                    },
+                },
+                [
+                    'SmartDataDiscoveryController.getStories',
+                    {
+                        folderId: 'folderId',
+                        inputId: 'inputId',
+                        pageParam: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'query',
+                        scope: 'CreatedByMe',
+                        sourceType: 'AnalyticsDataset',
+                        sourceTypes: 'AnalyticsDataset,Report',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+            basePath: `/stories`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+                basePath: `/stories`,
+            },
+            {}
+        );
     });
 
     describe('get /connect/communities/{communityId}/managed-content/delivery/contents', () => {

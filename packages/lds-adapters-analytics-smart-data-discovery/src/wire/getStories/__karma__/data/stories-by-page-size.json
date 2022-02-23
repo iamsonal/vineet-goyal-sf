@@ -1,0 +1,145 @@
+{
+    "stories": [
+        {
+            "createdBy": {
+                "id": "005RM000002OVLAYA4",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2022-01-10T23:53:05.000Z",
+            "errorCode": 101,
+            "fields": [
+                {
+                    "type": "number",
+                    "name": "Amount",
+                    "ignored": false,
+                    "sensitive": false,
+                    "min": 205156,
+                    "max": 249959,
+                    "bucketingStrategy": "PERCENTILE",
+                    "highCardinality": false
+                },
+                {
+                    "type": "date",
+                    "name": "Close_Date",
+                    "ignored": false,
+                    "sensitive": false,
+                    "min": "2010-06-24",
+                    "max": "2010-08-07",
+                    "interval": "DAY",
+                    "periodicIntervals": ["DAY_OF_WEEK"],
+                    "highCardinality": false
+                },
+                {
+                    "type": "text",
+                    "name": "AccountId_BillingState",
+                    "ignored": false,
+                    "sensitive": false,
+                    "highCardinality": false,
+                    "ordering": "OCCURRENCE",
+                    "includeOther": true,
+                    "values": [
+                        {
+                            "name": "PA"
+                        }
+                    ]
+                },
+                {
+                    "ignored": false,
+                    "sensitive": false,
+                    "min": 1009,
+                    "max": 19999,
+                    "bucketingStrategy": "MANUAL",
+                    "highCardinality": false,
+                    "name": "Monthly_Income",
+                    "type": "number"
+                }
+            ],
+            "folder": {
+                "id": "005RM000002OVLAYA4",
+                "label": "Admin User",
+                "url": "/services/data/v55.0/wave/folders/005RM000002OVLAYA4"
+            },
+            "historiesUrl": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000007DD0AY/histories",
+            "id": "1Y3RM00000007DD0AY",
+            "input": {
+                "dataset": {
+                    "id": "0FbRM0000002szC0AQ",
+                    "url": "/services/data/v55.0/wave/datasets/0FbRM0000002szC0AQ"
+                },
+                "datasetVersion": {
+                    "id": "0FcRM0000008vxE0AQ",
+                    "url": "/services/data/v55.0/wave/datasets/0FbRM0000002szC0AQ/versions/0FcRM0000008vxE0AQ"
+                },
+                "type": "AnalyticsDataset"
+            },
+            "label": "car",
+            "lastModifiedBy": {
+                "id": "005RM000002OVLPYA4",
+                "name": "Integration User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2022-01-10T23:53:07.000Z",
+            "message": "Analysis setup has been marked as TimeOut by the scheduler as it exceeded its time to live.",
+            "name": "car",
+            "outcome": {
+                "goal": "None",
+                "label": "small",
+                "name": "small",
+                "targetVariables": [],
+                "type": "Categorical"
+            },
+            "runId": "9B4RM0000004Kt80AE",
+            "status": "TimedOut",
+            "url": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000007DD0AY"
+        },
+        {
+            "createdBy": {
+                "id": "005RM000002OVLAYA4",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2022-01-10T23:51:01.000Z",
+            "errorCode": 106,
+            "fields": [],
+            "folder": {
+                "id": "00lRM000000nOziYAE",
+                "label": "Learning Adventure",
+                "url": "/services/data/v55.0/wave/folders/00lRM000000nOziYAE"
+            },
+            "historiesUrl": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000007D80AI/histories",
+            "id": "1Y3RM00000007D80AI",
+            "input": {
+                "dataset": {
+                    "id": "0FbRM0000004vJl0AI",
+                    "url": "/services/data/v55.0/wave/datasets/0FbRM0000004vJl0AI"
+                },
+                "datasetVersion": {
+                    "id": "0FcRM0000008Y8w0AE",
+                    "url": "/services/data/v55.0/wave/datasets/0FbRM0000004vJl0AI/versions/0FcRM0000008Y8w0AE"
+                },
+                "type": "AnalyticsDataset"
+            },
+            "label": "Quota_Region",
+            "lastModifiedBy": {
+                "id": "005RM000002OVLAYA4",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2022-01-10T23:51:01.000Z",
+            "message": "Analysis does not have enough fields. Min: 2, Got: 0",
+            "name": "Quota_Region",
+            "outcome": {
+                "goal": "Maximize",
+                "label": "Quota",
+                "name": "Quota",
+                "type": "Number"
+            },
+            "runId": "9B4RM0000004Kt30AE",
+            "status": "Failed",
+            "url": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000007D80AI"
+        }
+    ],
+    "totalSize": 2,
+    "url": "/services/data/v55.0/smartdatadiscovery/stories?pageSize=2"
+}

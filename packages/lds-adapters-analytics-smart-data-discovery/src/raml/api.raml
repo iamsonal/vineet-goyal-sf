@@ -1,0 +1,648 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  AbstractBucketingStrategyRepresentation:
+    description: Abstract bucketing strategy response.
+    discriminator: type
+    type: object
+    properties:
+      type:
+        description: Bucketing strategy.
+        type: string
+        enum:
+          - Even_Width
+          - Manual
+          - Percentile
+  AbstractClassificationThresholdRepresentation:
+    description: Base representation for classification threshold.
+    discriminator: type
+    type: object
+    properties:
+      type:
+        description: type of classification. for eg., Binary
+        type: string
+        enum:
+          - Binary
+  AbstractFieldConfigurationRepresentation:
+    description: Field configuration response.
+    discriminator: type
+    type: object
+    properties:
+      highCardinality:
+        description: Specifies if the field is a high cardinality field or not.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      ignored:
+        description: Specifies if the field is ignored or not.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Field display name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Field developer name
+        type: string
+      sensitive:
+        description: Specifies if the field is sensitive or not.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: Field type.
+        type: string
+        enum:
+          - Boolean
+          - Date
+          - DateTime
+          - Number
+          - Text
+  AbstractStorySourceRepresentation:
+    description: Base representation for an analysis source.
+    discriminator: type
+    type: object
+    properties:
+      type:
+        description: source type of the analysis. for e.g. WaveDataset/Report
+        type: string
+        enum:
+          - AnalyticsDataset
+          - LiveDataset
+          - Report
+  AnalyticsDatasetSourceRepresentation:
+    description: Representation to identify an analytics dataset as analysis source.
+    discriminatorValue: AnalyticsDataset
+    type: AbstractStorySourceRepresentation
+    properties:
+      dataset:
+        description: dataset for an analysis source.
+        type: AssetReferenceRepresentation
+      datasetVersion:
+        description: dataset version for an analysis source.
+        type: AssetReferenceRepresentation
+  AssetReferenceRepresentation:
+    description: Asset reference representation.
+    type: BaseAssetReferenceRepresentation
+    properties: {}
+  AutopilotRepresentation:
+    description: Autopilot setup response.
+    type: object
+    properties:
+      enabled:
+        description: Specifies if autopilot is enabled or not.
+        type: boolean
+  BaseAssetReferenceRepresentation:
+    description: Base asset reference representation.
+    type: object
+    discriminator: id # TODO: Hand-rolled
+    properties:
+      id:
+        description: The 18 character ID of the asset.
+        type: string
+      label:
+        description: The asset label.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The asset developer name.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      namespace:
+        description: The namespace that qualifies the asset name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: The asset URL.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  BinaryClassificationThresholdRepresentation:
+    description: Representation to identify classification threshold as binary..
+    discriminatorValue: Binary
+    type: AbstractClassificationThresholdRepresentation
+    properties:
+      value:
+        description: dataset for an analysis source.
+        format: double
+        type: number
+  DateFieldConfigurationRepresentation:
+    description: Date field configuration response.
+    discriminatorValue: date
+    type: AbstractFieldConfigurationRepresentation
+    properties:
+      interval:
+        description: Returns date interval for date field.
+        type: string
+        enum:
+          - Auto
+          - Day
+          - Month
+          - None
+          - Quarter
+          - Year
+      max:
+        description: Returns max date value of the field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      min:
+        description: Returns min date value of the field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      periodicIntervals:
+        description: Returns list of periodic date intervals for date field.
+        type: array
+        items:
+          type: string
+          enum:
+            - Day_of_week
+            - Month_of_year
+            - Quarter_of_year
+        required: false # TODO Hand-rolled W-8253396
+  EvenWidthBucketingStrategyRepresentation:
+    description: Even-width bucketing strategy response
+    discriminatorValue: EVEN_WIDTH
+    type: AbstractBucketingStrategyRepresentation
+    properties:
+      numberOfBuckets:
+        description: Number of buckets for a numeric field
+        type: integer
+  ManualBucketingStrategyRepresentation:
+    description: Manual bucketing strategy response.
+    discriminatorValue: MANUAL
+    type: AbstractBucketingStrategyRepresentation
+    properties:
+      cutoffs:
+        description: List of manual buckets
+        type: array
+        items:
+          format: double
+          type: number
+  NumericFieldConfigurationRepresentation:
+    description: Numeric field configuration response.
+    discriminatorValue: number
+    type: AbstractFieldConfigurationRepresentation
+    properties:
+      bucketingStrategy:
+        description: Bucketing strategy for numeric field.
+        type: AbstractBucketingStrategyRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      imputeStrategy:
+        description: Impute strategy for numeric field.
+        type: SmartDataDiscoveryImputeStrategyRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      max:
+        description: Maximum value of numeric field.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+      min:
+        description: Minimum value of numeric field.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+  PercentileBucketingStrategyRepresentation:
+    description: Percentile bucketing strategy response
+    discriminatorValue: PERCENTILE
+    type: AbstractBucketingStrategyRepresentation
+    properties:
+      numberOfBuckets:
+        description: Number of buckets for a numeric field
+        type: integer
+  ReportSourceRepresentation:
+    description: Representation to identify an analytics report as analysis source.
+    discriminatorValue: Report
+    type: AbstractStorySourceRepresentation
+    properties:
+      report:
+        description: report for an analysis source.
+        type: AssetReferenceRepresentation
+      reportInstance:
+        description: report instance for an analysis source.
+        type: AssetReferenceRepresentation
+  SmartDataDiscoveryCategoricalOutcomeRepresentation:
+    description: Representation for analysis outcome of type Categorical field.
+    discriminatorValue: Categorical
+    type: SmartDataDiscoveryOutcomeRepresentation
+    properties:
+      goal:
+        description: Indicates whether analysis maximizes or minimizes the field value.
+        type: string
+        enum:
+          - Maximize
+          - Minimize
+          - None
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Display name for outcome field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Name of field.
+        type: string
+      targetVariables:
+        description: target categorical values for the field.
+        type: array
+        items:
+          type: string
+        required: false # TODO Hand-rolled W-8253396
+  SmartDataDiscoveryCountOutcomeRepresentation:
+    description: Representation for analysis outcome of type Count.
+    discriminatorValue: Count
+    type: SmartDataDiscoveryOutcomeRepresentation
+    properties: {}
+  SmartDataDiscoveryImputeStrategyRepresentation:
+    description: Text field value configuration response.
+    type: object
+    properties:
+      groupByFieldName:
+        description: Group by field name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      method:
+        description: Impute method
+        type: string
+        enum:
+          - Mean
+          - Median
+          - Mode
+          - None
+        required: false # TODO Hand-rolled W-8253396
+  SmartDataDiscoveryModelConfigurationRepresentation:
+    description: Model configuration response.
+    type: object
+    properties:
+      algorithmType:
+        description: Model algorithm type.
+        type: string
+        enum:
+          - Drf
+          - Gbm
+          - Glm
+          - Xgboost
+        required: false # TODO Hand-rolled W-8253396
+  SmartDataDiscoveryNumericOutcomeRepresentation:
+    description: Representation for analysis outcome of type Numeric field.
+    discriminatorValue: Number
+    type: SmartDataDiscoveryOutcomeRepresentation
+    properties:
+      goal:
+        description: Indicates whether analysis maximizes or minimizes the field value.
+        type: string
+        enum:
+          - Maximize
+          - Minimize
+          - None
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Display name for outcome field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Name of field.
+        type: string
+      max:
+        description: Returns maximum value of numeric outcome field.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+      min:
+        description: Returns minimum value of numeric outcome field.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+  SmartDataDiscoveryOutcomeRepresentation:
+    description: Representation for analysis outcome.
+    discriminator: type
+    type: object
+    properties:
+      predictionType:
+        description: Analysis prediction type.
+        type: string
+        enum:
+          - Binary
+          - Count
+          - MultiClass
+          - None
+          - Numeric
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: Type of analysis outcome (for eg. count, text, number).
+        type: string
+        enum:
+          - Categorical
+          - Count
+          - Number
+          - Text
+  SmartDataDiscoveryTextOutcomeRepresentation:
+    description: Representation for analysis outcome of type Text field.
+    discriminatorValue: Text
+    type: SmartDataDiscoveryOutcomeRepresentation
+    properties:
+      goal:
+        description: Indicates whether analysis maximizes or minimizes the field value.
+        type: string
+        enum:
+          - Maximize
+          - Minimize
+          - None
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Display name for outcome field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Name of field.
+        type: string
+      failureValue:
+        description: Failure value for the field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      successValue:
+        description: Success value for the field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  SmartDataDiscoveryUserRepresentation:
+    description: Information about a user.
+    type: object
+    properties:
+      id:
+        description: The 18 character user ID.
+        type: string
+      name:
+        description: The name of the user.
+        type: string
+      profilePhotoUrl:
+        description: The Chatter profile photo of the user.
+        type: string
+  StoryCollectionRepresentation:
+    description: Colection of story configuration and results.
+    type: object
+    properties:
+      nextPageUrl:
+        description: URL for the next page of contents in the collection.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      stories:
+        description: Discovery story collection.
+        type: array
+        items:
+          type: StoryRepresentation
+      totalSize:
+        description: Total count of the elements in the collection.
+        type: integer
+      url:
+        description: URL for the collection.
+        type: string
+  StoryRepresentation:
+    description: Details of a story configuration and results.
+    type: object
+    properties:
+      autopilot:
+        description: Autopilot settings.
+        type: AutopilotRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      classificationThreshold:
+        description: Threshold for classification predictions.
+        type: AbstractClassificationThresholdRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      createdBy:
+        description: User who created the story.
+        type: SmartDataDiscoveryUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      createdDate:
+        description: Date when the story was created.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      errorCode:
+        description: Diagnostic error code for the story.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      fields:
+        description: Fields configuration
+        type: array
+        items:
+          type: AbstractFieldConfigurationRepresentation
+      folder:
+        description: Folder containing this story.
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      historiesUrl:
+        description: The URL for the histories associated with the story.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      id:
+        description: ID of the discovery story.
+        type: string
+      input:
+        description: Input data for the story.
+        type: AbstractStorySourceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      inputProfile:
+        description: Statistical summary of the input data
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Name of the story.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedBy:
+        description: User who last modified the story.
+        type: SmartDataDiscoveryUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedDate:
+        description: Date when the story was last modified.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastSuccessfulVersion:
+        description: The most recent successful version of the story.
+        type: StoryVersionReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      message:
+        description: Informational message related to the story generation.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      modelConfiguration:
+        description: Model configuration
+        type: SmartDataDiscoveryModelConfigurationRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Developer name of the story.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      namespace:
+        description: Namespace of the story.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      outcome:
+        description: Selected outcome for generated story.
+        type: SmartDataDiscoveryOutcomeRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      runId:
+        description: Run ID reference for fetching insights.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      setup:
+        description: 'Story setup information including: names, action variables,
+          model settings, variables and outcomes.'
+        type: object
+        properties:
+          //:
+            type: any # TODO Hand-rolled W-8863405
+        required: false # TODO Hand-rolled W-8253396
+      status:
+        description: Current status of the story.
+        type: string
+        enum:
+          - Autopilot
+          - DoneDescriptive
+          - DoneFeatureEngineering
+          - DonePredictive
+          - Draft
+          - Failed
+          - Fetching
+          - InProgress
+          - Postprocessing
+          - Preprocessing
+          - Queued
+          - QueuedForFetching
+          - QueuedForPostprocessing
+          - RequestToDelete
+          - Resizing
+          - RunningDescriptive
+          - RunningFeatureEngineering
+          - RunningPredictive
+          - Success
+          - TimedOut
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: URL to get this story.
+        type: string
+  StoryVersionReferenceRepresentation:
+    description: Story Version Reference Representation with basic information on
+      a Story Version.
+    type: object
+    properties:
+      createdDate:
+        description: Date when story version was created.
+        type: string
+      id:
+        description: The 18 character ID of the story version.
+        type: string
+      url:
+        description: URL to get the story version.
+        type: string
+  TextFieldValueConfigurationRepresentation:
+    description: Text field value configuration response.
+    type: object
+    properties:
+      label:
+        description: Field value label
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Field value name
+        type: string
+  TextFieldConfigurationRepresentation:
+    description: Text field configuration response.
+    discriminatorValue: text
+    type: AbstractFieldConfigurationRepresentation
+    properties:
+      includeOther:
+        description: Indicates whether or not values that do not match any of the
+          specified values should be grouped into "other".
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      ordering:
+        description: Strategy for ordering values of the field
+        type: string
+        enum:
+          - Alphabetical
+          - Numeric
+          - Occurrence
+        required: false # TODO Hand-rolled W-8253396
+      values:
+        description: List of values of the field.
+        type: array
+        items:
+          type: TextFieldValueConfigurationRepresentation
+        required: false # TODO Hand-rolled W-8253396
+
+/smartdatadiscovery:
+  /stories:
+    get:
+      description: Get Discovery Stories.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: StoryCollectionRepresentation
+      queryParameters:
+        folderId:
+          description: Folder ID query parameter
+          type: string
+          required: false
+        inputId:
+          description: Input ID query parameter
+          type: string
+          required: false
+        page:
+          description: Page query parameter
+          type: string
+          required: false
+        pageSize:
+          description: Page size parameter
+          type: integer
+          required: false
+        q:
+          description: Search Parameter
+          type: string
+          required: false
+        scope:
+          description: Scope query parameter
+          type: string
+          required: false
+          enum:
+            - CreatedByMe
+            - SharedWithMe
+        sourceType:
+          description: Source Type query parameter
+          type: string
+          required: false
+          enum:
+            - AnalyticsDataset
+            - LiveDataset
+            - Report
+        sourceTypes:
+          description: Source Types query parameter
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - AnalyticsDataset
+              - LiveDataset
+              - Report
+            (oas-collectionFormat): csv

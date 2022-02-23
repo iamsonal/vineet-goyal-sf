@@ -3,6 +3,7 @@ export const CONNECT_BASE_URI = `${BASE_URI}/connect`;
 export const COMMERCE_BASE_URI = `${BASE_URI}/commerce`;
 export const GUIDANCE_BASE_URI = `${BASE_URI}/assistant-platform`;
 export const WAVE_BASE_URI = `${BASE_URI}/wave`;
+export const SMART_DATA_DISCOVERY_BASE_URI = `${BASE_URI}/smartdatadiscovery`;
 export const ADATS_BASE_URI = `${BASE_URI}/analytics/data-service`;
 export const ADATS_SYNC_BASE_URI = `${BASE_URI}/analytics/data-service/sync`;
 export const ADATS_DATABASE_BASE_URI = `${BASE_URI}/analytics/data-service/databases`;

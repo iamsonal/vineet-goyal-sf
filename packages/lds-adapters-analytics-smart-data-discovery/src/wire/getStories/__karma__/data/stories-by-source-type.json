@@ -1,0 +1,45 @@
+{
+    "stories": [
+        {
+            "createdBy": {
+                "id": "005RM000002OVLAYA4",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-11-02T21:48:15.000Z",
+            "fields": [],
+            "folder": {
+                "id": "005RM000002OVLAYA4",
+                "label": "Admin User",
+                "url": "/services/data/v55.0/wave/folders/005RM000002OVLAYA4"
+            },
+            "historiesUrl": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000006a30AA/histories",
+            "id": "1Y3RM00000006a30AA",
+            "input": {
+                "report": {
+                    "id": "00ORM000001KL0n2AG"
+                },
+                "reportInstance": {
+                    "id": "0LGRM0000001ybL4AQ"
+                },
+                "type": "Report"
+            },
+            "label": "Opportunities - navjot",
+            "lastModifiedBy": {
+                "id": "005RM000002OVLAYA4",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-11-02T21:48:16.000Z",
+            "name": "Opportunities_navjot",
+            "outcome": {
+                "type": "Count"
+            },
+            "runId": "9B4RM0000004K9G0AU",
+            "status": "Success",
+            "url": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000006a30AA"
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v55.0/smartdatadiscovery/stories?sourceType=Report"
+}

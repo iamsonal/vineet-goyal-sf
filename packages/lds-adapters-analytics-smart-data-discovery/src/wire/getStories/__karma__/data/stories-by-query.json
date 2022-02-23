@@ -1,0 +1,52 @@
+{
+    "stories": [
+        {
+            "createdBy": {
+                "id": "005RM000002OVLAYA4",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-07-07T19:42:37.000Z",
+            "errorCode": 101,
+            "fields": [],
+            "folder": {
+                "id": "00lRM000000nOziYAE",
+                "label": "Learning Adventure",
+                "url": "/services/data/v55.0/wave/folders/00lRM000000nOziYAE"
+            },
+            "historiesUrl": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000004yO0AQ/histories",
+            "id": "1Y3RM00000004yO0AQ",
+            "input": {
+                "dataset": {
+                    "id": "0FbRM0000004vJk0AI",
+                    "url": "/services/data/v55.0/wave/datasets/0FbRM0000004vJk0AI"
+                },
+                "datasetVersion": {
+                    "id": "0FcRM0000008Y8v0AE",
+                    "url": "/services/data/v55.0/wave/datasets/0FbRM0000004vJk0AI/versions/0FcRM0000008Y8v0AE"
+                },
+                "type": "AnalyticsDataset"
+            },
+            "label": "OpportunitiesRegion",
+            "lastModifiedBy": {
+                "id": "005RM000002OVLAYA4",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://drm000000n6ly2as--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-07-07T19:42:38.000Z",
+            "message": "Analysis setup has been marked as TimeOut by the scheduler as it exceeded its time to live.",
+            "name": "OpportunitiesRegion2",
+            "outcome": {
+                "goal": "Maximize",
+                "label": "Amount",
+                "name": "Amount",
+                "type": "Number"
+            },
+            "runId": "9B4RM0000004IVV0A2",
+            "status": "TimedOut",
+            "url": "/services/data/v55.0/smartdatadiscovery/stories/1Y3RM00000004yO0AQ"
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v55.0/smartdatadiscovery/stories?q=OpportunitiesRegion"
+}

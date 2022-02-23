@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-explainability",
-    "version": "1.39.1",
+    "version": "1.40.0",
     "description": "API to fetch and post centralised explainability related meta data and transactional data",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-explainability.js",
@@ -27,13 +27,13 @@
         "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.39.1"
+        "@salesforce/lds-bindings": "1.40.0"
     },
     "devDependencies": {
         "@luvio/cli": "0.75.1",
         "@luvio/compiler": "0.75.1",
         "@luvio/engine": "0.75.1",
         "@luvio/lwc-luvio": "0.75.1",
-        "@salesforce/lds-karma": "1.39.1"
+        "@salesforce/lds-karma": "1.40.0"
     }
 }

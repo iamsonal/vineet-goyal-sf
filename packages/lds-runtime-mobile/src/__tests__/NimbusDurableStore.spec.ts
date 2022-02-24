@@ -8,10 +8,6 @@ import { JSONStringify } from '../utils/language';
 import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
 import { DurableStoreChange } from '@mobileplatform/nimbus-plugin-lds';
 
-import { getInstrumentation } from 'o11y/client';
-import { withInstrumentation } from '../utils/observability';
-type Instrumentation = ReturnType<typeof getInstrumentation>;
-
 const testSegment = 'testSegment';
 describe('Nimbus durable store tests', () => {
     const recordId = 'foo';
@@ -188,88 +184,30 @@ describe('Nimbus durable store tests', () => {
             expect(result).toEqual({ present: { data: {} } });
         });
 
-        it('should report metrics to the instrumentation service', async () => {
+        it('should call report metrics to the instrumentation service', async () => {
             // Arrange
-            const errorSpy = jest.fn();
-            const incrementCounterSpy = jest.fn();
-            const mockReporter = {
-                error: errorSpy,
-                incrementCounter: incrementCounterSpy,
-            } as unknown as Instrumentation;
-
+            const instrumentationSpy = jest.fn().mockResolvedValue({
+                entries: { foo: JSONStringify(recordData) },
+            });
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             const durableStore = new NimbusDurableStore({
-                withInstrumentation: withInstrumentation(mockReporter),
+                withInstrumentation: instrumentationSpy,
             });
-
-            nimbusStore.kvp = {
-                [DefaultDurableSegment]: {
-                    ['present']: JSONStringify({ data: {} }),
-                },
-            };
 
             // Act
             await durableStore.getEntries(['missing', 'present'], DefaultDurableSegment);
 
             // Assert
-            expect(errorSpy).toBeCalledTimes(0);
-            expect(incrementCounterSpy).toBeCalledTimes(1);
-            expect(incrementCounterSpy).toBeCalledWith(
-                'durable-store',
-                1, // Metric Value
-                false, // hasError
-                {
+            expect(instrumentationSpy).toBeCalledTimes(1);
+            expect(instrumentationSpy).toBeCalledWith(expect.any(Function), {
+                metricName: 'durable-store-count',
+                tags: {
                     method: 'getEntries',
                     operation: 'read',
                     segment: 'DEFAULT',
-                }
-            );
-        });
-
-        it('should report errors to the instrumentation service', async () => {
-            // Arrange
-            const errorSpy = jest.fn();
-            const incrementCounterSpy = jest.fn();
-            const mockReporter = {
-                error: errorSpy,
-                incrementCounter: incrementCounterSpy,
-            } as unknown as Instrumentation;
-
-            const readError = new Error('Read error');
-            const nimbusStore = new MockNimbusDurableStore();
-            jest.spyOn(nimbusStore, 'getEntriesInSegment').mockRejectedValue(readError);
-            mockNimbusStoreGlobal(nimbusStore);
-
-            const durableStore = new NimbusDurableStore({
-                withInstrumentation: withInstrumentation(mockReporter),
-            });
-
-            nimbusStore.kvp = {
-                [DefaultDurableSegment]: {
-                    ['present']: JSONStringify({ data: {} }),
                 },
-            };
-
-            // Act
-            await expect(
-                durableStore.getEntries(['missing', 'present'], DefaultDurableSegment)
-            ).rejects.toThrow(readError);
-
-            // Assert
-            expect(errorSpy).toBeCalledTimes(1);
-            expect(errorSpy).toBeCalledWith(readError);
-            expect(incrementCounterSpy).toBeCalledTimes(1);
-            expect(incrementCounterSpy).toBeCalledWith(
-                'durable-store',
-                1, // Metric Value
-                true, // hasError
-                {
-                    method: 'getEntries',
-                    operation: 'read',
-                    segment: 'DEFAULT',
-                }
-            );
+            });
         });
     });
 

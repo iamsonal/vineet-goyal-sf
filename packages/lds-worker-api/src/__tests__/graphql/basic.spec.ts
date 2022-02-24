@@ -49,7 +49,7 @@ describe(`invokeAdapter("${gqlAdapterName}")`, () => {
             expect(mockInstrumentation.error).toHaveBeenCalledTimes(1);
             expect(mockInstrumentation.error).toHaveBeenCalledWith(
                 Error('Syntax Error: Expected Name, found <EOF>.'),
-                'gql-parse-error'
+                'gql-query-parse-error'
             );
             done();
         };
@@ -77,12 +77,12 @@ describe(`executeAdapter("${gqlAdapterName}")`, () => {
         executeAdapter('graphQL', JSON.stringify({ query: `query {`, variables: {} }), onSnapshot);
     });
 
-    it('logs error when recieves malformed query error', (done) => {
+    it('logs error when receives malformed query error', (done) => {
         const onSnapshot: OnSnapshot = () => {
             expect(mockInstrumentation.error).toHaveBeenCalledTimes(1);
             expect(mockInstrumentation.error).toHaveBeenCalledWith(
                 Error('Syntax Error: Expected Name, found <EOF>.'),
-                'gql-parse-error'
+                'gql-query-parse-error'
             );
             done();
         };

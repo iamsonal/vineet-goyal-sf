@@ -152,3 +152,17 @@ export const CACHE_POLICY_COUNTERS = {
 export const CACHE_POLICY_UNDEFINED_COUNTER = 'cache-policy-undefined';
 
 export const STALE_TAG = 'stale';
+
+/**
+ * W-9804037
+ * Durable Store health metric
+ * Counter to track durable Store read, write and error rates
+ */
+export const DURABLE_STORE_COUNT = 'durable-store-count';
+
+/**
+ * W-10490363
+ * GraphQL Eval health metric
+ * Counter to track Success and Error Rate on Eval
+ */
+export const GRAPHQL_ADAPTER_COUNT = 'graphql-adapter-count';

@@ -1,7 +1,6 @@
 import type { AdapterRequestContext, CachePolicy, FetchResponse } from '@luvio/engine';
 import { parseAndVisit as gqlParse } from '@luvio/graphql-parser';
 import * as gqlApi from 'force/ldsAdaptersGraphql';
-import { getInstrumentation } from 'o11y/client';
 
 import { JSONParse, ObjectKeys } from './language';
 import type { AdapterCallback, AdapterCallbackValue } from './lightningAdapterApi';
@@ -22,10 +21,11 @@ import {
 } from './NativeFetchResponse';
 import type { ObservabilityContext } from 'native/ldsEngineMobile';
 import { debugLog } from 'native/ldsEngineMobile';
+import { ErrorReporter } from '@salesforce/lds-instrumentation';
 
 let adapterCounter = 0;
 
-const instr = getInstrumentation('lds-worker-api');
+const errorReporter = new ErrorReporter();
 
 // Native Type Definitions
 type NativeCallbackValue = {
@@ -180,8 +180,9 @@ export function subscribeToAdapter(
             // gql config needs gql query string turned into AST object
             configObject.query = gqlParse(configObject.query);
         } catch (parseError) {
+            errorReporter.reportGraphqlQueryParseError(parseError as Error);
+
             // call the callback with error
-            instr.error(parseError as Error, 'gql-parse-error');
             onResponseDelegate({
                 data: undefined,
                 error: parseError as NativeFetchResponse<unknown>,
@@ -495,8 +496,9 @@ export function invokeAdapter(
                 // gql config needs gql query string turned into AST object
                 configObject.query = gqlParse(configObject.query);
             } catch (parseError) {
+                errorReporter.reportGraphqlQueryParseError(parseError as Error);
+
                 // call the callback with error
-                instr.error(parseError as Error, 'gql-parse-error');
                 onResponseDelegate({
                     data: undefined,
                     error: parseError,

@@ -19,7 +19,13 @@ import {
     makeEnvironmentDraftAware,
     DraftManager,
 } from '@salesforce/lds-drafts';
-import { setupInstrumentation, instrumentLuvio } from '@salesforce/lds-instrumentation';
+import {
+    setupInstrumentation,
+    instrumentLuvio,
+    withInstrumentation,
+    O11Y_NAMESPACE_LDS_MOBILE,
+} from '@salesforce/lds-instrumentation';
+
 import salesforceNetworkAdapter from '@salesforce/lds-network-adapter';
 
 import userId from '@salesforce/user/Id';
@@ -36,7 +42,6 @@ import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledD
 import { makeDebugEnvironment } from './debug/makeDebugEnvironment';
 import { NimbusSqlDurableStore } from './NimbusSqlDurableStore';
 import { getInstrumentation } from 'o11y/client';
-import { withInstrumentation, O11Y_NAMESPACE_LDS_MOBILE } from './utils/observability';
 
 let luvio: Luvio;
 

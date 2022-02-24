@@ -21,3 +21,5 @@ export const instrumentation = {
     incrementCounter,
     trackValue,
 };
+
+export const METRIC_KEYS = {};

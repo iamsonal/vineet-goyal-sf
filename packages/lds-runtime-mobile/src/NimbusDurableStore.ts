@@ -21,9 +21,8 @@ import type {
 } from '@mobileplatform/nimbus-plugin-lds';
 
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
-import type { InstrumentationConfig, WithInstrumentation } from './utils/observability';
-import { METRIC_NAME } from './utils/observability';
-
+import type { WithInstrumentation, InstrumentationConfig } from '@salesforce/lds-instrumentation';
+import { METRIC_KEYS } from '@salesforce/lds-instrumentation';
 import { idleDetector } from 'o11y/client';
 
 const tasker = idleDetector.declareNotifierTaskMulti('NimbusDurableStore');
@@ -158,7 +157,7 @@ export class NimbusDurableStore implements DurableStore {
             __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment);
 
         return this.wrapInstrumentation(operation, {
-            metricName: METRIC_NAME.DURABLE_STORE,
+            metricName: METRIC_KEYS.DURABLE_STORE_COUNT,
             tags: {
                 operation: 'read',
                 method: 'getEntries',
@@ -178,7 +177,7 @@ export class NimbusDurableStore implements DurableStore {
         const operation = () => __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment);
 
         return this.wrapInstrumentation(operation, {
-            metricName: METRIC_NAME.DURABLE_STORE,
+            metricName: METRIC_KEYS.DURABLE_STORE_COUNT,
             tags: {
                 operation: 'read',
                 method: 'getAllEntries',
@@ -210,7 +209,7 @@ export class NimbusDurableStore implements DurableStore {
         }
 
         return this.wrapInstrumentation(operation, {
-            metricName: METRIC_NAME.DURABLE_STORE,
+            metricName: METRIC_KEYS.DURABLE_STORE_COUNT,
             tags: {
                 operation: 'write',
                 method: 'setEntries',

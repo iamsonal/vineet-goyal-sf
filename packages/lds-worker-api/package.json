@@ -33,7 +33,7 @@
     "bundlesize": [
         {
             "path": "./dist/sfdc/es/ldsWorkerApi.js",
-            "maxSize": "55 kB",
+            "maxSize": "90 kB",
             "compression": "brotli"
         }
     ]

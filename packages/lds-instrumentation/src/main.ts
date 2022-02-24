@@ -14,6 +14,10 @@ import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-
 import { instrument as instrumentLwcBindings } from '@salesforce/lds-bindings';
 import { instrument as instrumentNetworkAdapter } from '@salesforce/lds-network-adapter';
 
+export * as METRIC_KEYS from './metric-keys';
+export { O11Y_NAMESPACE_LDS_MOBILE } from './utils/observability';
+export type { InstrumentationConfig } from './utils/observability';
+
 import {
     ADAPTER_CACHE_HIT_COUNT_METRIC_NAME,
     ADAPTER_CACHE_HIT_DURATION_METRIC_NAME,
@@ -58,6 +62,8 @@ import { ObjectKeys } from './utils/language';
 import { LRUCache } from './utils/lru-cache';
 export { LRUCache } from './utils/lru-cache';
 import { isPromise, stableJSONStringify, throttle } from './utils/utils';
+export { ErrorReporter, ERROR_CODE } from './utils/ErrorReporter';
+export { withInstrumentation, WithInstrumentation, ReporterType } from './utils/observability';
 
 interface AdapterMetadata {
     apiFamily: string;

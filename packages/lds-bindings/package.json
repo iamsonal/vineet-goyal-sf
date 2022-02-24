@@ -24,6 +24,6 @@
     },
     "devDependencies": {
         "@luvio/engine": "0.75.1",
-        "@lwc/engine-core": "~1.7.5"
+        "@lwc/engine-core": "2.9.0"
     }
 }

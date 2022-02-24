@@ -4,7 +4,7 @@ const lwcDistribution = require('lwc');
 
 const karmaPluginCompat = require('../plugins/karma-plugin-compat');
 
-const LWC_ENGINE_COMPAT = lwcDistribution.getModulePath('engine', 'umd', 'es5', 'prod_debug');
+const LWC_ENGINE_COMPAT = lwcDistribution.getModulePath('engine-dom', 'umd', 'es5', 'prod_debug');
 
 const POLYFILL_COMPAT = require.resolve('es5-proxy-compat/polyfills.js');
 const SHADOW_POLYFILL_COMPAT = lwcDistribution.getModulePath(

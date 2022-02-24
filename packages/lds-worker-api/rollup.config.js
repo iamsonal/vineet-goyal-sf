@@ -26,7 +26,12 @@ const baseOutput = { banner, footer };
 const platform = {
     input: 'src/main.ts',
 
-    external: ['native/ldsEngineMobile', 'force/ldsAdaptersGraphql', 'o11y/client'],
+    external: [
+        '@salesforce/lds-instrumentation',
+        'native/ldsEngineMobile',
+        'force/ldsAdaptersGraphql',
+        'o11y/client',
+    ],
 
     output: [
         {

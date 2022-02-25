@@ -209,10 +209,16 @@ export function subscribeToAdapter(
  * @param adapter : DML Adapter
  * @param configObject : parsed config
  * @param onResponse : OnResponse
+ * @param nativeAdapterRequestContext: Specify cache policy, priority and observability parameters
  */
-function invokeDmlAdapter(adapter: any, configObject: any, onResponse: NativeOnResponse) {
+function invokeDmlAdapter(
+    adapter: any,
+    configObject: any,
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
+) {
     try {
-        adapter(configObject).then(
+        adapter(configObject, buildAdapterRequestContext(nativeAdapterRequestContext)).then(
             (data: any) => {
                 onResponse({ data, error: undefined });
             },
@@ -221,6 +227,7 @@ function invokeDmlAdapter(adapter: any, configObject: any, onResponse: NativeOnR
             }
         );
     } catch (err) {
+        // For catching the synchronous error in adapter
         onResponse(buildInvalidConfigError(err));
     }
 }
@@ -238,7 +245,8 @@ export function invokeAdapterWithDraftToReplace(
     adapterId: string,
     config: string,
     draftIdToReplace: string,
-    onResponse: NativeOnResponse
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
     draftManager.getQueue().then((draftInfo) => {
         const draftIds = draftInfo.items.map((draft) => draft.id);
@@ -269,26 +277,32 @@ export function invokeAdapterWithDraftToReplace(
                 adapter,
                 config,
                 draftIdToReplace,
-                onResponse
+                onResponse,
+                nativeAdapterRequestContext
             );
         } else {
-            invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-                const draftIds = draftIdsForResponseValue(responseValue);
-                if (
-                    responseValue.error === undefined &&
-                    draftIds !== undefined &&
-                    draftIds.length > 0
-                ) {
-                    const draftId = draftIds[draftIds.length - 1];
-                    draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
-                        onResponse(responseValue);
-                    });
-                } else {
-                    let response: NativeCallbackValue = responseValue;
-                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                    onResponse(response);
-                }
-            });
+            invokeDmlAdapter(
+                adapter,
+                JSONParse(config),
+                (responseValue) => {
+                    const draftIds = draftIdsForResponseValue(responseValue);
+                    if (
+                        responseValue.error === undefined &&
+                        draftIds !== undefined &&
+                        draftIds.length > 0
+                    ) {
+                        const draftId = draftIds[draftIds.length - 1];
+                        draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
+                            onResponse(responseValue);
+                        });
+                    } else {
+                        let response: NativeCallbackValue = responseValue;
+                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                        onResponse(response);
+                    }
+                },
+                nativeAdapterRequestContext
+            );
         }
     });
 }
@@ -306,7 +320,8 @@ export function invokeAdapterWithMetadata(
     adapterId: string,
     config: string,
     metadata: DraftQueueItemMetadata,
-    onResponse: NativeOnResponse
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
     const adapter = dmlAdapterMap[adapterId];
     if (adapter === undefined) {
@@ -323,25 +338,36 @@ export function invokeAdapterWithMetadata(
     }
 
     if (adapterId === 'deleteRecord') {
-        invokeAdapterWithMetadataDeleteRecord(adapter, config, metadata, onResponse);
+        invokeAdapterWithMetadataDeleteRecord(
+            adapter,
+            config,
+            metadata,
+            onResponse,
+            nativeAdapterRequestContext
+        );
     } else {
-        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-            const draftIds = draftIdsForResponseValue(responseValue);
-            if (
-                responseValue.error === undefined &&
-                draftIds !== undefined &&
-                draftIds.length > 0
-            ) {
-                const draftId = draftIds[draftIds.length - 1];
-                draftManager.setMetadata(draftId, metadata).then(() => {
-                    onResponse(responseValue);
-                });
-            } else {
-                let response: NativeCallbackValue = responseValue;
-                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                onResponse(response);
-            }
-        });
+        invokeDmlAdapter(
+            adapter,
+            JSONParse(config),
+            (responseValue) => {
+                const draftIds = draftIdsForResponseValue(responseValue);
+                if (
+                    responseValue.error === undefined &&
+                    draftIds !== undefined &&
+                    draftIds.length > 0
+                ) {
+                    const draftId = draftIds[draftIds.length - 1];
+                    draftManager.setMetadata(draftId, metadata).then(() => {
+                        onResponse(responseValue);
+                    });
+                } else {
+                    let response: NativeCallbackValue = responseValue;
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                    onResponse(response);
+                }
+            },
+            nativeAdapterRequestContext
+        );
     }
 }
 
@@ -355,7 +381,8 @@ function invokeAdapterWithMetadataDeleteRecord(
     adapter: any,
     config: string,
     metadata: DraftQueueItemMetadata,
-    onResponse: NativeOnResponse
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
     const targetedRecordId = JSONParse(config);
     let priorDraftIds: string[] | undefined;
@@ -363,32 +390,37 @@ function invokeAdapterWithMetadataDeleteRecord(
         priorDraftIds = draftState.items.map((item) => {
             return item.id;
         });
-        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-            if (responseValue.error === undefined && responseValue.data === undefined) {
-                draftManager.getQueue().then((newState) => {
-                    const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
-                    const newDrafts = newState.items;
-                    const addedDrafts = newDrafts.filter((item) => {
-                        const isNew = draftIdsToFilter.indexOf(item.id) < 0;
-                        const targetIdMatches = item.targetId === targetedRecordId;
-                        return isNew && targetIdMatches;
-                    });
-                    if (addedDrafts.length !== 1) {
-                        let response: NativeCallbackValue = responseValue;
-                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                        onResponse(response);
-                    } else {
-                        draftManager.setMetadata(addedDrafts[0].id, metadata).then(() => {
-                            onResponse(responseValue);
+        invokeDmlAdapter(
+            adapter,
+            JSONParse(config),
+            (responseValue) => {
+                if (responseValue.error === undefined && responseValue.data === undefined) {
+                    draftManager.getQueue().then((newState) => {
+                        const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
+                        const newDrafts = newState.items;
+                        const addedDrafts = newDrafts.filter((item) => {
+                            const isNew = draftIdsToFilter.indexOf(item.id) < 0;
+                            const targetIdMatches = item.targetId === targetedRecordId;
+                            return isNew && targetIdMatches;
                         });
-                    }
-                });
-            } else {
-                let response: NativeCallbackValue = responseValue;
-                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                onResponse(response);
-            }
-        });
+                        if (addedDrafts.length !== 1) {
+                            let response: NativeCallbackValue = responseValue;
+                            response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                            onResponse(response);
+                        } else {
+                            draftManager.setMetadata(addedDrafts[0].id, metadata).then(() => {
+                                onResponse(responseValue);
+                            });
+                        }
+                    });
+                } else {
+                    let response: NativeCallbackValue = responseValue;
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                    onResponse(response);
+                }
+            },
+            nativeAdapterRequestContext
+        );
     });
 }
 
@@ -402,7 +434,8 @@ function invokeAdapterWithDraftToReplaceDeleteRecord(
     adapter: any,
     config: string,
     draftIdToReplace: string,
-    onResponse: NativeOnResponse
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
     const targetedRecordId = JSONParse(config);
     let priorDraftIds: string[] | undefined;
@@ -410,32 +443,39 @@ function invokeAdapterWithDraftToReplaceDeleteRecord(
         priorDraftIds = draftState.items.map((item) => {
             return item.id;
         });
-        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-            if (responseValue.error === undefined && responseValue.data === undefined) {
-                draftManager.getQueue().then((newState) => {
-                    const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
-                    const newDrafts = newState.items;
-                    const addedDrafts = newDrafts.filter((item) => {
-                        const isNew = draftIdsToFilter.indexOf(item.id) < 0;
-                        const targetIdMatches = item.targetId === targetedRecordId;
-                        return isNew && targetIdMatches;
-                    });
-                    if (addedDrafts.length !== 1) {
-                        let response: NativeCallbackValue = responseValue;
-                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                        onResponse(response);
-                    } else {
-                        draftManager.replaceAction(draftIdToReplace, addedDrafts[0].id).then(() => {
-                            onResponse(responseValue);
+        invokeDmlAdapter(
+            adapter,
+            JSONParse(config),
+            (responseValue) => {
+                if (responseValue.error === undefined && responseValue.data === undefined) {
+                    draftManager.getQueue().then((newState) => {
+                        const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
+                        const newDrafts = newState.items;
+                        const addedDrafts = newDrafts.filter((item) => {
+                            const isNew = draftIdsToFilter.indexOf(item.id) < 0;
+                            const targetIdMatches = item.targetId === targetedRecordId;
+                            return isNew && targetIdMatches;
                         });
-                    }
-                });
-            } else {
-                let response: NativeCallbackValue = responseValue;
-                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                onResponse(response);
-            }
-        });
+                        if (addedDrafts.length !== 1) {
+                            let response: NativeCallbackValue = responseValue;
+                            response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                            onResponse(response);
+                        } else {
+                            draftManager
+                                .replaceAction(draftIdToReplace, addedDrafts[0].id)
+                                .then(() => {
+                                    onResponse(responseValue);
+                                });
+                        }
+                    });
+                } else {
+                    let response: NativeCallbackValue = responseValue;
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                    onResponse(response);
+                }
+            },
+            nativeAdapterRequestContext
+        );
     });
 }
 
@@ -524,7 +564,7 @@ export function invokeAdapter(
         throw Error(`adapter ${adapterId} not recognized`);
     }
 
-    invokeDmlAdapter(adapter, configObject, onResponseDelegate);
+    invokeDmlAdapter(adapter, configObject, onResponseDelegate, nativeAdapterRequestContext);
 }
 
 /**
@@ -535,9 +575,10 @@ export function invokeAdapter(
 export function executeAdapter(
     adapterId: string,
     config: string,
-    onSnapshot: NativeOnSnapshot
+    onSnapshot: NativeOnSnapshot,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ): Unsubscribe {
-    return subscribeToAdapter(adapterId, config, onSnapshot);
+    return subscribeToAdapter(adapterId, config, onSnapshot, nativeAdapterRequestContext);
 }
 
 /**
@@ -548,7 +589,8 @@ export function executeAdapter(
 export function executeMutatingAdapter(
     adapterId: string,
     config: string,
-    onResult: NativeOnResponse
+    onResult: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ): void {
-    invokeAdapter(adapterId, config, onResult);
+    invokeAdapter(adapterId, config, onResult, nativeAdapterRequestContext);
 }

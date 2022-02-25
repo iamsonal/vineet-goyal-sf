@@ -10,6 +10,96 @@ import { stripProperties } from '@luvio/adapter-test-library';
 import { recordEndpointPath, objectInfoAccountPath } from './urlPaths';
 import { flushPromises } from './utils';
 
+describe('nativeAdapterRequestContext', () => {
+    let invokeAdapterWithMetadata,
+        mockDeleteRecord = jest.fn();
+
+    beforeAll(() => {
+        jest.mock('../lightningAdapterApi', () => {
+            const original = jest.requireActual('../lightningAdapterApi');
+
+            return {
+                ...original,
+                dmlAdapterMap: {
+                    ...original.dmlAdapterMap,
+                    deleteRecord: mockDeleteRecord,
+                },
+            };
+        });
+
+        ({ invokeAdapterWithMetadata } = require('../executeAdapter'));
+    });
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
+
+    afterAll(() => {
+        jest.unmock('../lightningAdapterApi');
+    });
+
+    it('should pass the request metadata', (done) => {
+        // Arrange
+        const observabilityContext = {
+            rootId: 'priming-root-id',
+            isRootActivitySampled: true,
+            traceId: 'uuid-trace-id',
+        };
+        const theMetadata = { theMetadata: 'that is expected' };
+        const onResponse = () => {
+            assert();
+            done();
+        };
+
+        // Act
+        invokeAdapterWithMetadata(
+            'deleteRecord',
+            JSON.stringify(recordRep_Account.id),
+            theMetadata,
+            onResponse,
+            {
+                priority: 'high',
+                observabilityContext,
+            }
+        );
+
+        // Assert
+        function assert() {
+            expect(mockDeleteRecord).toBeCalledTimes(1);
+            expect(mockDeleteRecord).toHaveBeenCalledWith(recordRep_Account.id, {
+                cachePolicy: undefined,
+                priority: 'high',
+                requestCorrelator: {
+                    observabilityContext,
+                },
+            });
+        }
+    });
+
+    it('should pass the default metadata as undefined', (done) => {
+        // Arrange
+        const theMetadata = { theMetadata: 'that is expected' };
+        const onResponse = () => {
+            assert();
+            done();
+        };
+
+        // Act
+        invokeAdapterWithMetadata(
+            'deleteRecord',
+            JSON.stringify(recordRep_Account.id),
+            theMetadata,
+            onResponse
+        );
+
+        // Assert
+        function assert() {
+            expect(mockDeleteRecord).toBeCalledTimes(1);
+            expect(mockDeleteRecord).toHaveBeenCalledWith(recordRep_Account.id, undefined);
+        }
+    });
+});
+
 describe('invokeAdapterWithMetadata', () => {
     let invokeAdapter, subscribeToAdapter, draftManager, invokeAdapterWithMetadata;
 

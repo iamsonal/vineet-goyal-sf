@@ -156,6 +156,17 @@ function getResponseCacheKeys(
     return keySet;
 }
 
+function onResourceResponseError(
+    luvio: Luvio,
+    config: GraphQLConfig,
+    response: FetchResponse<GraphQL>
+) {
+    const errorSnapshot = luvio.errorSnapshot(response);
+    luvio.storeIngestError(GRAPHQL_ROOT_KEY, errorSnapshot);
+    luvio.storeBroadcast();
+    return errorSnapshot;
+}
+
 function buildNetworkSnapshot(
     luvio: Luvio,
     config: GraphQLConfig,
@@ -178,14 +189,19 @@ function buildNetworkSnapshot(
         headers: {},
     };
 
-    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
-    // TODO - handle network error response
-    return luvio.dispatchResourceRequest<any>(request, options).then((resp) => {
-        return luvio.handleSuccessResponse(
-            () => onResourceResponseSuccess(luvio, config, resp, fragment),
-            () => getResponseCacheKeys(luvio, config, resp, fragment)
-        );
-    });
+    return luvio.dispatchResourceRequest<any>(request, options).then(
+        (resp) => {
+            return luvio.handleSuccessResponse(
+                () => onResourceResponseSuccess(luvio, config, resp, fragment),
+                () => getResponseCacheKeys(luvio, config, resp, fragment)
+            );
+        },
+        (errorResponse) => {
+            return luvio.handleErrorResponse(() =>
+                onResourceResponseError(luvio, config, errorResponse)
+            );
+        }
+    );
 }
 
 function validateGraphQlConfig(untrustedConfig: unknown): {

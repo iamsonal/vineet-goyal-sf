@@ -5,6 +5,7 @@ import {
     parseQuery,
     expireRecords,
     mockGetRecordNetwork,
+    mockGraphqlNetworkErrorOnce,
 } from 'graphql-test-util';
 import { graphQLImperative } from 'lds-adapters-graphql';
 import { luvio } from 'lds-engine';
@@ -1810,6 +1811,48 @@ describe('graphql', () => {
 
             const snapshot = await graphQLImperative(graphqlConfig);
             expect(snapshot.data).toEqualSnapshotWithoutEtags(mock);
+        });
+
+        it('displays error when network request returns 404s', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const networkError = {
+                ok: false,
+                status: 404,
+                statusText: 'NOT_FOUND',
+                body: [
+                    {
+                        errorCode: 'NOT_FOUND',
+                        message: 'The requested resource does not exist',
+                    },
+                ],
+            };
+            mockGraphqlNetworkErrorOnce(QueryAccountFieldsName, networkError);
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.error).toEqual(networkError);
         });
     });
 

@@ -3745,17 +3745,17 @@ describe('routes', () => {
         );
     });
 
-    describe('post /related-list-records/{parentRecordId}/{relatedListId}', () => {
+    describe('get /related-list-records/{parentRecordId}/{relatedListId}', () => {
         testControllerInput(
             {
-                method: 'post',
+                method: 'get',
                 baseUri: UI_API_BASE_URI,
                 basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
                 urlParams: {
                     parentRecordId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
                 },
-                body: {
+                queryParams: {
                     fields: ['Id'],
                     optionalFields: ['Name'],
                     pageSize: 50,
@@ -3764,24 +3764,22 @@ describe('routes', () => {
                 },
             },
             [
-                'RelatedListUiController.postRelatedListRecords',
+                'RelatedListUiController.getRelatedListRecords',
                 {
                     parentRecordId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
-                    listRecordsQuery: {
-                        fields: ['Id'],
-                        optionalFields: ['Name'],
-                        pageSize: 50,
-                        pageToken: 0,
-                        sortBy: ['Id'],
-                    },
+                    fields: ['Id'],
+                    optionalFields: ['Name'],
+                    pageSize: 50,
+                    pageToken: 0,
+                    sortBy: ['Id'],
                 },
                 undefined,
             ]
         );
 
         testRejectFetchResponse({
-            method: 'post',
+            method: 'get',
             baseUri: UI_API_BASE_URI,
             basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
             urlParams: {

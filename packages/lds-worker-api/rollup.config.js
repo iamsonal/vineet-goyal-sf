@@ -28,8 +28,8 @@ const platform = {
 
     external: [
         '@salesforce/lds-instrumentation',
-        'native/ldsEngineMobile',
         'force/ldsAdaptersGraphql',
+        'native/ldsEngineMobile',
         'o11y/client',
     ],
 
@@ -38,6 +38,9 @@ const platform = {
             ...baseOutput,
             file: platformEsmPath,
             format: 'esm',
+            paths: {
+                '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
+            },
         },
     ],
 

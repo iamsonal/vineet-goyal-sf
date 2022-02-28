@@ -54,6 +54,16 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets MDP recipes', async () => {
+        const mock = getMock('recipes-mdp');
+        const config = { licenseType: 'MulesoftDataPath' };
+        mockGetRecipesNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetRecipes);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('does not fetch a second time', async () => {
         const mock = getMock('recipes');
         const config = {};

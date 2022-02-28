@@ -58,6 +58,28 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets MDP limits', async () => {
+        const mock = getMock('analytics-limits-mdp');
+        const config = {
+            types: [
+                'BatchTransformationHours',
+                'OutputLocalConnectorVolume',
+                'MaxDailyRowsHighOutputCon',
+                'MaxDailyRowsLowOutputCon',
+                'MaxDailyRowsMedOutputCon',
+                'MaxDailySizeHighOutputCon',
+                'MaxDailySizeLowOutputCon',
+                'MaxDailySizeMedOutputCon',
+            ],
+            licenseType: 'MulesoftDataPath',
+        };
+        mockGetAnalyticsLimitsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetAnalyticsLimits);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('displays error when network request 404s', async () => {
         const mock = {
             ok: false,

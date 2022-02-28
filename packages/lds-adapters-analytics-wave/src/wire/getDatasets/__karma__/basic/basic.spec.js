@@ -98,6 +98,16 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets MDP datasets', async () => {
+        const mock = getMock('datasets-mdp');
+        const config = { licenseType: 'MulesoftDataPath' };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets datasets with current version metadata', async () => {
         const mock = getMock('datasets-current-version');
         const config = { includeCurrentVersion: true };

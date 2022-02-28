@@ -6,7 +6,7 @@
 import timekeeper from 'timekeeper';
 
 import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
-import { Adapter, FetchResponse, HttpStatusCode } from '@luvio/engine';
+import { Adapter, AdapterRequestContext, FetchResponse, HttpStatusCode } from '@luvio/engine';
 
 import {
     incrementRequestResponseCount,
@@ -475,6 +475,35 @@ describe('instrumentation', () => {
                 0
             );
             expect((instrumentation as any).adapterCacheMisses.size).toEqual(0);
+        });
+
+        it('sends request context to the adapter', async () => {
+            const mockAdapter = jest.fn();
+            mockAdapter.mockResolvedValue({});
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            const requestContext: AdapterRequestContext = {
+                cachePolicy: {
+                    type: 'no-cache',
+                },
+            };
+            const config: any = {};
+            await instrumentedAdapter(config, requestContext);
+            expect(mockAdapter).toHaveBeenCalledWith(config, requestContext);
+        });
+
+        it('does not send request context to the adapter', async () => {
+            const mockAdapter = jest.fn();
+            mockAdapter.mockResolvedValue({});
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            const config: any = {};
+            await instrumentedAdapter(config);
+            expect(mockAdapter).toHaveBeenCalledWith(config, undefined);
         });
     });
 

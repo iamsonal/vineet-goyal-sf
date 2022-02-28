@@ -5,6 +5,7 @@ import type {
     Adapter,
     UnfulfilledSnapshot,
     HttpStatusCode,
+    AdapterRequestContext,
 } from '@luvio/engine';
 import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@salesforce/lds-bindings';
 import type { CacheStatsLogger, Counter, MetricsKey, Timer } from 'instrumentation/service';
@@ -201,13 +202,13 @@ export class Instrumentation {
                   )
               );
 
-        const instrumentedAdapter = (config: C) => {
+        const instrumentedAdapter = (config: C, requestContext?: AdapterRequestContext) => {
             // increment overall and adapter request metrics
             wireAdapterRequestMetric.increment(1);
             totalAdapterRequestSuccessMetric.increment(1);
 
             // execute adapter logic
-            const result = adapter(config);
+            const result = adapter(config, requestContext);
             // In the case where the adapter returns a non-Pending Snapshot it is constructed out of the store
             // (cache hit) whereas a Promise<Snapshot> or Pending Snapshot indicates a network request (cache miss).
             //

@@ -596,14 +596,14 @@ const connect: ApiFamily = {
         method: 'post',
         predicate: (path) => path.startsWith(CONNECT_BASE_URI) && DGF_DATE_ISSUE_PATH.test(path),
         transport: {
-            controller: 'SustainabilityFamilyController.fetchDateIssues',
+            controller: 'SustainabilityFamilyController.identifyDateIssues',
         },
     },
     dgfDataGap: {
         method: 'post',
         predicate: (path) => path.startsWith(CONNECT_BASE_URI) && DGF_DATAGAP_PATH.test(path),
         transport: {
-            controller: 'SustainabilityFamilyController.getDataGapFillers',
+            controller: 'SustainabilityFamilyController.computeDataGapFillers',
         },
     },
 

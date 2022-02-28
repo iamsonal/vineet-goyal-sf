@@ -2,12 +2,11 @@ import {
     mockDgfDateIssueNetworkOnce,
     mockDgfDateIssueNetworkErrorOnce,
 } from 'industries-sustainability-dgf-test-util';
-import { fetchDateIssues } from 'lds-adapters-industries-sustainability-dgf';
+import { identifyDateIssues } from 'lds-adapters-industries-sustainability-dgf';
 const INPUT_MOCK = {
-    recordId: '0pfxx0000000001AAA',
-    types: ['type1'],
-
-    filters: [{}],
+    filters: [],
+    recordId: '0pfxx000000001dAAA',
+    types: ['missingDates', 'outOfDateRange', 'overlappingDates'],
 };
 
 const OUTPUT_MOCK = {
@@ -19,8 +18,9 @@ const OUTPUT_MOCK = {
 };
 describe('dgf date issue test', () => {
     it('test positive case of dgf date issue', async () => {
-        mockDgfDateIssueNetworkOnce(INPUT_MOCK, OUTPUT_MOCK);
-        const el = await fetchDateIssues(INPUT_MOCK);
+        const config = { dateIssueInput: INPUT_MOCK };
+        mockDgfDateIssueNetworkOnce(config, OUTPUT_MOCK);
+        const el = await identifyDateIssues(config);
         expect(el).toEqual(OUTPUT_MOCK);
     });
 
@@ -36,9 +36,11 @@ describe('dgf date issue test', () => {
                 },
             ],
         };
-        mockDgfDateIssueNetworkErrorOnce(INPUT_MOCK, mockErrorResponse);
+        const config = { dateIssueInput: INPUT_MOCK };
+
+        mockDgfDateIssueNetworkErrorOnce(config, mockErrorResponse);
         try {
-            await fetchDateIssues(INPUT_MOCK);
+            await identifyDateIssues(config);
             fail('dgf did not throw an error when expected to');
         } catch (e) {
             expect(e).toEqual(mockErrorResponse);

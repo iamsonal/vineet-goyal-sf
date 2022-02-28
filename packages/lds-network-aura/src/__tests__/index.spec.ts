@@ -3435,7 +3435,7 @@ describe('routes', () => {
                 basePath: `/sustainability/dgf/compute-datagap-fillers`,
             },
             [
-                'SustainabilityFamilyController.getDataGapFillers',
+                'SustainabilityFamilyController.computeDataGapFillers',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -3462,7 +3462,7 @@ describe('routes', () => {
                 basePath: `/sustainability/dgf/identify-date-issues`,
             },
             [
-                'SustainabilityFamilyController.fetchDateIssues',
+                'SustainabilityFamilyController.identifyDateIssues',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]

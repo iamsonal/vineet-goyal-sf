@@ -42,8 +42,9 @@ types:
       filters:
         description: Different DGF filters
         type: array
+        required: false
         items:
-          type: object
+          type: FilterInputRepresentation
       methods:
         description: Different methods
         type: array
@@ -87,8 +88,9 @@ types:
       filters:
         description: filters
         type: array
+        required: false
         items:
-          type: object
+          type: FilterInputRepresentation
       recordId:
         description: RecordId
         type: string
@@ -97,6 +99,20 @@ types:
         type: array
         items:
           type: string
+  SustainabilityDateIssueInputWrapperRepresentation: # TODO Hand Rolled 'SustainabilityDateIssueInputRepresentation' W-9311618 and W-9311623
+    description: A Wrapper around the SustainabilityDateIssueRepresentation
+    type: object
+    properties:
+      dateIssueInput:
+        description: The Oas Body Name for dateIssueInput.
+        type: SustainabilityDateIssueInputRepresentation
+  SustainabilityDGFDataGapFillerInputWrapperRepresentation: # TODO Hand Rolled 'SustainabilityDGFDataGapFillerInputRepresentation' W-9311618 and W-9311623
+    description: A Wrapper around the SustainabilityDGFDataGapFillerInputRepresentation
+    type: object
+    properties:
+      dataGapInput:
+        description: The Oas Body Name for dateGap filler input.
+        type: SustainabilityDGFDataGapFillerInputRepresentation
   SustainabilityDateIssueRepresentation:
     description: Output object for Sustainability Date issue calculation
     type: object
@@ -135,8 +151,9 @@ types:
                 type: SustainabilityDGFDataGapFillerRepresentation
         body:
           application/json:
-            type: SustainabilityDGFDataGapFillerInputRepresentation
-            (oas-body-name): DateIssueInput
+            type: SustainabilityDGFDataGapFillerInputWrapperRepresentation
+            #required: false
+            (oas-body-name): dataGapInput
     /identify-date-issues:
       post:
         description: used for fetching the date issues for a given record Id
@@ -148,5 +165,6 @@ types:
                 type: SustainabilityDateIssueRepresentation
         body:
           application/json:
-            type: SustainabilityDateIssueInputRepresentation
-            (oas-body-name): DateIssueInput
+            type: SustainabilityDateIssueInputWrapperRepresentation
+            #required: false
+            (oas-body-name): dateIssueInput

@@ -16,11 +16,13 @@ export function mockDgfDateIssueNetworkErrorOnce(config, mockData) {
 }
 
 function dgfDateIssueMatcher(config) {
+    let { dateIssueInput } = config;
+
     return sinon.match({
         baseUri: BASE_URI,
         basePath: `/connect/sustainability/dgf/identify-date-issues`,
         method: 'post',
-        body: { ...config },
+        body: { dateIssueInput },
     });
 }
 
@@ -35,10 +37,12 @@ export function mockDgfDataGapFillerNetworkErrorOnce(config, mockData) {
 }
 
 function dataGapFillerMatcher(config) {
+    let { dataGapInput } = config;
+
     return sinon.match({
         baseUri: BASE_URI,
         basePath: `/connect/sustainability/dgf/compute-datagap-fillers`,
         method: 'post',
-        body: { ...config },
+        body: { dataGapInput },
     });
 }

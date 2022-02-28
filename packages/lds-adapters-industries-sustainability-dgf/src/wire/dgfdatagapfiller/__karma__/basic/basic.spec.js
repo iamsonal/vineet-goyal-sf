@@ -2,12 +2,12 @@ import {
     mockDgfDataGapFillerNetworkOnce,
     mockDgfDataGapFillerNetworkErrorOnce,
 } from 'industries-sustainability-dgf-test-util';
-import { getDataGapFillers } from 'lds-adapters-industries-sustainability-dgf';
+import { computeDataGapFillers } from 'lds-adapters-industries-sustainability-dgf';
 
 const INPUT_MOCK = {
     recordId: '0pfxx0000000001AAA',
     methods: ['method1'],
-    filters: [{}],
+    filters: [{ item: 'some_item', value: 'some_value' }],
 };
 const OUTPUT_MOCK = {
     code: 1,
@@ -16,12 +16,15 @@ const OUTPUT_MOCK = {
 };
 describe('dgf data gap filler  test', () => {
     it('test positive case of dgf data gap filler', async () => {
-        mockDgfDataGapFillerNetworkOnce(INPUT_MOCK, OUTPUT_MOCK);
-        const el = await getDataGapFillers(INPUT_MOCK);
+        const config = { dataGapInput: INPUT_MOCK };
+        mockDgfDataGapFillerNetworkOnce(config, OUTPUT_MOCK);
+        const el = await computeDataGapFillers(config);
         expect(el).toEqual(OUTPUT_MOCK);
     });
 
     it('test dgf data gap filler error case', async () => {
+        const config = { dataGapInput: INPUT_MOCK };
+
         const mockErrorResponse = {
             ok: false,
             status: 404,
@@ -33,9 +36,9 @@ describe('dgf data gap filler  test', () => {
                 },
             ],
         };
-        mockDgfDataGapFillerNetworkErrorOnce(INPUT_MOCK, mockErrorResponse);
+        mockDgfDataGapFillerNetworkErrorOnce(config, mockErrorResponse);
         try {
-            await getDataGapFillers(INPUT_MOCK);
+            await computeDataGapFillers(config);
             fail('dgf did not throw an error when expected to');
         } catch (e) {
             expect(e).toEqual(mockErrorResponse);

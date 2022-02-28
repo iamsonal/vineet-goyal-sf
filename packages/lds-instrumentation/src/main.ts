@@ -374,13 +374,13 @@ export function instrumentAdapter<C, D>(
         // add metrics event observer to observer list (or create list and context if not defined)
         let requestContextWithInstrumentationObserver = requestContext;
         if (requestContextWithInstrumentationObserver === undefined) {
-            requestContextWithInstrumentationObserver = { eventObservers: [metricsEventObserver] };
+            requestContextWithInstrumentationObserver = { eventObservers: [] };
         }
         if (requestContextWithInstrumentationObserver.eventObservers === undefined) {
-            requestContextWithInstrumentationObserver.eventObservers = [metricsEventObserver];
-        } else {
-            requestContextWithInstrumentationObserver.eventObservers.push(metricsEventObserver);
+            requestContextWithInstrumentationObserver.eventObservers = [];
         }
+
+        requestContextWithInstrumentationObserver.eventObservers.push(metricsEventObserver);
 
         try {
             // execute adapter logic

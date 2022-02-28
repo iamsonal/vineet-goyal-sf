@@ -165,6 +165,54 @@ describe('instrumentAdapter', () => {
             expect(o11yActivitySpies.discard).toHaveBeenCalled();
         });
     });
+    describe('event observer', () => {
+        it('no request context passed', () => {
+            const mockAdapter = jest.fn();
+            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            instrumentedAdapter({});
+
+            const eventObservers = mockAdapter.mock.calls[0][1].eventObservers;
+
+            expect(mockAdapter).toBeCalledTimes(1);
+            expect(eventObservers).toBeDefined();
+            expect(eventObservers.length).toBe(1);
+        });
+        it('request context passed but no event observers', () => {
+            const mockAdapter = jest.fn();
+            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            instrumentedAdapter({}, { priority: 'high' });
+
+            const eventObservers = mockAdapter.mock.calls[0][1].eventObservers;
+
+            expect(mockAdapter).toBeCalledTimes(1);
+            expect(eventObservers).toBeDefined();
+            expect(eventObservers.length).toBe(1);
+        });
+
+        it('request context passed with an existing event observer', () => {
+            const mockAdapter = jest.fn();
+            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            instrumentedAdapter(
+                {},
+                { priority: 'high', eventObservers: [{ onLuvioEvent: () => {} }] }
+            );
+
+            const eventObservers = mockAdapter.mock.calls[0][1].eventObservers;
+
+            expect(mockAdapter).toBeCalledTimes(1);
+            expect(eventObservers).toBeDefined();
+            expect(eventObservers.length).toBe(2);
+        });
+    });
     describe('luvio store (L1) cache hit', () => {
         const mockAdapter = ((config, context) => {
             const observer = context.eventObservers[0];

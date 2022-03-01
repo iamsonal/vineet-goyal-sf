@@ -1,0 +1,192 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  ContractDocumentVersionRepresentation:
+    description: ContractDocumentVersion record
+    type: object
+    properties:
+      contractDocumentVersionId:
+        description: The record Id of ContractDocumentVersion
+        type: string
+      contractId:
+        description: The record Id of parent Contract
+        type: string
+      createdByFullName:
+        description: The status of ContractDocumentVersion
+        type: string
+      createdDate:
+        description: The createdDate of ContractDocumentVersion
+        type: string
+      creationProcessType:
+        description: The creationProcessType of ContractDocumentVersion
+        type: string
+      lastModifiedDate:
+        description: The lastModifiedDate of ContractDocumentVersion
+        type: string
+      name:
+        description: The versionName of ContractDocumentVersion
+        type: string
+      status:
+        description: The status of ContractDocumentVersion
+        type: string
+      versionNumber:
+        description: The versionNumber of ContractDocumentVersion
+        type: string
+  ContractDocumentVersionsListRepresentation:
+    description: ContractDocumentVersions record list
+    type: object
+    properties:
+      data:
+        description: List of ContractDocumentVersions details associated to the Contract
+        type: array
+        items:
+          type: ContractDocumentVersionRepresentation
+  ContractRepresentation:
+    description: Contract record
+    type: object
+    properties:
+      id:
+        description: The record Id of the Contact
+        type: string
+      name:
+        description: The name of the Contact
+        type: string
+      title:
+        description: The title of the Contact
+        type: string
+  GenericOutputRepresentation:
+    description: Generic Output Representation
+    type: object
+    properties:
+      code:
+        description: API code
+        type: string
+        required: false
+      id:
+        description: id
+        type: string
+      isSuccess:
+        description: API success status
+        type: boolean
+        required: false
+      message:
+        description: API message
+        type: string
+        required: false
+  TemplateListRepresentation:
+    description: Output representation of Templates
+    type: object
+    properties:
+      code:
+        description: API code
+        type: string
+        required: false
+      data:
+        description: The list of templates
+        type: array
+        items:
+          type: TemplateRepresentation
+      message:
+        description: API message
+        type: string
+        required: false
+  TemplateRepresentation:
+    description: Template Record
+    type: object
+    properties:
+      id:
+        description: The record Id of the Template
+        type: string
+      isActive:
+        description: The status of the Template
+        type: boolean
+      name:
+        description: The name of the Template
+        type: string
+      type:
+        description: The type of the Template
+        type: string
+/connect/clm:
+  /contract-document-version/{contractdocumentversionid}:
+    /checkIn:
+      patch:
+        description: CheckIn a Contract Document Version using Contract Document Version
+          ID
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: GenericOutputRepresentation
+      uriParameters:
+        contractdocumentversionid:
+          type: string
+          required: true
+    /unlock:
+      patch:
+        description: Unlock a Contract Document Version using Contract Document Version
+          ID
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: GenericOutputRepresentation
+      uriParameters:
+        contractdocumentversionid:
+          type: string
+          required: true
+  /contract/{contractId}/contract-document-version:
+    get:
+      description: Get contract document version details based on id
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ContractDocumentVersionsListRepresentation
+      queryParameters:
+        contractDocumentVersionId:
+          type: string
+          required: false
+    uriParameters:
+      contractId:
+        type: string
+        required: true
+  /document-templates:
+    get:
+      description: Get Template details based on version id
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TemplateListRepresentation
+      queryParameters:
+        objecttype:
+          type: string
+          required: false

@@ -20,6 +20,7 @@ import {
     ADATS_SYNC_BASE_URI,
     ADATS_CATALOG_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
+    CLM_BASE_URI,
     SMART_DATA_DISCOVERY_BASE_URI,
     ASSETCREATION_BASE_URI,
 } from '../middlewares/connect-base';
@@ -79,7 +80,6 @@ function testControllerInput(
         const fn = jest
             .spyOn(aura, 'executeGlobalController')
             .mockResolvedValueOnce(expectedResponseBody ? expectedResponseBody : {});
-
         await networkAdapter(buildResourceRequest(request));
 
         expect(fn).toHaveBeenCalledWith(...expectedParams);
@@ -10577,6 +10577,111 @@ describe('routes', () => {
                 basePath: `/health/uhs/actions`,
             },
             {}
+        );
+    });
+    describe('get /connect/clm/contract/{contractId}/contract-document-version', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract/800xx000000bnkHAAQ/contract-document-version`,
+                queryParams: {},
+            },
+            [
+                'ClmController.getContractDocumentVersion',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CLM_BASE_URI,
+            basePath: `/contract/800xx000000bnkHAAQ/contract-document-version`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract/800xx000000bnkHAAQ/contract-document-version`,
+            },
+            {}
+        );
+    });
+    describe('get /connect/clm/document-templates', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/document-templates`,
+                queryParams: {},
+            },
+            [
+                'ClmController.getTemplates',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CLM_BASE_URI,
+            basePath: `/document-templates`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/document-templates`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /contract-document-version/{contractdocumentversionid}/checkIn', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract-document-version/1234AA123E4567XD/checkIn`,
+                urlParams: {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                body: {},
+                headers: {
+                    'If-Modified-Since': '1234',
+                },
+            },
+            [
+                'ClmController.checkIn',
+                {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+    });
+    describe('patch /contract-document-version/{contractdocumentversionid}/unlock', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract-document-version/1234AA123E4567XD/unlock`,
+                urlParams: {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                body: {},
+                headers: {
+                    'If-Modified-Since': '1234',
+                },
+            },
+            [
+                'ClmController.unlock',
+                {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
         );
     });
 

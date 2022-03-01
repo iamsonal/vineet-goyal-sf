@@ -17,6 +17,7 @@ import {
     CIB_BASE_URI,
     RCG_TENANTMANAGEMENT_BASE_URI,
     IDENTITY_VERIFICATION_BASE_URI,
+    CLM_BASE_URI,
     PSS_SOCIAL_CARE_BASE_URI,
     LEARNING_CONTENT_PLATFORM_BASE_URI,
     SMART_DATA_DISCOVERY_BASE_URI,
@@ -506,7 +507,19 @@ const CIB_GET_DEAL_PARTIES_PATH = new RegExp(
     `${CIB_BASE_URI}/deal-parties/([A-Z0-9]){15,18}$`,
     'i'
 );
-
+const CLM_CONTRACT_URI_PATH = new RegExp(
+    `${CLM_BASE_URI}/contract/([A-Z0-9]){15,18}/contract-document-version$`,
+    'i'
+);
+const CLM_GET_DOCUMENT_URI_PATH = new RegExp(`${CLM_BASE_URI}/document-templates$`, 'i');
+const CLM_CONTRACT_CHECKIN_URI_PATH = new RegExp(
+    `${CLM_BASE_URI}/contract-document-version/([A-Z0-9]){1,18}/checkIn$`,
+    'i'
+);
+const CLM_CONTRACT_UNLOCK_URI_PATH = new RegExp(
+    `${CLM_BASE_URI}/contract-document-version/([A-Z0-9]){1,18}/unlock$`,
+    'i'
+);
 const UPLOAD_REFERENCE_DATA_PATH = new RegExp(
     `${CONNECT_BASE_URI}/sustainability/reference-data/([A-Z]){2,40}/upload$`,
     'i'
@@ -993,6 +1006,36 @@ const connect: ApiFamily = {
         predicate: (path) => path.startsWith(CIB_BASE_URI) && CIB_GET_DEAL_PARTIES_PATH.test(path),
         transport: {
             controller: 'CibController.getDealParties',
+        },
+    },
+    getContractDocumentVersion: {
+        method: 'get',
+        predicate: (path) => path.startsWith(CLM_BASE_URI) && CLM_CONTRACT_URI_PATH.test(path),
+        transport: {
+            controller: 'ClmController.getContractDocumentVersion',
+        },
+    },
+    getTemplates: {
+        method: 'get',
+        predicate: (path) => path.startsWith(CLM_BASE_URI) && CLM_GET_DOCUMENT_URI_PATH.test(path),
+        transport: {
+            controller: 'ClmController.getTemplates',
+        },
+    },
+    checkIn: {
+        method: 'patch',
+        predicate: (path) =>
+            path.startsWith(CLM_BASE_URI) && CLM_CONTRACT_CHECKIN_URI_PATH.test(path),
+        transport: {
+            controller: 'ClmController.checkIn',
+        },
+    },
+    unlock: {
+        method: 'patch',
+        predicate: (path) =>
+            path.startsWith(CLM_BASE_URI) && CLM_CONTRACT_UNLOCK_URI_PATH.test(path),
+        transport: {
+            controller: 'ClmController.unlock',
         },
     },
     uploadReferenceData: {
@@ -1995,7 +2038,6 @@ const assetCreation: ApiFamily = {
         },
     },
 };
-
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);

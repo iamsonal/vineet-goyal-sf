@@ -5988,6 +5988,12 @@ types:
           enum:
             - R2
             - R3
+        lastModifiedAfter:
+          type: string
+          required: false
+        lastModifiedBefore:
+          type: string
+          required: false
         licenseType:
           type: string
           required: false
@@ -5995,6 +6001,12 @@ types:
             - EinsteinAnalytics
             - MulesoftDataPath
             - Sonic
+        nextScheduledAfter:
+          type: string
+          required: false
+        nextScheduledBefore:
+          type: string
+          required: false
         page:
           type: string
           required: false
@@ -6012,6 +6024,19 @@ types:
             - LastModifiedBy
             - Mru
             - Name
+        status:
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - Failure
+              - New
+              - Queued
+              - Running
+              - Success
+              - Warning
+            (oas-collectionFormat): csv
   /recipes/{id}:
     get:
       description: Get a recipe by ID.

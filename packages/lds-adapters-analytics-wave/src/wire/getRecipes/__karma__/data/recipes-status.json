@@ -1,0 +1,42 @@
+{
+    "nextPageUrl": null,
+    "recipes": [
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005xx000001X7kDAAS",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2022-01-25T01:39:37.000Z",
+            "dataflowLastUpdate": "2022-01-25T01:39:36.000Z",
+            "fileUrl": "/services/data/v55.0/wave/recipes/05vxx0000004C92AAE/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v55.0/wave/recipes/05vxx0000004C92AAE/histories",
+            "id": "05vxx0000004C92AAE",
+            "label": "r3y opp sonic 2",
+            "lastModifiedBy": {
+                "id": "005xx000001X7kDAAS",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2022-01-25T01:39:37.000Z",
+            "licenseAttributes": {
+                "type": "sonic"
+            },
+            "name": "r3y_opp_sonic_2",
+            "publishingTarget": "Dataset",
+            "scheduleAttributes": {
+                "assetId": "05vxx0000004C92AAE",
+                "frequency": "none"
+            },
+            "status": "New",
+            "targetDataflowId": "02Kxx0000004DC3EAM",
+            "type": "recipe",
+            "url": "/services/data/v55.0/wave/recipes/05vxx0000004C92AAE?format=R3",
+            "validationDetails": []
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v55.0/wave/recipes?status=New"
+}

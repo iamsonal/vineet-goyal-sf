@@ -54,6 +54,36 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets recipes with lastModifiedBefore and lastModifiedAfter', async () => {
+        const mock = getMock('recipes-last-modified');
+        const config = { lastModifiedAfter: '1606206503', lastModifiedBefore: '1606724903' };
+        mockGetRecipesNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetRecipes);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets recipes with nextScheduledAfter and nextScheduledBefore', async () => {
+        const mock = getMock('recipes-next-scheduled');
+        const config = { nextScheduledAfter: '1611476903', nextScheduledBefore: '1643012903' };
+        mockGetRecipesNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetRecipes);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets recipes with status', async () => {
+        const mock = getMock('recipes-status');
+        const config = { status: ['New'] };
+        mockGetRecipesNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetRecipes);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets MDP recipes', async () => {
         const mock = getMock('recipes-mdp');
         const config = { licenseType: 'MulesoftDataPath' };

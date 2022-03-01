@@ -6741,6 +6741,11 @@ describe('routes', () => {
                         pageSize: 10,
                         q: 'rcp 3',
                         sort: 'Name',
+                        lastModifiedAfter: '1606206503',
+                        lastModifiedBefore: '1606724903',
+                        nextScheduledAfter: '1611476903',
+                        nextScheduledBefore: '1643012903',
+                        status: ['New'],
                     },
                 },
                 [
@@ -6752,6 +6757,11 @@ describe('routes', () => {
                         pageSize: 10,
                         q: 'rcp 3',
                         sortParam: 'Name',
+                        lastModifiedAfter: '1606206503',
+                        lastModifiedBefore: '1606724903',
+                        nextScheduledAfter: '1611476903',
+                        nextScheduledBefore: '1643012903',
+                        status: ['New'],
                     },
                     { background: false, hotspot: true, longRunning: false },
                 ]

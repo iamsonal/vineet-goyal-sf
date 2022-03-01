@@ -921,7 +921,20 @@ function mockGetRecipesNetworkErrorOnce(config, mockData) {
 }
 
 function getRecipesMatcher(config) {
-    let { format, licenseType, page, pageSize, q, sort, order } = config;
+    let {
+        format,
+        licenseType,
+        page,
+        pageSize,
+        q,
+        sort,
+        order,
+        lastModifiedAfter,
+        lastModifiedBefore,
+        nextScheduledAfter,
+        nextScheduledBefore,
+        status,
+    } = config;
     return sinon.match({
         body: null,
         headers: {},
@@ -936,6 +949,11 @@ function getRecipesMatcher(config) {
             q,
             sort,
             order,
+            lastModifiedAfter,
+            lastModifiedBefore,
+            nextScheduledAfter,
+            nextScheduledBefore,
+            status,
         },
     });
 }

@@ -42,5 +42,8 @@
         }
     ],
     "primaryResponseObjRecordIds": [null],
-    "secondaryResponseObjRecordIds": ["a01x00000009qltAAA"]
+    "secondaryResponseObjRecordIds": ["a01x00000009qltAAA"],
+    "status": {
+        "code": 200
+    }
 }

@@ -45,17 +45,20 @@ types:
         description: .
         type: string | nil
         required: false
+  # TODO Hand-rolled Union Types for Array  W-8253396
+  NullableColumnMap:
+    description: ColumnMapWrap wrapper object for use in PredictionInputRepresentation.
+    type: object
+    properties:
+      //:
+        type: string | nil
   ColumnMapWrap:
     description: ColumnMapWrap wrapper object for use in PredictionInputRepresentation.
     type: object
     properties:
       columnMap:
         description: Map of the Field Map.
-        type: object
-        properties:
-          //:
-            type: string
-        required: false
+        type: NullableColumnMap | nil
   FeatureExtractionParametersList:
     description: featureExtractionParametersList wrapper object for use in PredictionInputRepresentation.
     type: object
@@ -64,8 +67,12 @@ types:
         description: FeatureExtractionParameters
         type: array
         items:
-          type: object
+          type: FeatureExtractionParametersMapValue | nil # TODO Hand-rolled W-7093257
         required: false
+    # TODO Hand-rolled Union Types for Array  W-8253396
+  NullableFeatureExtractionParametersMapValue:
+    description: Wrapper to make the object null
+    type: object
   FeatureExtractionParametersMapValue:
     description: featureExtractionParameterMapValue wrapper object for use as child
       wrapper of FeatureExtractionParametersMap.
@@ -73,7 +80,7 @@ types:
     properties:
       featureExtractionParametersMapValue:
         description: Map of the Field Map.
-        type: object
+        type: NullableFeatureExtractionParametersMapValue | nil # TODO Hand-rolled W-7093257
         required: false
   Insight:
     description: .
@@ -90,16 +97,20 @@ types:
         format: double
         type: number
         required: false
+    # TODO Hand-rolled Union Types for Array  W-8253396
+  NullableInsightsSettingsMap:
+    description: Wrapper for Nullable Map Object.
+    type: object
+    properties:
+      //:
+        type: integer | nil
   InsightsSettingsMap:
     description: InsightsSettingsMap wrapper object for use in PredictionInputRepresentation.
     type: object
     properties:
       insightsSettings:
         description: insightsSettings
-        type: object
-        properties:
-          //:
-            type: integer
+        type: NullableInsightsSettingsMap | nil
         required: false
   ModelFeature:
     description: .
@@ -149,7 +160,6 @@ types:
         format: double
         type: number
         required: false
-
   PredictionInputWrapperRepresentation:
     description: Wrapper for PredictInputRepresentation.
     type: object
@@ -163,55 +173,55 @@ types:
     properties:
       async:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       columnNames:
         description: .
-        type: WrappedList
+        type: WrappedList | nil
         required: false # TODO Hand-rolled W-9314597
       enableFeaturePersistence:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       enableInsightPersistence:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       enableScorePersistence:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       enableSuggestionPersistence:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       enrichModelClassification:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       enrichModelFeatures:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       enrichPredictionDefinition:
         description: .
-        type: boolean
+        type: boolean | nil
         required: false # TODO Hand-rolled W-9314597
       featureColumnMap:
         description: .
-        type: ColumnMapWrap
+        type: ColumnMapWrap | nil
         required: false # TODO Hand-rolled W-9314597
       featureExtractionParameters:
         description: .
-        type: FeatureExtractionParametersList
+        type: FeatureExtractionParametersList | nil
         required: false # TODO Hand-rolled W-9314597
       featureExtractorId:
         description: .
-        type: string
+        type: string | nil
         required: false # TODO Hand-rolled W-9314597
       historyReferencePoint:
         description: .
-        type: string
+        type: string | nil
         required: false # TODO Hand-rolled W-9314597
       inputType:
         description: .
@@ -219,11 +229,11 @@ types:
         required: true # TODO Hand-rolled W-9314597
       insightColumnMap:
         description: .
-        type: ColumnMapWrap
+        type: ColumnMapWrap | nil
         required: false # TODO Hand-rolled W-9314597
       insightsSettings:
         description: .
-        type: InsightsSettingsMap
+        type: InsightsSettingsMap | nil
         required: false # TODO Hand-rolled W-9314597
       predictionDefinition:
         description: .
@@ -231,34 +241,39 @@ types:
         required: true # TODO Hand-rolled W-9314597
       rawData:
         description: .
-        type: RawDataList
+        type: RawDataList | nil
         required: false # TODO Hand-rolled W-9314597
       records:
         description: .
-        type: WrappedList
+        type: WrappedList | nil
         required: false # TODO Hand-rolled W-9314597
       scorePersistenceColumn:
         description: .
-        type: string
+        type: string | nil
         required: false # TODO Hand-rolled W-9314597
       suggestionColumnMap:
         description: .
-        type: ColumnMapWrap
+        type: ColumnMapWrap | nil
         required: false # TODO Hand-rolled W-9314597
       usecaseDefinition:
         description: .
         type: string
         required: true # TODO Hand-rolled W-9314597
+    # TODO Hand-rolled Union Types for Array  W-8253396
+  NullableModel:
+    description: .
+    type: object
+    properties:
+      //:
+        type: string | nil
   PredictionObject:
     description: .
     type: object
     properties:
       model:
         description: .
-        type: object
-        properties:
-          //:
-            type: string | nil
+        type: NullableModel | nil
+        required: false
       prediction:
         description: .
         type: Prediction | nil
@@ -388,16 +403,13 @@ types:
         description: RawDataInput
         type: array
         items:
-          type: string
+          type: string | nil
   RawDataInputWrap:
     description: RawDataInputWrap wrapper object for use as child wrapper of  RawDataList.
     type: object
     properties:
       rawDataInputWrap:
-        description: .
-        type: array
-        items:
-          type: string
+        type: RawDataInputRepresentation | nil # TODO Hand-rolled W-7093257
   RawDataList:
     description: RawDataList wrapper object for use in PredictionInputRepresentation.
     type: object
@@ -406,23 +418,20 @@ types:
         description: RawData
         type: array
         items:
-          type: object
+          type: RawDataInputWrap | nil # TODO Hand-rolled W-7093257
+  # TODO Hand-rolled W-10772396
   Status:
     description: The output representation of the Status of the request.
     type: object
     properties:
       code:
         description: get Code.
-        type: string | nil
+        type: integer | nil
+        required: false
       message:
         description: Get Error Message
         type: string | nil
-      successCount:
-        description: Get success count.
-        type: integer | nil
-      totalRecommendations:
-        description: Get total recommendations.
-        type: integer | nil
+        required: false
   Suggestion:
     description: .
     type: object
@@ -432,10 +441,12 @@ types:
         type: array
         items:
           type: Column | nil
+        required: false
       value:
         description: .
         format: double
         type: number
+        required: false
   WrappedList:
     description: WrappedList wrapper object for use in PredictionInputRepresentation.
     type: object
@@ -444,7 +455,7 @@ types:
         description: wrappedList
         type: array
         items:
-          type: string
+          type: string | nil
 /connect:
   /aiaccelerator/predictions:
     post:

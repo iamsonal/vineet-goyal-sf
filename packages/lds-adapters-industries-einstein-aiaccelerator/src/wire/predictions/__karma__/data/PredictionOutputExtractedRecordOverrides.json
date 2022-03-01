@@ -1,7 +1,9 @@
 {
+    "classificationThreshold": null,
     "featureExtractor": "SampleApexFeatureExtractor",
     "featureExtractorType": "APEX",
     "inputType": "ExtractedRecordOverrides",
+    "modelFeatures": [],
     "insightsSettings": {
         "prescriptionImpactPercentage": 0,
         "maxPrescriptions": 2,
@@ -12,9 +14,7 @@
     "predictionPurpose": "FTestSampleMLUsecase",
     "predictions": [
         {
-            "model": {
-                "id": "1Otx00000004C98CAE"
-            },
+            "model": null,
             "prediction": {
                 "insights": [
                     {
@@ -46,6 +46,13 @@
                 ],
                 "score": -196.02606563424106
             },
+            "suggestions": [
+                {
+                    "columns": [],
+                    "value": null
+                },
+                {}
+            ],
             "prescriptions": [
                 {
                     "columns": [
@@ -70,5 +77,9 @@
         }
     ],
     "primaryResponseObjRecordIds": [null],
-    "secondaryResponseObjRecordIds": [null]
+    "secondaryResponseObjRecordIds": [null],
+    "status": {
+        "code": 200,
+        "message": "Success"
+    }
 }

@@ -30,6 +30,9 @@
                             "20000"
                         ]
                     }
+                },
+                {
+                    "rawDataInputWrap": { "rawDataInput": [] }
                 }
             ]
         },
@@ -64,16 +67,8 @@
         },
         "featureExtractionParameters": {
             "featureExtractionParameters": [
-                {
-                    "featureExtractionParametersMapValue": {
-                        "rawData": {
-                            "corp_year_week__c": "202016",
-                            "sap_source_id__c": "0YQx0000000CaS8GAK",
-                            "sap_ppg_id__c": "01tx00000006j2DAAQ",
-                            "sales_units__c": "20"
-                        }
-                    }
-                },
+                null,
+                {},
                 {
                     "featureExtractionParametersMapValue": {
                         "rawData": {

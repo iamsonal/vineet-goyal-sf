@@ -1,4 +1,15 @@
 {
-    "grants": [],
+    "grants": [
+        {
+            "qualifiedName": "Salesforce.Schema.Account",
+            "grantee": {
+                "id": "0ZGRM0000004Dn04AE",
+                "displayName": "Bart Simpson",
+                "type": "User"
+            },
+            "permission": "CreateSchema",
+            "operation": "Revoke"
+        }
+    ],
     "requestId": "requestId"
 }

@@ -19,15 +19,17 @@ describe('basic', () => {
         it(`executes ${permission} with results from ${permission}.json`, async () => {
             const mock = getMock(permission);
             const grants = {
-                requestId: 'requestId',
-                grants: [
-                    {
-                        grantee: '0ZGRM0000004Dn04AE',
-                        operation,
-                        permission,
-                        qualifiedName: 'testdb01.testSchema01.Account',
-                    },
-                ],
+                grants: {
+                    requestId: 'requestId',
+                    grants: [
+                        {
+                            grantee: '0ZGRM0000004Dn04AE',
+                            operation,
+                            permission,
+                            qualifiedName: 'testdb01.testSchema01.Account',
+                        },
+                    ],
+                },
             };
             mockCreateCatalogGrantsNetworkOnce(grants, mock);
             const data = await createCatalogGrants(grants);
@@ -39,21 +41,23 @@ describe('basic', () => {
     it('executes MultipleRequestsReturnOnlyGrants', async () => {
         const mock = getMock('MultipleRequestsReturnOnlyGrants');
         const grants = {
-            requestId: 'requestId',
-            grants: [
-                {
-                    grantee: '0ZGRM0000004Dn04AE',
-                    operation: 'Grant',
-                    permission: 'Usage',
-                    qualifiedName: 'testdb01.testSchema01.Account',
-                },
-                {
-                    grantee: '0ZGRM0000004Dn04AE',
-                    operation: 'Revoke',
-                    permission: 'Select',
-                    qualifiedName: 'testdb01.testSchema01.Account',
-                },
-            ],
+            grants: {
+                requestId: 'requestId',
+                grants: [
+                    {
+                        grantee: '0ZGRM0000004Dn04AE',
+                        operation: 'Grant',
+                        permission: 'Usage',
+                        qualifiedName: 'testdb01.testSchema01.Account',
+                    },
+                    {
+                        grantee: '0ZGRM0000004Dn04AE',
+                        operation: 'Revoke',
+                        permission: 'Select',
+                        qualifiedName: 'testdb01.testSchema01.Account',
+                    },
+                ],
+            },
         };
         mockCreateCatalogGrantsNetworkOnce(grants, mock);
         const data = await createCatalogGrants(grants);
@@ -74,27 +78,29 @@ describe('basic', () => {
             ],
         };
         const grants = {
-            requestId: 'requestId',
-            grants: [
-                {
-                    qualifiedName: 'testdb01.testSchema01.Account',
-                    grantee: '0ZGRM0000004Dn04AE',
-                    operation: 'Grant',
-                    permission: 'Select',
-                },
-                {
-                    qualifiedName: 'testdb01.testSchema01.Account',
-                    grantee: '0ZGRM0000004Dn04AE',
-                    operation: 'Grant',
-                    permission: 'Insert',
-                },
-                {
-                    qualifiedName: 'testdb01.testSchema01.Account',
-                    grantee: '0ZGRM0000004Dn04AE',
-                    operation: 'Grant',
-                    permission: 'Ownership',
-                },
-            ],
+            grants: {
+                requestId: 'requestId',
+                grants: [
+                    {
+                        qualifiedName: 'testdb01.testSchema01.Account',
+                        grantee: '0ZGRM0000004Dn04AE',
+                        operation: 'Grant',
+                        permission: 'Select',
+                    },
+                    {
+                        qualifiedName: 'testdb01.testSchema01.Account',
+                        grantee: '0ZGRM0000004Dn04AE',
+                        operation: 'Grant',
+                        permission: 'Insert',
+                    },
+                    {
+                        qualifiedName: 'testdb01.testSchema01.Account',
+                        grantee: '0ZGRM0000004Dn04AE',
+                        operation: 'Grant',
+                        permission: 'Ownership',
+                    },
+                ],
+            },
         };
         mockCreateCatalogGrantsNetworkErrorOnce(grants, mock);
 

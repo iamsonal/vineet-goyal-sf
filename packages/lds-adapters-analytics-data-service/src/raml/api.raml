@@ -610,6 +610,13 @@ types:
       url:
         description: The url of this collection.
         type: string
+  GrantInputCollectionWrapperRepresentation:
+    description: Wrapper for grant input collection representation
+    type: object
+    properties:
+      grants:
+        type: GrantInputCollectionRepresentation
+        description: grant input collection representation
   GrantInputCollectionRepresentation:
     description: A definition used to grant or revoke new grants
     type: object
@@ -686,9 +693,38 @@ types:
         description: The list of grants that have been updated from this update request.
         type: array
         items:
-          type: GrantRepresentation
+          type: GrantUpdateRepresentation
       requestId:
         description: The provided request id.
+        type: string
+  GrantUpdateRepresentation:
+    description: Details about an Analytics Data Service access grant that has been
+      granted or revoked
+    type: object
+    properties:
+      grantee:
+        description: Grantee that permission was granted/revoked for
+        type: GrantUrogRepresentation
+      operation:
+        description: Is this permission being granted, or revoked?
+        type: string
+        enum:
+          - Grant
+          - Revoke
+      permission:
+        description: Permission this grant allows
+        type: string
+        enum:
+          - CreateSchema
+          - CreateTable
+          - Delete
+          - Insert
+          - Ownership
+          - Select
+          - Update
+          - Usage
+      qualifiedName:
+        description: Fully qualified name of the resource this grant is for
         type: string
   GrantUrogRepresentation:
     description: Details about a user, role, or group granted access to an ADS asset
@@ -875,8 +911,10 @@ types:
         body:
           application/json:
             description: List of Grant/Revoke statements
-            type: GrantInputCollectionRepresentation
+            # TODO Hand-rolled W-10128739. Original type: GrantInputCollectionRepresentation
+            type: GrantInputCollectionWrapperRepresentation
             (oas-body-name): grants
+
 /analytics/data-service/sync:
   /connectors:
     get:

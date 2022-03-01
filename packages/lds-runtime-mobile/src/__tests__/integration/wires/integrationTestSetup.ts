@@ -23,6 +23,7 @@ import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/Obje
 import { flushPromises } from '../../testUtils';
 import mockOpportunityObjectInfo from './data/object-Opportunity.json';
 import mockAccountObjectInfo from './data/object-Account.json';
+import mockUserObjectInfo from './data/object-User.json';
 import mockUser from './data/record-User-fields-User.Id,User.City.json';
 import { JSONStringify } from '../../../utils/language';
 import { NimbusSqlDurableStore } from '../../../NimbusSqlDurableStore';
@@ -37,7 +38,7 @@ let updateRecord;
 let deleteRecord;
 let getRecords;
 let getRelatedListRecords;
-let graphQL;
+let graphQL: ReturnType<typeof graphQLAdapterFactory>;
 let getRecordUi;
 let storeEval;
 
@@ -133,6 +134,11 @@ export function populateDurableStoreWithObjectInfos(luvioDurableStore: NimbusSql
         data: { ...mockAccountObjectInfo },
     };
 
+    const userObjectInfoKey = keyBuilderObjectInfo({ apiName: mockUserObjectInfo.apiName });
+    const userObjectInfo: DurableStoreEntry<ObjectInfoRepresentation> = {
+        data: { ...mockUserObjectInfo },
+    };
+
     return luvioDurableStore.batchOperations([
         {
             type: DurableStoreOperationType.SetEntries,
@@ -150,6 +156,7 @@ export function populateDurableStoreWithObjectInfos(luvioDurableStore: NimbusSql
             entries: {
                 [opportunityObjectInfoKey]: opportunityObjectInfo,
                 [accountObjectInfoKey]: accountObjectInfo,
+                [userObjectInfoKey]: userObjectInfo,
             },
         },
     ]);

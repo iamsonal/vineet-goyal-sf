@@ -2768,6 +2768,11 @@ types:
               #required: false # TODO hand rolled. W-9275477
               (oas-body-name): unpublishInput
       /variants/{variantId}:
+        delete:
+          description: Delete a managed content variant given its Id
+          responses:
+            '200':
+              description: Success
         get:
           description: Gets a managed content variant by Id.
           responses:

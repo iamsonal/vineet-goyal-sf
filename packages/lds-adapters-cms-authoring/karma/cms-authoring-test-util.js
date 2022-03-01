@@ -269,7 +269,35 @@ function mockReplaceManagedContentVariantErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function getDeleteManagedContentVariantMatcher(config) {
+    const { variantId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/contents/variants/${variantId}`,
+        queryParams: {},
+    });
+}
+
+function mockDeleteManagedContentVariant(config, mockData = {}) {
+    var paramMatch = getDeleteManagedContentVariantMatcher(config);
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteManagedContentVariantErrorOnce(config, mockData = {}) {
+    var paramMatch = getDeleteManagedContentVariantMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 export {
+    URL_BASE,
     mockUnpublishManagedContent,
     mockUnpublishManagedContentErrorOnce,
     getCreateDeploymentsMatcher,
@@ -291,4 +319,6 @@ export {
     getReplaceManagedContentsVaraiantsMatcher,
     mockReplaceManagedContentVariant,
     mockReplaceManagedContentVariantErrorOnce,
+    mockDeleteManagedContentVariant,
+    mockDeleteManagedContentVariantErrorOnce,
 };

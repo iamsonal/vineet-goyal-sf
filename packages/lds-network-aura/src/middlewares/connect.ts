@@ -282,6 +282,8 @@ const GET_MANAGED_CONTENT_PATH = new RegExp(`${CMS_BASE_URI}/contents/([A-Z0-9_]
 
 const REPLACE_MANAGED_CONTENT_VARIANT_PATH = GET_MANAGED_CONTENT_VARIANT_PATH;
 
+const DELETE_MANAGED_CONTENT_VARIANT_PATH = GET_MANAGED_CONTENT_VARIANT_PATH;
+
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
     'i'
@@ -856,6 +858,14 @@ const connect: ApiFamily = {
             path.startsWith(CMS_BASE_URI) && REPLACE_MANAGED_CONTENT_VARIANT_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.replaceManagedContentVariant',
+        },
+    },
+    deleteManagedContentVariant: {
+        method: 'delete',
+        predicate: (path: string) =>
+            path.startsWith(CMS_BASE_URI) && DELETE_MANAGED_CONTENT_VARIANT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.deleteManagedContentVariant',
         },
     },
     searchDecisionMatrixByName: {

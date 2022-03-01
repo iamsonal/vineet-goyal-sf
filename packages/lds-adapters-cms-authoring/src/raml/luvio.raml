@@ -295,6 +295,11 @@ types:
             content_key: urlParams.contentKeyOrId
             language: queryParams.language || ''
       /variants/{variantId}:
+        delete:
+          (luvio.adapter):
+            name: deleteManagedContentVariant
+          (luvio.key):
+            id: urlParams.variantId
         get:
           (luvio.adapter):
             name: getManagedContentVariant

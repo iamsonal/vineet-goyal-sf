@@ -7958,6 +7958,30 @@ describe('routes', () => {
         );
     });
 
+    describe('delete /connect/cms/contents/variants/{managedContentVariantId}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004CKKCA2`,
+            },
+            [
+                'ManagedContentController.deleteManagedContentVariant',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004CKKCA2`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/cms/folders/{folderId}/items', () => {
         testControllerInput(
             {

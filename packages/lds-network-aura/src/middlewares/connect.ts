@@ -573,6 +573,11 @@ const IDENTIFY_VERIFICATION_VERIFY_RECORD_PATH = new RegExp(
     'i'
 );
 
+const TIMELINE_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/timeline/([A-Z0-9]){15,18}/timeline-definitions/([A-Za-z0-9_]){1,255}/events`,
+    'i'
+);
+
 const AI_ACCELERATOR_PREDICTIONS = new RegExp(`${CONNECT_BASE_URI}/aiaccelerator/predictions`, 'i');
 
 const GET_STARTER_TEMPLATE_BYID_PATH = new RegExp(
@@ -2010,6 +2015,16 @@ const identityVerification: ApiFamily = {
     },
 };
 
+const timeline: ApiFamily = {
+    getTimelineData: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(CONNECT_BASE_URI) && TIMELINE_PATH.test(path),
+        transport: {
+            controller: 'TimelineController.getTimelineData',
+        },
+    },
+};
+
 const assetCreation: ApiFamily = {
     getStarterTemplates: {
         method: 'get',
@@ -2053,5 +2068,6 @@ registerApiFamilyRoutes(interesttagging);
 registerApiFamilyRoutes(identityVerification);
 registerApiFamilyRoutes(hpiscore);
 registerApiFamilyRoutes(learningContentPlatform);
+registerApiFamilyRoutes(timeline);
 registerApiFamilyRoutes(smartDataDiscovery);
 registerApiFamilyRoutes(assetCreation);

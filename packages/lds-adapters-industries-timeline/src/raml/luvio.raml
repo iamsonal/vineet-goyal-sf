@@ -1,0 +1,89 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'Timeline'
+(luvio.ttl): 360000
+
+types:
+  TimelineDataGetResultRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 10000
+    examples:
+      validResponse: !include ../wire/getTimelineData/__karma__/data/TimelineEventsResponse.json
+      emptyResponse: !include ../wire/getTimelineData/__karma__/data/TimelineEventsEmptyResponse.json
+
+/connect/timeline/{timelineObjRecordId}/timeline-definitions/{timelineConfigFullName}/events:
+  get:
+    (luvio.adapter):
+      name: getTimelineData
+      tests:
+        validConfigs:
+          - |
+            {
+              "timelineObjRecordId": "0DMR00000000gKcOAI",
+              "timelineConfigFullName": "HealthTimeline",
+              "direction": "prev",
+              "endDate": "2025-10-08T01:02:03Z",
+              "startDate": "2021-10-08T01:02:03Z"
+            }
+          - |
+            {
+              "timelineObjRecordId": "0DMR00000000gKcOAI",
+              "timelineConfigFullName": "HealthTimeline",
+              "eventTypeOffsets": "5",
+              "endDate": "2025-10-08T01:02:03Z",
+              "startDate": "2021-10-08T01:02:03Z"
+            }
+          - |
+            {
+              "timelineObjRecordId": "0DMR00000000gKcOAI",
+              "timelineConfigFullName": "HealthTimeline"
+            }
+        invalidConfigs:
+          - |
+            {}
+          - |
+            {
+              "timelineObjRecordId": 1234567890
+            }
+          - |
+            {
+              "direction": "prev",
+              "endDate": "2025-10-08T01:02:03Z",
+              "eventTypeOffsets": "5",
+              "eventTypes": "Case",
+              "startDate": "2021-10-08T01:02:03Z"
+            }
+    queryParameters:
+      direction:
+        examples:
+          validResponse: 'next'
+          emptyResponse: 'up'
+      endDate:
+        examples:
+          validResponse: '2025-10-08T01:02:03Z'
+          emptyResponse: '2025-10-08T01:02:03Z'
+      eventTypeOffsets:
+        examples:
+          validResponse: '5'
+          emptyResponse: '5'
+      eventTypes:
+        examples:
+          validResponse: 'Case'
+          emptyResponse: 'Case'
+      startDate:
+        examples:
+          validResponse: '2022-10-08T01:02:03Z'
+          emptyResponse: '2022-10-08T01:02:03Z'
+  uriParameters:
+    timelineConfigFullName:
+      examples:
+        validResponse: 'HealthTimeline'
+        emptyResponse: 'HealthTimeline'
+    timelineObjRecordId:
+      examples:
+        validResponse: '0DMR00000000gKcOAI'
+        emptyResponse: '0DMR00000000gKcOAI'

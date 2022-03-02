@@ -18,8 +18,8 @@
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-mobile"
     },
     "dependencies": {
-        "@luvio/engine": "0.75.1",
-        "@luvio/environments": "0.75.1",
+        "@luvio/engine": "0.76.1",
+        "@luvio/environments": "0.76.1",
         "@salesforce/lds-instrumentation": "1.40.0",
         "@salesforce/lds-network-adapter": "1.40.0"
     },

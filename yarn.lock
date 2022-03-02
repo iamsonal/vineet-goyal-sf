@@ -4811,58 +4811,58 @@
     npmlog "^4.1.2"
     write-file-atomic "^3.0.3"
 
-"@luvio/adapter-test-library@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.npmjs.org/@luvio/adapter-test-library/-/adapter-test-library-0.75.1.tgz#5bd61351927c663b83911ca7d239e744525ce95c"
-  integrity sha512-HZszK8528abVqEgeyf1lj8KMRNS58xjd3PCbJ28pPAYvbKRKF4x1SFLMsQpEpZRBQ+Qd+wQddx32JbScLdmtbQ==
+"@luvio/adapter-test-library@0.76.1":
+  version "0.76.1"
+  resolved "https://registry.npmjs.org/@luvio/adapter-test-library/-/adapter-test-library-0.76.1.tgz#1e95e2e3fe358cf01b2e438a63ac97cfcc65ea93"
+  integrity sha512-3nMwxroCP+LY5PGWr/aWQLmWHXF6S7yHiN/rLsOIPKGbg71gx39/Zpc549wnK7JDcBa1cl7gCdUNgCSDwWZlGQ==
   dependencies:
     sinon "^7.5.0"
 
-"@luvio/cli@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.npmjs.org/@luvio/cli/-/cli-0.75.1.tgz#419c7cb6aef6864d42ec22c14de061ac40284d0f"
-  integrity sha512-1kmhV91IyFjuAxvNhaydzaC6VewVx4SOxZUDUX1+j1eWMy7o0rQdQoGC/QIVhLaj8LvW4ZF3fevv7pwrJP+Gqg==
+"@luvio/cli@0.76.1":
+  version "0.76.1"
+  resolved "https://registry.npmjs.org/@luvio/cli/-/cli-0.76.1.tgz#718c9c3f36c6b50d3881a7967696108941642710"
+  integrity sha512-urM2xgpv84Z44ffFN8e7+dAaZN0N8kbDKnwnm+ONi+mlLWiljUrriCc7TkCPHsglGm2fDD2fRcslRn+0t9uMUw==
   dependencies:
-    "@luvio/compiler" "0.75.1"
+    "@luvio/compiler" "0.76.1"
     "@oclif/core" "^1.0.11"
     chalk "^4.0.0"
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@luvio/compiler@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.npmjs.org/@luvio/compiler/-/compiler-0.75.1.tgz#c08b84423667f4f3177faf088bca34a9bb18c872"
-  integrity sha512-9YmOungqB9+SE3sJKewCrwdpKwVH+r/ZWJVj4LYvWz9Tz5BHoxYS1LTRBVKlG1qyht4gSnnW1VDigQBKkFSJeA==
+"@luvio/compiler@0.76.1":
+  version "0.76.1"
+  resolved "https://registry.npmjs.org/@luvio/compiler/-/compiler-0.76.1.tgz#b4fd7cd57b639608421840216b6ddfd793c76936"
+  integrity sha512-ZOWIWM75DqS8p6REuDsEJmFWrujD1MG44/CO+hTUMkok7xnOI16tAvJc5bjF8kww/yNey4iEbzsnbBVvN9ETdA==
   dependencies:
-    "@luvio/graphql-parser" "0.75.1"
+    "@luvio/graphql-parser" "0.76.1"
     amf-client-js "4.2.0"
 
-"@luvio/engine@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.npmjs.org/@luvio/engine/-/engine-0.75.1.tgz#075bb11d4ad1f46997717cb78962ec081e4163e9"
-  integrity sha512-fsWC9RIGZHj1VYgrIGAS2W+klB9JxZxGqhLgXni1+I1+rsBSxD9ZfDPksxK++mxul2cMmzGbC8INFUKDlfm+vw==
+"@luvio/engine@0.76.1":
+  version "0.76.1"
+  resolved "https://registry.npmjs.org/@luvio/engine/-/engine-0.76.1.tgz#e949319217711b2ef06ca1dd2ed7848678895c3b"
+  integrity sha512-Mn4eFKBjgPY+r1E/b6xV6Bds8cWONXkXODRJ+wGUna/nO9SI5WHULlXzDl+UmQ9WLyrYrMnw52IvlysSItmAyA==
 
-"@luvio/environments@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.npmjs.org/@luvio/environments/-/environments-0.75.1.tgz#40f5db1ed86fa8c737f7bea4dd499d5d0519eed4"
-  integrity sha512-UhxRaja4GXQlAmvogjiHsnYY7NUhfeotKSBmA9DUtpKEu+dNzRT4QO67cLp7NMWeA/F3TR7Q+gvQ5vbgZ2FAwA==
+"@luvio/environments@0.76.1":
+  version "0.76.1"
+  resolved "https://registry.npmjs.org/@luvio/environments/-/environments-0.76.1.tgz#8940da958c7d925f702d6e0fe39964e5ded98b00"
+  integrity sha512-tZQukbg2wf0XlCVCgzfcWPq+AhSFsvk3LQBJnWQIsU1hR+682N1Ph07kd3zmd8fZHAHKZtJSzkJeXBHJxdjchw==
   dependencies:
-    "@luvio/engine" "0.75.1"
+    "@luvio/engine" "0.76.1"
 
-"@luvio/graphql-parser@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.npmjs.org/@luvio/graphql-parser/-/graphql-parser-0.75.1.tgz#296784d77fc578aaeb7aab581847fc078eef6b96"
-  integrity sha512-lBPKliFZJybwbh7BG9E7FKsem3jauvSvRqQYOZr0VhzH1SQ6cDCGFR++cf58DPxzh9w2Ou+8hwJMhbbi+/UydA==
+"@luvio/graphql-parser@0.76.1":
+  version "0.76.1"
+  resolved "https://registry.npmjs.org/@luvio/graphql-parser/-/graphql-parser-0.76.1.tgz#f3fd31ca315bde2c9d98df96c9ab8a773136378b"
+  integrity sha512-Kp/8Cp6NAMEiFnN5mKQoVKkoTFwF/NWMvlGV9A1pSDcSA42RPFpzOZqOL5zQGgnGiyA6LnAskyphl9fzReFNsg==
   dependencies:
     graphql "^15.0.0"
 
-"@luvio/lwc-luvio@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.npmjs.org/@luvio/lwc-luvio/-/lwc-luvio-0.75.1.tgz#e96cc755a2336f51ff9252cbe1605bcf3b82747e"
-  integrity sha512-Z2pkLwzbPuXNRFFMR4zVKWmlo4pG5BTxaeulstS7ITk0ZS9EZD5La9P3XfyeRGKqGtwvjNNNbWykKeXz73YoGQ==
+"@luvio/lwc-luvio@0.76.1":
+  version "0.76.1"
+  resolved "https://registry.npmjs.org/@luvio/lwc-luvio/-/lwc-luvio-0.76.1.tgz#4e3f56d836c8dd1aa1fba3d77a04e03f2e12d693"
+  integrity sha512-7M2kyrahkleyOagFLGeGGL73gogwQYWCjwlZGYIatVZrwuHRTPwzCAoyDcamJXkDvifBVhCmJRX1uT400bR1Jw==
   dependencies:
-    "@luvio/engine" "0.75.1"
-    "@lwc/engine-core" "^2.5.10"
+    "@luvio/engine" "0.76.1"
+    "@lwc/engine-core" "2.9.0"
 
 "@lwc/babel-plugin-component@2.9.0":
   version "2.9.0"
@@ -4895,14 +4895,6 @@
     "@lwc/features" "2.9.0"
     "@lwc/shared" "2.9.0"
 
-"@lwc/engine-core@^2.5.10":
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/@lwc/engine-core/-/engine-core-2.7.3.tgz#0bea24042698634689900c6d62d1dcee02eac734"
-  integrity sha512-n2b5FrJWR2f/DzENwkzLfTKk7mrKDZa2hCp2Ms/zYfXpFuDAAcH7ZE7EDOZ8p5bCvXbf30Oj95jX3Ao5Kb6iEQ==
-  dependencies:
-    "@lwc/features" "2.7.3"
-    "@lwc/shared" "2.7.3"
-
 "@lwc/engine-dom@2.9.0":
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/@lwc/engine-dom/-/engine-dom-2.9.0.tgz#a3f49dd54c6ae9103d346ee7bf9979bdc958793a"
@@ -4917,13 +4909,6 @@
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/@lwc/errors/-/errors-2.9.0.tgz#9864bde5607edb0db525b1796d804a29918b8e99"
   integrity sha512-IUgfyJzE43E+UKziLGzkO4OQ1MiD5hgMKv4UUdAsao83OFukVAlmD5+wnaUbbjVqi1JPowcltiVcWROkrbseLA==
-
-"@lwc/features@2.7.3":
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/@lwc/features/-/features-2.7.3.tgz#2b4201f8d4a5c43874a9c94d1402a5895eb81724"
-  integrity sha512-8DXk24i9vGQ+QPtKyWg4KNf7XC6RmC3iMeWndPzIIGxxaAHLf85fTq/Wz6gM3bxHUGmwjA/KYAGAgkWTC9+7rQ==
-  dependencies:
-    "@lwc/shared" "2.7.3"
 
 "@lwc/features@2.9.0":
   version "2.9.0"
@@ -4946,11 +4931,6 @@
   dependencies:
     "@lwc/module-resolver" "2.9.0"
     "@rollup/pluginutils" "~4.1.1"
-
-"@lwc/shared@2.7.3":
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/@lwc/shared/-/shared-2.7.3.tgz#b70a186e2d75aeffc1489bf4a21295b82d8c0269"
-  integrity sha512-h3beuhpqGP/N168HV9vuoRaHUQLvFH4xmNYMwQU4ZqhRolcCzwPBCViC9zEy7h+Yoi9+s8RYMnvkSS2cf+ti1g==
 
 "@lwc/shared@2.9.0":
   version "2.9.0"

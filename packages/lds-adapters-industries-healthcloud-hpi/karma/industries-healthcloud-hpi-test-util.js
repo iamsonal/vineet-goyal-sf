@@ -39,3 +39,22 @@ const getMorePatientScores = (params) => {
         queryParams: { limitBy, searchTerm, recordType, startIndex, range },
     });
 };
+
+export const mockGetInterfaceStatusError = (config, mockData) => {
+    const paramMatch = getInterfaceStatus(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+};
+export const mockGetInterfaceStatusOnce = (config, mockData) => {
+    const paramMatch = getInterfaceStatus(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+};
+
+const getInterfaceStatus = (params) => {
+    const { apexInterfaceName } = params;
+    return sinon.match({
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/health/uhsscore/apexinterface`,
+        queryParams: { apexInterfaceName },
+    });
+};

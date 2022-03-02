@@ -10718,6 +10718,29 @@ describe('routes', () => {
             {}
         );
     });
+    describe('get /connect/health/uhsscore/apexinterface', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhsscore/apexinterface`,
+            },
+            [
+                'HolisticPatientIndexController.getApexInterfaceStatus',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhsscore/apexinterface`,
+            },
+            {}
+        );
+    });
     describe('get /asset-creation/starter-templates', () => {
         testControllerInput(
             {

@@ -471,6 +471,11 @@ const HPI_SCORE_PATH = new RegExp(`${CONNECT_BASE_URI}/health/uhs/actions`, 'i')
 
 const GET_PATIENT_LIST_SCORE = new RegExp(`${CONNECT_BASE_URI}/health/uhslist/[A-Z0-9_-]`, 'i');
 
+const GET_PATIENT_SCORE_APEX_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/health/uhsscore/apexinterface`,
+    'i'
+);
+
 const GET_TAGS_BY_RECORD_PATH = new RegExp(
     `${CONNECT_BASE_URI}/interest-tags/assignments/entity/([A-Z0-9_]){1,80}$`,
     'i'
@@ -1946,6 +1951,14 @@ const hpiscore: ApiFamily = {
         },
         predicate: (path: string) =>
             path.startsWith(CONNECT_BASE_URI) && GET_PATIENT_LIST_SCORE.test(path),
+    },
+    getApexInterfaceStatus: {
+        method: 'get',
+        transport: {
+            controller: 'HolisticPatientIndexController.getApexInterfaceStatus',
+        },
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_PATIENT_SCORE_APEX_PATH.test(path),
     },
 };
 

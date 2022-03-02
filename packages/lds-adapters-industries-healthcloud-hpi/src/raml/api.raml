@@ -102,7 +102,13 @@ types:
       range:
         description: the range filter
         type: string
-
+  HPIApexInterfaceStatus:
+    description: Representation of the API Apex interface status
+    type: object
+    properties:
+      isPresent:
+        description: Set when the Apex interface implementation is present
+        type: boolean
 /connect:
   /health:
     /uhs:
@@ -158,3 +164,16 @@ types:
           description: Score Id
           type: string
           required: true
+    /uhsscore/apexinterface:
+      get:
+        description: API to check if the implementation of Apex interface exists in the org
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: HPIApexInterfaceStatus
+        queryParameters:
+          apexInterfaceName:
+            type: string
+            required: false

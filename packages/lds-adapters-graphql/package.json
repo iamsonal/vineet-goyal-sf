@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-graphql",
-    "version": "1.40.0",
+    "version": "1.41.0",
     "description": "Wire adapter for GraphQL API endpoint",
     "license": "MIT",
     "main": "dist/umd/es2018/graphql-service.js",
@@ -25,14 +25,14 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-graphql"
     },
     "dependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.40.0",
-        "@salesforce/lds-bindings": "1.40.0"
+        "@salesforce/lds-adapters-uiapi": "1.41.0",
+        "@salesforce/lds-bindings": "1.41.0"
     },
     "devDependencies": {
         "@luvio/graphql-parser": "0.76.1",
-        "@salesforce/lds-compiler-plugins": "1.40.0",
-        "@salesforce/lds-jest": "1.40.0",
-        "@salesforce/lds-karma": "1.40.0"
+        "@salesforce/lds-compiler-plugins": "1.41.0",
+        "@salesforce/lds-jest": "1.41.0",
+        "@salesforce/lds-karma": "1.41.0"
     },
     "bundlesize": [
         {

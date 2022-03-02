@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-network-adapter",
-    "version": "1.40.0",
+    "version": "1.41.0",
     "description": "LDS Network Adapter for Lightning Platform",
     "license": "MIT",
     "main": "dist/ldsNetwork.js",
@@ -15,6 +15,6 @@
     },
     "devDependencies": {
         "@luvio/engine": "0.76.1",
-        "@salesforce/lds-adapters-uiapi": "1.40.0"
+        "@salesforce/lds-adapters-uiapi": "1.41.0"
     }
 }

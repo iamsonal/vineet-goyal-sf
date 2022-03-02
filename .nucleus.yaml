@@ -29,6 +29,20 @@ steps:
     run:
       command: yarn format:fix
     after: node-install-update
+  populate-test-coverage-to-gus:
+    enabled: true
+    params:
+      coverage-config:
+        tool-name: clover
+        gus-team-name: 'Lightning Data Service'
+        aggregate-team-coverage: true
+        gus-record-active: true
+        report-locations:
+          - 'packages/lds-runtime-aura/coverage/clover.xml'
+          - 'packages/lds-network-aura/coverage/clover.xml'
+          - 'packages/lds-instrumentation/coverage/clover.xml'
+          - 'packages/lds-adapters-uiapi/coverage/clover.xml'
+          - 'packages/lds-adapters-apex/coverage/clover.xml'
 notifications:
   email:
     address: auradataservicescrumteam@salesforce.com

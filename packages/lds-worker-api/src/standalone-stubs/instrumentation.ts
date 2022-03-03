@@ -19,6 +19,6 @@ export const REFRESH_UIAPI_KEY = 'refreshUiApi';
 export const METRIC_KEYS = {};
 export const O11Y_NAMESPACE_LDS_MOBILE = 'lds-mobile';
 export const withInstrumentation = () => undefined;
-export class ErrorReporter {
+export class MetricsReporter {
     reportGraphqlQueryParseError() {}
 }

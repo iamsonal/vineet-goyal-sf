@@ -8,3 +8,10 @@ export const METRIC_KEYS = {
 };
 
 export const withInstrumentation = () => undefined;
+
+export class MetricsReporter {
+    reportGraphqlQueryParseError() {}
+    reportGraphqlSqlEvalPreconditionError() {}
+    reportGraphqlCreateSnapshotError() {}
+    reportGraphqlAdapterSuccess() {}
+}

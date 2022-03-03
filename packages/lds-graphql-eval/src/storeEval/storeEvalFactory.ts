@@ -3,6 +3,7 @@ import type { DurableStoreChange } from '@luvio/environments';
 import type { LuvioDocumentNode } from '@luvio/graphql-parser';
 import type { SqlStore, SqlDurableStore } from '@salesforce/lds-store-sql';
 
+import { MetricsReporter } from '@salesforce/lds-instrumentation';
 import { transform } from '../ast-parser';
 import type { SqlMappingInput } from '../ast-to-sql';
 import { sql } from '../ast-to-sql';
@@ -15,6 +16,9 @@ import type { ObjectInfoMap } from '../info-types';
 import type { RootQuery } from '../Predicate';
 import { hasObjectInfoChanges } from './util';
 import { createSnapshot } from './snapshot';
+
+// TODO [W-10791579]: See if we can inject this into storeEvalFactory
+const metricsReporter = new MetricsReporter();
 
 function evalQuery(
     ast: LuvioDocumentNode,
@@ -37,18 +41,35 @@ function offlineEvalSnapshot(
 ): Promise<Snapshot<unknown, any>> {
     const { sql: sqlString, bindings } = sql(query, mappingInput);
 
-    return sqlStore.evaluateSQL(sqlString, bindings).then((result) => {
-        const json = JSON.parse(result);
-        const snapshot = createSnapshot(json, ttlStrategy, timestamp);
+    return sqlStore
+        .evaluateSQL(sqlString, bindings)
+        .then((result) => {
+            const json = JSON.parse(result);
+            const snapshot = createSnapshot(json, ttlStrategy, timestamp);
 
-        return snapshot;
-    });
+            return snapshot;
+        })
+        .catch((err) => {
+            metricsReporter.reportGraphqlCreateSnapshotError(err);
+
+            throw err;
+        });
 }
 
 export type StoreEval = (
     ast: LuvioDocumentNode,
     ttlStrategy: TTLStrategy
 ) => Promise<Snapshot<unknown, any>>;
+
+const wrapInstrumentation = (storeEval: StoreEval): StoreEval => {
+    return (ast: LuvioDocumentNode, ttlStrategy: TTLStrategy) => {
+        return storeEval(ast, ttlStrategy).then((snapshot) => {
+            metricsReporter.reportGraphqlAdapterSuccess();
+
+            return snapshot;
+        });
+    };
+};
 
 export function storeEvalFactory(
     userId: string,
@@ -80,20 +101,30 @@ export function storeEvalFactory(
 
     const storeEval = (ast: LuvioDocumentNode, ttlStrategy: TTLStrategy) => {
         if (sqlDurableStore.isEvalSupported() === false) {
-            // console.log('eval not supported')
-            return Promise.reject('Eval is not supported.');
+            const error = new Error('Eval is not supported.');
+            metricsReporter.reportGraphqlSqlEvalPreconditionError(error);
+
+            return Promise.reject(error);
         }
 
         const queryResult = makeEvalQuery(ast);
         if (queryResult.isSuccess === false) {
-            return Promise.reject(
+            const error = new Error(
                 `Could not map GraphQL AST to SQL: ${JSON.stringify(queryResult.error)}`
             );
+            metricsReporter.reportGraphqlSqlEvalPreconditionError(error);
+
+            return Promise.reject(error);
         }
 
         return tableAttrsPromise(sqlDurableStore).then((mappingInput) => {
             if (mappingInput === undefined) {
-                return Promise.reject('DurableStore attrs required for evaluating GraphQL query.');
+                const error = new Error(
+                    'DurableStore attrs required for evaluating GraphQL query.'
+                );
+                metricsReporter.reportGraphqlSqlEvalPreconditionError(error);
+
+                return Promise.reject(error);
             }
 
             const timestamp = timestampSource();
@@ -107,5 +138,5 @@ export function storeEvalFactory(
         });
     };
 
-    return storeEval;
+    return wrapInstrumentation(storeEval);
 }

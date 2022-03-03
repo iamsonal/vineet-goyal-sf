@@ -62,7 +62,7 @@ import { ObjectKeys } from './utils/language';
 import { LRUCache } from './utils/lru-cache';
 export { LRUCache } from './utils/lru-cache';
 import { isPromise, stableJSONStringify, throttle } from './utils/utils';
-export { ErrorReporter, ERROR_CODE } from './utils/ErrorReporter';
+export { MetricsReporter, ERROR_CODE } from './utils/MetricsReporter';
 export { withInstrumentation, WithInstrumentation, ReporterType } from './utils/observability';
 
 interface AdapterMetadata {

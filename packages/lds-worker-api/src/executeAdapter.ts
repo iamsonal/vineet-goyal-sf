@@ -21,11 +21,11 @@ import {
 } from './NativeFetchResponse';
 import type { ObservabilityContext } from 'native/ldsEngineMobile';
 import { debugLog } from 'native/ldsEngineMobile';
-import { ErrorReporter } from '@salesforce/lds-instrumentation';
+import { MetricsReporter } from '@salesforce/lds-instrumentation';
 
 let adapterCounter = 0;
 
-const errorReporter = new ErrorReporter();
+const metricsReporter = new MetricsReporter();
 
 // Native Type Definitions
 type NativeCallbackValue = {
@@ -180,7 +180,7 @@ export function subscribeToAdapter(
             // gql config needs gql query string turned into AST object
             configObject.query = gqlParse(configObject.query);
         } catch (parseError) {
-            errorReporter.reportGraphqlQueryParseError(parseError as Error);
+            metricsReporter.reportGraphqlQueryParseError(parseError);
 
             // call the callback with error
             onResponseDelegate({
@@ -536,7 +536,7 @@ export function invokeAdapter(
                 // gql config needs gql query string turned into AST object
                 configObject.query = gqlParse(configObject.query);
             } catch (parseError) {
-                errorReporter.reportGraphqlQueryParseError(parseError as Error);
+                metricsReporter.reportGraphqlQueryParseError(parseError);
 
                 // call the callback with error
                 onResponseDelegate({

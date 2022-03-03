@@ -100,7 +100,7 @@ describe('storeEvalFactory', () => {
             await flushPromises();
 
             return storeEval(ast, ttlStrategy).catch((e) => {
-                expect(e).toEqual('Eval is not supported.');
+                expect(e.message).toEqual('Eval is not supported.');
             });
         });
 
@@ -116,7 +116,7 @@ describe('storeEvalFactory', () => {
 
             await flushPromises();
             return storeEval(ast, ttlStrategy).catch((e) => {
-                expect(e).toEqual(
+                expect(e.message).toEqual(
                     'Could not map GraphQL AST to SQL: [{"type":"MissingObjectInfoError","object":"TimeSheet"}]'
                 );
             });

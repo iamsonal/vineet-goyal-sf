@@ -59,7 +59,7 @@
         "@luvio/environments": "0.76.1",
         "@luvio/lwc-luvio": "0.76.1",
         "@lwc/rollup-plugin": "2.9.0",
-        "@oclif/command": "^1.6.1",
+        "@oclif/core": "^1.5.0",
         "@rollup/plugin-alias": "^3.1.1",
         "@rollup/plugin-commonjs": "^21.0.1",
         "@rollup/plugin-node-resolve": "^13.1.3",

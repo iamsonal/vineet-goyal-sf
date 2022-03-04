@@ -9,7 +9,7 @@ import {
 import { nimbusDraftQueue } from './nimbusDraftQueue';
 import { draftQueue, draftManager } from './draftQueueImplementation';
 import { setUiApiRecordTTL, setMetadataTTL } from './ttl';
-import { withDefaultLuvio } from 'native/ldsEngineMobile';
+import { withDefaultLuvio } from '@salesforce/lds-runtime-mobile';
 import type { Luvio } from '@luvio/engine';
 import { initializeStoreEval } from './storeEval';
 

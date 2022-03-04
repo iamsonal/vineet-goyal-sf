@@ -95,4 +95,4 @@ for (let i = 0; i < imperativeAdapterNames.length; i++) {
     delete adapterMap[wireAdapterName];
 }
 
-export { imperativeAdapterMap, adapterMap as dmlAdapterMap };
+export { imperativeAdapterMap, adapterMap as dmlAdapterMap, gqlApi };

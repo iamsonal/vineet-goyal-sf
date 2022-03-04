@@ -1,6 +1,5 @@
 import type { AdapterRequestContext, CachePolicy, FetchResponse } from '@luvio/engine';
 import { parseAndVisit as gqlParse } from '@luvio/graphql-parser';
-import * as gqlApi from 'force/ldsAdaptersGraphql';
 
 import { JSONParse, ObjectKeys } from './language';
 import type { AdapterCallback, AdapterCallbackValue } from './lightningAdapterApi';
@@ -9,6 +8,7 @@ import {
     dmlAdapterMap,
     UNSTABLE_ADAPTER_PREFIX,
     IMPERATIVE_ADAPTER_SUFFIX,
+    gqlApi,
 } from './lightningAdapterApi';
 import type { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
 import { draftManager } from './draftQueueImplementation';
@@ -19,8 +19,8 @@ import {
     NO_DRAFT_CREATED_MESSAGE,
     DRAFT_DOESNT_EXIST_MESSAGE,
 } from './NativeFetchResponse';
-import type { ObservabilityContext } from 'native/ldsEngineMobile';
-import { debugLog } from 'native/ldsEngineMobile';
+import type { ObservabilityContext } from '@salesforce/lds-runtime-mobile';
+import { debugLog } from '@salesforce/lds-runtime-mobile';
 import { MetricsReporter } from '@salesforce/lds-instrumentation';
 
 let adapterCounter = 0;
@@ -32,7 +32,7 @@ type NativeCallbackValue = {
     data: any | undefined;
     error: NativeFetchResponse<unknown> | undefined;
 };
-type NativeOnSnapshot = (value: NativeCallbackValue) => void;
+export type NativeOnSnapshot = (value: NativeCallbackValue) => void;
 type NativeOnResponse = (value: NativeCallbackValue) => void;
 type Unsubscribe = () => void;
 type NativeCachePolicy = CachePolicy;

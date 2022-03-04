@@ -1,13 +1,14 @@
 import { adapterName as gqlAdapterName } from '@salesforce/lds-adapters-graphql';
-import { executeAdapter, invokeAdapter, OnSnapshot } from '../../executeAdapter';
+import { executeAdapter, invokeAdapter } from '../../executeAdapter';
+import type { NativeOnSnapshot } from '../../executeAdapter';
 import { addMockNetworkResponse } from '../mocks/mockNimbusNetwork';
-import { ErrorReporter } from '@salesforce/lds-instrumentation';
+import { MetricsReporter } from '@salesforce/lds-instrumentation';
 
 import recordQuery_account1 from './mockData/RecordQuery-Account-fields-Name.json';
 
 const query = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) @connection { edges { node { Id, WeakEtag, Name { value, displayValue  } } } } } } }`;
 
-const errorReporterSpy = jest.spyOn(ErrorReporter.prototype, 'reportGraphqlQueryParseError');
+const errorReporterSpy = jest.spyOn(MetricsReporter.prototype, 'reportGraphqlQueryParseError');
 
 beforeEach(() => {
     jest.resetAllMocks();
@@ -22,7 +23,7 @@ describe(`invokeAdapter("${gqlAdapterName}")`, () => {
             body: JSON.stringify(recordQuery_account1),
         });
 
-        const onSnapshot: OnSnapshot = (value) => {
+        const onSnapshot: NativeOnSnapshot = (value) => {
             const { data, error } = value;
 
             expect(data).toEqual(recordQuery_account1);
@@ -34,7 +35,7 @@ describe(`invokeAdapter("${gqlAdapterName}")`, () => {
     });
 
     it('returns malformed query error in error callback', (done) => {
-        const onSnapshot: OnSnapshot = (value) => {
+        const onSnapshot: NativeOnSnapshot = (value) => {
             const { data, error } = value;
 
             expect(data).not.toBeDefined();
@@ -48,7 +49,7 @@ describe(`invokeAdapter("${gqlAdapterName}")`, () => {
     });
 
     it('logs error when recieves malformed query error', (done) => {
-        const onSnapshot: OnSnapshot = () => {
+        const onSnapshot: NativeOnSnapshot = () => {
             expect(errorReporterSpy).toHaveBeenCalledTimes(1);
             expect(errorReporterSpy).toHaveBeenCalledWith(
                 Error('Syntax Error: Expected Name, found <EOF>.')
@@ -62,7 +63,7 @@ describe(`invokeAdapter("${gqlAdapterName}")`, () => {
 
 describe(`executeAdapter("${gqlAdapterName}")`, () => {
     it('returns malformed query error in error callback', (done) => {
-        const onSnapshot: OnSnapshot = (value) => {
+        const onSnapshot: NativeOnSnapshot = (value) => {
             const { data, error } = value;
 
             expect(data).not.toBeDefined();
@@ -76,7 +77,7 @@ describe(`executeAdapter("${gqlAdapterName}")`, () => {
     });
 
     it('logs error when receives malformed query error', (done) => {
-        const onSnapshot: OnSnapshot = () => {
+        const onSnapshot: NativeOnSnapshot = () => {
             expect(errorReporterSpy).toHaveBeenCalledTimes(1);
             expect(errorReporterSpy).toHaveBeenCalledWith(
                 Error('Syntax Error: Expected Name, found <EOF>.')

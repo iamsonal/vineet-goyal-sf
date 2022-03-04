@@ -5,9 +5,9 @@
         "paths": {
             "native/ldsEngineMobile": ["../lds-runtime-mobile"],
             "force/ldsEngine": ["../lds-runtime-mobile"],
-            "lightning/ui*Api": ["../lds-adapters-uiapi"],
-            "lightning/unstable_ui*Api": ["../lds-adapters-uiapi"],
-            "force/ldsAdaptersGraphql": ["../lds-adapters-graphql"]
+            "lightning/ui*Api": ["../lds-adapters-uiapi/sfdc"],
+            "lightning/unstable_ui*Api": ["../lds-adapters-uiapi/sfdc"],
+            "force/ldsAdaptersGraphql": ["../lds-adapters-graphql/sfdc"]
         }
     },
     "include": ["src", "typings"]

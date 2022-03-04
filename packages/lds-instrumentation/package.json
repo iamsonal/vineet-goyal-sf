@@ -28,7 +28,7 @@
     "bundlesize": [
         {
             "path": "./dist/ldsInstrumentation.js",
-            "maxSize": "8 kB",
+            "maxSize": "9 kB",
             "compression": "brotli"
         }
     ]

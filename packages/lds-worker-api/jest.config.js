@@ -7,6 +7,7 @@ const nodeModulesNeedingTransformed = [
     '@salesforce/lds-bindings',
     '@luvio/graphql-parser',
     '@mobileplatform/nimbus-plugin-lds',
+    'o11y_schema',
 ];
 
 module.exports = {
@@ -26,6 +27,7 @@ module.exports = {
         'lightning/unstable_ui(.*)Api': '@salesforce/lds-adapters-uiapi/sfdc',
         'force/ldsAdaptersGraphql': '@salesforce/lds-adapters-graphql/sfdc',
         'force/ldsAdaptersUiapi': '@salesforce/lds-adapters-uiapi/sfdc',
+        'force/ldsNetwork': '@salesforce/lds-network-adapter',
         'o11y/client': require.resolve('./src/standalone-stubs/o11y.ts'),
         'force/ldsInstrumentation': require.resolve('./src/standalone-stubs/instrumentation.ts'),
         '@salesforce/user/Id': require.resolve('./src/standalone-stubs/salesforce-user-id.ts'),

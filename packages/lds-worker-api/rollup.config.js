@@ -28,9 +28,10 @@ const platform = {
 
     external: [
         '@salesforce/lds-instrumentation',
-        'force/ldsAdaptersGraphql',
-        'native/ldsEngineMobile',
+        '@salesforce/lds-adapters-graphql',
+        '@salesforce/lds-runtime-mobile',
         'o11y/client',
+        'force/ldsAdaptersGraphql', // gql adapter not under lightning/ namespace yet
     ],
 
     output: [
@@ -40,6 +41,8 @@ const platform = {
             format: 'esm',
             paths: {
                 '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
+                '@salesforce/lds-runtime-mobile': 'native/ldsEngineMobile',
+                '@salesforce/lds-adapters-graphql': 'force/ldsAdaptersGraphql',
             },
         },
     ],
@@ -100,6 +103,10 @@ const standalone = {
                 {
                     find: 'force/ldsEngine',
                     replacement: '@salesforce/lds-runtime-mobile',
+                },
+                {
+                    find: 'force/ldsNetwork',
+                    replacement: '@salesforce/lds-network-adapter',
                 },
                 {
                     find: 'force/ldsAdaptersGraphql',

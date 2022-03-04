@@ -1,1 +1,1 @@
-export { draftQueue, draftManager } from 'native/ldsEngineMobile';
+export { draftQueue, draftManager } from '@salesforce/lds-runtime-mobile';

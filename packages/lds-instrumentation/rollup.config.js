@@ -10,13 +10,22 @@ const footer = buildFooter(packageJson.version);
 const ldsInstrumentation = {
     input: './src/main.ts',
 
-    external: ['@salesforce/lds-bindings', 'lwc', 'o11y/client'],
+    external: [
+        '@salesforce/lds-adapters-uiapi',
+        '@salesforce/lds-bindings',
+        '@salesforce/lds-network-adapter',
+        /* o11y modules on core have the same name as their npm counterpart */
+        'o11y/client',
+        'o11y_schema/sf_lds',
+    ],
 
     output: {
         file: 'dist/ldsInstrumentation.js',
         format: 'esm',
         paths: {
+            '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi',
             '@salesforce/lds-bindings': 'force/ldsBindings',
+            '@salesforce/lds-network-adapter': 'force/ldsNetwork',
         },
         banner,
         footer,

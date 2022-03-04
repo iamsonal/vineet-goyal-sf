@@ -2,11 +2,15 @@ import timekeeper from 'timekeeper';
 
 import { flushPromises } from '@salesforce/lds-jest';
 import { Adapter, Store } from '@luvio/engine';
+import { ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
+import { adapterUnfulfilledErrorSchema } from 'o11y_schema/sf_lds';
 
 import {
+    AdapterUnfulfilledError,
     setupInstrumentation,
     incrementCounterMetric,
     instrumentAdapter,
+    instrumentLuvio,
     instrumentMethods,
     logAdapterCacheMissOutOfTtlDuration,
     updatePercentileHistogramMetric,
@@ -15,6 +19,7 @@ import {
 jest.mock('o11y/client');
 import { activity, instrumentation as o11yInstrumentation } from 'o11y/client';
 const o11yInstrumentationSpies = {
+    error: jest.spyOn(o11yInstrumentation, 'error'),
     trackValue: jest.spyOn(o11yInstrumentation, 'trackValue'),
     incrementCounter: jest.spyOn(o11yInstrumentation, 'incrementCounter'),
     startActivity: jest.spyOn(o11yInstrumentation, 'startActivity'),
@@ -452,6 +457,57 @@ describe('instrumentAdapter', () => {
             ['cache-miss-count.UiApi.getFoo', 1],
         ];
         testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+    });
+});
+
+describe('instrumentLuvio', () => {
+    describe('AdapterUnfulfilledError', () => {
+        const mockMissingPath = 'data.missing.path';
+        const mockMissingLink = 'missingRef';
+        const mockContext: AdapterUnfulfilledError = {
+            [ADAPTER_UNFULFILLED_ERROR]: true,
+            adapterName: 'foo',
+            missingPaths: { [mockMissingPath]: true },
+            missingLinks: { [mockMissingLink]: true },
+        };
+        it('should increment adapter request error count', () => {
+            instrumentLuvio(mockContext);
+            // Verify Metric Calls
+            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(2);
+            const expectedMetricCalls = [['error.foo'], ['error']];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('should log adapter unfulfilled error details', () => {
+            instrumentLuvio(mockContext);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledTimes(1);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledWith(
+                ADAPTER_UNFULFILLED_ERROR,
+                adapterUnfulfilledErrorSchema,
+                {
+                    adapter: 'foo',
+                    missing_paths: [mockMissingPath],
+                    missing_links: [mockMissingLink],
+                }
+            );
+        });
+        it('should return empty array for either missingPaths or missingLinks when they are empty', () => {
+            const mockEmptyPathsAndLinksContext: AdapterUnfulfilledError = {
+                ...mockContext,
+                missingPaths: {},
+                missingLinks: {},
+            };
+            instrumentLuvio(mockEmptyPathsAndLinksContext);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledTimes(1);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledWith(
+                ADAPTER_UNFULFILLED_ERROR,
+                adapterUnfulfilledErrorSchema,
+                {
+                    adapter: 'foo',
+                    missing_paths: [],
+                    missing_links: [],
+                }
+            );
+        });
     });
 });
 

@@ -7,11 +7,14 @@ import type {
     UnfulfilledSnapshot,
     LuvioEventObserver,
 } from '@luvio/engine';
-import { ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 
 import { getInstrumentation } from 'o11y/client';
+import { adapterUnfulfilledErrorSchema } from 'o11y_schema/sf_lds';
 import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
-import { instrument as instrumentLwcBindings } from '@salesforce/lds-bindings';
+import {
+    instrument as instrumentLwcBindings,
+    ADAPTER_UNFULFILLED_ERROR,
+} from '@salesforce/lds-bindings';
 import { instrument as instrumentNetworkAdapter } from '@salesforce/lds-network-adapter';
 
 export * as METRIC_KEYS from './metric-keys';
@@ -71,7 +74,7 @@ interface AdapterMetadata {
     ttl?: number;
 }
 
-interface AdapterUnfulfilledError {
+export interface AdapterUnfulfilledError {
     [ADAPTER_UNFULFILLED_ERROR]: boolean;
     adapterName: string;
     missingPaths: UnfulfilledSnapshot<any, any>['missingPaths'];
@@ -103,7 +106,13 @@ export class Instrumentation {
  */
 export function instrumentLuvio(context: unknown) {
     if (isAdapterUnfulfilledError(context)) {
-        incrementAdapterRequestErrorCount(context);
+        // We are consolidating all apex adapter instrumentation calls under a single key
+        const normalizedContext = {
+            ...context,
+            adapterName: normalizeAdapterName(context.adapterName),
+        };
+        incrementAdapterRequestErrorCount(normalizedContext);
+        logAdapterRequestError(normalizedContext);
     }
 }
 
@@ -123,14 +132,26 @@ function isAdapterUnfulfilledError(context: unknown): context is AdapterUnfulfil
  * @param context The transaction context.
  */
 function incrementAdapterRequestErrorCount(context: AdapterUnfulfilledError): void {
-    // We are consolidating all apex adapter instrumentation calls under a single key
-    const adapterName = normalizeAdapterName(context.adapterName);
     const adapterRequestErrorCounter = createMetricsKey(
         ADAPTER_ERROR_COUNT_METRIC_NAME,
-        adapterName
+        context.adapterName
     );
     observabilityInstrumentation.incrementCounter(adapterRequestErrorCounter);
     observabilityInstrumentation.incrementCounter(TOTAL_ADAPTER_ERROR_COUNT);
+}
+
+/**
+ * W-10495632
+ * Logs the missing paths and/or links associated with the UnfulfilledSnapshotError.
+ *
+ * @param context The transaction context.
+ */
+function logAdapterRequestError(context: AdapterUnfulfilledError): void {
+    ldsInstrumentation.error(ADAPTER_UNFULFILLED_ERROR, adapterUnfulfilledErrorSchema, {
+        adapter: context.adapterName,
+        missing_paths: ObjectKeys(context.missingPaths),
+        missing_links: ObjectKeys(context.missingLinks),
+    });
 }
 
 /**

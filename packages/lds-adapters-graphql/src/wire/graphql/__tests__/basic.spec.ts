@@ -159,7 +159,7 @@ describe('graphQL adapter', () => {
             expect(lookupSpy).toHaveBeenCalledTimes(1);
         });
 
-        it('does not call buildInMemorySnapshot when storeEval is defined', async () => {
+        it('buildCachedSnapshot does not call storeEval', async () => {
             const storeEval = jest.fn(() => Promise.resolve({ state: 'Fulfilled' } as any));
             const lookupSpy = jest.fn();
             (lookupSpy as any).ttlStrategy = () => undefined;
@@ -167,19 +167,17 @@ describe('graphQL adapter', () => {
             configuration.setStoreEval(storeEval);
             await buildCachedSnapshot(context, lookupSpy);
 
-            expect(lookupSpy).toHaveBeenCalledTimes(0);
-            expect(storeEval).toHaveBeenCalledTimes(1);
+            expect(lookupSpy).toHaveBeenCalledTimes(1);
+            expect(storeEval).toHaveBeenCalledTimes(0);
         });
 
-        it('calls buildInMemorySnapshot when storeEval rejects', async () => {
-            const storeEval = jest.fn(() => Promise.reject('something bad'));
-            const lookupSpy = jest.fn();
-            (lookupSpy as any).ttlStrategy = () => undefined;
-
+        it('calls storeEval when defined', async () => {
+            const storeEval = jest.fn(() => Promise.resolve({ state: 'Fulfilled' } as any));
             configuration.setStoreEval(storeEval);
-            await buildCachedSnapshot(context, lookupSpy);
 
-            expect(lookupSpy).toHaveBeenCalledTimes(1);
+            const { adapter, config } = setup();
+            await adapter(config);
+
             expect(storeEval).toHaveBeenCalledTimes(1);
         });
     });

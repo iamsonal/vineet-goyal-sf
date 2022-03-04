@@ -1,14 +1,9 @@
-import type { Snapshot, TTLStrategy } from '@luvio/engine';
-import type { LuvioDocumentNode } from '@luvio/graphql-parser';
+import type { StoreEval } from '@salesforce/lds-graphql-eval';
 
-export type StoreEval = (
-    ast: LuvioDocumentNode,
-    ttlStrategy: TTLStrategy
-) => Promise<Snapshot<unknown, any>>;
-export let storeEval: StoreEval | undefined = undefined;
+export let storeEval: StoreEval<unknown> | undefined = undefined;
 
 export const configuration = {
-    setStoreEval: function (storeEvalArg: StoreEval | undefined): void {
+    setStoreEval: function (storeEvalArg: typeof storeEval): void {
         storeEval = storeEvalArg;
     },
 };

@@ -198,7 +198,7 @@ luvio = new Luvio(draftEnv, {
 });
 
 //inject query eval to graphql adapter
-const storeEval: StoreEval = storeEvalFactory(userId, baseDurableStore);
+const storeEval: StoreEval<unknown> = storeEvalFactory(userId, baseDurableStore);
 
 // Draft mapping entries exists only in the Durable store.
 // Populate Luvio L1 cache with the entries from the Durable store.

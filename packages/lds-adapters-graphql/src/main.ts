@@ -13,7 +13,6 @@ import type {
     Snapshot,
     SnapshotRefresh,
     StoreLookup,
-    TTLStrategy,
 } from '@luvio/engine';
 import type { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { astToString } from './util/ast-to-string';
@@ -267,24 +266,10 @@ type BuildSnapshotContext = {
     luvio: Luvio;
 };
 
-type hasTTLStrategy = {
-    ttlStrategy: TTLStrategy | undefined;
-};
-
 export function buildCachedSnapshot(
     context: BuildSnapshotContext,
     storeLookup: StoreLookup<unknown>
 ): Promise<Snapshot<unknown, unknown>> | Snapshot<unknown, any> {
-    if (storeEval !== undefined) {
-        const { ttlStrategy } = storeLookup as unknown as hasTTLStrategy;
-
-        if (ttlStrategy !== undefined) {
-            return storeEval(context.config.query, ttlStrategy).catch(() => {
-                return buildInMemorySnapshot(context, storeLookup);
-            });
-        }
-    }
-
     return buildInMemorySnapshot(context, storeLookup);
 }
 
@@ -341,14 +326,32 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
         const { query, variables } = validatedConfig;
 
         const fragment: ReaderFragment = createFragment(query, variables);
-        const context = { config: validatedConfig, fragment, luvio };
+        const context: BuildSnapshotContext = {
+            config: validatedConfig,
+            fragment,
+            luvio,
+        };
 
-        return luvio.applyCachePolicy(
+        const snapshotOrPromiseFromCachePolicy = luvio.applyCachePolicy(
             requestContext || {},
             context,
             buildCachedSnapshot,
             buildNetworkSnapshotCachePolicy
         );
+
+        if (storeEval !== undefined) {
+            return storeEval(
+                validatedConfig.query,
+                snapshotOrPromiseFromCachePolicy,
+                // if cache policy is only-if-cached we always return eval snapshot
+                (requestContext &&
+                    requestContext.cachePolicy &&
+                    requestContext.cachePolicy.type === 'only-if-cached') ||
+                    false
+            );
+        }
+
+        return snapshotOrPromiseFromCachePolicy;
     };
 
 export { configuration } from './configuration';

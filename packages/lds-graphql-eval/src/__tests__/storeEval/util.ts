@@ -95,6 +95,19 @@ export const evaluationResults = (expiration: number) => `
 
 export const snapshotTemplate = (expiration: number, state: SnapshotState): EvalSnapshot => {
     return {
+        recordId: 'GraphQL::graphql',
+        variables: {},
+        seenRecords: {
+            'UiApi::RecordRepresentation:1tsx0000000004zAAA': true,
+            'UiApi::RecordRepresentation:1tsx0000000008MAAQ': true,
+            'UiApi::RecordRepresentation:1tsx0000000008MAAZ': true,
+        },
+        select: {
+            node: { kind: 'Fragment', private: [] },
+            recordId: 'GraphQL::graphql',
+            variables: {},
+        },
+        state: state as any,
         data: {
             data: {
                 uiapi: {
@@ -159,20 +172,5 @@ export const snapshotTemplate = (expiration: number, state: SnapshotState): Eval
                 },
             },
         },
-        missingLinks: {},
-        missingPaths: {},
-        recordId: 'GraphQL::graphql',
-        seenRecords: {
-            'UiApi::RecordRepresentation:1tsx0000000004zAAA': true,
-            'UiApi::RecordRepresentation:1tsx0000000008MAAQ': true,
-            'UiApi::RecordRepresentation:1tsx0000000008MAAZ': true,
-        },
-        select: {
-            node: { kind: 'Fragment', private: [] },
-            recordId: 'GraphQL::graphql',
-            variables: {},
-        },
-        state: state as any,
-        variables: {},
     };
 };

@@ -30,6 +30,7 @@
     },
     "devDependencies": {
         "@luvio/graphql-parser": "0.76.1",
+        "@salesforce/lds-graphql-eval": "1.41.0",
         "@salesforce/lds-compiler-plugins": "1.41.0",
         "@salesforce/lds-jest": "1.41.0",
         "@salesforce/lds-karma": "1.41.0"

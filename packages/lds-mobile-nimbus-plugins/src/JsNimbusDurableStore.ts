@@ -1,4 +1,4 @@
-import {
+import type {
     DurableStore,
     DurableStoreChange,
     DurableStoreChangedInfo,
@@ -12,6 +12,13 @@ export interface BackingStore {
     set(key: string, segment: string, value: any): Promise<void>;
     delete(key: string, segment: string): Promise<void>;
     getAllKeys(segment: string): Promise<string[]>;
+
+    evaluateSQL(
+        sql: string,
+        params: string[],
+        onResult: (result: string) => void,
+        onError: (message: string) => void
+    ): Promise<void>;
 
     // resets the entire store, clears all segments
     reset(): Promise<void>;
@@ -30,6 +37,19 @@ export class JsNimbusDurableStore implements DurableStore {
 
     constructor(backingStore: BackingStore) {
         this.backingStore = backingStore;
+    }
+
+    evaluateSQL(
+        sql: string,
+        params: string[],
+        onResult: (result: string) => void,
+        onError: (message: string) => void
+    ): Promise<void> {
+        return this.backingStore.evaluateSQL(sql, params, onResult, onError);
+    }
+
+    updateIndices(_indices: string[]): Promise<void> {
+        return Promise.resolve();
     }
 
     resetStore(): Promise<void> {

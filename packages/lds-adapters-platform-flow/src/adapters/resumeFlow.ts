@@ -1,14 +1,15 @@
-import { createResourceRequest as resources_postConnectInteractionRuntimeResumeFlowByFlowDevName_createResourceRequest } from '../generated/resources/postConnectInteractionRuntimeResumeFlowByFlowDevName';
 import {
+    createResourceRequest as resources_postConnectInteractionRuntimeResumeFlow_createResourceRequest,
+    getResponseCacheKeys,
+} from '../generated/resources/postConnectInteractionRuntimeResumeFlow';
+import type {
     Luvio as $64$luvio_engine_Luvio,
-    ResourceRequestOverride as $64$luvio_engine_ResourceRequestOverride,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
+import type { FlowRuntimeResponseRepresentation as types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation } from '../generated/types/FlowRuntimeResponseRepresentation';
+import { deepFreeze } from '../generated/types/FlowRuntimeResponseRepresentation';
+import type { ResumeFlowConfig } from '../generated/adapters/resumeFlow';
 import {
-    FlowRuntimeResponseRepresentation as types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation,
-    deepFreeze,
-} from '../generated/types/FlowRuntimeResponseRepresentation';
-import {
-    ResumeFlowConfig,
     createResourceParams,
     resumeFlow_ConfigPropertyNames,
     validateAdapterConfig,
@@ -19,27 +20,34 @@ export { adapterName } from '../generated/adapters/resumeFlow';
 export function buildNetworkSnapshot(
     luvio: $64$luvio_engine_Luvio,
     config: ResumeFlowConfig,
-    override?: $64$luvio_engine_ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ): Promise<types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation> {
     const resourceParams = createResourceParams(config);
     const request =
-        resources_postConnectInteractionRuntimeResumeFlowByFlowDevName_createResourceRequest(
-            resourceParams
-        );
+        resources_postConnectInteractionRuntimeResumeFlow_createResourceRequest(resourceParams);
     return luvio
         .dispatchResourceRequest<types_FlowRuntimeResponseRepresentation_FlowRuntimeResponseRepresentation>(
             request,
-            override
+            options
         )
         .then(
             (response: any) => {
-                deepFreeze(response.body);
-                return response.body;
+                return luvio.handleSuccessResponse(
+                    () => {
+                        deepFreeze(response.body);
+                        return response.body;
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, response.body);
+                    }
+                );
             },
             (response: any) => {
-                // We want to throw these exceptions to be caught in the runtime layer
-                // eslint-disable-next-line @salesforce/lds/no-error-in-production
-                throw new Error(response.body.message || response.body.error || response.body);
+                return luvio.handleErrorResponse(() => {
+                    // We want to throw these exceptions to be caught in the runtime layer
+                    // eslint-disable-next-line @salesforce/lds/no-error-in-production
+                    throw new Error(response.body.message || response.body.error || response.body);
+                });
             }
         );
 }

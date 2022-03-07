@@ -77,7 +77,7 @@ const RAML_ARTIFACTS = {
         {
             identifier: 'getRecordAdapterFactory',
             path: path.join('src', 'wire', 'getRecord', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
+            //targetIdentifier added to point to the overridden export name
             targetIdentifier: 'factory',
         },
     ],
@@ -91,18 +91,101 @@ const RAML_ARTIFACTS = {
     ],
     '/adapters/getLayout': [
         {
-            identifier: 'getLayoutAdapterFactory',
-            path: path.join('src', 'wire', 'getLayout', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'validateAdapterConfig',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayout',
+                'validateAdapterConfig.ts'
+            ),
+        },
+        {
+            identifier: 'onResourceResponseSuccess',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayout',
+                'onResourceResponseSuccess.ts'
+            ),
+        },
+        {
+            identifier: 'GetLayoutConfig',
+            path: path.join('src', 'raml-artifacts', 'adapters', 'getLayout', 'utils.ts'),
+            targetIdentifier: 'GetLayoutConfigWithDefaults',
+        },
+        {
+            identifier: 'buildCachedSnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayout',
+                'buildCachedSnapshotCachePolicy.ts'
+            ),
         },
     ],
     '/adapters/getLayoutUserState': [
         {
-            identifier: 'getLayoutUserStateAdapterFactory',
-            path: path.join('src', 'wire', 'getLayoutUserState', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'buildCachedSnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'buildCachedSnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'buildCachedSnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'buildCachedSnapshotCachePolicy.ts'
+            ),
+        },
+        {
+            identifier: 'buildNetworkSnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'buildNetworkSnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'getLayoutUserState_ConfigPropertyNames',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'getLayoutUserState_ConfigPropertyNames.ts'
+            ),
+        },
+        {
+            identifier: 'validateAdapterConfig',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'validateAdapterConfig.ts'
+            ),
+        },
+        {
+            identifier: 'GetLayoutUserStateConfig',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getLayoutUserState',
+                'getLayoutUserStateConfig.ts'
+            ),
         },
     ],
     '/adapters/getListViewSummaryCollection': [
@@ -131,18 +214,58 @@ const RAML_ARTIFACTS = {
     ],
     '/adapters/getPicklistValues': [
         {
-            identifier: 'getPicklistValuesAdapterFactory',
-            path: path.join('src', 'wire', 'getPicklistValues', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'validateAdapterConfig',
+            path: path.join('src', 'raml-artifacts', 'getPicklistValues', 'index.ts'),
+        },
+        {
+            identifier: 'buildNetworkSnapshotCachePolicy',
+            path: path.join('src', 'raml-artifacts', 'getPicklistValues', 'index.ts'),
+        },
+        {
+            identifier: 'buildCachedSnapshotCachePolicy',
+            path: path.join('src', 'raml-artifacts', 'getPicklistValues', 'index.ts'),
         },
     ],
     '/adapters/getRecordAvatars': [
         {
-            identifier: 'getRecordAvatarsAdapterFactory',
-            path: path.join('src', 'wire', 'getRecordAvatars', 'index.ts'),
-            //targetIdentifier added to point to the overriden export name
-            targetIdentifier: 'factory',
+            identifier: 'buildNetworkSnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildNetworkSnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'buildNetworkSnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildNetworkSnapshotCachePolicy.ts'
+            ),
+        },
+        {
+            identifier: 'buildCachedSnapshot',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildCachedSnapshot.ts'
+            ),
+        },
+        {
+            identifier: 'buildCachedSnapshotCachePolicy',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecordAvatars',
+                'buildCachedSnapshotCachePolicy.ts'
+            ),
         },
     ],
     '/adapters/getRecordCreateDefaults': [
@@ -196,6 +319,18 @@ const RAML_ARTIFACTS = {
                 'resources',
                 'getUiApiRecordsByRecordId',
                 'createResourceRequest.ts'
+            ),
+        },
+    ],
+    '/resources/getUiApiRecordAvatarsBatchByRecordIds': [
+        {
+            identifier: 'ingestSuccess',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'resources',
+                'getUiApiRecordAvatarsBatchByRecordIds',
+                'ingestSuccess.ts'
             ),
         },
     ],

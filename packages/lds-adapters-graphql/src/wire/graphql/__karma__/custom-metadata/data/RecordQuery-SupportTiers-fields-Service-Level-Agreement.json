@@ -1,0 +1,178 @@
+{
+    "data": {
+        "__typename": "Query",
+        "uiapi": {
+            "__typename": "UIAPI",
+            "query": {
+                "__typename": "RecordQuery",
+                "Support_Tier__mdt": {
+                    "__typename": "Support_Tier__mdtConnection",
+                    "edges": [
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Service_Level_Agreement__r": {
+                                    "Id": "m01xx000003GccdAAC",
+                                    "Label": {
+                                        "__typename": "StringValue",
+                                        "value": "Level 0",
+                                        "displayValue": null
+                                    },
+                                    "Response_in_Hours__c": {
+                                        "__typename": "DoubleValue",
+                                        "value": 4,
+                                        "displayValue": "4"
+                                    },
+                                    "__typename": "Service_Level_Agreement__mdt",
+                                    "ApiName": "Service_Level_Agreement__mdt",
+                                    "WeakEtag": 0,
+                                    "DisplayValue": "Level_0",
+                                    "SystemModstamp": {
+                                        "value": null
+                                    },
+                                    "LastModifiedById": {
+                                        "value": null
+                                    },
+                                    "LastModifiedDate": {
+                                        "value": null
+                                    },
+                                    "RecordTypeId": {
+                                        "value": null
+                                    }
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "Id": "m00xx000000bqDVAAY",
+                                "DisplayValue": "Tier_0",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "LastModifiedDate": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6MA=="
+                        },
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Service_Level_Agreement__r": {
+                                    "Id": "m01xx000003GceFAAS",
+                                    "Label": {
+                                        "__typename": "StringValue",
+                                        "value": "Level 1",
+                                        "displayValue": null
+                                    },
+                                    "Response_in_Hours__c": {
+                                        "__typename": "DoubleValue",
+                                        "value": 8,
+                                        "displayValue": "8"
+                                    },
+                                    "__typename": "Service_Level_Agreement__mdt",
+                                    "ApiName": "Service_Level_Agreement__mdt",
+                                    "WeakEtag": 0,
+                                    "DisplayValue": "Level_1",
+                                    "SystemModstamp": {
+                                        "value": null
+                                    },
+                                    "LastModifiedById": {
+                                        "value": null
+                                    },
+                                    "LastModifiedDate": {
+                                        "value": null
+                                    },
+                                    "RecordTypeId": {
+                                        "value": null
+                                    }
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "Id": "m00xx000000bqF7AAI",
+                                "DisplayValue": "Tier_1",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "LastModifiedDate": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6MQ=="
+                        },
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Service_Level_Agreement__r": {
+                                    "Id": "m01xx000003GchTAAS",
+                                    "Label": {
+                                        "__typename": "StringValue",
+                                        "value": "Level 3",
+                                        "displayValue": null
+                                    },
+                                    "Response_in_Hours__c": {
+                                        "__typename": "DoubleValue",
+                                        "value": 72,
+                                        "displayValue": "72"
+                                    },
+                                    "__typename": "Service_Level_Agreement__mdt",
+                                    "ApiName": "Service_Level_Agreement__mdt",
+                                    "WeakEtag": 0,
+                                    "DisplayValue": "Level_3",
+                                    "SystemModstamp": {
+                                        "value": null
+                                    },
+                                    "LastModifiedById": {
+                                        "value": null
+                                    },
+                                    "LastModifiedDate": {
+                                        "value": null
+                                    },
+                                    "RecordTypeId": {
+                                        "value": null
+                                    }
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "Id": "m00xx000000bqGjAAI",
+                                "DisplayValue": "Tier_2",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "LastModifiedDate": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6Mg=="
+                        }
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 3
+                }
+            }
+        }
+    },
+    "errors": []
+}

@@ -8,6 +8,7 @@ import {
     ObjectInfoRepresentation,
     keyBuilderObjectInfo,
     getRelatedListRecordsAdapterFactory,
+    getRecordUiAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import { graphQLAdapterFactory } from '@salesforce/lds-adapters-graphql';
 import { DraftManager, DraftQueue, DurableDraftStore } from '@salesforce/lds-drafts';
@@ -22,8 +23,10 @@ import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/Obje
 import { flushPromises } from '../../testUtils';
 import mockOpportunityObjectInfo from './data/object-Opportunity.json';
 import mockAccountObjectInfo from './data/object-Account.json';
+import mockUserObjectInfo from './data/object-User.json';
 import mockUser from './data/record-User-fields-User.Id,User.City.json';
 import { JSONStringify } from '../../../utils/language';
+import { NimbusSqlDurableStore } from '../../../NimbusSqlDurableStore';
 
 let luvio: Luvio;
 let draftQueue: DraftQueue;
@@ -35,17 +38,18 @@ let updateRecord;
 let deleteRecord;
 let getRecords;
 let getRelatedListRecords;
-let graphQL;
+let graphQL: ReturnType<typeof graphQLAdapterFactory>;
+let getRecordUi;
+let storeEval;
 
 // we want the same instance of MockNimbusDurableStore since we don't
 // want to lose the listeners between tests (luvio instance only registers
 // the listeners once on static import)
-const durableStore = new MockNimbusDurableStore();
+export const durableStore = new MockNimbusDurableStore();
 mockNimbusStoreGlobal(durableStore);
 
 export async function setup() {
     await flushPromises();
-
     await durableStore.resetStore();
 
     networkAdapter = new MockNimbusNetworkAdapter();
@@ -56,6 +60,8 @@ export async function setup() {
     draftQueue = runtime.draftQueue;
     draftQueue.stopQueue();
     draftManager = runtime.draftManager;
+    storeEval = runtime.storeEval;
+
     await resetLuvioStore();
 
     const luvioDurableStore = (draftQueue as any).draftStore.durableStore;
@@ -70,8 +76,9 @@ export async function setup() {
     getRecords = getRecordsAdapterFactory(luvio);
     getRelatedListRecords = getRelatedListRecordsAdapterFactory(luvio);
     graphQL = graphQLAdapterFactory(luvio);
+    getRecordUi = getRecordUiAdapterFactory(luvio);
 
-    await populateDurableStoreWithObjectInfos();
+    await populateDurableStoreWithObjectInfos(luvioDurableStore);
     await flushPromises();
 
     return {
@@ -88,6 +95,8 @@ export async function setup() {
         getRecords,
         getRelatedListRecords,
         graphQL,
+        getRecordUi,
+        storeEval,
     };
 }
 
@@ -96,7 +105,7 @@ export async function resetLuvioStore() {
     await flushPromises();
 }
 
-export function populateDurableStoreWithObjectInfos() {
+export function populateDurableStoreWithObjectInfos(luvioDurableStore: NimbusSqlDurableStore) {
     const accountObjectInfoIndex: DurableStoreEntry<ObjectInfoIndex> = {
         data: { apiName: 'Account', keyPrefix: '001' },
     };
@@ -125,31 +134,32 @@ export function populateDurableStoreWithObjectInfos() {
         data: { ...mockAccountObjectInfo },
     };
 
-    return durableStore.batchOperations(
-        [
-            {
-                type: DurableStoreOperationType.SetEntries,
-                ids: ['Account', 'Opportunity', 'User', 'Contact'],
-                segment: OBJECT_INFO_PREFIX_SEGMENT,
-                entries: {
-                    ['Account']: JSON.stringify(accountObjectInfoIndex),
-                    ['Opportunity']: JSON.stringify(opportunityObjectInfoIndex),
-                    ['User']: JSON.stringify(userObjectInfoIndex),
-                    ['Contact']: JSON.stringify(contactObjectInfoPrefixIndex),
-                },
+    const userObjectInfoKey = keyBuilderObjectInfo({ apiName: mockUserObjectInfo.apiName });
+    const userObjectInfo: DurableStoreEntry<ObjectInfoRepresentation> = {
+        data: { ...mockUserObjectInfo },
+    };
+
+    return luvioDurableStore.batchOperations([
+        {
+            type: DurableStoreOperationType.SetEntries,
+            segment: OBJECT_INFO_PREFIX_SEGMENT,
+            entries: {
+                ['Account']: accountObjectInfoIndex,
+                ['Opportunity']: opportunityObjectInfoIndex,
+                ['User']: userObjectInfoIndex,
+                ['Contact']: contactObjectInfoPrefixIndex,
             },
-            {
-                type: DurableStoreOperationType.SetEntries,
-                segment: DefaultDurableSegment,
-                ids: [opportunityObjectInfoKey, accountObjectInfoKey],
-                entries: {
-                    [opportunityObjectInfoKey]: JSON.stringify(opportunityObjectInfo),
-                    [accountObjectInfoKey]: JSON.stringify(accountObjectInfo),
-                },
+        },
+        {
+            type: DurableStoreOperationType.SetEntries,
+            segment: DefaultDurableSegment,
+            entries: {
+                [opportunityObjectInfoKey]: opportunityObjectInfo,
+                [accountObjectInfoKey]: accountObjectInfo,
+                [userObjectInfoKey]: userObjectInfo,
             },
-        ],
-        ''
-    );
+        },
+    ]);
 }
 
 export async function populateL2WithUser() {

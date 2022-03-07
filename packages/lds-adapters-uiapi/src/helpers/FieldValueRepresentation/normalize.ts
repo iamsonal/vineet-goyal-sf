@@ -1,11 +1,11 @@
-import { IngestPath, Luvio, Store } from '@luvio/engine';
-import {
+import type { IngestPath, Luvio, Store } from '@luvio/engine';
+import type {
     FieldValueRepresentationNormalized,
     FieldValueRepresentation,
 } from '../../generated/types/FieldValueRepresentation';
 import { createRecordIngest } from '../../util/record-ingest';
-import { RecordFieldTrie } from '../../util/records';
-import { RecordConflictMap } from '../RecordRepresentation/resolveConflict';
+import type { RecordFieldTrie } from '../../util/records';
+import type { RecordConflictMap } from '../RecordRepresentation/resolveConflict';
 
 export default function normalize(
     input: FieldValueRepresentation,
@@ -33,7 +33,6 @@ export default function normalize(
                     key: path.fullPath,
                     existing: existing,
                 },
-                state: { result: { type: 'success' } },
             },
             luvio,
             store,

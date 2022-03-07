@@ -6,7 +6,7 @@ version: '54.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v54.0
+baseUri: /services/data/v55.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -31,48 +31,72 @@ types:
     properties:
       attendeeId:
         description: Chime AttendeeId
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
+      externalAttendeeId:
+        description: Chime ExternalAttendeeId
         type: string
+        required: false
       joinToken:
         description: Chime Attendee join token
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
   ChimeMediaPlacementResultRepresentation:
     description: Output representation of Chime Media Placement Result
     type: object
     properties:
       audioFallbackUrl:
         description: ChimeMediaPlacement AudioFallbackUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       audioHostUrl:
         description: ChimeMediaPlacement AudioHostUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       eventIngestionUrl:
         description: ChimeMediaPlacement EventIngestionUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       screenDataUrl:
         description: ChimeMediaPlacement ScreenDataUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       screenSharingUrl:
         description: ChimeMediaPlacement ScreenSharingUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       screenViewingUrl:
         description: ChimeMediaPlacement ScreenViewingUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       signalingUrl:
         description: ChimeMediaPlacement SignalingUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       turnControlUrl:
         description: ChimeMediaPlacement TurnControlUrl
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
   ChimeMeetingResultRepresentation:
     description: Output representation of Chime Meeting
     type: object
     properties:
       mediaPlacement:
         description: MediaPlacementUrls of chime meeting
-        type: ChimeMediaPlacementResultRepresentation
+        type: ChimeMediaPlacementResultRepresentation | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       meetingId:
         description: Chime MeetingId
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change
+        required: false
+  # TODO [W-9807143]: Hand rolled due to due to issue in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+  JoinChimeMeetingInputWrapperRepresentation:
+    description: Wrapper Input Representation for JoinChimeMeetingInputRepresentation
+    type: object
+    properties:
+      JoinChimeMeetingInput:
+        type: JoinChimeMeetingInputRepresentation
+        description: Input representation for Join Meeting Resource
   JoinChimeMeetingInputRepresentation:
     description: Input representation for JoinChimeMeeting
     type: object
@@ -90,28 +114,75 @@ types:
       attendee:
         description: JoinMeeting API attendee information
         type: ChimeAttendeeResultRepresentation
+        required: false
       errorMessage:
         description: JoinMeeting error messages
-        type: string
+        type: string | nil # TODO [W-9807143]: Hand Rolled Change nil
+        required: false
       isSuccess:
         description: JoinMeeting success flag
         type: boolean
       meeting:
         description: JoinMeeting API meeting information
         type: ChimeMeetingResultRepresentation
+        required: false
+  # TODO [W-10290611]: Hand Rolled due to due to issue in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+  LeaveChimeMeetingInputWrapperRepresentation:
+    description: Wrapper Input Representation for LeaveChimeMeetingInputRepresentation
+    type: object
+    properties:
+      LeaveChimeMeetingInput:
+        type: LeaveChimeMeetingInputRepresentation
+        description: Input representation for Leave Meeting Resource
+  LeaveChimeMeetingInputRepresentation:
+    description: Input representation for LeaveChimeMeeting
+    type: object
+    properties:
+      attendeeId:
+        description: Set Attendee for Video Call
+        type: string
+      externalMeetingId:
+        description: Set External Meeting Id for Video Call
+        type: string
+  LeaveChimeMeetingResultRepresentation:
+    description: Output representation of LeaveChimeMeeting Result
+    type: object
+    properties:
+      errorMessage:
+        description: LeaveMeeting error messages
+        type: string | nil # TODO [W-10290611]: Hand Rolled Change nil
+        required: false
+      isSuccess:
+        description: LeaveMeeting success flag
+        type: boolean
 /connect:
   /health:
-    /video-visits/chime-meeting:
-      post:
-        description: JoinMeeting API Resource
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: JoinChimeMeetingResultRepresentation
-        body:
-          application/json:
-            type: JoinChimeMeetingInputRepresentation
-            # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-            (oas-body-name): JoinChimeMeetingInput
+    /video-visits:
+      /chime-meeting:
+        post:
+          description: JoinMeeting API Resource
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: JoinChimeMeetingResultRepresentation
+          body:
+            application/json:
+              type: JoinChimeMeetingInputWrapperRepresentation
+              # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+              (oas-body-name): JoinChimeMeetingInput
+      /leave-chime-meeting:
+        put:
+          description: LeaveMeeting API Resource
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: LeaveChimeMeetingResultRepresentation
+          body:
+            application/json:
+              type: LeaveChimeMeetingInputWrapperRepresentation
+              # TODO [W-10290611]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+              (oas-body-name): LeaveChimeMeetingInput

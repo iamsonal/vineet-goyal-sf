@@ -1,32 +1,24 @@
-import { ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
 
 import { createStorage } from '@salesforce/lds-aura-storage';
 
 import { actionConfig, UI_API_BASE_URI } from './uiapi-base';
+import type {
+    DispatchActionConfig,
+    InstrumentationRejectConfig,
+    InstrumentationResolveConfig,
+} from './utils';
 import {
     buildUiApiParams,
     dispatchAction,
-    DispatchActionConfig,
     shouldForceRefresh,
-    InstrumentationRejectConfig,
-    InstrumentationResolveConfig,
-    auraResponseIsQueryTooComplicated,
     registerLdsCacheStats,
 } from './utils';
-import {
-    buildGetRecordByFieldsCompositeRequest,
-    dispatchSplitRecordAggregateUiAction,
-    shouldUseAggregateUiForGetRecord,
-} from './execute-aggregate-ui';
+import { dispatchSplitRecordAggregateUiAction } from './execute-aggregate-ui';
 import appRouter from '../router';
-import { ArrayIsArray } from '../utils/language';
 
-import {
-    CrudEventState,
-    CrudEventType,
-    forceRecordTransactionsDisabled,
-    RecordInstrumentationCallbacks,
-} from './event-logging';
+import type { RecordInstrumentationCallbacks } from './event-logging';
+import { CrudEventState, CrudEventType, forceRecordTransactionsDisabled } from './event-logging';
 import { instrumentation } from '../instrumentation';
 
 enum UiApiRecordController {
@@ -55,6 +47,7 @@ enum UiApiRecordController {
 }
 
 const UIAPI_GET_LAYOUT = `${UI_API_BASE_URI}/layout/`;
+const UIAPI_AGGREGATE_UI_PATH = `${UI_API_BASE_URI}/aggregate-ui`;
 const UIAPI_RECORDS_PATH = `${UI_API_BASE_URI}/records`;
 const UIAPI_RECORDS_BATCH_PATH = `${UI_API_BASE_URI}/records/batch/`;
 const UIAPI_RECORD_AVATARS_BASE = `${UI_API_BASE_URI}/record-avatars/`;
@@ -159,55 +152,6 @@ const layoutUserStateStorage = createStorage({
 });
 const layoutUserStateStorageStatsLogger = registerLdsCacheStats('getLayoutUserState:storage');
 
-interface ResourceRequestWithConfig {
-    configOptionalFields?: string[];
-}
-
-/*
- * Takes a ResourceRequest, builds the aggregateUi payload, and dispatches via aggregateUi action
- */
-function buildAndDispatchGetRecordAggregateUi(
-    recordId: string,
-    resourceRequest: ResourceRequest & ResourceRequestWithConfig,
-    fieldsArray: Array<string>,
-    optionalFieldsArray: Array<string>,
-    fieldsString: string,
-    optionalFieldsString: string
-): Promise<any> {
-    instrumentation.getRecordAggregateInvoke();
-
-    const compositeRequest = buildGetRecordByFieldsCompositeRequest(recordId, resourceRequest, {
-        fieldsArray,
-        optionalFieldsArray,
-        fieldsLength: fieldsString.length,
-        optionalFieldsLength: optionalFieldsString.length,
-    });
-
-    const aggregateUiParams = {
-        input: {
-            compositeRequest,
-        },
-    };
-
-    const instrumentationCallbacks =
-        crudInstrumentationCallbacks !== null
-            ? {
-                  rejectFn: crudInstrumentationCallbacks.getRecordAggregateRejectFunction,
-                  resolveFn: crudInstrumentationCallbacks.getRecordAggregateResolveFunction,
-              }
-            : {};
-
-    instrumentation.aggregateUiChunkCount(compositeRequest.length);
-
-    return dispatchSplitRecordAggregateUiAction(
-        UiApiRecordController.ExecuteAggregateUi,
-        aggregateUiParams,
-        actionConfig,
-        recordId,
-        instrumentationCallbacks
-    );
-}
-
 function getObjectInfo(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
     const params = buildUiApiParams(
         {
@@ -252,43 +196,23 @@ function getObjectInfos(resourceRequest: ResourceRequest, cacheKey: string): Pro
     return dispatchAction(UiApiRecordController.GetObjectInfos, params, config);
 }
 
-function getRecord(resourceRequest: ResourceRequest & ResourceRequestWithConfig): Promise<any> {
+function executeAggregateUi(resourceRequest: ResourceRequest): Promise<any> {
+    const aggregateUiParams = resourceRequest.body;
+
+    return dispatchSplitRecordAggregateUiAction(
+        UiApiRecordController.ExecuteAggregateUi,
+        aggregateUiParams,
+        actionConfig
+    );
+}
+
+function getRecord(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
     const { recordId } = urlParams;
     const { fields, layoutTypes, modes, optionalFields } = queryParams;
 
-    const fieldsArray: string[] =
-        fields !== undefined && ArrayIsArray(fields) ? (fields as string[]) : [];
-
-    const optionalFieldsArray: string[] =
-        optionalFields !== undefined && Array.isArray(optionalFields)
-            ? (optionalFields as string[])
-            : [];
-
-    const fieldsString = fieldsArray.join(',');
-    const optionalFieldsString = optionalFieldsArray.join(',');
-    // Don't submit a megarequest to UIAPI due to SOQL limit reasons.
-    // Split and aggregate if needed
-    const useAggregateUi: boolean = shouldUseAggregateUiForGetRecord(
-        fieldsString,
-        optionalFieldsString
-    );
-
-    if (useAggregateUi) {
-        return buildAndDispatchGetRecordAggregateUi(
-            recordId as string,
-            resourceRequest,
-            fieldsArray,
-            optionalFieldsArray,
-            fieldsString,
-            optionalFieldsString
-        );
-    }
-
     let getRecordParams: any = {};
     let controller: UiApiRecordController;
-
-    instrumentation.getRecordNormalInvoke();
 
     if (layoutTypes !== undefined) {
         getRecordParams = {
@@ -315,25 +239,7 @@ function getRecord(resourceRequest: ResourceRequest & ResourceRequestWithConfig)
                   resolveFn: crudInstrumentationCallbacks.getRecordResolveFunction,
               }
             : {};
-    return dispatchAction(controller, params, actionConfig, instrumentationCallbacks).catch(
-        (err) => {
-            if (auraResponseIsQueryTooComplicated(err)) {
-                instrumentation.getRecordAggregateRetry();
-
-                // Retry with aggregateUi to see if we can avoid Query Too Complicated
-                return buildAndDispatchGetRecordAggregateUi(
-                    recordId as string,
-                    resourceRequest,
-                    fieldsArray,
-                    optionalFieldsArray,
-                    fieldsString,
-                    optionalFieldsString
-                );
-            } else {
-                throw err;
-            }
-        }
-    );
+    return dispatchAction(controller, params, actionConfig, instrumentationCallbacks);
 }
 
 function getRecords(resourceRequest: ResourceRequest): Promise<any> {
@@ -726,6 +632,7 @@ appRouter.get(
         /picklist-values\/[a-zA-Z\d]+/.test(path) === false,
     getObjectInfo
 );
+appRouter.post((path: string) => path.startsWith(UIAPI_AGGREGATE_UI_PATH), executeAggregateUi);
 appRouter.get((path: string) => path.startsWith(UIAPI_RECORDS_BATCH_PATH), getRecords); // Must be registered before getRecord since they both begin with /records.
 appRouter.get((path: string) => path.startsWith(UIAPI_RECORDS_PATH), getRecord);
 appRouter.get(

@@ -1,0 +1,40 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'flow-builder'
+(luvio.ttl): 60000
+
+types:
+  FlowOperatorRuleCollectionRepresentation:
+    (luvio.ttl): 500
+    examples:
+      allRules: !include ../mocks/types/allRules.json
+
+/connect/interaction/builder/rules:
+  get:
+    (luvio.adapter):
+      name: getRules
+      tests:
+        validConfigs:
+          - |
+            {
+              "flowTriggerType": "Scheduled",
+              "recordTriggerType": "Update"
+            }
+        expectedResponses:
+          - configInput: |
+              {
+                "flowTriggerType": "None",
+                "recordTriggerType": "None"
+              }
+            mockPayloadId: allRules
+    queryParameters:
+      flowTriggerType:
+        examples:
+          allRules: 'None'
+      recordTriggerType:
+        examples:
+          allRules: 'None'

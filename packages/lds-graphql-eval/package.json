@@ -1,11 +1,11 @@
 {
     "name": "@salesforce/lds-graphql-eval",
-    "version": "1.32.0",
+    "version": "1.41.0",
     "description": "Offline GraphQL eval",
     "license": "MIT",
-    "main": "dist/umd/es2018/graphql-eval.js",
-    "module": "dist/es/es2018/graphql-eval.js",
-    "types": "dist/types/src/main.d.ts",
+    "main": "dist/graphql-eval.js",
+    "module": "dist/graphql-eval.js",
+    "types": "dist/main.d.ts",
     "files": [
         "dist"
     ],
@@ -17,6 +17,10 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@salesforce/lds-graphql-parser": "1.32.0"
+        "@luvio/engine": "0.76.1",
+        "@luvio/environments": "0.76.1",
+        "@luvio/graphql-parser": "0.76.1",
+        "@salesforce/lds-store-sql": "1.41.0",
+        "@salesforce/lds-instrumentation": "1.41.0"
     }
 }

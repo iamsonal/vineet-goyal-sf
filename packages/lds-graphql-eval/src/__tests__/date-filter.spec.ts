@@ -3,9 +3,9 @@ import { unwrappedError, unwrappedValue } from '../Result';
 import infoJson from './mockData/objectInfos.json';
 const infoMap = infoJson as ObjectInfoMap;
 
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import { findRecordSelections } from '../ast-parser';
-import { LuvioArgumentNode, LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioArgumentNode, LuvioDocumentNode } from '@luvio/graphql-parser';
 import {
     ComparisonOperator,
     DateArray,
@@ -23,6 +23,7 @@ import {
 } from '../Predicate';
 import { makeGraphQL } from './util';
 import { ObjectInfoMap } from '../info-types';
+import { message, PredicateError } from '../Error';
 
 const { eq, ne, gt, gte, lt, lte, nin } = ComparisonOperator;
 const inOp = ComparisonOperator.in;
@@ -39,7 +40,7 @@ function testOperatorResult(
     expectedValue: DateInput | DateTimeInput | DateArray | DateTimeArray
 ) {
     const graphqlSource = makeGraphQL(source);
-    const where = findWhereArg(parser.default(graphqlSource));
+    const where = findWhereArg(parseAndVisit(graphqlSource));
     const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(filter.isSuccess).toEqual(true);
@@ -48,9 +49,9 @@ function testOperatorResult(
     expect(unwrappedValue(filter).predicate['right']).toEqual(expectedValue);
 }
 
-function testExpectedError(source: string, expectedError: any) {
+function testExpectedError(source: string, expectedError: PredicateError[]) {
     const graphqlSource = makeGraphQL(source);
-    const where = findWhereArg(parser.default(graphqlSource));
+    const where = findWhereArg(parseAndVisit(graphqlSource));
     const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(filter.isSuccess).toEqual(false);
@@ -64,7 +65,7 @@ describe('date filter parser', () => {
             (op) => {
                 const source = `{ EndDate: { ${op}: { value: "2021-09-17T17:57:01.000Z" } } }`;
 
-                return testExpectedError(source, ['Date format must be YYYY-MM-DD.']);
+                return testExpectedError(source, [message('Date format must be YYYY-MM-DD.')]);
             }
         );
 
@@ -74,7 +75,7 @@ describe('date filter parser', () => {
                 const source = `{ CreatedDate: { ${op}: { value: "2021-09-17" } } }`;
 
                 return testExpectedError(source, [
-                    'DateTime format must be YYYY-MM-DDTHH:MM:SS.SSSZ.',
+                    message('DateTime format must be YYYY-MM-DDTHH:MM:SS.SSSZ.'),
                 ]);
             }
         );
@@ -96,7 +97,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS for null date value', () => {
             const graphqlSource = makeGraphQL(`{ EndDate: { eq: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,
@@ -116,7 +117,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS NOT for null date value', () => {
             const graphqlSource = makeGraphQL(`{ EndDate: { ne: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,
@@ -136,7 +137,7 @@ describe('date filter parser', () => {
 
         it.each([gt, gte, lt, lte])('returns error when null value is compared with %s', (op) => {
             const source = `{ EndDate: { ${op}: { value: null } } }`;
-            return testExpectedError(source, [`Null can not be compared with ${op}`]);
+            return testExpectedError(source, [message(`Null can not be compared with ${op}`)]);
         });
 
         it.each([eq, ne, gt, gte, lt, lte])(
@@ -166,7 +167,7 @@ describe('date filter parser', () => {
             'returns error for unknown date enum when compared with %s',
             (op) => {
                 const source = `{ EndDate: { ${op}: { literal: UNKNOWN } } }`;
-                return testExpectedError(source, [`Unknown Date literal UNKNOWN.`]);
+                return testExpectedError(source, [message(`Unknown Date literal UNKNOWN.`)]);
             }
         );
 
@@ -174,7 +175,7 @@ describe('date filter parser', () => {
             'returns error for bad date format when compared with %s',
             (op) => {
                 const source = `{ EndDate: { ${op}: { value: "93oaxld-3" } } }`;
-                return testExpectedError(source, [`Date format must be YYYY-MM-DD.`]);
+                return testExpectedError(source, [message(`Date format must be YYYY-MM-DD.`)]);
             }
         );
     });
@@ -208,12 +209,12 @@ describe('date filter parser', () => {
 
         it.each([inOp, nin])('returns error for unknown date enum when compared with %s', (op) => {
             const source = `{ EndDate: { ${op}: [{ literal: BETWIXT }] } }`;
-            return testExpectedError(source, [`Unknown Date literal BETWIXT.`]);
+            return testExpectedError(source, [message(`Unknown Date literal BETWIXT.`)]);
         });
 
         it.each([inOp, nin])('returns error for bad date format when compared with %s', (op) => {
             const source = `{ EndDate: { ${op}: [{  value: "93oaxld-3" }] } }`;
-            return testExpectedError(source, [`Date format must be YYYY-MM-DD.`]);
+            return testExpectedError(source, [message(`Date format must be YYYY-MM-DD.`)]);
         });
     });
 
@@ -233,7 +234,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS for null date time value', () => {
             const graphqlSource = makeGraphQL(`{ CreatedDate: { eq: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,
@@ -253,7 +254,7 @@ describe('date filter parser', () => {
 
         it('returns NullComparisonPredicate IS NOT for null date time value', () => {
             const graphqlSource = makeGraphQL(`{ CreatedDate: { ne: { value: null } } }`);
-            const where = findWhereArg(parser.default(graphqlSource));
+            const where = findWhereArg(parseAndVisit(graphqlSource));
             const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
             const expected: NullComparisonPredicate = {
                 type: PredicateType.nullComparison,
@@ -273,7 +274,7 @@ describe('date filter parser', () => {
 
         it.each([gt, gte, lt, lte])('returns error when null value is compared with %s', (op) => {
             const source = `{ CreatedDate: { ${op}: { value: null } } }`;
-            return testExpectedError(source, [`Null can not be compared with ${op}`]);
+            return testExpectedError(source, [message(`Null can not be compared with ${op}`)]);
         });
 
         it.each([eq, ne, gt, gte, lt, lte])(
@@ -306,7 +307,7 @@ describe('date filter parser', () => {
             'returns error when unknown datetime enum is compared with %s',
             (op) => {
                 const source = `{ CreatedDate: { ${op}: { literal: UNKNOWN } } }`;
-                return testExpectedError(source, [`Unknown DateTime literal UNKNOWN.`]);
+                return testExpectedError(source, [message(`Unknown DateTime literal UNKNOWN.`)]);
             }
         );
 
@@ -315,7 +316,7 @@ describe('date filter parser', () => {
             (op) => {
                 const source = `{ CreatedDate: { ${op}: { value: "93oaxld-3" } } }`;
                 return testExpectedError(source, [
-                    `DateTime format must be YYYY-MM-DDTHH:MM:SS.SSSZ.`,
+                    message(`DateTime format must be YYYY-MM-DDTHH:MM:SS.SSSZ.`),
                 ]);
             }
         );
@@ -352,7 +353,7 @@ describe('date filter parser', () => {
             'returns error for unknown date time enum when compared with set %s',
             (op) => {
                 const source = `{ CreatedDate: { ${op}: [{ literal: BETWIXT }] } }`;
-                return testExpectedError(source, [`Unknown DateTime literal BETWIXT.`]);
+                return testExpectedError(source, [message(`Unknown DateTime literal BETWIXT.`)]);
             }
         );
 
@@ -361,7 +362,7 @@ describe('date filter parser', () => {
             (op) => {
                 const source = `{ CreatedDate: { ${op}: [{  value: "93oaxld-3" }] } }`;
                 return testExpectedError(source, [
-                    `DateTime format must be YYYY-MM-DDTHH:MM:SS.SSSZ.`,
+                    message(`DateTime format must be YYYY-MM-DDTHH:MM:SS.SSSZ.`),
                 ]);
             }
         );

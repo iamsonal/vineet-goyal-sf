@@ -1,24 +1,32 @@
-import { AdapterFactory, Luvio, FetchResponse, FulfilledSnapshot } from '@luvio/engine';
+import type {
+    AdapterFactory,
+    Luvio,
+    FetchResponse,
+    FulfilledSnapshot,
+    StoreLookup,
+    Snapshot,
+    AdapterRequestContext,
+    CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
+} from '@luvio/engine';
 
-import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
-import {
-    AdapterValidationConfig,
-    untrustedIsObject,
-    refreshable,
-} from '../../generated/adapters/adapter-utils';
-import {
-    validateAdapterConfig,
-    GetLookupRecordsConfig,
-} from '../../generated/adapters/getLookupRecords';
-import { getFieldId, FieldId } from '../../primitives/FieldId';
+import type { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
+import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
+import type { GetLookupRecordsConfig } from '../../generated/adapters/getLookupRecords';
+import { validateAdapterConfig } from '../../generated/adapters/getLookupRecords';
+import type { FieldId } from '../../primitives/FieldId';
+import { getFieldId } from '../../primitives/FieldId';
 import { isSpanningRecord } from '../../selectors/record';
-import { ObjectId } from '../../primitives/ObjectId';
+import type { ObjectId } from '../../primitives/ObjectId';
+import type { ResourceRequestConfig } from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import getLookupRecordsResourceRequest, {
     keyBuilder,
-    ResourceRequestConfig,
+    getResponseCacheKeys,
 } from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import { deepFreeze } from '../../util/deep-freeze';
-import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import type { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { isPromise } from '../../util/promise';
 
 interface GetLookupRecordsConfigRequestParams {
     q?: string;
@@ -102,8 +110,8 @@ function coerceConfigWithDefaults(untrusted: unknown): GetLookupRecordsConfig | 
 function removeEtags(recordRep: RecordRepresentation) {
     const { fields } = recordRep;
 
-    delete recordRep.eTag;
-    delete recordRep.weakEtag;
+    delete (recordRep as Partial<RecordRepresentation>).eTag;
+    delete (recordRep as Partial<RecordRepresentation>).weakEtag;
 
     Object.keys(fields).forEach((fieldName) => {
         const { value: nestedValue } = fields[fieldName];
@@ -113,7 +121,11 @@ function removeEtags(recordRep: RecordRepresentation) {
     });
 }
 
-export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfig) {
+export function buildNetworkSnapshot(
+    luvio: Luvio,
+    config: GetLookupRecordsConfig,
+    options?: DispatchResourceRequestContext
+) {
     const { objectApiName, fieldApiName, targetApiName } = config;
     const resourceParams: ResourceRequestConfig = {
         urlParams: {
@@ -132,56 +144,114 @@ export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfi
     };
     const request = getLookupRecordsResourceRequest(resourceParams);
 
-    return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request, options).then(
         (response) => {
-            // TODO [W-7235112]: remove this hack to never ingest lookup responses that
-            // avoids issues caused by them not being real RecordRepresentations
-            const key = keyBuilder(resourceParams);
-            const { body } = response;
-            const { records } = body;
-            for (let i = 0, len = records.length; i < len; i += 1) {
-                removeEtags(records[i]);
-            }
-            deepFreeze(body);
-            return {
-                state: 'Fulfilled',
-                recordId: key,
-                variables: {},
-                seenRecords: {},
-                select: {
-                    recordId: key,
-                    node: {
-                        kind: 'Fragment',
-                    },
-                    variables: {},
+            return luvio.handleSuccessResponse(
+                () => {
+                    // TODO [W-7235112]: remove this hack to never ingest lookup responses that
+                    // avoids issues caused by them not being real RecordRepresentations
+                    const key = keyBuilder(resourceParams);
+                    const { body } = response;
+                    const { records } = body;
+                    for (let i = 0, len = records.length; i < len; i += 1) {
+                        removeEtags(records[i]);
+                    }
+                    deepFreeze(body);
+                    return {
+                        state: 'Fulfilled',
+                        recordId: key,
+                        variables: {},
+                        seenRecords: {},
+                        select: {
+                            recordId: key,
+                            node: {
+                                kind: 'Fragment',
+                            },
+                            variables: {},
+                        },
+                        data: body,
+                    } as FulfilledSnapshot<RecordCollectionRepresentation, {}>;
                 },
-                data: body,
-            } as FulfilledSnapshot<RecordCollectionRepresentation, {}>;
+                () => {
+                    return getResponseCacheKeys(resourceParams, response.body);
+                }
+            );
         },
         (err: FetchResponse<unknown>) => {
-            return luvio.errorSnapshot(err);
+            return luvio.handleErrorResponse(() => {
+                return luvio.errorSnapshot(err);
+            });
         }
     );
+}
+
+type BuildSnapshotContext = {
+    config: GetLookupRecordsConfig;
+    luvio: Luvio;
+};
+
+function buildCachedSnapshot(
+    _context: BuildSnapshotContext,
+    _storeLookup: StoreLookup<RecordCollectionRepresentation>
+): undefined {
+    return;
+}
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
+): Promise<Snapshot<RecordCollectionRepresentation>> {
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
+    if (networkPriority !== 'normal') {
+        dispatchOptions.overrides = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(context.luvio, context.config, dispatchOptions);
 }
 
 export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRepresentation> = (
     luvio: Luvio
 ) => {
-    return refreshable(
-        function (untrusted: unknown) {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                return null;
-            }
-            return buildNetworkSnapshot(luvio, config);
-        },
-        (untrusted: unknown) => {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                // eslint-disable-next-line @salesforce/lds/no-error-in-production
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-            return buildNetworkSnapshot(luvio, config);
+    return (
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
+    ):
+        | Promise<Snapshot<RecordCollectionRepresentation>>
+        | Snapshot<RecordCollectionRepresentation>
+        | null => {
+        const config = coerceConfigWithDefaults(untrustedConfig);
+        if (config === null) {
+            return null;
         }
-    );
+
+        const refresh = {
+            config,
+            resolve: () => buildNetworkSnapshot(luvio, config),
+        };
+
+        const promiseOrSnapshot = luvio.applyCachePolicy(
+            requestContext || {},
+            { config, luvio },
+            buildCachedSnapshot,
+            buildNetworkSnapshotCachePolicy
+        );
+
+        if (isPromise(promiseOrSnapshot)) {
+            return promiseOrSnapshot.then((snapshot) => {
+                snapshot.refresh = refresh;
+                return snapshot;
+            });
+        }
+
+        promiseOrSnapshot.refresh = refresh;
+        return promiseOrSnapshot;
+    };
 };

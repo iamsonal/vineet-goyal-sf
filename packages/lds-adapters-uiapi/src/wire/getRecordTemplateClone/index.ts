@@ -1,28 +1,34 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     Snapshot,
     FulfilledSnapshot,
-    ResourceRequestOverride,
     Selector,
     FetchResponse,
     AdapterContext,
+    StoreLookup,
+    AdapterRequestContext,
+    CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
+import type {
+    buildCachedSnapshot as generatedBuildCachedSnapshot,
+    buildNetworkSnapshot as generatedBuildNetworkSnapshot,
+    GetRecordTemplateCloneConfig,
+} from '../../generated/adapters/getRecordTemplateClone';
 import {
     validateAdapterConfig,
     getRecordTemplateClone_ConfigPropertyNames,
     createResourceParams,
-    buildInMemorySnapshot as generatedBuildInMemorySnapshot,
-    buildNetworkSnapshot as generatedBuildNetworkSnapshot,
-    GetRecordTemplateCloneConfig,
 } from '../../generated/adapters/getRecordTemplateClone';
-import { createResourceRequest } from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
-import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCloneByRecordId/select';
 import {
-    RecordDefaultsTemplateCloneRepresentation,
-    TTL as RecordTemplateCloneTTL,
-} from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
-import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
+    createResourceRequest,
+    getResponseCacheKeys,
+} from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
+import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCloneByRecordId/select';
+import type { RecordDefaultsTemplateCloneRepresentation } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
+import { TTL as RecordTemplateCloneTTL } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
+import type { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import { keyBuilder as templateRecordKeyBuilder } from '../../generated/types/RecordTemplateCloneRepresentation';
 import {
     BLANK_RECORD_FIELDS_TRIE,
@@ -70,12 +76,12 @@ const buildNetworkSnapshot: (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) => ReturnType<typeof generatedBuildNetworkSnapshot> = (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ) => {
     const resourceParams = createResourceParams(config);
     const recordTypeId = getRecordTypeId(config, context);
@@ -107,72 +113,84 @@ const buildNetworkSnapshot: (
               });
 
     return luvio
-        .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, override)
+        .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, options)
         .then(
             (response) => {
-                const { body } = response;
-                const key = templateKeyBuilderFromType(body);
+                return luvio.handleSuccessResponse(
+                    () => {
+                        const { body } = response;
+                        const key = templateKeyBuilderFromType(body);
 
-                const responseRecordTypeId = body.record.recordTypeId;
-                const objectApiName = body.record.apiName;
-                // publish metadata for recordTypeId
-                saveDefaultRecordTypeId(context, body.objectInfos[objectApiName]);
+                        const responseRecordTypeId = body.record.recordTypeId;
+                        const objectApiName = body.record.apiName;
+                        // publish metadata for recordTypeId
+                        saveDefaultRecordTypeId(context, body.objectInfos[objectApiName]);
 
-                const optionalFieldsTrie = convertFieldsToTrie(
-                    resourceParams.queryParams.optionalFields
-                );
-                luvio.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
-                    key,
-                    resourceCreateFieldsIngest({
-                        fields: BLANK_RECORD_FIELDS_TRIE,
-                        optionalFields: optionalFieldsTrie,
-                        trackedFields: optionalFieldsTrie,
-                        serverRequestCount: 1,
-                    }),
-                    body
-                );
-
-                luvio.storeBroadcast();
-                const snapshot = buildInMemorySnapshot(luvio, context, {
-                    ...config,
-                    recordTypeId: responseRecordTypeId as string,
-                });
-
-                if (process.env.NODE_ENV !== 'production') {
-                    if (snapshot.state !== 'Fulfilled') {
-                        throw new Error(
-                            'Invalid network response. Expected network response to result in Fulfilled snapshot'
+                        const optionalFieldsTrie = convertFieldsToTrie(
+                            resourceParams.queryParams.optionalFields
                         );
-                    }
-                }
+                        luvio.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
+                            key,
+                            resourceCreateFieldsIngest({
+                                fields: BLANK_RECORD_FIELDS_TRIE,
+                                optionalFields: optionalFieldsTrie,
+                                trackedFields: optionalFieldsTrie,
+                                serverRequestCount: 1,
+                            }),
+                            body
+                        );
 
-                return snapshot as FulfilledSnapshot<RecordDefaultsTemplateCloneRepresentation, {}>;
+                        luvio.storeBroadcast();
+                        const snapshot = buildCachedSnapshot(luvio, context, {
+                            ...config,
+                            recordTypeId: responseRecordTypeId as string,
+                        });
+
+                        if (process.env.NODE_ENV !== 'production') {
+                            if (snapshot.state !== 'Fulfilled') {
+                                throw new Error(
+                                    'Invalid network response. Expected network response to result in Fulfilled snapshot'
+                                );
+                            }
+                        }
+
+                        return snapshot as FulfilledSnapshot<
+                            RecordDefaultsTemplateCloneRepresentation,
+                            {}
+                        >;
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, response.body);
+                    }
+                );
             },
             (response: FetchResponse<unknown>) => {
-                const key = templateKeyBuilder({
-                    cloneSourceId: config.recordId,
-                    recordTypeId: config.recordTypeId || null,
+                return luvio.handleErrorResponse(() => {
+                    const key = templateKeyBuilder({
+                        cloneSourceId: config.recordId,
+                        recordTypeId: config.recordTypeId || null,
+                    });
+                    const errorSnapshot = luvio.errorSnapshot(response, {
+                        config,
+                        resolve: () =>
+                            buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
+                    });
+                    luvio.storeIngestError(
+                        key,
+                        errorSnapshot,
+                        RECORD_TEMPLATE_CLONE_ERROR_STORE_METADATA_PARAMS
+                    );
+                    return errorSnapshot;
                 });
-                const errorSnapshot = luvio.errorSnapshot(response, {
-                    config,
-                    resolve: () =>
-                        buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
-                });
-                luvio.storeIngestError(
-                    key,
-                    errorSnapshot,
-                    RECORD_TEMPLATE_CLONE_ERROR_STORE_METADATA_PARAMS
-                );
-                return errorSnapshot;
             }
         );
 };
 
-const buildInMemorySnapshot: (
+const buildCachedSnapshot: (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig
-) => ReturnType<typeof generatedBuildInMemorySnapshot> = (
+) => ReturnType<typeof generatedBuildCachedSnapshot> = (
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCloneConfig
@@ -193,13 +211,70 @@ const buildInMemorySnapshot: (
     });
 };
 
+type BuildSnapshotContext = {
+    adapterContext: AdapterContext;
+    config: GetRecordTemplateCloneConfig;
+    luvio: Luvio;
+    recordTypeId: string | undefined;
+};
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
+): Promise<Snapshot<RecordDefaultsTemplateCloneRepresentation, any>> {
+    const { config, adapterContext, luvio } = context;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
+    if (networkPriority !== 'normal') {
+        dispatchOptions.overrides = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, adapterContext, config, dispatchOptions);
+}
+
+function buildCachedSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordDefaultsTemplateCloneRepresentation>
+): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> {
+    const { adapterContext, config, luvio, recordTypeId } = context;
+
+    const updatedConfig = {
+        ...config,
+        recordTypeId,
+    };
+
+    const resourceParams = createResourceParams(updatedConfig);
+    const key = templateKeyBuilder({
+        cloneSourceId: updatedConfig.recordId,
+        recordTypeId: updatedConfig.recordTypeId || null,
+    });
+    const selector: Selector = {
+        recordId: key,
+        node: select(luvio, resourceParams),
+        variables: {},
+    };
+    return storeLookup(selector, {
+        config,
+        resolve: () =>
+            buildNetworkSnapshot(luvio, adapterContext, updatedConfig, snapshotRefreshOptions),
+    });
+}
+
 export const factory: AdapterFactory<
     GetRecordTemplateCloneConfig,
     RecordDefaultsTemplateCloneRepresentation
 > = (luvio: Luvio) =>
     luvio.withContext(function getRecordTemplateClone_ContextWrapper(
         untrustedConfig: unknown,
-        context: AdapterContext
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
     ) {
         const config = validateAdapterConfig(
             untrustedConfig,
@@ -211,17 +286,17 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        const recordTypeId = getRecordTypeId(config, context);
+        const recordTypeId = getRecordTypeId(config, adapterContext);
 
-        const cacheSnapshot = buildInMemorySnapshot(luvio, context, {
-            ...config,
-            recordTypeId,
-        });
-
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot) === true) {
-            return cacheSnapshot;
-        }
-
-        return buildNetworkSnapshot(luvio, context, config);
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+                recordTypeId,
+                adapterContext,
+            },
+            buildCachedSnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
     });

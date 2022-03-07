@@ -1,5 +1,5 @@
-import { Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
+import type { Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createLDSAction } from '../actionHandlers/LDSActionHandler';
@@ -17,7 +17,7 @@ import {
     prefixForRecordId,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
-import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+import type { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 /**
  * Checks if a provided resource request is a POST operation on the record
@@ -72,9 +72,13 @@ export function createRecordDraftEnvironment(
         durableStore,
         getObjectInfo,
         apiNameForPrefix,
+        ensureObjectInfoCached,
     }: DraftEnvironmentOptions
 ): DurableEnvironment {
-    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
+    // TODO [W-8909393]: can remove this when metadata is stored separately from data
+    const synthesizedIds: Record<string, true> = {};
+
+    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <_T>(
         request: ResourceRequest
     ) {
         if (isRequestCreateRecord(request) === false) {
@@ -94,9 +98,9 @@ export function createRecordDraftEnvironment(
             );
         }
 
-        return assertReferenceIdsAreCached(apiName, resolvedResourceRequest.body.fields).then(
-            () => {
-                return prefixForApiName(apiName).then((prefix) => {
+        return assertDraftPrerequisitesSatisfied(apiName, resolvedResourceRequest.body.fields).then(
+            () =>
+                prefixForApiName(apiName).then((prefix) => {
                     if (prefix === null) {
                         return Promise.reject(
                             createBadRequestResponse({
@@ -106,8 +110,7 @@ export function createRecordDraftEnvironment(
                     }
 
                     return enqueueRequest(prefix, resolvedResourceRequest);
-                });
-            }
+                })
         );
     };
 
@@ -115,6 +118,11 @@ export function createRecordDraftEnvironment(
         recordKey: string,
         storeMetadata: StoreMetadata
     ) {
+        // TODO [W-8909393]: should not have to do this anymore when metadata is stored separately from data
+        if (synthesizedIds[recordKey]) {
+            delete synthesizedIds[recordKey];
+            return;
+        }
         const recordId = extractRecordIdFromStoreKey(recordKey);
         if (recordId === undefined || isDraftId(recordId) === false) {
             return env.publishStoreMetadata(recordKey, storeMetadata);
@@ -122,16 +130,25 @@ export function createRecordDraftEnvironment(
         return env.publishStoreMetadata(recordKey, {
             ...storeMetadata,
             expirationTimestamp: Number.MAX_SAFE_INTEGER,
-            staleTimestamp: Number.MAX_SAFE_INTEGER,
         });
     };
 
-    function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
-        return ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo).catch(
-            (err: Error) => {
-                throw createDraftSynthesisErrorResponse(err.message);
-            }
-        );
+    /**
+     * Ensures that any reference ids being edited and the Object Info exist in the store
+     * @param apiName
+     * @param fields
+     * @returns Promise
+     */
+    function assertDraftPrerequisitesSatisfied(
+        apiName: string,
+        fields: Record<string, any>
+    ): Promise<void[]> {
+        return Promise.all([
+            ensureObjectInfoCached(apiName),
+            ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo),
+        ]).catch((err: Error) => {
+            throw createDraftSynthesisErrorResponse(err.message);
+        });
     }
 
     function enqueueRequest(prefix: string, request: ResourceRequest): any {
@@ -153,6 +170,8 @@ export function createRecordDraftEnvironment(
                         if (record === undefined) {
                             throw createDraftSynthesisErrorResponse();
                         }
+                        // TODO [W-8909393]: should not have to do this anymore when metadata is stored separately from data
+                        synthesizedIds[key] = true;
                         return createOkResponse(filterRecordFields(record, fields)) as any;
                     });
             });

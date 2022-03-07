@@ -1,6 +1,6 @@
-import { Adapter } from '@luvio/engine';
-import { AdapterMetadata } from './ldsAdapter';
-import { refreshApiNames } from './bindWireRefresh';
+import type { Adapter } from '@luvio/engine';
+import type { AdapterMetadata } from './ldsAdapter';
+import type { refreshApiNames } from './bindWireRefresh';
 
 /**
  * Instrumentation hooks exposed by this module.

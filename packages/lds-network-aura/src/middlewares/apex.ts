@@ -1,9 +1,11 @@
-import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
-import { ActionConfig, executeGlobalController } from 'aura';
+import type { ResourceRequest } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
+import type { ActionConfig } from 'aura';
+import { executeGlobalController } from 'aura';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import appRouter from '../router';
 
-export const LWR_APEX_BASE_URI = '/lwr/apex/v54.0';
+export const LWR_APEX_BASE_URI = '/lwr/apex/v55.0';
 const ApexController = 'ApexActionController.execute';
 const CACHE_CONTROL = 'Cache-Control';
 const X_SFDC_ALLOW_CONTINUATION = 'X-SFDC-Allow-Continuation';
@@ -81,7 +83,7 @@ function dispatchApexAction(
             );
         },
         (err) => {
-            // Handle ConnectedInJava exception shapes
+            // Handle ConnectInJava exception shapes
             if (err.data !== undefined && err.data.statusCode !== undefined) {
                 const { data } = err;
                 throw new AuraFetchResponse(data.statusCode, data);

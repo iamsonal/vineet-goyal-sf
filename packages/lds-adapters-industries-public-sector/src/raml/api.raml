@@ -1,0 +1,741 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  BenefitListRepresentation:
+    description: Output Representation of Benefit List
+    type: object
+    properties:
+      benefits:
+        description: List of Benefit
+        type: array
+        required: false
+        items:
+          type: BenefitRepresentation
+      code:
+        description: API response code for failure case
+        type: string
+        required: false
+      isSuccess:
+        description: States whether API is successful or not
+        type: boolean
+        required: false
+      message:
+        description: API response message for failure case
+        type: string
+        required: false
+  BenefitOutputRepresentation:
+    description: Output Representation of Benefit
+    type: object
+    properties:
+      associatedGoalDefinition:
+        description: Associated GoalDefinition of the Benefit
+        type: GoalDefinitionOutputRepresentation
+        required: false
+      benefitFrequency:
+        description: Frequency of the Benefit
+        type: string
+        required: false
+      enrollmentCount:
+        description: EnrollmentCount of the Benefit
+        type: integer
+        required: false
+      id:
+        description: Id of the Benefit record
+        type: string
+      isActive:
+        description: Boolean value representing whether this benefit record is active
+          or not
+        type: boolean
+      maximumAmount:
+        description: Maximum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      minimumAmount:
+        description: Minimum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      name:
+        description: Name of the Benefit
+        type: string
+      status:
+        description: Status of the Benefit
+        type: string
+        required: false
+  BenefitRepresentation:
+    description: Output Representation of Benefit
+    type: object
+    properties:
+      goalDefinitionId:
+        description: Goal Definition Id for this Benefit
+        type: string
+        required: false
+      goalDefinitionName:
+        description: Goal Definition name for this Benefit
+        type: string
+        required: false
+      goalDefinitionStatus:
+        description: Status of the Goal Definition
+        type: string
+        required: false
+      id:
+        description: Id of the Benefit record
+        type: string
+        required: false
+      maximumAmount:
+        description: Maximum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      minimumAmount:
+        description: Minimum allocated amount for the Benefit
+        format: double
+        type: number
+        required: false
+      name:
+        description: Name of the Benefit
+        type: string
+        required: false
+      status:
+        description: Status of the Benefit
+        type: string
+        required: false
+      type:
+        description: Type of the Benefit
+        type: string
+        required: false
+  CaseServicePlanRepresentation:
+    description: Output Representation of CaseServicePlan and it's related records
+    type: object
+    properties:
+      caseId:
+        description: Case Record Id for this CaseServicePlan
+        type: string
+      description:
+        description: Description of CaseServicePlan record
+        type: string
+        required: false
+      endDate:
+        description: End Date of CaseServicePlan record
+        type: string
+        required: false
+      enrolleeBenefits:
+        description: List of EnrolleeBenefit associated with this CaseServicePlan
+          record
+        type: EnrolleeBenefitListRepresentation
+      id:
+        description: Id of CaseServicePlan record
+        type: string
+      name:
+        description: Name of the Case Service Plan
+        type: string
+      participantId:
+        description: ParticipantId of CaseServicePlan record
+        type: string
+        required: false
+      publicServiceGoals:
+        description: List of PublicServiceGoal associated with this CaseServicePlan
+          record
+        type: PublicServiceGoalListRepresentation
+      servicePlanTemplateId:
+        description: Service Plan Template Id for this CaseServicePlan
+        type: string
+        required: false
+      startDate:
+        description: Start Date of CaseServicePlan record
+        type: string
+        required: false
+      status:
+        description: Status of CaseServicePlan record
+        type: string
+  EnrolleeBenefitListRepresentation:
+    description: List Representation of EnrolleeBenefit
+    type: object
+    properties:
+      records:
+        description: list of EnrolleeBenefit records
+        type: array
+        items:
+          type: EnrolleeBenefitRepresentation
+  EnrolleeBenefitRepresentation:
+    description: Output Representation of EnrolleeBenefit record
+    type: object
+    properties:
+      associatedPublicServiceGoal:
+        description: Related Public Service Goal data with this Benefit
+        type: PublicServiceGoalRepresentation
+        required: false
+      benefitFrequency:
+        description: Frequency by which participant will get this benefit
+        type: string
+        required: false
+      benefitId:
+        description: Id of Benefit Record associated with this record
+        type: string
+      endDate:
+        description: End Date of EnrolleeBenefit record
+        type: string
+        required: false
+      enrollmentCount:
+        description: Enrollment count for this Benefit
+        type: integer
+        required: false
+      id:
+        description: Id of EnrolleeBenefit record
+        type: string
+      maximumAmount:
+        description: Maximum amount a participant will get from this benefit
+        format: double
+        type: number
+        required: false
+      minimumAmount:
+        description: Minimum amount a participant will get from this benefit
+        format: double
+        type: number
+        required: false
+      participantId:
+        description: Id of participant to whom this EnrolleeBenefit is assigned
+        type: string
+        required: false
+      startDate:
+        description: Start Date of EnrolleeBenefit record
+        type: string
+        required: false
+  PublicServiceGoalListRepresentation:
+    description: List Representation of PublicServiceGoal
+    type: object
+    properties:
+      records:
+        description: list of PublicServiceGoal records
+        type: array
+        items:
+          type: PublicServiceGoalRepresentation
+  PublicServiceGoalRepresentation:
+    description: Output Representation of PublicServiceGoal
+    type: object
+    properties:
+      completionPercentage:
+        description: Completion Percentage of PublicServiceGoal record
+        format: double
+        type: number
+        required: false
+      goalAssigneeId:
+        description: Id of Goal Assignee of this PublicServiceGoal record
+        type: string
+        required: false
+      goalDefinitionId:
+        description: GoalDefinition Id for this PublicServiceGoal
+        type: string
+      goalType:
+        description: Goal type of this record
+        type: string
+        required: false
+      id:
+        description: Id of PublicServiceGoal record
+        type: string
+      startDate:
+        description: Start Date of PublicServiceGoal record
+        type: string
+        required: false
+      status:
+        description: Status of PublicServiceGoal record
+        type: string
+        required: false
+      targetCompletionDate:
+        description: Target Completion Date of PublicServiceGoal record
+        type: string
+        required: false
+  GenericOutputRepresentation:
+    description: Generic Output Representation
+    type: object
+    properties:
+      code:
+        description: API code
+        type: string
+        required: false
+      id:
+        description: id
+        type: string
+      isSuccess:
+        description: API success status
+        type: boolean
+        required: false
+      message:
+        description: API message
+        type: string
+        required: false
+  GoalDefinitionListRepresentation:
+    description: Output Representation of Goal Definition List
+    type: object
+    properties:
+      code:
+        description: API response code
+        type: string
+        required: false
+      goalDefinitions:
+        description: List of Goal Definition
+        type: array
+        required: false
+        items:
+          type: GoalDefinitionRepresentation
+      isSuccess:
+        description: States whether API is successful or not
+        type: boolean
+        required: false
+      message:
+        description: API response message for failure case
+        type: string
+        required: false
+  GoalDefinitionOutputRepresentation:
+    description: Output Representation of Goal Definition
+    type: object
+    properties:
+      id:
+        description: Record Id of goal Definition
+        type: string
+      name:
+        description: Name of Goal Definition
+        type: string
+      status:
+        description: Status of Goal Definition
+        type: string
+        required: false
+      type:
+        description: Type of Goal Definition
+        type: string
+        required: false
+  GoalDefinitionRepresentation:
+    description: Output Representation of Goal Definition
+    type: object
+    properties:
+      category:
+        description: Category for Goal Definition
+        type: string
+        required: false
+      id:
+        description: Record Id of goal Definition
+        type: string
+        required: false
+      name:
+        description: Name of Goal Definition
+        type: string
+        required: false
+      usageType:
+        description: Usage Type for Goal Definition
+        type: string
+        required: false
+  # TODO Hand-Rolled due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAMmFgP)
+  ServicePlanTemplateAssociationsInputWrapperRepresentation:
+    description: Wrapper Input Representation for associating Service Plan Template benefit
+      and Service Plan Template Goal records to Service Plan Template
+    type: object
+    properties:
+      servicePlanTemplateRecord:
+        type: ServicePlanTemplateAssociationsInputRepresentation
+        description: Service Plan Template Associations input represenation
+  ServicePlanTemplateAssociationsInputRepresentation:
+    description: Input Representation for associating Service Plan Template benefit
+      and Service Plan Template Goal records to Service Plan Template
+    type: object
+    properties:
+      servicePlanTemplateBenefits:
+        description: Object containing list of Benefits to be added to Service Plan
+          template
+        # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: ServicePlanTemplateBenefitListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      servicePlanTemplateGoals:
+        description: Object containing list of Goals to be added to Service Plan Template
+        type: ServicePlanTemplateGoalListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+  ServicePlanTemplateBenefitInputRepresentation:
+    description: Input Representation for Service Plan Template Benefit Object
+    type: object
+    properties:
+      benefitId:
+        description: Benefit ID
+        type: string
+      priority:
+        description: Priority of the Benefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+  ServicePlanTemplateBenefitListInputRepresentation:
+    description: Input Representation for list of Service Plan Template benefit records
+    type: object
+    properties:
+      records:
+        description: List of Goals to be added to Service Plan Template
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: ServicePlanTemplateBenefitInputRepresentation
+  ServicePlanTemplateBenefitRepresentation:
+    description: Record Representation of ServicePlanTemplateBenefit
+    type: object
+    properties:
+      associatedBenefit:
+        description: Associated Benefit record ServicePlanTemplateBenefit
+        type: BenefitOutputRepresentation
+      id:
+        description: Id of ServicePlanTemplateBenefit Record
+        type: string
+      priority:
+        description: Priority of ServicePlanTemplateBenefit Record
+        type: string
+        required: false
+  ServicePlanTemplateGoalInputRepresentation:
+    description: Input Representation for Service Plan Template Goal Object
+    type: object
+    properties:
+      goalDefinitionId:
+        description: Goal Definition ID
+        type: string
+      priority:
+        description: Priority of the Goal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+  ServicePlanTemplateGoalListInputRepresentation:
+    description: Input Representation for list of Service Plan Template benefit records
+    type: object
+    properties:
+      records:
+        description: List of Benefits to be added to Service Plan template
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: ServicePlanTemplateGoalInputRepresentation
+  ServicePlanTemplateGoalRepresentation:
+    description: Record Representation of ServicePlanTemplateGoal
+    type: object
+    properties:
+      associatedGoalDefinition:
+        description: Associated GoalDefinition Record
+        type: GoalDefinitionOutputRepresentation
+      id:
+        description: Id of ServicePlanTemplateGoal Record
+        type: string
+      priority:
+        description: Priority of ServicePlanTemplateGoal Record
+        type: string
+        required: false
+      sptBenefitIdList:
+        description: Comma separated list of Benefit Ids
+        type: string
+        required: false
+  ServicePlanTemplateRepresentation:
+    description: ServicePlanTemplate record and it's related ServicePlanTemplateGoals
+      and ServicePlanTemplateBenefits
+    type: object
+    properties:
+      id:
+        description: Id of ServicePlanTemplate Record
+        type: string
+      name:
+        description: Name of ServicePlanTemplate Record
+        type: string
+      servicePlanTemplateBenefits:
+        description: List of Associated ServicePlanTemplateBenefit Records
+        type: array
+        required: false
+        items:
+          type: ServicePlanTemplateBenefitRepresentation
+      servicePlanTemplateGoals:
+        description: List of Associated ServicePlanTemplateGoal Records
+        type: array
+        required: false
+        items:
+          type: ServicePlanTemplateGoalRepresentation
+      status:
+        description: Status of ServicePlanTemplate Record
+        type: string
+  # TODO Hand-Rolled due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAMmFgP)
+  CaseServicePlanInputWrapperRepresentation:
+    description: Wrapper Input Representation for Case Service Plan
+    type: object
+    properties:
+      caseServicePlan:
+        type: CaseServicePlanInputRepresentation
+        description: Input representation for Case Service Plan
+  CaseServicePlanInputRepresentation:
+    description: Input representation for Case Service Plan
+    type: object
+    properties:
+      id:
+        description: Id of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      name:
+        description: Name of the CaseServicePlan
+        type: string
+      participantId:
+        description: Participant of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      caseId:
+        description: CaseId of the CaseServicePlan
+        type: string
+      description:
+        description: Description of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      endDate:
+        description: EndDate of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      servicePlanTemplateId:
+        description: ServicePlanTemplateId of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      startDate:
+        description: StartDate of the CaseServicePlan
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      status:
+        description: Status of the CaseServicePlan
+        type: string
+      enrolleeBenefits:
+        description: EnrolleeBenefits of the CaseServicePlan
+        type: EnrolleeBenefitListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      publicServiceGoals:
+        description: PublicServiceGoals of the CaseServicePlan
+        type: PublicServiceGoalListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+  EnrolleeBenefitListInputRepresentation:
+    description: Input representation for List of EnrolleeBenefits
+    type: object
+    properties:
+      records:
+        description: List of EnrolleeBenefits
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: EnrolleeBenefitInputRepresentation
+  EnrolleeBenefitInputRepresentation:
+    description: Input representation for EnrolleeBenefit
+    type: object
+    properties:
+      associatedPublicServiceGoal:
+        description: AssociatedPublicServiceGoal of the EnrolleeBenefit
+        type: PublicServiceGoalInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      benefitFrequency:
+        description: BenefitFrequency of the EnrolleeBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      benefitId:
+        description: Benefit Id of the Benefit
+        type: string
+      endDate:
+        description: EndDate of the EnrolleeBenefit
+        type: string
+      enrollmentCount:
+        description: EnrollmentCount of the EnrolleeBenefit
+        type: integer
+      id:
+        description: Id of the EnrolleBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      maximumAmount:
+        description: MaximumAmount of the EnrolleeBenefit
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      minimumAmount:
+        description: MinimumAmount of the EnrolleeBenefit
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      participantId:
+        description: ParticipantId of the EnrolleeBenefit
+        type: string
+      priority:
+        description: Priority of the EnrolleeBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      startDate:
+        description: StartDate of EnrolleeBenefit
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+  PublicServiceGoalListInputRepresentation:
+    description: Input representation for List of PublicServiceGoals
+    type: object
+    properties:
+      records:
+        description: List of PublicServiceGoals
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: PublicServiceGoalInputRepresentation
+  PublicServiceGoalInputRepresentation:
+    description: Input representation for PublicServiceGoal
+    type: object
+    properties:
+      completionPercentage:
+        description: CompletionPercentage of the PublicServiceGoal
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      goalAssigneeId:
+        description: GoalAssigneeId of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      goalDefinitionId:
+        description: GoalDefinitionId of the PublicServiceGoal
+        type: string
+      goalType:
+        description: GoalType of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      id:
+        description: Id of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      priority:
+        description: Priority of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      startDate:
+        description: StartDate of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      status:
+        description: Status of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      targetCompletionDate:
+        description: TargetCompletionDate of the PublicServiceGoal
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+
+/connect/socialcare:
+  /benefits:
+    get:
+      description: API to search/fetch the active benefits
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: BenefitListRepresentation
+      queryParameters:
+        offset:
+          type: integer
+          required: false
+        searchKey:
+          type: string
+          required: false
+
+  /goal-definitions:
+    get:
+      description: API to search Goal Definition
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GoalDefinitionListRepresentation
+      queryParameters:
+        offset:
+          type: integer
+          required: false
+        searchKey:
+          type: string
+          required: false
+
+  /case-service-plans/{caseServicePlanId}:
+    get:
+      description: API to fetch data of CaseServicePlan and it's related record
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: CaseServicePlanRepresentation
+    uriParameters:
+      caseServicePlanId:
+        type: string
+        required: true
+
+  /serviceplan-templates/{servicePlanTemplateId}:
+    get:
+      description: API to fetch data of ServicePlanTemplateId and it's related record
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ServicePlanTemplateRepresentation
+    uriParameters:
+      servicePlanTemplateId:
+        type: string
+        required: true
+
+  /serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}:
+    post:
+      description: Create Service Plan Template Benefit and Service Plan Template
+        Goal records for specified Service Plan Template ID
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GenericOutputRepresentation
+      body:
+        application/json:
+          # TODO Hand-Rolled due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAMmFgP)
+          type: ServicePlanTemplateAssociationsInputWrapperRepresentation
+          # TODO: Hand-rolled due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): servicePlanTemplateRecord
+    uriParameters:
+      actionType:
+        type: string
+        required: true
+      servicePlanTemplateId:
+        type: string
+        required: true
+
+  /case-service-plans:
+    post:
+      description: API to create/update Case Service Plan
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GenericOutputRepresentation
+      body:
+        application/json:
+          type: CaseServicePlanInputWrapperRepresentation
+          #required: false
+          (oas-body-name): caseServicePlan

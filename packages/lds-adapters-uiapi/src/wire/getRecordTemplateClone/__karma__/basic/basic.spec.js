@@ -1,3 +1,4 @@
+import { getRecordTemplateClone_imperative } from 'lds-adapters-uiapi';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     expireObjectInfo,
@@ -10,6 +11,7 @@ import GetRecord from '../../../getRecord/__karma__/lwc/record-fields';
 import GetObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';
 import GetRecordTemplateClone from '../lwc/get-record-template-clone';
 import { expireRecords, mockGetRecordNetwork } from '../../../../../karma/uiapi-test-util';
+import { flushPromises, stripEtags } from 'test-util';
 
 const MOCK_PREFIX = 'wire/getRecordTemplateClone/__karma__/basic/data/';
 
@@ -642,5 +644,41 @@ describe('refresh', () => {
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshed);
+    });
+});
+
+describe('getRecordTemplateClone_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mock1 = getMock('record-template-clone-Custom_Object__c');
+        const mock2 = getMock('record-template-clone-Custom_Object__c');
+        mock2.record.fields.CloneSourceId.displayValue = 'foo';
+
+        const recordId = mock1.record.cloneSourceId;
+        const config = {
+            recordId,
+            recordTypeId: undefined,
+        };
+
+        mockGetRecordTemplateCloneNetwork(config, [mock1, mock2]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mock1
+        getRecordTemplateClone_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getRecordTemplateClone_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([{ data: stripEtags(mock1), error: undefined }]);
+        expect(callback.calls.argsFor(1)).toEqual([{ data: stripEtags(mock2), error: undefined }]);
     });
 });

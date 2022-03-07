@@ -1,6 +1,6 @@
 import { Environment, FulfilledSnapshot, Luvio, Store } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionCustomFieldNode } from '@luvio/graphql-parser';
 import { GqlRecord, createIngest, convertToRecordRepresentation, createRead } from '../record';
 
 describe('GQL Record', () => {
@@ -1079,7 +1079,6 @@ describe('GQL Record', () => {
                 data,
                 {
                     parent: null,
-                    state: null,
                     propertyName: null,
                     fullPath: '',
                 },
@@ -2222,7 +2221,6 @@ describe('GQL Record', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -2238,7 +2236,6 @@ describe('GQL Record', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,

@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterContext,
     IngestPath,
     Luvio,
@@ -32,6 +32,12 @@ export interface ApexAdapterConfig {
     methodParams?: any;
     xSFDCAllowContinuation: string;
 }
+
+export type BuildSnapshotContext = {
+    luvio: Luvio;
+    config: ApexAdapterConfig;
+    adapterContext: AdapterContext;
+};
 
 export const CACHE_CONTROL = 'cache-control';
 export const SHARED_ADAPTER_CONTEXT_ID = 'apex__shared';
@@ -120,7 +126,7 @@ export function configBuilder(
     classname: string,
     method: string,
     isContinuation: boolean
-) {
+): ApexAdapterConfig {
     return {
         apexMethod: method,
         apexClass: classname,

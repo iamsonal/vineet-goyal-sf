@@ -1,4 +1,5 @@
-import { Environment, Luvio, NetworkAdapter, Store } from '@luvio/engine';
+import type { NetworkAdapter } from '@luvio/engine';
+import { Environment, Luvio, Store } from '@luvio/engine';
 
 /**
  * Parameters accepted by setDefaultLuvio.

@@ -1,3 +1,5 @@
+import type { DataType } from './info-types';
+
 export enum PredicateType {
     compound = 'compound',
     comparison = 'comparison',
@@ -6,6 +8,11 @@ export enum PredicateType {
     recordRepresentation = 'recordRepresentation',
     exists = 'exists',
     between = 'between',
+    dateFunction = 'dateFunction',
+}
+
+export enum DateFunction {
+    dayOfMonth = 'DAY_OF_MONTH',
 }
 
 export enum CompoundOperator {
@@ -28,6 +35,8 @@ export enum ComparisonOperator {
     gte = 'gte',
     in = 'in',
     nin = 'nin',
+    excludes = 'excludes',
+    includes = 'includes',
 }
 
 export enum DateEnumType {
@@ -65,6 +74,7 @@ export enum ValueType {
     DateTimeRange = 'DateTimeRange',
     RelativeDate = 'RelativeDate',
     NullValue = 'NullValue',
+    MultiPicklistSet = 'MultiPicklistSet',
 }
 
 export type LiteralValue =
@@ -79,7 +89,8 @@ export type LiteralValue =
     | DateArray
     | DateTimeArray
     | RelativeDate
-    | NullValue;
+    | NullValue
+    | MultiPicklistSet;
 
 interface Value<Type, ValueType> {
     type: Type;
@@ -110,7 +121,14 @@ export interface RelativeDate {
     hasTime: boolean;
 }
 
-export type StringLiteral = Value<ValueType.StringLiteral, string>;
+export interface StringLiteral {
+    type: ValueType.StringLiteral;
+    value: string;
+    safe: boolean;
+    isCaseSensitive: boolean;
+}
+
+export type MultiPicklistSet = Value<ValueType.MultiPicklistSet, string>;
 export type IntLiteral = Value<ValueType.IntLiteral, number>;
 export type DoubleLiteral = Value<ValueType.DoubleLiteral, number>;
 export type BooleanLiteral = Value<ValueType.BooleanLiteral, Boolean>;
@@ -124,7 +142,6 @@ export type DateInput = DateValue | DateEnum | DateRange | NullValue;
 export type DateTimeInput = DateTimeValue | DateTimeEnum | DateTimeRange | NullValue;
 export type DateArray = Value<ValueType.DateArray, DateInput[]>;
 export type DateTimeArray = Value<ValueType.DateTimeArray, DateTimeInput[]>;
-
 export interface ComparisonPredicate {
     type: PredicateType.comparison;
     operator: ComparisonOperator;
@@ -143,6 +160,15 @@ export interface NotPredicate {
     type: PredicateType.not;
     child: Predicate;
 }
+
+export interface DateFunctionPredicate {
+    type: PredicateType.dateFunction;
+    extract: JsonExtract;
+    function: DateFunction;
+    operator: ComparisonOperator;
+    value: number;
+}
+
 export interface NullComparisonPredicate {
     type: PredicateType.nullComparison;
     operator: NullComparisonOperator;
@@ -182,6 +208,7 @@ export interface ScalarField {
     type: FieldType.Scalar;
     path: string;
     extract: JsonExtract;
+    targetDataType?: DataType;
 }
 
 export interface OrderBy {
@@ -201,13 +228,11 @@ export interface RootQuery {
 }
 
 export interface RecordQuery {
-    type: 'connection';
     predicate: Predicate | undefined;
     fields: RecordQueryField[];
     alias: string;
-    apiName: string;
     first: number | undefined;
-    orderBy: OrderBy | undefined;
+    orderBy: OrderBy[];
     joinNames: string[];
 }
 
@@ -217,6 +242,7 @@ export type Predicate =
     | CompoundPredicate
     | ComparisonPredicate
     | ExistsPredicate
+    | DateFunctionPredicate
     | BetweenPredicate
     | NotPredicate
     | NullComparisonPredicate;
@@ -245,4 +271,8 @@ export function isNotPredicate(predicate: Predicate): predicate is NotPredicate 
 
 export function isExistsPredicate(predicate: Predicate): predicate is ExistsPredicate {
     return predicate.type === PredicateType.exists;
+}
+
+export function isDateFunctionPredicate(predicate: Predicate): predicate is DateFunctionPredicate {
+    return predicate.type === PredicateType.dateFunction;
 }

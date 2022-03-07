@@ -64,15 +64,11 @@ describe('ingestSuccess', () => {
 });
 
 describe('isContinuation Header', () => {
-    it('handles continuations', () => {
-        const mockLuvio: any = {
-            storeIngest: jest.fn(),
-            storeLookup: jest.fn(),
-            dispatchResourceRequest: jest.fn().mockReturnValue(Promise.resolve({})),
-            withContext: (fn: any) => fn,
-            snapshotAvailable: jest.fn().mockReturnValue(false),
-            resolveSnapshot: (snapshot: any, refresh: any) => refresh.resolve(),
-        };
+    it('handles continuations', async () => {
+        const store = new Store();
+        const environment = new Environment(store, jest.fn().mockResolvedValue({}));
+        const dispatchSpy = jest.spyOn(environment, 'dispatchResourceRequest');
+        const luvio = new Luvio(environment);
 
         jest.spyOn(utils, 'isCacheable').mockReturnValue(false);
 
@@ -89,14 +85,15 @@ describe('isContinuation Header', () => {
             xSFDCAllowContinuation: 'true',
         };
 
-        const adapter = factory(mockLuvio, invokerParams);
+        const adapter = await factory(luvio, invokerParams);
         adapter(config);
-        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledTimes(1);
+        expect(dispatchSpy).toHaveBeenCalledTimes(1);
 
         const expectedRequest = {
-            baseUri: '/lwr/apex/v54.0',
+            baseUri: '/lwr/apex/v55.0',
             basePath: '/wkdw__TestController/getString',
             method: 'post',
+            priority: 'normal',
             body: {
                 apexMethod: 'getString',
                 apexClass: 'TestController',
@@ -111,7 +108,7 @@ describe('isContinuation Header', () => {
                 'X-SFDC-Allow-Continuation': 'true',
             },
         };
-        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledWith(expectedRequest, undefined);
+        expect(dispatchSpy).toHaveBeenCalledWith(expectedRequest, { requestCorrelator: undefined });
     });
 });
 
@@ -181,5 +178,38 @@ describe('onResourceResponseSuccess', () => {
             } as FulfilledSnapshot<any, any>)
         );
         expect(store.records[expectedKey]).toBe(response.body);
+    });
+});
+
+describe('no-cache response header', () => {
+    it('skips cache lookup', async () => {
+        const store = jest.fn();
+        const environment = new Environment(
+            store as unknown as Store,
+            jest.fn().mockResolvedValue({})
+        );
+        const luvio = new Luvio(environment);
+
+        const dispatchSpy = jest.spyOn(environment, 'dispatchResourceRequest');
+        jest.spyOn(utils, 'isCacheable').mockReturnValue(false);
+
+        const invokerParams = {
+            method: 'getString',
+            classname: 'TestController',
+            isContinuation: true,
+            namespace: 'wkdw',
+        };
+
+        const config = {
+            apexMethod: 'getString',
+            apexClass: 'TestController',
+            xSFDCAllowContinuation: 'true',
+        };
+
+        const adapter = factory(luvio, invokerParams);
+        await adapter(config);
+
+        expect(store).not.toHaveBeenCalled();
+        expect(dispatchSpy).toHaveBeenCalledTimes(1);
     });
 });

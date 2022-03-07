@@ -113,10 +113,21 @@ describe('isContinuation Header', () => {
         const mockLuvio: any = {
             storeIngest: jest.fn(),
             storeLookup: jest.fn(),
+            applyCachePolicy: jest
+                .fn()
+                .mockImplementation(
+                    (_cachePolicy, buildSnapshotContext, _buildCachedFunc, buildNetworkFunc) => {
+                        // have mock implementation call buildNetworkSnapshot so we can
+                        // validate dispatchResourceRequest is called with correct params
+                        return buildNetworkFunc(buildSnapshotContext, {
+                            networkPriority: 'normal',
+                        });
+                    }
+                ),
             dispatchResourceRequest: jest.fn().mockReturnValue(Promise.resolve({})),
+            handleSuccessResponse: jest.fn().mockReturnValue(Promise.resolve({})),
             withContext: (fn: any) => fn,
             snapshotAvailable: jest.fn().mockReturnValue(false),
-            resolveSnapshot: (snapshot: any, refresh: any) => refresh.resolve(),
         };
 
         const invokerParams = {
@@ -138,12 +149,13 @@ describe('isContinuation Header', () => {
 
         const expectedRequest = {
             basePath: '/wkdw__TestController/getString',
-            baseUri: '/lwr/apex/v54.0',
+            baseUri: '/lwr/apex/v55.0',
             body: null,
             headers: {
                 'X-SFDC-Allow-Continuation': 'true',
             },
             method: 'get',
+            priority: 'normal',
             queryParams: {
                 methodParams: {
                     apexClass: 'TestController',
@@ -157,7 +169,9 @@ describe('isContinuation Header', () => {
             },
         };
 
-        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledWith(expectedRequest, undefined);
+        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledWith(expectedRequest, {
+            resourceRequestContext: { requestCorrelator: undefined },
+        });
     });
 });
 

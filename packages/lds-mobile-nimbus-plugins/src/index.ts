@@ -11,7 +11,13 @@ export {
     DurableStoreOperationType,
     DurableStoreOperation,
 } from './DurableStore';
-export { NetworkAdapter, Request, Response, NetworkError } from './NetworkAdapter';
+export {
+    NetworkAdapter,
+    Request,
+    Response,
+    NetworkError,
+    ObservabilityContext,
+} from './NetworkAdapter';
 export { DraftQueue } from './DraftQueue';
 
 // export implementations for downstream testing

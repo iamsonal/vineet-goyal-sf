@@ -1,6 +1,5 @@
 import { HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { getRecordKeyForId } from '../../utils/records';
 import { DRAFT_RECORD_ID, RECORD_ID, STORE_KEY_DRAFT_RECORD } from '../../__tests__/test-utils';
 import {
     createPatchRequest,
@@ -14,6 +13,8 @@ import {
 import mockGetRecord from './mockData/record-Account-fields-Account.Id,Account.Name.json';
 import { clone } from '../../utils/clone';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
+import * as RecordUtils from '../../utils/records';
+const { getRecordKeyForId } = RecordUtils;
 
 describe('draft environment tests', () => {
     describe('updateRecord', () => {
@@ -121,7 +122,7 @@ describe('draft environment tests', () => {
 
             durableStore.getDenormalizedRecord = jest.fn().mockRejectedValue(undefined);
             const request = {
-                baseUri: '/services/data/v54.0',
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -155,7 +156,7 @@ describe('draft environment tests', () => {
                 .mockResolvedValueOnce(undefined);
 
             const request = {
-                baseUri: '/services/data/v54.0',
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -190,7 +191,7 @@ describe('draft environment tests', () => {
                 },
             });
             const request = {
-                baseUri: '/services/data/v54.0',
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -236,7 +237,7 @@ describe('draft environment tests', () => {
             });
             store.redirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
             const request = {
-                baseUri: '/services/data/v54.0',
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${DRAFT_RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -277,7 +278,7 @@ describe('draft environment tests', () => {
             const { draftEnvironment, durableStore } = await setupDraftEnvironment();
             mockDurableStoreResponse(durableStore);
             const request = {
-                baseUri: '/services/data/v54.0',
+                baseUri: '/services/data/v55.0',
                 basePath: '/ui-api/records/',
                 method: 'patch',
                 body: {
@@ -363,6 +364,92 @@ describe('draft environment tests', () => {
                 },
                 headers: {},
             });
+        });
+    });
+
+    describe('assertDraftPrerequisitesSatisfied', () => {
+        let request,
+            draftEnvironment,
+            durableStore,
+            ensureObjectInfoCachedMock,
+            ensureReferencedIdsAreCachedMock;
+        beforeEach(async () => {
+            ensureObjectInfoCachedMock = jest.fn().mockName('ensureObjectInfoCachedMock');
+
+            ensureReferencedIdsAreCachedMock = jest
+                .spyOn(RecordUtils, 'ensureReferencedIdsAreCached')
+                .mockResolvedValue(null);
+
+            ({ draftEnvironment, durableStore } = await setupDraftEnvironment({
+                ensureObjectInfoCached: ensureObjectInfoCachedMock,
+            }));
+            mockDurableStoreResponse(durableStore);
+            request = createPatchRequest();
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('should call ensureObjectInfoCached', async () => {
+            // Arrange
+
+            // Act
+            await draftEnvironment.dispatchResourceRequest(request);
+
+            // Assert
+            expect(ensureObjectInfoCachedMock).toBeCalledTimes(1);
+            expect(ensureObjectInfoCachedMock).toBeCalledWith(DEFAULT_API_NAME);
+        });
+
+        it('should call ensureReferencedIdsAreCached', async () => {
+            // Arrange
+
+            // Act
+            await draftEnvironment.dispatchResourceRequest(request);
+
+            // Assert
+            expect(ensureReferencedIdsAreCachedMock).toBeCalledTimes(1);
+            expect(ensureReferencedIdsAreCachedMock).toBeCalledWith(
+                durableStore,
+                DEFAULT_API_NAME,
+                {
+                    Name: DEFAULT_NAME_FIELD_VALUE,
+                },
+                expect.any(Function)
+            );
+        });
+
+        it('should throw if ensureObjectInfoCached throws', async () => {
+            // Arrange
+            ensureObjectInfoCachedMock.mockRejectedValueOnce({});
+            let expectedError = null;
+
+            // Act
+            try {
+                await draftEnvironment.dispatchResourceRequest(request);
+            } catch (err) {
+                expectedError = err;
+            }
+
+            // Assert
+            expect(expectedError).not.toBe(null);
+        });
+
+        it('should throw if ensureReferencedIdsAreCached throws', async () => {
+            // Arrange
+            ensureReferencedIdsAreCachedMock.mockRejectedValueOnce({});
+            let expectedError = null;
+
+            // Act
+            try {
+                await draftEnvironment.dispatchResourceRequest(request);
+            } catch (err) {
+                expectedError = err;
+            }
+
+            // Assert
+            expect(expectedError).not.toBe(null);
         });
     });
 });

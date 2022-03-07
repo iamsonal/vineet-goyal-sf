@@ -1,26 +1,33 @@
-import {
+import type {
     AdapterFactory,
+    AdapterRequestContext,
     CacheKeySet,
+    CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
     FetchResponse,
     Luvio,
     Reader,
     ReaderFragment,
     ResourceRequest,
+    Selector,
     Snapshot,
     SnapshotRefresh,
+    StoreLookup,
 } from '@luvio/engine';
-import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import type { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { astToString } from './util/ast-to-string';
 import { deepFreeze, namespace, representationName, untrustedIsObject } from './util/adapter';
 import { ObjectKeys, ObjectCreate } from './util/language';
+import type { GraphQL } from './type/Document';
 import {
-    GraphQL,
     createIngest,
     createRead,
     validate as documentValidate,
     isLuvioDocumentNode,
 } from './type/Document';
-import { GraphQLVariables, isGraphQLVariables } from './type/Variable';
+import type { GraphQLVariables } from './type/Variable';
+import { isGraphQLVariables } from './type/Variable';
+import { storeEval } from './configuration';
 
 export { namespace, representationName } from './util/adapter';
 
@@ -106,7 +113,7 @@ function getResponseCacheKeys(
     response: FetchResponse<GraphQL>,
     fragment: ReaderFragment
 ): CacheKeySet {
-    // TODO [W-10055997]: make this more efficient
+    // TODO [W-10147827]: make this more efficient
 
     // for now we will get the cache keys by actually ingesting then looking at
     // the seenRecords + recordId
@@ -148,17 +155,30 @@ function getResponseCacheKeys(
     return keySet;
 }
 
+function onResourceResponseError(
+    luvio: Luvio,
+    config: GraphQLConfig,
+    response: FetchResponse<GraphQL>
+) {
+    const errorSnapshot = luvio.errorSnapshot(response);
+    luvio.storeIngestError(GRAPHQL_ROOT_KEY, errorSnapshot);
+    luvio.storeBroadcast();
+    return errorSnapshot;
+}
+
 function buildNetworkSnapshot(
     luvio: Luvio,
     config: GraphQLConfig,
-    fragment: ReaderFragment
+    fragment: ReaderFragment,
+    options?: DispatchResourceRequestContext
 ): Promise<Snapshot<unknown, any>> {
     const { variables: queryVariables, query } = config;
 
     const request: ResourceRequest = {
-        baseUri: '/services/data/v54.0',
+        baseUri: '/services/data/v55.0',
         basePath: '/graphql',
         method: 'post',
+        priority: 'normal',
         body: {
             query: astToString(query),
             variables: queryVariables,
@@ -168,14 +188,19 @@ function buildNetworkSnapshot(
         headers: {},
     };
 
-    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
-    // TODO - handle network error response
-    return luvio.dispatchResourceRequest<any>(request).then((resp) => {
-        return luvio.handleSuccessResponse(
-            () => onResourceResponseSuccess(luvio, config, resp, fragment),
-            () => getResponseCacheKeys(luvio, config, resp, fragment)
-        );
-    });
+    return luvio.dispatchResourceRequest<any>(request, options).then(
+        (resp) => {
+            return luvio.handleSuccessResponse(
+                () => onResourceResponseSuccess(luvio, config, resp, fragment),
+                () => getResponseCacheKeys(luvio, config, resp, fragment)
+            );
+        },
+        (errorResponse) => {
+            return luvio.handleErrorResponse(() =>
+                onResourceResponseError(luvio, config, errorResponse)
+            );
+        }
+    );
 }
 
 function validateGraphQlConfig(untrustedConfig: unknown): {
@@ -235,9 +260,59 @@ function validateGraphQlConfig(untrustedConfig: unknown): {
     };
 }
 
+type BuildSnapshotContext = {
+    config: GraphQLConfig;
+    fragment: ReaderFragment;
+    luvio: Luvio;
+};
+
+export function buildCachedSnapshot(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<unknown>
+): Promise<Snapshot<unknown, unknown>> | Snapshot<unknown, any> {
+    return buildInMemorySnapshot(context, storeLookup);
+}
+
+function buildInMemorySnapshot(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<unknown>
+): Snapshot<unknown, any> {
+    const { config, fragment, luvio } = context;
+
+    const selector: Selector = {
+        recordId: GRAPHQL_ROOT_KEY,
+        node: fragment,
+        variables: {},
+    };
+
+    return storeLookup(selector, buildSnapshotRefresh(luvio, config, fragment));
+}
+
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
+): Promise<Snapshot<unknown, any>> {
+    const { config, fragment, luvio } = context;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
+    if (networkPriority !== 'normal') {
+        dispatchOptions.overrides = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, config, fragment, dispatchOptions);
+}
+
 export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (luvio: Luvio) =>
     function graphql(
-        untrustedConfig: unknown
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
     ): Promise<Snapshot<unknown, any>> | Snapshot<unknown, any> | null {
         const { validatedConfig, errors } = validateGraphQlConfig(untrustedConfig);
 
@@ -251,22 +326,33 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
         const { query, variables } = validatedConfig;
 
         const fragment: ReaderFragment = createFragment(query, variables);
+        const context: BuildSnapshotContext = {
+            config: validatedConfig,
+            fragment,
+            luvio,
+        };
 
-        const snapshot = luvio.storeLookup(
-            {
-                recordId: GRAPHQL_ROOT_KEY,
-                node: fragment,
-                variables: {},
-            },
-            buildSnapshotRefresh(luvio, validatedConfig, fragment)
+        const snapshotOrPromiseFromCachePolicy = luvio.applyCachePolicy(
+            requestContext || {},
+            context,
+            buildCachedSnapshot,
+            buildNetworkSnapshotCachePolicy
         );
 
-        if (luvio.snapshotAvailable(snapshot)) {
-            return snapshot;
+        if (storeEval !== undefined) {
+            return storeEval(
+                validatedConfig.query,
+                snapshotOrPromiseFromCachePolicy,
+                // if cache policy is only-if-cached we always return eval snapshot
+                (requestContext &&
+                    requestContext.cachePolicy &&
+                    requestContext.cachePolicy.type === 'only-if-cached') ||
+                    false
+            );
         }
 
-        return luvio.resolveSnapshot(
-            snapshot,
-            buildSnapshotRefresh(luvio, validatedConfig, fragment)
-        );
+        return snapshotOrPromiseFromCachePolicy;
     };
+
+export { configuration } from './configuration';
+export { keyBuilder as connectionKeyBuilder } from './custom/connection';

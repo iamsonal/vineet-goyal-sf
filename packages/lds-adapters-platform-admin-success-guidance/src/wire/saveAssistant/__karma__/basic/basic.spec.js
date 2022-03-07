@@ -21,12 +21,11 @@ describe('basic', () => {
     it('basic save assistant invocation: progress', async () => {
         const mock = getMock('save-assistant');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            scenarioId: 'test_scenario_id',
+            assistantName: mock.developerName,
             assistantData: {
                 items: {
                     learn_about_salesforce: {
-                        progress: 'Completed',
+                        status: 'Completed',
                     },
                 },
             },
@@ -41,12 +40,11 @@ describe('basic', () => {
     });
     it('displays error when network request 404s', async () => {
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            scenarioId: 'test_scenario_id',
+            assistantName: getMock('save-assistant').developerName,
             assistantData: {
                 items: {
                     learn_about_salesforce: {
-                        progress: 'Completed',
+                        status: 'Completed',
                     },
                 },
             },
@@ -74,12 +72,11 @@ describe('basic', () => {
     it('getAssistant after saveAssistant does not fetch', async () => {
         const mock = getMock('save-assistant');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            scenarioId: 'test_scenario_id',
+            assistantName: mock.developerName,
             assistantData: {
                 items: {
                     learn_about_salesforce: {
-                        progress: 'Completed',
+                        status: 'Completed',
                     },
                 },
             },

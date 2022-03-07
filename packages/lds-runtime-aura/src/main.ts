@@ -2,8 +2,7 @@ import { Environment, Luvio, Store } from '@luvio/engine';
 import ldsTrackedFieldsBehaviorGate from '@salesforce/gate/lds.useNewTrackedFieldBehavior';
 import { configuration as ldsAdaptersUiapiConfig } from '@salesforce/lds-adapters-uiapi';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
-import { instrumentation, setupInstrumentation } from '@salesforce/lds-instrumentation';
-import { setInstrumentationHooks } from './instrumentation';
+import { setupInstrumentation, instrumentation } from './aura-instrumentation/main';
 import networkAdapter from '@salesforce/lds-network-aura';
 import { setupMetadataWatcher } from './metadata';
 
@@ -28,8 +27,6 @@ export function initializeLDS() {
     });
 
     setupInstrumentation(luvio, store);
-
-    setInstrumentationHooks();
 
     setupMetadataWatcher(luvio);
 

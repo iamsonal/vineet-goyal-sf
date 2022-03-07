@@ -2,17 +2,15 @@ import { api, LightningElement, track } from 'lwc';
 import { evaluateStep } from 'lds-adapters-platform-admin-success-guidance';
 
 export default class EvaluateStep extends LightningElement {
-    @track assistantTarget;
-    @track stepId;
+    @track stepName;
     @track stepData;
     @track error;
 
     @api
-    invokeEvaluateStep({ assistantTarget, stepId }) {
-        evaluateStep({ assistantTarget, stepId })
+    invokeEvaluateStep({ stepName }) {
+        evaluateStep({ stepName })
             .then((data) => {
-                this.assistantTarget = assistantTarget;
-                this.stepId = stepId;
+                this.stepName = stepName;
                 this.stepData = data;
             })
             .catch((error) => {

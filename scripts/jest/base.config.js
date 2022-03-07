@@ -3,6 +3,7 @@ module.exports = {
     // startup time.
     // https://jestjs.io/docs/en/configuration#testenvironment-string
     testEnvironment: 'node',
+    testRunner: 'jest-jasmine2',
 
     // Narrow down testMatch to only match against jest unit test files.
     // https://jestjs.io/docs/en/configuration#testmatch-array-string
@@ -22,6 +23,7 @@ module.exports = {
         '!**/__karma__/**',
         '!**/__tests__/**',
         '!**/__benchmarks__/**',
+        '!**/mocks/**',
         '!**/fixtures/**',
         '!**/generated/**',
     ],

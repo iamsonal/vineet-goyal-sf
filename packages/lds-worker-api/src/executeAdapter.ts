@@ -1,36 +1,112 @@
-import { AdapterRequestContext, FetchResponse } from '@luvio/engine';
-import gqlParse from '@salesforce/lds-graphql-parser';
-import * as gqlApi from 'force/ldsAdaptersGraphql';
-import { getInstrumentation } from 'o11y/client';
+import type { AdapterRequestContext, CachePolicy, FetchResponse } from '@luvio/engine';
+import { parseAndVisit as gqlParse } from '@luvio/graphql-parser';
 
 import { JSONParse, ObjectKeys } from './language';
+import type { AdapterCallback, AdapterCallbackValue } from './lightningAdapterApi';
 import {
     imperativeAdapterMap,
     dmlAdapterMap,
     UNSTABLE_ADAPTER_PREFIX,
     IMPERATIVE_ADAPTER_SUFFIX,
+    gqlApi,
 } from './lightningAdapterApi';
-import { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
+import type { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
 import { draftManager } from './draftQueueImplementation';
+import type { NativeFetchResponse } from './NativeFetchResponse';
 import {
     createNativeErrorResponse,
     NON_MUTATING_ADAPTER_MESSAGE,
     NO_DRAFT_CREATED_MESSAGE,
     DRAFT_DOESNT_EXIST_MESSAGE,
-    NativeFetchResponse,
 } from './NativeFetchResponse';
+import type { ObservabilityContext } from '@salesforce/lds-runtime-mobile';
+import { debugLog } from '@salesforce/lds-runtime-mobile';
+import { MetricsReporter } from '@salesforce/lds-instrumentation';
 
-const instr = getInstrumentation('lds-worker-api');
+let adapterCounter = 0;
 
-type CallbackValue = {
+const metricsReporter = new MetricsReporter();
+
+// Native Type Definitions
+type NativeCallbackValue = {
     data: any | undefined;
     error: NativeFetchResponse<unknown> | undefined;
 };
+export type NativeOnSnapshot = (value: NativeCallbackValue) => void;
+type NativeOnResponse = (value: NativeCallbackValue) => void;
+type Unsubscribe = () => void;
+type NativeCachePolicy = CachePolicy;
+type NativeAdapterRequestPriority = 'high' | 'normal' | 'background';
 
-export type OnSnapshot = (value: CallbackValue) => void;
-export type OnResponse = (value: CallbackValue) => void;
+// currently these types match up exactly, if they ever change we'll require
+// a coerce function to adapt them
+type NativeObservabilityContext = ObservabilityContext;
 
-export type Unsubscribe = () => void;
+interface NativeAdapterRequestContext {
+    cachePolicy?: NativeCachePolicy;
+    priority?: NativeAdapterRequestPriority;
+    observabilityContext?: NativeObservabilityContext;
+}
+
+/**
+ * Coerces a cache policy passed in from native to a luvio cache policy
+ * @param nativeCachePolicy The cache policy passed in from native
+ * @returns A coerced luvio cache policy
+ */
+function buildCachePolicy(
+    nativeCachePolicy: NativeCachePolicy | undefined
+): CachePolicy | undefined {
+    if (nativeCachePolicy === undefined) {
+        return undefined;
+    }
+
+    // currently the types match exactly, if we ever decide to deviate then we should coerce here
+    return nativeCachePolicy as CachePolicy;
+}
+
+/**
+ * Coerces a request context passed in from native to a luvio request context
+ * @param nativeRequestContext request context passed in from native
+ * @returns Coerced luvio request context
+ */
+function buildAdapterRequestContext(
+    nativeRequestContext: NativeAdapterRequestContext | undefined
+): AdapterRequestContext | undefined {
+    if (nativeRequestContext === undefined) {
+        return undefined;
+    }
+    const { cachePolicy, priority, observabilityContext } = nativeRequestContext;
+
+    const requestContext: AdapterRequestContext = {
+        cachePolicy: buildCachePolicy(cachePolicy),
+        priority,
+    };
+
+    if (observabilityContext !== undefined) {
+        requestContext.requestCorrelator = {
+            observabilityContext,
+        };
+    }
+    return requestContext;
+}
+
+function buildInvalidConfigError(error: unknown): NativeCallbackValue {
+    return {
+        data: undefined,
+        error: {
+            ok: false,
+            status: 400,
+            statusText: 'INVALID_CONFIG',
+            body: error,
+            headers: {},
+        },
+    };
+}
+
+function buildNativeCallbackValue(adapterCallbackValue: AdapterCallbackValue): NativeCallbackValue {
+    // currently no coercion required, just retype
+    return adapterCallbackValue as NativeCallbackValue;
+}
 
 /**
  *
@@ -44,6 +120,11 @@ function imperativeAdapterKeyBuilder(adapterId: string): string {
 
     return `${UNSTABLE_ADAPTER_PREFIX}${adapterId}${IMPERATIVE_ADAPTER_SUFFIX}`;
 }
+
+function generateAdapterUniqueId() {
+    return (adapterCounter++).toString();
+}
+
 /**
  * Executes the adapter with the given adapterId and config.  Will call onSnapshot
  * callback with data or error.  Returns an unsubscribe function that should
@@ -55,11 +136,30 @@ function imperativeAdapterKeyBuilder(adapterId: string): string {
 export function subscribeToAdapter(
     adapterId: string,
     config: string,
-    onSnapshot: OnSnapshot,
-    requestContext?: AdapterRequestContext
+    onSnapshot: NativeOnSnapshot,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ): Unsubscribe {
     const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
     const imperativeAdapter = imperativeAdapterMap[imperativeAdapterIdentifier];
+
+    const adapterUuid = generateAdapterUniqueId();
+
+    debugLog({
+        type: 'adapter-start',
+        timestamp: Date.now(),
+        adapterId: adapterUuid,
+        adapterName: adapterId,
+        config,
+    });
+
+    const onResponseDelegate: AdapterCallback = (value) => {
+        debugLog({
+            type: 'adapter-callback',
+            timestamp: Date.now(),
+            adapterId: adapterUuid,
+        });
+        onSnapshot(buildNativeCallbackValue(value));
+    };
 
     if (imperativeAdapter === undefined) {
         // This check is here for legacy purpose
@@ -80,14 +180,27 @@ export function subscribeToAdapter(
             // gql config needs gql query string turned into AST object
             configObject.query = gqlParse(configObject.query);
         } catch (parseError) {
+            metricsReporter.reportGraphqlQueryParseError(parseError);
+
             // call the callback with error
-            instr.error(parseError as Error, 'gql-parse-error');
-            onSnapshot({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
+            onResponseDelegate({
+                data: undefined,
+                error: parseError as NativeFetchResponse<unknown>,
+            });
             return () => {};
         }
     }
 
-    return imperativeAdapter.subscribe(configObject, requestContext, onSnapshot);
+    try {
+        return imperativeAdapter.subscribe(
+            configObject,
+            buildAdapterRequestContext(nativeAdapterRequestContext),
+            onResponseDelegate
+        );
+    } catch (err) {
+        onResponseDelegate(buildInvalidConfigError(err));
+        return () => {};
+    }
 }
 
 /**
@@ -96,16 +209,27 @@ export function subscribeToAdapter(
  * @param adapter : DML Adapter
  * @param configObject : parsed config
  * @param onResponse : OnResponse
+ * @param nativeAdapterRequestContext: Specify cache policy, priority and observability parameters
  */
-function invokeDmlAdapter(adapter: any, configObject: any, onResponse: OnResponse) {
-    adapter(configObject).then(
-        (data: any) => {
-            onResponse({ data, error: undefined });
-        },
-        (error: FetchResponse<unknown>) => {
-            onResponse({ data: undefined, error });
-        }
-    );
+function invokeDmlAdapter(
+    adapter: any,
+    configObject: any,
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
+) {
+    try {
+        adapter(configObject, buildAdapterRequestContext(nativeAdapterRequestContext)).then(
+            (data: any) => {
+                onResponse({ data, error: undefined });
+            },
+            (error: FetchResponse<unknown>) => {
+                onResponse({ data: undefined, error });
+            }
+        );
+    } catch (err) {
+        // For catching the synchronous error in adapter
+        onResponse(buildInvalidConfigError(err));
+    }
 }
 
 /**
@@ -121,7 +245,8 @@ export function invokeAdapterWithDraftToReplace(
     adapterId: string,
     config: string,
     draftIdToReplace: string,
-    onResponse: OnResponse
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
     draftManager.getQueue().then((draftInfo) => {
         const draftIds = draftInfo.items.map((draft) => draft.id);
@@ -147,23 +272,38 @@ export function invokeAdapterWithDraftToReplace(
             throw Error(`adapter ${adapterId} not recognized`);
         }
 
-        invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-            const draftIds = draftIdsForResponseValue(responseValue);
-            if (
-                responseValue.error === undefined &&
-                draftIds !== undefined &&
-                draftIds.length > 0
-            ) {
-                const draftId = draftIds[draftIds.length - 1];
-                draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
-                    onResponse(responseValue);
-                });
-            } else {
-                let response: CallbackValue = responseValue;
-                response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-                onResponse(response);
-            }
-        });
+        if (adapterId === 'deleteRecord') {
+            invokeAdapterWithDraftToReplaceDeleteRecord(
+                adapter,
+                config,
+                draftIdToReplace,
+                onResponse,
+                nativeAdapterRequestContext
+            );
+        } else {
+            invokeDmlAdapter(
+                adapter,
+                JSONParse(config),
+                (responseValue) => {
+                    const draftIds = draftIdsForResponseValue(responseValue);
+                    if (
+                        responseValue.error === undefined &&
+                        draftIds !== undefined &&
+                        draftIds.length > 0
+                    ) {
+                        const draftId = draftIds[draftIds.length - 1];
+                        draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
+                            onResponse(responseValue);
+                        });
+                    } else {
+                        let response: NativeCallbackValue = responseValue;
+                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                        onResponse(response);
+                    }
+                },
+                nativeAdapterRequestContext
+            );
+        }
     });
 }
 
@@ -180,7 +320,8 @@ export function invokeAdapterWithMetadata(
     adapterId: string,
     config: string,
     metadata: DraftQueueItemMetadata,
-    onResponse: OnResponse
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
     const adapter = dmlAdapterMap[adapterId];
     if (adapter === undefined) {
@@ -196,22 +337,149 @@ export function invokeAdapterWithMetadata(
         throw Error(`adapter ${adapterId} not recognized`);
     }
 
-    invokeDmlAdapter(adapter, JSONParse(config), (responseValue) => {
-        const draftIds = draftIdsForResponseValue(responseValue);
-        if (responseValue.error === undefined && draftIds !== undefined && draftIds.length > 0) {
-            const draftId = draftIds[draftIds.length - 1];
-            draftManager.setMetadata(draftId, metadata).then(() => {
-                onResponse(responseValue);
-            });
-        } else {
-            let response: CallbackValue = responseValue;
-            response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
-            onResponse(response);
-        }
+    if (adapterId === 'deleteRecord') {
+        invokeAdapterWithMetadataDeleteRecord(
+            adapter,
+            config,
+            metadata,
+            onResponse,
+            nativeAdapterRequestContext
+        );
+    } else {
+        invokeDmlAdapter(
+            adapter,
+            JSONParse(config),
+            (responseValue) => {
+                const draftIds = draftIdsForResponseValue(responseValue);
+                if (
+                    responseValue.error === undefined &&
+                    draftIds !== undefined &&
+                    draftIds.length > 0
+                ) {
+                    const draftId = draftIds[draftIds.length - 1];
+                    draftManager.setMetadata(draftId, metadata).then(() => {
+                        onResponse(responseValue);
+                    });
+                } else {
+                    let response: NativeCallbackValue = responseValue;
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                    onResponse(response);
+                }
+            },
+            nativeAdapterRequestContext
+        );
+    }
+}
+
+/*
+//TODO W-10284305: Remove this function in 238
+This is a special case version of the invokeAdapterWithMetadata function
+which should only be used for the deleteRecord wire adapter, since it does not
+contain record data in the result and has to do special querying of the draft queue
+*/
+function invokeAdapterWithMetadataDeleteRecord(
+    adapter: any,
+    config: string,
+    metadata: DraftQueueItemMetadata,
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
+) {
+    const targetedRecordId = JSONParse(config);
+    let priorDraftIds: string[] | undefined;
+    draftManager.getQueue().then((draftState) => {
+        priorDraftIds = draftState.items.map((item) => {
+            return item.id;
+        });
+        invokeDmlAdapter(
+            adapter,
+            JSONParse(config),
+            (responseValue) => {
+                if (responseValue.error === undefined && responseValue.data === undefined) {
+                    draftManager.getQueue().then((newState) => {
+                        const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
+                        const newDrafts = newState.items;
+                        const addedDrafts = newDrafts.filter((item) => {
+                            const isNew = draftIdsToFilter.indexOf(item.id) < 0;
+                            const targetIdMatches = item.targetId === targetedRecordId;
+                            return isNew && targetIdMatches;
+                        });
+                        if (addedDrafts.length !== 1) {
+                            let response: NativeCallbackValue = responseValue;
+                            response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                            onResponse(response);
+                        } else {
+                            draftManager.setMetadata(addedDrafts[0].id, metadata).then(() => {
+                                onResponse(responseValue);
+                            });
+                        }
+                    });
+                } else {
+                    let response: NativeCallbackValue = responseValue;
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                    onResponse(response);
+                }
+            },
+            nativeAdapterRequestContext
+        );
     });
 }
 
-function draftIdsForResponseValue(response: CallbackValue): string[] | undefined {
+/*
+//TODO W-10284305: Remove this function in 238
+This is a special case version of the invokeAdapterWithDraftToReplace function
+which should only be used for the deleteRecord wire adapter, since it does not
+contain record data in the result and has to do special querying of the draft queue
+*/
+function invokeAdapterWithDraftToReplaceDeleteRecord(
+    adapter: any,
+    config: string,
+    draftIdToReplace: string,
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
+) {
+    const targetedRecordId = JSONParse(config);
+    let priorDraftIds: string[] | undefined;
+    draftManager.getQueue().then((draftState) => {
+        priorDraftIds = draftState.items.map((item) => {
+            return item.id;
+        });
+        invokeDmlAdapter(
+            adapter,
+            JSONParse(config),
+            (responseValue) => {
+                if (responseValue.error === undefined && responseValue.data === undefined) {
+                    draftManager.getQueue().then((newState) => {
+                        const draftIdsToFilter = priorDraftIds ? priorDraftIds : [];
+                        const newDrafts = newState.items;
+                        const addedDrafts = newDrafts.filter((item) => {
+                            const isNew = draftIdsToFilter.indexOf(item.id) < 0;
+                            const targetIdMatches = item.targetId === targetedRecordId;
+                            return isNew && targetIdMatches;
+                        });
+                        if (addedDrafts.length !== 1) {
+                            let response: NativeCallbackValue = responseValue;
+                            response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                            onResponse(response);
+                        } else {
+                            draftManager
+                                .replaceAction(draftIdToReplace, addedDrafts[0].id)
+                                .then(() => {
+                                    onResponse(responseValue);
+                                });
+                        }
+                    });
+                } else {
+                    let response: NativeCallbackValue = responseValue;
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                    onResponse(response);
+                }
+            },
+            nativeAdapterRequestContext
+        );
+    });
+}
+
+function draftIdsForResponseValue(response: NativeCallbackValue): string[] | undefined {
     if (
         response.data !== undefined &&
         response.data.drafts !== undefined &&
@@ -232,9 +500,28 @@ function draftIdsForResponseValue(response: CallbackValue): string[] | undefined
 export function invokeAdapter(
     adapterId: string,
     config: string,
-    onResponse: OnResponse,
-    requestContext?: AdapterRequestContext
+    onResponse: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ) {
+    const adapterUuid = generateAdapterUniqueId();
+
+    debugLog({
+        type: 'adapter-start',
+        timestamp: Date.now(),
+        adapterId: adapterUuid,
+        adapterName: adapterId,
+        config,
+    });
+
+    const onResponseDelegate: AdapterCallback = (value) => {
+        debugLog({
+            type: 'adapter-callback',
+            timestamp: Date.now(),
+            adapterId: adapterUuid,
+        });
+        onResponse(buildNativeCallbackValue(value));
+    };
+
     const imperativeAdapterIdentifier = imperativeAdapterKeyBuilder(adapterId);
     const imperativeAdapter = imperativeAdapterMap[imperativeAdapterIdentifier];
     const configObject = JSONParse(config);
@@ -249,13 +536,25 @@ export function invokeAdapter(
                 // gql config needs gql query string turned into AST object
                 configObject.query = gqlParse(configObject.query);
             } catch (parseError) {
+                metricsReporter.reportGraphqlQueryParseError(parseError);
+
                 // call the callback with error
-                instr.error(parseError as Error, 'gql-parse-error');
-                onResponse({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
+                onResponseDelegate({
+                    data: undefined,
+                    error: parseError,
+                });
                 return;
             }
         }
-        imperativeAdapter.invoke(configObject, requestContext, onResponse);
+        try {
+            imperativeAdapter.invoke(
+                configObject,
+                buildAdapterRequestContext(nativeAdapterRequestContext),
+                onResponseDelegate
+            );
+        } catch (err) {
+            onResponseDelegate(buildInvalidConfigError(err));
+        }
         return;
     }
 
@@ -265,7 +564,7 @@ export function invokeAdapter(
         throw Error(`adapter ${adapterId} not recognized`);
     }
 
-    invokeDmlAdapter(adapter, configObject, onResponse);
+    invokeDmlAdapter(adapter, configObject, onResponseDelegate, nativeAdapterRequestContext);
 }
 
 /**
@@ -276,9 +575,10 @@ export function invokeAdapter(
 export function executeAdapter(
     adapterId: string,
     config: string,
-    onSnapshot: OnSnapshot
+    onSnapshot: NativeOnSnapshot,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ): Unsubscribe {
-    return subscribeToAdapter(adapterId, config, onSnapshot);
+    return subscribeToAdapter(adapterId, config, onSnapshot, nativeAdapterRequestContext);
 }
 
 /**
@@ -289,7 +589,8 @@ export function executeAdapter(
 export function executeMutatingAdapter(
     adapterId: string,
     config: string,
-    onResult: OnResponse
+    onResult: NativeOnResponse,
+    nativeAdapterRequestContext?: NativeAdapterRequestContext
 ): void {
-    invokeAdapter(adapterId, config, onResult);
+    invokeAdapter(adapterId, config, onResult, nativeAdapterRequestContext);
 }

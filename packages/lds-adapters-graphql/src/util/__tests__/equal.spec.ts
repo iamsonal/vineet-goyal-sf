@@ -1,4 +1,4 @@
-import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionObjectFieldNode } from '@luvio/graphql-parser';
 import { equals, scalarFieldEquals } from '../equal';
 
 describe('Equals', () => {

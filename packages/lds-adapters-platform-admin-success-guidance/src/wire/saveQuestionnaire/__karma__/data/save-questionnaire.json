@@ -1,58 +1,46 @@
 {
-    "assistantGroup": "test_assistant_group_id",
-    "id": "test_questionnaire",
-    "labels": {
-        "description": "Setup Assistant is here to help you get Salesforce ready for your users. First, we'll get acquainted by asking you a few questions. Then, we'll provide some setup resources just for you.",
-        "title": "Welcome to Salesforce"
-    },
-    "progress": "NotStarted",
+    "assistantTarget": "test_assistant_target",
+    "description": "Setup Assistant is here to help you get Salesforce ready for your users. First, we'll get acquainted by asking you a few questions. Then, we'll provide some setup resources just for you.",
+    "developerName": "test_questionnaire_name",
     "questions": [
         {
             "choices": [
                 {
-                    "id": "administrator",
-                    "labels": {
-                        "description": "I'm setting up Salesforce myself.",
-                        "title": "Salesforce administrator"
-                    },
-                    "next": "expertise"
+                    "description": "I'm setting up Salesforce myself.",
+                    "developerName": "administrator",
+                    "next": "expertise",
+                    "title": "Salesforce administrator"
                 },
                 {
-                    "id": "business_sponsor",
-                    "labels": {
-                        "description": "I'm setting up Salesforce for a customer.",
-                        "title": "Consulting Partner"
-                    },
-                    "next": "expertise"
+                    "description": "I'm setting up Salesforce for a customer.",
+                    "developerName": "business_sponsor",
+                    "next": "expertise",
+                    "title": "Consulting Partner"
                 }
             ],
-            "id": "role",
-            "labels": {
-                "question": "Tell us about your role in this Salesforce rollout.",
-                "placeholderText": "Select your role..."
-            },
-            "link": null
+            "description": "Select your role...",
+            "developerName": "role",
+            "link": null,
+            "title": "Tell us about your role in this Salesforce rollout."
         },
         {
             "choices": [
                 {
-                    "id": "beginner",
-                    "labels": {
-                        "description": "I've never set up Salesforce or I've set up basic features only.",
-                        "title": "Limited experience"
-                    },
-                    "next": "_finished"
+                    "description": "I've never set up Salesforce or I've set up basic features only.",
+                    "developerName": "beginner",
+                    "next": "_finished",
+                    "title": "Limited experience"
                 }
             ],
-            "id": "expertise",
-            "labels": {
-                "question": "How much experience do you have with Salesforce setup?",
-                "placeholderText": "Select your experience..."
-            },
+            "description": "Select your experience...",
+            "developerName": "expertise",
             "link": {
                 "label": "Learn Why",
                 "url": "http://www.salesforce.com"
-            }
+            },
+            "title": "How much experience do you have with Salesforce setup?"
         }
-    ]
+    ],
+    "status": "NotStarted",
+    "title": "Welcome to Salesforce"
 }

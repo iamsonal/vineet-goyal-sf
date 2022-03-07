@@ -1,35 +1,47 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "Opportunity": {
+                    "__typename": "OpportunityConnection",
                     "edges": [
                         {
+                            "__typename": "OpportunityEdge",
                             "node": {
                                 "Name": {
+                                    "__typename": "StringValue",
                                     "value": "Opp1",
                                     "displayValue": null
                                 },
                                 "__typename": "Opportunity",
                                 "ApiName": "Opportunity",
-                                "WeakEtag": 1601595776000,
+                                "WeakEtag": 1623169485000,
                                 "Id": "006RM000003UQ0AYAW",
                                 "DisplayValue": "Opp1",
                                 "SystemModstamp": {
-                                    "value": "2020-10-01T23:42:56.000Z"
+                                    "value": "2021-06-08T16:24:45.000Z"
                                 },
                                 "LastModifiedById": {
                                     "value": "005RM000002492xYAA"
                                 },
                                 "LastModifiedDate": {
-                                    "value": "2020-10-01T23:42:56.000Z"
+                                    "value": "2021-06-08T16:24:45.000Z"
                                 },
                                 "RecordTypeId": {
-                                    "value": "012000000000000AAA"
+                                    "value": null
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

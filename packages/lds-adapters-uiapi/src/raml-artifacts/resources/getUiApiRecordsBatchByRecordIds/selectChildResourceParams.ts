@@ -1,16 +1,12 @@
-import { Fragment, Luvio, Reader } from '@luvio/engine';
+import type { Fragment, Luvio, Reader } from '@luvio/engine';
 import { ArrayPrototypePush, ObjectFreeze } from '../../../generated/adapters/adapter-utils';
-import {
-    keyBuilder as getUiApiRecordsByRecordId_keyBuilder,
-    ResourceRequestConfig as getUiApiRecordsByRecordId_ResourceRequestConfig,
-} from '../../../generated/resources/getUiApiRecordsByRecordId';
-import {
-    keyBuilder as getUiApiRecordsBatchByRecordIds_keyBuilder,
-    ResourceRequestConfig as getUiApiRecordsBatchByRecordIds_ResourceRequestConfig,
-} from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
-import { BatchRepresentation } from '../../../generated/types/BatchRepresentation';
-import { BatchResultRepresentation } from '../../../generated/types/BatchResultRepresentation';
-import { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
+import type { ResourceRequestConfig as getUiApiRecordsByRecordId_ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsByRecordId';
+import { keyBuilder as getUiApiRecordsByRecordId_keyBuilder } from '../../../generated/resources/getUiApiRecordsByRecordId';
+import type { ResourceRequestConfig as getUiApiRecordsBatchByRecordIds_ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
+import { keyBuilder as getUiApiRecordsBatchByRecordIds_keyBuilder } from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
+import type { BatchRepresentation } from '../../../generated/types/BatchRepresentation';
+import type { BatchResultRepresentation } from '../../../generated/types/BatchResultRepresentation';
+import type { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
 import { buildRecordSelector } from '../../../wire/getRecord/GetRecordFields';
 import { nonCachedErrors } from './ingestSuccessChildResourceParams';
 

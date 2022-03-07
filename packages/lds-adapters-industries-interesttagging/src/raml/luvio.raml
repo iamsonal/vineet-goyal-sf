@@ -18,3 +18,15 @@ types:
       get:
         (luvio.adapter):
           name: getTagsByRecordId
+    /tag/{tagId}:
+      get:
+        (luvio.adapter):
+          name: getInterestTagEntityAssignments
+  /tags:
+    get:
+      (luvio.adapter):
+        name: getTagsByCategoryId
+  /categories:
+    get:
+      (luvio.adapter):
+        name: getTagCategoriesByTagId

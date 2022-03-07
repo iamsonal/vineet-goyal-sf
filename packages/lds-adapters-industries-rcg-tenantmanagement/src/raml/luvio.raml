@@ -1,0 +1,26 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'rcg-tenantmanagement'
+(luvio.ttl): 360000
+
+types:
+  TenantCertificateStateRepresentation:
+    (luvio.ttl): 1000
+    (luvio.opaque): true
+  TenantCertificateUpdateStatusRepresentation:
+    (luvio.ttl): 1000
+    (luvio.opaque): true
+    (luvio.key):
+      certificateUpdateStatus: certificateUpdateStatus
+
+/connect/consumer-goods/tenant-registration:
+  get:
+    (luvio.adapter):
+      name: getTenantRegistrationStatus
+  put:
+    (luvio.adapter):
+      name: updateTenantCertificate

@@ -1,7 +1,14 @@
-import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
-import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import type {
+    IngestPath,
+    Luvio,
+    Reader,
+    ReaderFragment,
+    ResourceIngest,
+    Store,
+} from '@luvio/engine';
+import type { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { validate as operationValidate } from './Operation';
-import { GraphQLVariables } from './Variable';
+import type { GraphQLVariables } from './Variable';
 import { createIngest as genericCreateIngest } from '../util/ingest';
 import { createRead as genericCreateRead } from '../util/read';
 import { untrustedIsObject } from '../util/adapter';
@@ -76,7 +83,6 @@ export function createIngest(ast: LuvioDocumentNode, variables: GraphQLVariables
                     parent: null,
                     fullPath: key,
                     propertyName: null,
-                    state: path.state,
                 },
                 luvio,
                 store,

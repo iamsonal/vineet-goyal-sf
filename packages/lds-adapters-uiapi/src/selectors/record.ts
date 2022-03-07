@@ -1,10 +1,11 @@
-import { PathSelection } from '@luvio/engine';
-import { RecordFieldTrie } from '../util/records';
-import { RecordRepresentation, dynamicSelect } from '../generated/types/RecordRepresentation';
+import type { PathSelection } from '@luvio/engine';
+import type { RecordFieldTrie } from '../util/records';
+import type { RecordRepresentation } from '../generated/types/RecordRepresentation';
+import { dynamicSelect } from '../generated/types/RecordRepresentation';
+import type { FieldMapRepresentation } from '../util/fields';
 import {
     createPathSelection,
     createPathSelectionFromValue,
-    FieldMapRepresentation,
     convertRecordFieldsArrayToTrie,
 } from '../util/fields';
 

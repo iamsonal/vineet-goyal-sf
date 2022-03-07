@@ -3,7 +3,7 @@ import { mockNetworkOnce, mockNetworkErrorOnce, mockNetworkSequence } from 'test
 import sinon from 'sinon';
 import timekeeper from 'timekeeper';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const INTERACTION_TTL = 1000;
 
@@ -30,6 +30,16 @@ export function mockGetDecisionMatricDetailsNetworkOnce(config, mockData) {
 
 export function mockDecisionMatricDetailsNetworkErrorOnce(config, mockData) {
     const paramMatch = getDecisionMatricDetailsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockGetDecisionTableDetailsNetworkOnce(config, mockData) {
+    const paramMatch = getDecisionTableDetailsMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockDecisionTableDetailsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDecisionTableDetailsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -115,6 +125,19 @@ function getDecisionMatricDetailsMatcher(config) {
         method: 'get',
         baseUri: BASE_URI,
         basePath: `/connect/omnistudio/decision-matrices/${id}`,
+        queryParams: {},
+    });
+}
+
+function getDecisionTableDetailsMatcher(config) {
+    let { id } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/omnistudio/decision-tables/${id}`,
         queryParams: {},
     });
 }
@@ -211,6 +234,32 @@ function searchDecisionMatrixByNameMatcher(config) {
         method: 'get',
         baseUri: BASE_URI,
         basePath: `/connect/omnistudio/decision-matrices`,
+        queryParams: query,
+    });
+}
+
+export function mockSearchDecisionTableByNameNetworkOnce(config, mockData) {
+    const paramMatch = searchDecisionTableByNameMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockSearchDecisionTableByNameNetworkErrorOnce(config, mockData) {
+    const paramMatch = searchDecisionTableByNameMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function searchDecisionTableByNameMatcher(config) {
+    let { query } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/omnistudio/decision-tables`,
         queryParams: query,
     });
 }

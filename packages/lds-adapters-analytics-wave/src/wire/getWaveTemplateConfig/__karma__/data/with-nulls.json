@@ -1,0 +1,159 @@
+{
+    "id": "0Nkxx0000004FICCA2",
+    "name": "checkWireAdapterRaml",
+    "namespace": null,
+    "ui": {
+        "displayMessages": [],
+        "pages": [
+            {
+                "condition": null,
+                "helpUrl": null,
+                "title": "Page title",
+                "variables": [
+                    {
+                        "name": "booleanvar",
+                        "visibility": null
+                    }
+                ],
+                "vfPage": null
+            }
+        ]
+    },
+    "variables": {
+        "booleanvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": [true, false],
+                "type": "BooleanType"
+            }
+        },
+        "connectorvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": ["SFDC_LOCAL"],
+                "type": "StringType"
+            }
+        },
+        "datetimevar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "type": "DateTimeType"
+            }
+        },
+        "numbervar2": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": [],
+                "max": null,
+                "min": null,
+                "type": "NumberType"
+            }
+        },
+        "stringvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": [null],
+                "type": "StringType"
+            }
+        },
+        "arrayvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "enums": [
+                    ["one", "two"],
+                    ["a", "b"]
+                ],
+                "itemsType": null,
+                "sizeLimit": null,
+                "type": "ArrayType"
+            }
+        },
+        "objectvar": {
+            "computedValue": null,
+            "defaultValue": null,
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "properties": {},
+                "required": [],
+                "strictValidation": false,
+                "type": "ObjectType"
+            }
+        },
+        "sobjectfieldvar": {
+            "computedValue": null,
+            "defaultValue": {
+                "sobjectName": "Account",
+                "fieldName": ""
+            },
+            "description": null,
+            "excludeSelected": false,
+            "excludes": [],
+            "label": null,
+            "mostRecentValue": null,
+            "required": false,
+            "variableType": {
+                "dataType": null,
+                "properties": {
+                    "sobjectName": {
+                        "enums": [],
+                        "type": "StringType"
+                    },
+                    "fieldName": {
+                        "enums": [],
+                        "type": "StringType"
+                    }
+                },
+                "required": ["sobjectName", "fieldName"],
+                "strictValidation": true,
+                "type": "SobjectFieldType"
+            }
+        }
+    }
+}

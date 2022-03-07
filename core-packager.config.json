@@ -11,6 +11,7 @@
     "lwcFilter": ["**/__tests__/**", "**/__benchmarks__/**", "packages/lds-*", "packages/lwr-*"],
     "includeLwcModules": [
         "forcelds/adsBridge",
+        "forcelds/ldsAdaptersAnalyticsSmartDataDiscovery",
         "forcelds/ldsAdaptersAnalyticsWave",
         "forcelds/ldsAdaptersApex",
         "forcelds/ldsAdaptersCmsDelivery",

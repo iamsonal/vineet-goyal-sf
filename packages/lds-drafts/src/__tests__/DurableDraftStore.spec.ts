@@ -18,9 +18,10 @@ describe('DraftStore', () => {
                     id: 'id-foo',
                     status: 'pending',
                 } as any);
-                expect(durableStore.segments['DRAFT']['tag-foo__DraftAction__id-foo'].data).toEqual(
-                    { tag: 'tag-foo', id: 'id-foo', status: 'pending' }
-                );
+                expect(
+                    (await durableStore.persistence.get('DRAFT'))['tag-foo__DraftAction__id-foo']
+                        .data
+                ).toEqual({ tag: 'tag-foo', id: 'id-foo', status: 'pending' });
             });
 
             it('read actions immediates after write action waits for sync', async () => {

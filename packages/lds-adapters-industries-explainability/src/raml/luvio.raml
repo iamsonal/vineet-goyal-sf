@@ -18,10 +18,10 @@ types:
       id: uniqueIdentifier
 
 /connect:
-  /explainability-service/action-logs:
+  /decision-explainer/action-logs:
     get:
       (luvio.adapter):
         name: getExplainabilityActionLogs
     post:
       (luvio.adapter):
-        name: postExplainabilityActionLog
+        name: storeExplainabilityActionLog

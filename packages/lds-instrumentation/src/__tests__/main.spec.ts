@@ -1,26 +1,33 @@
-/**
- * @jest-environment jsdom
- */
-
-import { Adapter, Store } from '@luvio/engine';
 import timekeeper from 'timekeeper';
+
 import { flushPromises } from '@salesforce/lds-jest';
+import { Adapter, Store } from '@luvio/engine';
+import { ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
+import { adapterUnfulfilledErrorSchema } from 'o11y_schema/sf_lds';
 
 import {
+    AdapterUnfulfilledError,
     setupInstrumentation,
     incrementCounterMetric,
     instrumentAdapter,
+    instrumentLuvio,
     instrumentMethods,
     logAdapterCacheMissOutOfTtlDuration,
     updatePercentileHistogramMetric,
 } from '../main';
 
 jest.mock('o11y/client');
-import { instrumentation as o11yInstrumentation } from 'o11y/client';
+import { activity, instrumentation as o11yInstrumentation } from 'o11y/client';
 const o11yInstrumentationSpies = {
+    error: jest.spyOn(o11yInstrumentation, 'error'),
     trackValue: jest.spyOn(o11yInstrumentation, 'trackValue'),
     incrementCounter: jest.spyOn(o11yInstrumentation, 'incrementCounter'),
     startActivity: jest.spyOn(o11yInstrumentation, 'startActivity'),
+};
+const o11yActivitySpies = {
+    discard: jest.spyOn(activity, 'discard'),
+    error: jest.spyOn(activity, 'error'),
+    stop: jest.spyOn(activity, 'stop'),
 };
 
 beforeEach(() => {
@@ -48,8 +55,9 @@ function testMetricInvocations(metricSpy: any, expectedCalls: any) {
 // - cacheHitCountByAdapterMetric or cacheMissCountByAdapterMetric
 // - wireRequestCounter
 // - totalAdapterRequestSuccessMetric
-const baseCacheHitCounterIncrement = 4;
-const baseCacheMissCounterIncrement = 4;
+// - cachePolicyType or cachePolicyUndefined
+const baseCacheHitCounterIncrement = 5;
+const baseCacheMissCounterIncrement = 5;
 const GET_RECORD_TTL = 30000;
 
 describe('instrumentMethods', () => {
@@ -128,6 +136,378 @@ describe('instrumentMethods', () => {
         } catch {
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
         }
+    });
+});
+
+describe('instrumentAdapter', () => {
+    describe('adapter returning null', () => {
+        const mockAdapter = ((_config) => {
+            return null;
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        it('does not increment cache hit or miss counters', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('does not track cache hit or miss durations', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
+        });
+        it('discards activity', () => {
+            instrumentedAdapter({});
+            expect(o11yActivitySpies.discard).toHaveBeenCalled();
+        });
+    });
+    describe('event observer', () => {
+        it('no request context passed', () => {
+            const mockAdapter = jest.fn();
+            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            instrumentedAdapter({});
+
+            const eventObservers = mockAdapter.mock.calls[0][1].eventObservers;
+
+            expect(mockAdapter).toBeCalledTimes(1);
+            expect(eventObservers).toBeDefined();
+            expect(eventObservers.length).toBe(1);
+        });
+        it('request context passed but no event observers', () => {
+            const mockAdapter = jest.fn();
+            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            instrumentedAdapter({}, { priority: 'high' });
+
+            const eventObservers = mockAdapter.mock.calls[0][1].eventObservers;
+
+            expect(mockAdapter).toBeCalledTimes(1);
+            expect(eventObservers).toBeDefined();
+            expect(eventObservers.length).toBe(1);
+        });
+
+        it('request context passed with an existing event observer', () => {
+            const mockAdapter = jest.fn();
+            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            instrumentedAdapter(
+                {},
+                { priority: 'high', eventObservers: [{ onLuvioEvent: () => {} }] }
+            );
+
+            const eventObservers = mockAdapter.mock.calls[0][1].eventObservers;
+
+            expect(mockAdapter).toBeCalledTimes(1);
+            expect(eventObservers).toBeDefined();
+            expect(eventObservers.length).toBe(2);
+        });
+    });
+    describe('luvio store (L1) cache hit', () => {
+        const mockAdapter = ((config, context) => {
+            const observer = context.eventObservers[0];
+            if (config.error === true) {
+                throw new Error('error');
+            }
+            observer.onLuvioEvent({
+                type: 'adapter-lookup-start',
+                cachePolicy: config.cachePolicy,
+            });
+            observer.onLuvioEvent({ type: 'cache-lookup-start' });
+            observer.onLuvioEvent({
+                type: 'cache-lookup-end',
+                wasResultAsync: false,
+                hasError: false,
+                snapshotState: 'Fulfilled',
+            });
+            observer.onLuvioEvent({ type: 'adapter-lookup-end', hasError: false });
+
+            return {};
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+        it('increments cache hit counters', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-hit-count', 1],
+                ['cache-hit-count.UiApi.getFoo', 1],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('tracks cache hit duration', () => {
+            timekeeper.freeze(Date.now());
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [['cache-hit-duration.UiApi.getFoo', 0]];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
+        });
+        it('discards activity', () => {
+            instrumentedAdapter({});
+            expect(o11yActivitySpies.discard).toHaveBeenCalled();
+        });
+        it('discards activity with error', () => {
+            try {
+                instrumentedAdapter({ error: true });
+            } catch (error) {
+                expect(o11yActivitySpies.discard).toHaveBeenCalled();
+            }
+        });
+        xit('logs error', () => {});
+    });
+    describe('luvio store (L1) cache miss', () => {
+        const mockAdapter = ((config, context) => {
+            if (config.error === true) {
+                return Promise.reject('adapter threw');
+            } else {
+                const observer = context.eventObservers[0];
+                observer.onLuvioEvent({
+                    type: 'adapter-lookup-start',
+                    cachePolicy: config.cachePolicy,
+                });
+                observer.onLuvioEvent({ type: 'cache-lookup-start' });
+                observer.onLuvioEvent({
+                    type: 'cache-lookup-end',
+                    wasResultAsync: false,
+                    hasError: false,
+                    snapshotState: 'Unfulfilled',
+                });
+                observer.onLuvioEvent({
+                    type: 'network-lookup-start',
+                });
+                observer.onLuvioEvent({
+                    type: 'network-lookup-end',
+                    hasError: false,
+                });
+                observer.onLuvioEvent({ type: 'adapter-lookup-end', hasError: false });
+                return Promise.resolve({} as any);
+            }
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+        it('increments cache miss counters', async () => {
+            await instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-miss-count', 1],
+                ['cache-miss-count.UiApi.getFoo', 1],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('tracks cache miss duration', async () => {
+            timekeeper.freeze(Date.now());
+            await instrumentedAdapter({});
+
+            const expectedMetricCalls = [['cache-miss-duration.UiApi.getFoo', 0]];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
+        });
+        it('calls activity.stop with "cache-miss"', async () => {
+            await instrumentedAdapter({});
+            await flushPromises();
+            expect(o11yActivitySpies.stop).toHaveBeenCalled();
+            expect(o11yActivitySpies.stop).toHaveBeenCalledWith('cache-miss');
+        });
+        it('calls activity.error and activity.stop with error', async () => {
+            try {
+                await instrumentedAdapter({ error: true });
+            } catch (_error) {
+                // swallow error here
+            }
+            await flushPromises();
+            expect(o11yActivitySpies.error).toHaveBeenCalled();
+            expect(o11yActivitySpies.stop).toHaveBeenCalled();
+            expect(o11yActivitySpies.stop).toHaveBeenCalledWith('cache-miss');
+        });
+    });
+
+    describe('durable store (L2) cache hit', () => {
+        const mockAdapter = ((config, context) => {
+            const observer = context.eventObservers[0];
+
+            observer.onLuvioEvent({
+                type: 'adapter-lookup-start',
+                cachePolicy: config.cachePolicy,
+            });
+            observer.onLuvioEvent({ type: 'cache-lookup-start' });
+            observer.onLuvioEvent({
+                type: 'cache-lookup-end',
+                wasResultAsync: true,
+                hasError: false,
+                snapshotState: config.isStale ? 'Stale' : 'Fulfilled',
+            });
+            observer.onLuvioEvent({ type: 'adapter-lookup-end', hasError: false });
+
+            return {};
+        }) as Adapter<any, any>;
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        it('increments L2 cache hit markers', () => {
+            instrumentedAdapter({});
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-hit-l2-count', 1, undefined, undefined],
+                ['cache-hit-l2-count.UiApi.getFoo', 1, undefined, undefined],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('includes stale tag when data is stale', () => {
+            instrumentedAdapter({ isStale: true });
+
+            const expectedMetricCalls = [
+                ['request.UiApi.getFoo', 1],
+                ['request', 1],
+                ['cache-policy-undefined', 1],
+                ['cache-hit-l2-count', 1, undefined, { stale: true }],
+                ['cache-hit-l2-count.UiApi.getFoo', 1, undefined, { stale: true }],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+    });
+    it('logs cache miss when adapter returns a Promise', async () => {
+        const mockAdapter = ((config) => {
+            if (config.cacheHit === true) {
+                return {};
+            } else {
+                return Promise.resolve({});
+            }
+        }) as Adapter<any, any>;
+
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        await instrumentedAdapter({ cacheHit: false });
+
+        expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
+        expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
+    });
+
+    it('logs nothing when adapter returns null', async () => {
+        const mockAdapter = (() => {
+            return null;
+        }) as Adapter<any, any>;
+
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        await instrumentedAdapter({});
+
+        // technically we bump two counters for calls to the adapter
+        expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(0);
+    });
+
+    it('logs correct cache policy type when adapter is called with one', async () => {
+        const mockAdapter = ((config) => {
+            if (config.cacheHit === true) {
+                return {};
+            } else {
+                return Promise.resolve({});
+            }
+        }) as Adapter<any, any>;
+
+        const instrumentedAdapter = instrumentAdapter(mockAdapter, {
+            apiFamily: 'UiApi',
+            name: 'getFoo',
+        });
+
+        await instrumentedAdapter(
+            { cacheHit: false },
+            { cachePolicy: { type: 'cache-then-network' } }
+        );
+
+        const expectedMetricCalls = [
+            ['request.UiApi.getFoo', 1],
+            ['request', 1],
+            ['cache-policy-cache-then-network', 1],
+            ['cache-miss-count', 1],
+            ['cache-miss-count.UiApi.getFoo', 1],
+        ];
+        testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+    });
+});
+
+describe('instrumentLuvio', () => {
+    describe('AdapterUnfulfilledError', () => {
+        const mockMissingPath = 'data.missing.path';
+        const mockMissingLink = 'missingRef';
+        const mockContext: AdapterUnfulfilledError = {
+            [ADAPTER_UNFULFILLED_ERROR]: true,
+            adapterName: 'foo',
+            missingPaths: { [mockMissingPath]: true },
+            missingLinks: { [mockMissingLink]: true },
+        };
+        it('should increment adapter request error count', () => {
+            instrumentLuvio(mockContext);
+            // Verify Metric Calls
+            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(2);
+            const expectedMetricCalls = [['error.foo'], ['error']];
+            testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
+        });
+        it('should log adapter unfulfilled error details', () => {
+            instrumentLuvio(mockContext);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledTimes(1);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledWith(
+                ADAPTER_UNFULFILLED_ERROR,
+                adapterUnfulfilledErrorSchema,
+                {
+                    adapter: 'foo',
+                    missing_paths: [mockMissingPath],
+                    missing_links: [mockMissingLink],
+                }
+            );
+        });
+        it('should return empty array for either missingPaths or missingLinks when they are empty', () => {
+            const mockEmptyPathsAndLinksContext: AdapterUnfulfilledError = {
+                ...mockContext,
+                missingPaths: {},
+                missingLinks: {},
+            };
+            instrumentLuvio(mockEmptyPathsAndLinksContext);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledTimes(1);
+            expect(o11yInstrumentationSpies.error).toHaveBeenCalledWith(
+                ADAPTER_UNFULFILLED_ERROR,
+                adapterUnfulfilledErrorSchema,
+                {
+                    adapter: 'foo',
+                    missing_paths: [],
+                    missing_links: [],
+                }
+            );
+        });
     });
 });
 
@@ -210,6 +590,7 @@ describe('instrumentation', () => {
                 ['request', 1],
                 ['cache-hit-count', 1],
                 ['cache-hit-count.UiApi.getRecord', 1],
+                ['cache-policy-undefined', 2],
             ];
             testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
         });
@@ -310,44 +691,6 @@ describe('instrumentation', () => {
         });
     });
 
-    describe('instrumentedAdapter', () => {
-        it('logs cache miss when adapter returns a Promise', async () => {
-            const mockAdapter = ((config) => {
-                if (config.cacheHit === true) {
-                    return {};
-                } else {
-                    return Promise.resolve({});
-                }
-            }) as Adapter<any, any>;
-
-            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
-                apiFamily: 'UiApi',
-                name: 'getFoo',
-            });
-
-            await instrumentedAdapter({ cacheHit: false });
-
-            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
-            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(4);
-        });
-
-        it('logs nothing when adapter returns null', async () => {
-            const mockAdapter = (() => {
-                return null;
-            }) as Adapter<any, any>;
-
-            const instrumentedAdapter = instrumentAdapter(mockAdapter, {
-                apiFamily: 'UiApi',
-                name: 'getFoo',
-            });
-
-            await instrumentedAdapter({});
-
-            // technically we bump two counters for calls to the adapter
-            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(0);
-        });
-    });
-
     // TODO [W-9782972]: this will need done function
     describe('Observability metrics', () => {
         it('should instrument error when UnfulfilledSnapshot is returned to the adapter', () => {
@@ -373,6 +716,7 @@ describe('instrumentation', () => {
                 const expectedMetricCalls = [
                     ['request.UiApi.getRecord', 1],
                     ['request', 1],
+                    ['cache-policy-undefined', 1],
                     ['cache-miss-count', 1],
                     ['cache-miss-count.UiApi.getRecord', 1],
                 ];
@@ -405,6 +749,7 @@ describe('instrumentation', () => {
             const expectedMetricCalls = [
                 ['request.UiApi.getRecord', 1],
                 ['request', 1],
+                ['cache-policy-undefined', 1],
             ];
             testMetricInvocations(o11yInstrumentationSpies.incrementCounter, expectedMetricCalls);
         });
@@ -432,6 +777,7 @@ describe('instrumentation', () => {
                 const expectedMetricCalls = [
                     ['request.UiApi.getRecord', 1],
                     ['request', 1],
+                    ['cache-policy-undefined', 1],
                     ['cache-miss-count', 1],
                     ['cache-miss-count.UiApi.getRecord', 1],
                 ];
@@ -444,7 +790,7 @@ describe('instrumentation', () => {
     });
 
     describe('getApex cardinality', () => {
-        it('should aggregate all dynamic metrics under getApex', () => {
+        it('should aggregate all dynamic metrics under getApex', async () => {
             const mockGetApexAdapter: any = () => {
                 return new Promise((resolve) => {
                     setTimeout(() => resolve({}));
@@ -467,8 +813,8 @@ describe('instrumentation', () => {
                 'getApex__AccountController_getAccountList_true__instrumented'
             );
 
-            instrumentedGetApexAdapterOne({ name: 'LDS', foo: 'bar' });
-            instrumentedGetApexAdapterTwo({ name: 'LDS', foo: 'baz' });
+            await instrumentedGetApexAdapterOne({ name: 'LDS', foo: 'bar' });
+            await instrumentedGetApexAdapterTwo({ name: 'LDS', foo: 'baz' });
 
             expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(
                 baseCacheMissCounterIncrement + baseCacheHitCounterIncrement
@@ -478,10 +824,12 @@ describe('instrumentation', () => {
             const expectedMetricCalls = [
                 ['request.Apex.getApex', 1],
                 ['request', 1],
+                ['cache-policy-undefined', 1],
                 ['cache-miss-count', 1],
                 ['cache-miss-count.Apex.getApex', 1],
                 ['request.Apex.getApex', 1],
                 ['request', 1],
+                ['cache-policy-undefined', 1],
                 ['cache-miss-count', 1],
                 ['cache-miss-count.Apex.getApex', 1],
             ];
@@ -517,8 +865,8 @@ describe('instrumentation', () => {
 
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
 
-            // 4 standard counters + 1 for gql counter
-            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
+            // 5 standard counters + 1 for gql counter
+            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(6);
         });
         it('logs mixed bag response in case of a cache miss', async () => {
             const mockSnapshot = {
@@ -547,8 +895,8 @@ describe('instrumentation', () => {
 
             expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(1);
 
-            // 4 standard counters + 1 for gql counter
-            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(5);
+            // 5 standard counters + 1 for gql counter
+            expect(o11yInstrumentationSpies.incrementCounter).toHaveBeenCalledTimes(6);
         });
     });
 });
@@ -575,7 +923,36 @@ describe('setupInstrumentation', () => {
             mockLuvio.storeSetTTLOverride();
 
             // Verify
-            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(5);
+            expect(o11yInstrumentationSpies.trackValue).toHaveBeenCalledTimes(
+                5 /* expectedCalls */ + 3 /* unrelatedCalls */
+            );
+        });
+    });
+    describe('collects store statistics', () => {
+        it('provides the correct count for each of the store properties we instrument', () => {
+            // Setup
+            const mockLuvio: any = {
+                storeBroadcast: jest.fn,
+            };
+            const store = new Store();
+
+            // freeze to guarantee that the second param to `trackValue` will be zero
+            // for store-broadcast-duration
+            const now = Date.now();
+            timekeeper.freeze(now);
+
+            // Exercise
+            setupInstrumentation(mockLuvio, store);
+            mockLuvio.storeBroadcast();
+
+            // Verify
+            const expectedMetricCalls = [
+                ['store-size-count', 0],
+                ['store-snapshot-subscriptions-count', 0],
+                ['store-watch-subscriptions-count', 0],
+                ['store-broadcast-duration', 0],
+            ];
+            testMetricInvocations(o11yInstrumentationSpies.trackValue, expectedMetricCalls);
         });
     });
     describe('sets store scheduler', () => {

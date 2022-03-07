@@ -1,0 +1,17 @@
+{
+    "servicePlanTemplateGoals": {
+        "records": [
+            {
+                "goalDefinitionId": "1gdS70000000001IAA",
+                "priority": "High"
+            }
+        ]
+    },
+    "servicePlanTemplateBenefits": {
+        "records": [
+            {
+                "benefitId": "0jiS70000000001IAA"
+            }
+        ]
+    }
+}

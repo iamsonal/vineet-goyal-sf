@@ -1,5 +1,5 @@
 import { Environment, FulfilledSnapshot, Luvio, Store, UnfulfilledSnapshot } from '@luvio/engine';
-import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioDocumentNode } from '@luvio/graphql-parser';
 import { createIngest, createRead } from '../Document';
 
 describe('Document', () => {
@@ -1468,7 +1468,6 @@ describe('Document', () => {
                     fullPath: 'fullpath',
                     parent: null,
                     propertyName: null,
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -1744,7 +1743,6 @@ describe('Document', () => {
                     fullPath: 'fullpath',
                     parent: null,
                     propertyName: null,
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -1954,7 +1952,6 @@ describe('Document', () => {
                     fullPath: 'fullpath',
                     parent: null,
                     propertyName: null,
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -1970,7 +1967,6 @@ describe('Document', () => {
                     fullPath: 'fullpath',
                     parent: null,
                     propertyName: null,
-                    state: undefined,
                 },
                 luvio,
                 store,

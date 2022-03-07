@@ -1,4 +1,4 @@
-import { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
+import type { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
 
 export const getRecords_ConfigPropertyNames: AdapterValidationConfig = {
     displayName: 'getRecords',

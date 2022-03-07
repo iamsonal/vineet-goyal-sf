@@ -1,45 +1,57 @@
-import {
+import type {
     AdapterFactory,
-    Luvio,
-    Snapshot,
-    Selector,
+    AdapterRequestContext,
+    CacheKeySet,
+    ErrorSnapshot,
     FetchResponse,
     GraphNode,
-    ErrorSnapshot,
+    Luvio,
+    Selector,
+    Snapshot,
     SnapshotRefresh,
+    StoreLookup,
     UnfulfilledSnapshot,
-    UnAvailableSnapshot,
-    FulfilledSnapshot,
-    StaleSnapshot,
 } from '@luvio/engine';
-import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
-import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
+import type { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import { keyPrefix } from '../../generated/adapters/adapter-utils';
+import type { GetRecordUiConfig } from '../../generated/adapters/getRecordUi';
+import { validateAdapterConfig } from '../../generated/adapters/getRecordUi';
 import getUiApiRecordUiByRecordIds from '../../generated/resources/getUiApiRecordUiByRecordIds';
-import { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
+import type { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
+import type { RecordUiRepresentation } from '../../generated/types/RecordUiRepresentation';
 import {
-    RecordUiRepresentation,
     TTL as RecordUiRepresentationTTL,
     ingest,
 } from '../../generated/types/RecordUiRepresentation';
-import {
-    keyBuilder as recordRepresentationKeyBuilder,
+import type {
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
+import { keyBuilder as recordRepresentationKeyBuilder } from '../../generated/types/RecordRepresentation';
 import { dependencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
-import { ArrayPrototypePush, ObjectAssign, ObjectCreate, ObjectKeys } from '../../util/language';
+import {
+    ArrayPrototypePush,
+    JSONParse,
+    JSONStringify,
+    ObjectAssign,
+    ObjectCreate,
+    ObjectKeys,
+} from '../../util/language';
 import {
     markMissingOptionalFields,
     markNulledOutRequiredFields,
     isGraphNode,
 } from '../../util/records';
 import { dedupe } from '../../validation/utils';
-import { buildRecordUiSelector, RecordDef } from './selectors';
+import type { RecordDef } from './selectors';
+import { buildRecordUiSelector } from './selectors';
 import { getRecordTypeId } from '../../util/records';
-import { isFulfilledSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
-import { LayoutType } from '../../primitives/LayoutType';
-import { LayoutMode } from '../../primitives/LayoutMode';
+import { isFulfilledSnapshot, isStaleSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
+import type { LayoutType } from '../../primitives/LayoutType';
+import type { LayoutMode } from '../../primitives/LayoutMode';
 import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
+import { buildNotFetchableNetworkSnapshot } from '../../util/cache-policy';
+import { isPromise } from '../../util/promise';
 
 type GetRecordUiConfigWithDefaults = Omit<
     Required<GetRecordUiConfig>,
@@ -147,7 +159,7 @@ function buildSnapshotRefresh(
     };
 }
 
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     luvio: Luvio,
     config: GetRecordUiConfigWithDefaults
 ):
@@ -164,21 +176,15 @@ export function buildInMemorySnapshot(
     );
     const cachedSelectorKey = buildCachedSelectorKey(key);
 
-    const cacheSel = luvio.storeLookup<Selector>(
-        {
-            recordId: cachedSelectorKey,
-            node: {
-                kind: 'Fragment',
-                private: [],
-                opaque: true,
-            },
-            variables: {},
+    const cacheSel = luvio.storeLookup<Selector>({
+        recordId: cachedSelectorKey,
+        node: {
+            kind: 'Fragment',
+            private: [],
+            opaque: true,
         },
-        // TODO [W-9601746]: today makeDurable environment needs a refresh set for
-        // "resolveSnapshot" override to work properly, but once this work
-        // item is done we won't need to pass in a refresh here
-        buildSnapshotRefresh(luvio, config) as unknown as SnapshotRefresh<Selector>
-    );
+        variables: {},
+    });
 
     if (isFulfilledSnapshot(cacheSel)) {
         const cachedSelector = cacheSel.data;
@@ -257,6 +263,77 @@ function prepareRequest(luvio: Luvio, config: GetRecordUiConfigWithDefaults) {
     });
 
     return { key, selectorKey, resourceRequest };
+}
+
+// NOTE: getRecordUi is special and we can't use the generated getResponseCacheKeys
+// (just like we don't use the generated ingestSuccess).  To get the cache keys
+// we have to run ingest code and look at the resulting snapshot's seenRecords.
+function getCacheKeys(
+    luvio: Luvio,
+    config: GetRecordUiConfigWithDefaults,
+    key: string,
+    originalResponseBody: RecordUiRepresentation
+) {
+    const { recordIds, layoutTypes, modes } = config;
+
+    const responseBody = JSONParse(JSONStringify(originalResponseBody));
+
+    eachLayout(
+        responseBody,
+        (apiName: string, recordTypeId: string, layout: RecordLayoutRepresentation) => {
+            if (layout.id === null) {
+                return;
+            }
+            const layoutUserState = responseBody.layoutUserStates[layout.id];
+            // Temporary hack since we can't match keys from getLayoutUserState response
+            // to record ui's layout users states.
+            if (layoutUserState === undefined) {
+                return;
+            }
+            layoutUserState.apiName = apiName;
+            layoutUserState.recordTypeId = recordTypeId;
+            layoutUserState.mode = layout.mode;
+            layoutUserState.layoutType = layout.layoutType;
+        }
+    );
+
+    const recordLookupFields = getRecordUiMissingRecordLookupFields(responseBody);
+    const selPath = buildRecordUiSelector(
+        collectRecordDefs(responseBody, recordIds),
+        layoutTypes,
+        modes,
+        recordLookupFields
+    );
+
+    const sel = {
+        recordId: key,
+        node: selPath,
+        variables: {},
+    };
+
+    luvio.storeIngest(key, ingest, responseBody);
+
+    const snapshot = luvio.storeLookup<RecordUiRepresentation>(
+        sel,
+        buildSnapshotRefresh(luvio, config)
+    );
+
+    if (snapshot.state === 'Error') {
+        return {};
+    }
+
+    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
+    const keySet: CacheKeySet = ObjectCreate(null);
+    for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const namespace = key.split('::')[0];
+        const representationName = key.split('::')[1].split(':')[0];
+        keySet[key] = {
+            namespace,
+            representationName,
+        };
+    }
+    return keySet;
 }
 
 function onResourceResponseSuccess(
@@ -367,15 +444,6 @@ function onResourceResponseError(
     return errorSnapshot;
 }
 
-function isSelectorSnapshotWithData(
-    snapshot: Snapshot<Selector | RecordUiRepresentation>
-): snapshot is FulfilledSnapshot<Selector> | StaleSnapshot<Selector> {
-    return (
-        (snapshot.state === 'Fulfilled' || snapshot.state === 'Stale') &&
-        'node' in (snapshot.data as Selector)
-    );
-}
-
 export function buildNetworkSnapshot(
     luvio: Luvio,
     config: GetRecordUiConfigWithDefaults
@@ -384,10 +452,15 @@ export function buildNetworkSnapshot(
 
     return luvio.dispatchResourceRequest<RecordUiRepresentation>(resourceRequest).then(
         (response) => {
-            return onResourceResponseSuccess(luvio, config, selectorKey, key, response.body);
+            return luvio.handleSuccessResponse(
+                () => onResourceResponseSuccess(luvio, config, selectorKey, key, response.body),
+                () => getCacheKeys(luvio, config, key, response.body)
+            );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, config, selectorKey, key, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceResponseError(luvio, config, selectorKey, key, err);
+            });
         }
     );
 }
@@ -409,6 +482,61 @@ function publishDependencies(luvio: Luvio, recordIds: string[], depKeys: string[
 
         luvio.storePublish(recordDepKey, dependencies);
     }
+}
+
+type BuildSelectorSnapshotContext = {
+    config: GetRecordUiConfigWithDefaults;
+    luvio: Luvio;
+};
+
+function buildCachedSelectorSnapshot(
+    context: BuildSelectorSnapshotContext,
+    storeLookup: StoreLookup<Selector<RecordUiRepresentation>>
+): Snapshot<Selector<RecordUiRepresentation>> | undefined {
+    const { config } = context;
+    const { recordIds, layoutTypes, modes, optionalFields } = config;
+
+    const key = keyBuilder(
+        recordIds,
+        layoutTypes as LayoutType[],
+        modes as LayoutMode[],
+        optionalFields
+    );
+    const cachedSelectorKey = buildCachedSelectorKey(key);
+
+    return storeLookup({
+        recordId: cachedSelectorKey,
+        node: {
+            kind: 'Fragment',
+            private: [],
+            opaque: true,
+        },
+        variables: {},
+    });
+}
+
+type BuildRecordUiRepresentationSnapshotContext = {
+    config: GetRecordUiConfigWithDefaults;
+    luvio: Luvio;
+    selector: Selector<RecordUiRepresentation> | undefined;
+};
+
+function buildCachedRecordUiRepresentationSnapshot(
+    context: BuildRecordUiRepresentationSnapshotContext,
+    storeLookup: StoreLookup<RecordUiRepresentation>
+): Snapshot<RecordUiRepresentation> | undefined {
+    const { config, luvio, selector } = context;
+
+    // try to resolve RecordUiRepresentation selector if previous steps were able to find one
+    if (selector !== undefined) {
+        return storeLookup(selector, buildSnapshotRefresh(luvio, config));
+    }
+}
+
+function buildNetworkRecordUiRepresentationSnapshot(
+    context: BuildRecordUiRepresentationSnapshotContext
+): Promise<Snapshot<RecordUiRepresentation>> {
+    return buildNetworkSnapshot(context.luvio, context.config);
 }
 
 export function coerceConfigWithDefaults(
@@ -435,7 +563,8 @@ export function coerceConfigWithDefaults(
 
 export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> = (luvio: Luvio) =>
     function UiApi__getRecordUi(
-        untrustedConfig: unknown
+        untrustedConfig: unknown,
+        requestContext?: AdapterRequestContext
     ): Promise<Snapshot<RecordUiRepresentation>> | Snapshot<RecordUiRepresentation> | null {
         // standard config validation and coercion
         const config = coerceConfigWithDefaults(untrustedConfig);
@@ -443,53 +572,30 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
             return null;
         }
 
-        const cacheSnapshot = buildInMemorySnapshot(luvio, config);
+        const definedRequestContext = requestContext || {};
 
-        // if snapshot is null go right to network
-        if (cacheSnapshot === null) {
-            return buildNetworkSnapshot(luvio, config);
-        }
+        const selectorPromiseOrSnapshot = luvio.applyCachePolicy(
+            definedRequestContext,
+            { config, luvio },
+            buildCachedSelectorSnapshot,
+            buildNotFetchableNetworkSnapshot(luvio)
+        );
 
-        if (isUnfulfilledSnapshot(cacheSnapshot)) {
-            const snapshotRefresh = buildSnapshotRefresh(luvio, config);
+        const resolveSelector = (selectorSnapshot: Snapshot<Selector<RecordUiRepresentation>>) => {
+            const selector =
+                isFulfilledSnapshot(selectorSnapshot) || isStaleSnapshot(selectorSnapshot)
+                    ? selectorSnapshot.data
+                    : undefined;
 
-            return luvio
-                .resolveSnapshot(
-                    cacheSnapshot as UnAvailableSnapshot<RecordUiRepresentation | Selector>,
-                    snapshotRefresh
-                )
-                .then((resolvedSnapshot) => {
-                    // In default environment resolving a snapshot is just hitting the network
-                    // with the given SnapshotRefresh (so record-ui in this case).  In durable environment
-                    // resolving a snapshot will first attempt to read the missing cache keys
-                    // from the given UnAvailable snapshot (a record-ui snapshot or selector snapshot in this
-                    // case) and build a Fulfilled snapshot from that if those cache keys are present, otherwise
-                    // it hits the network with the given resource request.  Usually the SnapshotRefresh and the
-                    // UnAvailable snapshot are for the same response Type, but this adapter is special (it
-                    // stores its own selectors in the store), and so our use of resolveSnapshot
-                    // is special (polymorphic response, could either be a record-ui representation or a
-                    // selector).
+            return luvio.applyCachePolicy(
+                definedRequestContext,
+                { config, luvio, selector },
+                buildCachedRecordUiRepresentationSnapshot,
+                buildNetworkRecordUiRepresentationSnapshot
+            );
+        };
 
-                    // if the response is a selector then we can attempt to build a snapshot
-                    // with that selector
-                    if (isSelectorSnapshotWithData(resolvedSnapshot)) {
-                        const dataSnapshot = luvio.storeLookup<RecordUiRepresentation>(
-                            resolvedSnapshot.data,
-                            snapshotRefresh
-                        );
-
-                        if (luvio.snapshotAvailable(dataSnapshot)) {
-                            return dataSnapshot;
-                        }
-
-                        return luvio.resolveSnapshot(dataSnapshot, snapshotRefresh);
-                    }
-
-                    // otherwise it's a record-ui response
-                    return resolvedSnapshot as Snapshot<RecordUiRepresentation>;
-                });
-        }
-
-        // if we got here then we can just return the in-memory snapshot
-        return cacheSnapshot;
+        return isPromise(selectorPromiseOrSnapshot)
+            ? selectorPromiseOrSnapshot.then(resolveSelector)
+            : resolveSelector(selectorPromiseOrSnapshot);
     };

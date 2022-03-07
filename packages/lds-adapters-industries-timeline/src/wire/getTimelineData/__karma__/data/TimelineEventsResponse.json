@@ -1,0 +1,51 @@
+{
+    "errors": [],
+    "eventTypes": [
+        {
+            "eventApiName": "Case",
+            "offset": 1
+        },
+        {
+            "eventApiName": "Task",
+            "offset": 1
+        }
+    ],
+    "events": [
+        {
+            "description": "Test Case",
+            "eventDateTime": null,
+            "fields": [
+                {
+                    "name": "Name",
+                    "value": "Test1"
+                },
+                {
+                    "name": "Description",
+                    "value": "Test name"
+                }
+            ],
+            "id": "08pxx0000004EHIAA2",
+            "title": "Case opened",
+            "type": "Case"
+        },
+        {
+            "description": "Test Task",
+            "eventDateTime": "2001-02-15T20:00:00.000Z",
+            "fields": [
+                {
+                    "name": "Name",
+                    "value": "Test1"
+                },
+                {
+                    "name": "Description",
+                    "value": "Test name"
+                }
+            ],
+            "id": "08pxx0000004EHIAA2",
+            "title": "Task opened",
+            "type": "Task"
+        }
+    ],
+    "hasMoreData": true,
+    "isSuccess": true
+}

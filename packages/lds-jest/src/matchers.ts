@@ -1,4 +1,4 @@
-import { FulfilledSnapshot, Snapshot, StaleSnapshot } from '@luvio/engine';
+import type { FulfilledSnapshot, Snapshot, StaleSnapshot } from '@luvio/engine';
 import { isImmutable, stripProperties } from '@luvio/adapter-test-library';
 
 function isFulfilledSnapshot(

@@ -1,0 +1,6 @@
+[
+    {
+        "errorCode": "275",
+        "message": "You can't delete the 'Test4' connection because it is used by these objects. Delete these objects on the Setup tab before you delete the connection: [AIApplication]."
+    }
+]

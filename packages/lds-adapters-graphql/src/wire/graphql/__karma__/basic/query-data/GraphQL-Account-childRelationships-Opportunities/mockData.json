@@ -1,0 +1,116 @@
+{
+    "data": {
+        "__typename": "Query",
+        "uiapi": {
+            "__typename": "UIAPI",
+            "query": {
+                "__typename": "RecordQuery",
+                "Account": {
+                    "__typename": "AccountConnection",
+                    "edges": [
+                        {
+                            "__typename": "AccountEdge",
+                            "node": {
+                                "Name": {
+                                    "__typename": "StringValue",
+                                    "value": "Account1",
+                                    "displayValue": null
+                                },
+                                "Opportunities": {
+                                    "__typename": "OpportunityConnection",
+                                    "edges": [
+                                        {
+                                            "__typename": "OpportunityEdge",
+                                            "node": {
+                                                "Name": {
+                                                    "__typename": "StringValue",
+                                                    "value": "Opp1",
+                                                    "displayValue": null
+                                                },
+                                                "__typename": "Opportunity",
+                                                "ApiName": "Opportunity",
+                                                "WeakEtag": 1639808085000,
+                                                "Id": "006T1000001rrXfIAI",
+                                                "DisplayValue": "Opp1",
+                                                "SystemModstamp": {
+                                                    "value": "2021-12-18T06:14:45.000Z"
+                                                },
+                                                "LastModifiedById": {
+                                                    "value": "005T1000000IJpMIAW"
+                                                },
+                                                "LastModifiedDate": {
+                                                    "value": "2021-12-18T06:14:45.000Z"
+                                                },
+                                                "RecordTypeId": {
+                                                    "value": "012000000000000AAA"
+                                                }
+                                            },
+                                            "cursor": "djE6MQ=="
+                                        },
+                                        {
+                                            "__typename": "OpportunityEdge",
+                                            "node": {
+                                                "Name": {
+                                                    "__typename": "StringValue",
+                                                    "value": "Opp2",
+                                                    "displayValue": null
+                                                },
+                                                "__typename": "Opportunity",
+                                                "ApiName": "Opportunity",
+                                                "WeakEtag": 1639808086000,
+                                                "Id": "006T10000023bWbIAI",
+                                                "DisplayValue": "Opp2",
+                                                "SystemModstamp": {
+                                                    "value": "2021-12-18T06:14:46.000Z"
+                                                },
+                                                "LastModifiedById": {
+                                                    "value": "005T1000000IJpMIAW"
+                                                },
+                                                "LastModifiedDate": {
+                                                    "value": "2021-12-18T06:14:46.000Z"
+                                                },
+                                                "RecordTypeId": {
+                                                    "value": "012000000000000AAA"
+                                                }
+                                            },
+                                            "cursor": "djE6MA=="
+                                        }
+                                    ],
+                                    "pageInfo": {
+                                        "hasNextPage": false,
+                                        "hasPreviousPage": false
+                                    },
+                                    "totalCount": 2
+                                },
+                                "__typename": "Account",
+                                "ApiName": "Account",
+                                "WeakEtag": 1639808083000,
+                                "Id": "001T1000001p7SuIAI",
+                                "DisplayValue": "Account1",
+                                "SystemModstamp": {
+                                    "value": "2021-12-18T06:14:43.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005T1000000IJpMIAW"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-12-18T06:14:43.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012000000000000AAA"
+                                }
+                            },
+                            "cursor": "djE6MA=="
+                        }
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 2
+                }
+            }
+        }
+    },
+    "errors": []
+}

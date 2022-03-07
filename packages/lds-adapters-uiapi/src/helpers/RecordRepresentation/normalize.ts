@@ -1,6 +1,7 @@
-import { StoreLink } from '@luvio/engine';
+import type { StoreLink } from '@luvio/engine';
 import { ArrayPrototypePush, ObjectKeys } from '../../util/language';
-import { convertTrieToFieldsRecursively, RecordFieldTrie } from '../../util/records';
+import type { RecordFieldTrie } from '../../util/records';
+import { convertTrieToFieldsRecursively } from '../../util/records';
 import { dedupe } from '../../validation/utils';
 
 /**

@@ -11,7 +11,6 @@ const MOCK_PREFIX = '__karma__/data/';
 describe('resumeFlow', () => {
     it('resumes a flow', async () => {
         const mockConfig = {
-            flowDevName: 'flow1',
             pausedInterviewId: '123',
         };
         const mockResponse = getMock(MOCK_PREFIX + 'response_1');
@@ -22,7 +21,6 @@ describe('resumeFlow', () => {
 
     it('does not use cache', async () => {
         const mockConfig = {
-            flowDevName: 'flow2',
             pausedInterviewId: '1234',
         };
         const mockResponse = getMock(MOCK_PREFIX + 'response_sequence_1');
@@ -36,7 +34,6 @@ describe('resumeFlow', () => {
 
     it('errors out on flow not found', async () => {
         const mockConfig = {
-            flowDevName: 'flow2',
             pausedInterviewId: '123',
         };
         const mockError = {
@@ -57,7 +54,6 @@ describe('resumeFlow', () => {
 
     it('errors out on disconnect', async () => {
         const mockConfig = {
-            flowDevName: 'flow2',
             pausedInterviewId: '123',
         };
         const mockError = {
@@ -77,7 +73,6 @@ describe('resumeFlow', () => {
 
     it('ingests a response with null response property', async () => {
         const mockConfig = {
-            flowDevName: 'flow1',
             pausedInterviewId: '123',
         };
         mockResumeFlowNetworkOnce(mockConfig, {

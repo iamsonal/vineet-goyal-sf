@@ -1,0 +1,18 @@
+{
+    "code": "200",
+    "goalDefinitions": [
+        {
+            "category": "Category1",
+            "id": "1gdRM000000000aYAA",
+            "name": "Goal1",
+            "usageType": "Usage1"
+        },
+        {
+            "category": "Category2",
+            "id": "1gdRM0000004C9DYAU",
+            "name": "Goal2",
+            "usageType": "Usage2"
+        }
+    ],
+    "isSuccess": true
+}

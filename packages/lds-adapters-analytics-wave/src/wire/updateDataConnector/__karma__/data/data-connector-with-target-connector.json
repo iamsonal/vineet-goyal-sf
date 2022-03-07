@@ -26,8 +26,8 @@
         "id": "0Itxx0000004EAqCAM",
         "label": "Snowflake output",
         "name": "snowflake",
-        "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004EAqCAM"
+        "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004EAqCAM"
     },
     "type": "dataconnector",
-    "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE"
+    "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE"
 }

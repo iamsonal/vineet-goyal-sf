@@ -1,10 +1,7 @@
-import { Adapter, Environment, ResourceRequest } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
-import {
-    keyBuilderRecord,
-    RecordRepresentation,
-    GetRecordConfig,
-} from '@salesforce/lds-adapters-uiapi';
+import type { Adapter, Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
+import type { RecordRepresentation, GetRecordConfig } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createLDSAction } from '../actionHandlers/LDSActionHandler';
 import {
@@ -14,6 +11,7 @@ import {
     createOkResponse,
 } from '../DraftFetchResponse';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
+import type { RequestFields } from '../utils/records';
 import {
     ensureReferencedIdsAreCached,
     extractRecordIdFromResourceRequest,
@@ -23,9 +21,8 @@ import {
     getRecordKeyFromRecordRequest,
     prefixForRecordId,
     RECORD_ENDPOINT_REGEX,
-    RequestFields,
 } from '../utils/records';
-import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+import type { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 export interface UpdateRecordDraftEnvironmentOptions extends DraftEnvironmentOptions {
     getRecord: Adapter<GetRecordConfig, RecordRepresentation>;
@@ -108,8 +105,12 @@ export function updateRecordDraftEnvironment(
         getRecord,
         apiNameForPrefix,
         getObjectInfo,
+        ensureObjectInfoCached,
     }: UpdateRecordDraftEnvironmentOptions
 ): DurableEnvironment {
+    // TODO [W-8909393]: can remove this when metadata is stored separately from data
+    const synthesizedIds: Record<string, true> = {};
+
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function (
         resourceRequest: ResourceRequest
     ) {
@@ -134,26 +135,32 @@ export function updateRecordDraftEnvironment(
         const fields = getRecordFieldsFromRecordRequest(resolvedRequest);
 
         return apiNameForPrefix(prefix).then((apiName) => {
-            return assertReferenceIdsAreCached(apiName, resolvedRequest.body.fields).then(() => {
-                return assertRecordIsCached(key, targetId, apiName, fields).then(() => {
-                    return enqueueRequest(resolvedRequest, key, targetId);
-                });
-            });
+            return assertDraftPrerequisitesSatisfied(apiName, resolvedRequest.body.fields).then(
+                () => {
+                    return assertRecordIsCached(key, targetId, apiName, fields).then(() => {
+                        return enqueueRequest(resolvedRequest, key, targetId);
+                    });
+                }
+            );
         });
     };
 
     /**
-     * Asserts that any refrence ids being edited exist in the store
+     * Ensures that any reference ids being edited and the Object Info exist in the store
      * @param apiName apiName of record being updated
      * @param fields fields being edited
      * @returns
      */
-    function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
-        return ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo).catch(
-            (err: Error) => {
-                throw createDraftSynthesisErrorResponse(err.message);
-            }
-        );
+    function assertDraftPrerequisitesSatisfied(
+        apiName: string,
+        fields: Record<string, any>
+    ): Promise<void[]> {
+        return Promise.all([
+            ensureObjectInfoCached(apiName),
+            ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo),
+        ]).catch((err: Error) => {
+            throw createDraftSynthesisErrorResponse(err.message);
+        });
     }
 
     /**
@@ -242,13 +249,28 @@ export function updateRecordDraftEnvironment(
                         if (record === undefined) {
                             throw createDraftSynthesisErrorResponse();
                         }
+                        // TODO [W-8909393]: can remove this when metadata is stored separately from data
+                        synthesizedIds[key] = true;
                         return createOkResponse(filterRecordFields(record, fields));
                     });
             });
         });
     }
 
+    const publishStoreMetadata: typeof env['publishStoreMetadata'] = function (
+        recordKey: string,
+        storeMetadata: StoreMetadata
+    ) {
+        // TODO [W-8909393]: can remove this when metadata is stored separately from data
+        if (synthesizedIds[recordKey]) {
+            delete synthesizedIds[recordKey];
+            return;
+        }
+        return env.publishStoreMetadata(recordKey, storeMetadata);
+    };
+
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },
+        publishStoreMetadata: { value: publishStoreMetadata },
     });
 }

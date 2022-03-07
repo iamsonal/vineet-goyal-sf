@@ -2,11 +2,11 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '54.0'
+version: '55.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v54.0
+baseUri: /services/data/v55.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -210,6 +210,10 @@ types:
         type: boolean
       isNavPersonalizationDisabled:
         description: Nav personalization setting
+        type: boolean
+      isNavTabPersistenceDisabled:
+        description: Indicates if the Lightning Console App should persist a user's
+          workspace tabs
         type: boolean
       label:
         description: Label of the app
@@ -845,6 +849,7 @@ types:
           - Email
           - EncryptedString
           - Int
+          - JunctionIdList
           - Location
           - Long
           - MultiPicklist
@@ -1232,7 +1237,7 @@ types:
         type: boolean
       label:
         description: Localized label of the field.
-        type: string | nil
+        type: string | nil # TODO: hand rolled
   ListOrderedByInfoInputRepresentation:
     description: Representation of a orderedBy Info input.
     type: object
@@ -2726,6 +2731,24 @@ types:
       result:
         description: object wrapper around inner representation
         type: RelatedListInfoRepresentation
+  ListInfoBatchRepresentation: # TODO: Handrolled for W-10327887
+    description: ListInfoBatchRepresentation
+    type: object
+    properties:
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array
+        items:
+          type: SimpleListInfoResultRepresentation
+  SimpleListInfoResultRepresentation: # TODO: Handrolled for W-10327887
+    type: object
+    properties:
+      statusCode:
+        description: An HTTP status code indicating the status of this individual request in the batch.
+        type: number
+      result:
+        description: object wrapper around inner representation
+        type: ListInfoRepresentation
   RelatedListInfoRepresentation:
     description: RelatedListInfoRepresentation
     type: object
@@ -2920,6 +2943,15 @@ types:
       listReference:
         description: An object representing the identity of the list.
         type: RelatedListReferenceRepresentation
+  RelatedListRecordsBatchInputRepresentation:
+    description: Query (using POST) for records in multiple related lists.
+    type: object
+    properties:
+      relatedListParameters:
+        description: Parameters for each of the related lists in this batch request.
+        type: array
+        items:
+          type: RelatedListRecordsSingleBatchInputRepresentation #TODO: hand rolled
   RelatedListRecordsInputRepresentation:
     description: Query (using POST) for records in a related list.
     type: object
@@ -2957,6 +2989,40 @@ types:
         items:
           type: string
         required: false #TODO: handrolled
+  RelatedListRecordsSingleBatchInputRepresentation:
+    description: Query (using POST) for records in multiple related lists.
+    type: object
+    properties:
+      fields:
+        description: Additional fields queried for the records returned.  If the field
+          is not available to the user, an error occurs.
+        type: array
+        required: false #TODO: handrolled
+        items:
+          type: string
+      optionalFields:
+        description: Additional fields queried for the records returned.  If the field
+          is not available to the user, no error occurs and the field isn’t included
+          in the records.
+        type: array
+        required: false #TODO: handrolled
+        items:
+          type: string
+      pageSize:
+        description: The number of list records viewed at one time.  The default value
+          is 50. Value can be 1–2000.
+        type: integer
+        required: false #TODO: handrolled
+      relatedListId:
+        description: The identifier for this related list.
+        type: string
+      sortBy:
+        description: The API name of the field the related list is sorted by.  If
+          the name is preceded with -, the sort order is descending.
+        type: array
+        required: false #TODO: handrolled
+        items:
+          type: string
   RelatedListReferenceRepresentation:
     description: RelatedListReferenceRepresentation
     type: object
@@ -3047,6 +3113,24 @@ types:
           is a best effort calculation, and should not be relied upon to always be
           completely accurate.
         type: boolean
+  RelatedListPreferencesBatchRepresentation: # TODO: Handrolled
+    description: RelatedListPreferencesBatchRepresentation
+    type: object
+    properties:
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array
+        items:
+          type: SimpleRelatedListPreferencesResultRepresentation
+  SimpleRelatedListPreferencesResultRepresentation: # TODO: Handrolled
+    type: object
+    properties:
+      statusCode:
+        description: An HTTP status code indicating the status of this individual request in the batch.
+        type: number
+      result:
+        description: object wrapper around inner representation
+        type: RelatedListUserPreferencesRepresentation
   RelatedListUserPreferencesInputRepresentation:
     description: Representation of related list user preferences input.
     type: object
@@ -3440,6 +3524,20 @@ types:
         type: integer
         (oas-readOnly): true
 /:
+  /connect/briefcase/priming-records:
+    get:
+      description: relayToken to continue aggregating records from where it was left
+        off in previous request
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: PrimingRecordCollectionRepresentation
+      queryParameters:
+        relayToken:
+          type: string
+          required: false
   /graphql:
     post:
       description: Execute a GraphQL query.
@@ -4020,9 +4118,21 @@ types:
                   - QuickAction
                   - StandardButton
                 (oas-collectionFormat): csv
+            apiNames:
+              type: array
+              required: false
+              items:
+                type: string
+                (oas-collectionFormat): csv
             formFactor:
               type: string
               required: false
+            retrievalMode:
+              type: string
+              required: false
+              enum:
+                - All
+                - PageLayout
             sections:
               type: array
               required: false
@@ -4117,9 +4227,21 @@ types:
                     - QuickAction
                     - StandardButton
                   (oas-collectionFormat): csv
+              apiNames:
+                type: array
+                required: false
+                items:
+                  type: string
+                  (oas-collectionFormat): csv
               formFactor:
                 type: string
                 required: false
+              retrievalMode:
+                type: string
+                required: false
+                enum:
+                  - All
+                  - PageLayout
               sections:
                 type: array
                 required: false
@@ -4571,6 +4693,28 @@ types:
         type: string
         required: true
   /list-info:
+    /batch:
+      get:
+        description: Retrieve a list of listInfo.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListInfoBatchRepresentation # TODO: hand rolled for W-10327887
+        queryParameters:
+          ids:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          names:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
     /{listViewId}:
       get:
         description: Retrieve list info.
@@ -4626,6 +4770,7 @@ types:
           pageSize:
             type: integer
             required: false
+            default: 50
           pageToken:
             type: string
             required: false
@@ -4664,6 +4809,7 @@ types:
           pageSize:
             type: integer
             required: false
+            default: 50
           pageToken:
             type: string
             required: false
@@ -4706,6 +4852,7 @@ types:
           pageSize:
             type: integer
             required: false
+            default: 50
           pageToken:
             type: string
             required: false
@@ -4732,6 +4879,7 @@ types:
           pageSize:
             type: integer
             required: false
+            default: 20
           pageToken:
             type: string
             required: false
@@ -4770,6 +4918,7 @@ types:
           pageSize:
             type: integer
             required: false
+            default: 50
           pageToken:
             type: string
             required: false
@@ -4949,6 +5098,7 @@ types:
         pageSize:
           type: integer
           required: false
+          default: 50 # TODO: hand-rolled W-10122375
         pageToken:
           type: string
           required: false
@@ -5793,100 +5943,141 @@ types:
         relatedListId:
           type: string
           required: true
-    /related-list-preferences:
-      /batch/{preferencesIds}:
-        get:
-          description: Retrieve user preferences.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: SimplifiedBatchRepresentation
-        uriParameters:
-          preferencesIds:
-            type: array
-            required: true
-            items:
-              type: string
-              (oas-collectionFormat): csv
-      /{preferencesId}:
-        delete:
-          description: Deletes a single user preferences by preferencesId.
-          responses:
-            '200':
-              description: Success
-        get:
-          description: Retrieve user preferences.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: RelatedListUserPreferencesRepresentation
-        patch:
-          description: Update user preferences on an existing related list.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: RelatedListUserPreferencesRepresentation
-          body:
-            application/json:
-              type: RelatedListUserPreferencesInputRepresentation
-              # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
-              (oas-body-name): relatedListUserPreferencesInput
-        uriParameters:
-          preferencesId:
-            type: string
-            required: true
-  /related-list-records:
-    /batch/{parentRecordId}/{relatedListIds}:
+  /related-list-preferences:
+    /batch/{preferencesIds}:
       get:
-        description: Returns a batch of record data to populate several related
-          list.
+        description: Retrieve user preferences.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListPreferencesBatchRepresentation # TODO: hand rolled
+      uriParameters:
+        preferencesIds:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /{preferencesId}:
+      get:
+        description: Retrieve user preferences.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListUserPreferencesRepresentation
+      patch:
+        description: Update user preferences on an existing related list.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListUserPreferencesRepresentation
+        body:
+          application/json:
+            type: RelatedListUserPreferencesInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
+            (oas-body-name): relatedListUserPreferencesInput
+      uriParameters:
+        preferencesId:
+          type: string
+          required: true
+  /related-list-records:
+    /batch/{parentRecordId}:
+      post:
+        description: Returns record data to populate a related list.
         responses:
           '200':
             description: Success
             body:
               application/json:
                 type: RelatedListRecordCollectionBatchRepresentation # TODO: hand rolled
-        queryParameters:
-          fields:
-            type: string
-            required: false
-          optionalFields:
-            type: string
-            required: false
-          pageSize:
-            type: string
-            required: false
-          sortBy:
-            type: string
-            required: false
+        body:
+          application/json:
+            type: RelatedListRecordsBatchInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
+            (oas-body-name): listRecordsQuery
       uriParameters:
         parentRecordId:
           type: string
           required: true
-        relatedListIds:
-          type: array
-          required: true
-          items:
-            type: string
-            (oas-collectionFormat): csv
     /{parentRecordId}/{relatedListId}:
+      # TODO: this breaks the ResourceRequestConfig of getRelatedListRecordsBatch
+      # get:
+      #   description: Returns record data to populate a related list.
+      #   responses:
+      #     '200':
+      #       description: Success
+      #       body:
+      #         application/json:
+      #           type: RelatedListRecordCollectionRepresentation
+      #   queryParameters:
+      #     fields:
+      #       type: array
+      #       required: false
+      #       items:
+      #         type: string
+      #         (oas-collectionFormat): csv
+      #     optionalFields:
+      #       type: array
+      #       required: false
+      #       items:
+      #         type: string
+      #         (oas-collectionFormat): csv
+      #     pageSize:
+      #       type: integer
+      #       required: false
+      #     pageToken:
+      #       type: string
+      #       required: false
+      #     sortBy:
+      #       type: array
+      #       required: false
+      #       items:
+      #         type: string
+      #         (oas-collectionFormat): csv
       post:
-        description: This post method returns record data to populate a related list.
+        description: Returns record data to populate a related list.
         responses:
           '200':
             description: Success
             body:
               application/json:
                 type: RelatedListRecordCollectionRepresentation
+        # TODO: parameters conflicts
+        # queryParameters:
+        #   fields:
+        #     type: array
+        #     required: false
+        #     items:
+        #       type: string
+        #       (oas-collectionFormat): csv
+        #   optionalFields:
+        #     type: array
+        #     required: false
+        #     items:
+        #       type: string
+        #       (oas-collectionFormat): csv
+        #   pageSize:
+        #     type: integer
+        #     required: false
+        #   pageToken:
+        #     type: string
+        #     required: false
+        #   sortBy:
+        #     type: array
+        #     required: false
+        #     items:
+        #       type: string
+        #       (oas-collectionFormat): csv
         body:
           application/json:
             type: RelatedListRecordsInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): listRecordsQuery
       uriParameters:
         parentRecordId:

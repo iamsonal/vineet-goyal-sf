@@ -1,5 +1,5 @@
-import { FetchResponse, ResourceRequest } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
+import type { FetchResponse, ResourceRequest } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createBadRequestResponse } from '../DraftFetchResponse';
@@ -9,7 +9,7 @@ import {
     getRecordKeyFromResourceRequest,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
-import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+import type { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 /**
  * Checks if a resource request is a GET method on the record endpoint
@@ -90,8 +90,13 @@ export function getRecordDraftEnvironment(
         // if the canonical key matches the key in the resource request it means we do not have a
         // mapping in our cache so return a non-cacheable error
         if (canonicalKey === recordKey) {
+            // The only way a request is dispatched with a draft record id is when a required field
+            // is requested which isnt in L2 cache or when an optional field that
+            // doesnt exist on the object info is requested
             return Promise.reject(
-                createBadRequestResponse({ message: 'cannot refresh a draft-created record' })
+                createBadRequestResponse({
+                    message: 'Required field is missing from draft created record',
+                })
             );
         }
 

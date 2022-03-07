@@ -1,14 +1,11 @@
-import { IngestPath, Luvio, ResourceIngest, Store } from '@luvio/engine';
-import {
-    equals,
-    FieldValueRepresentation,
-    validate,
-} from '../../../generated/types/FieldValueRepresentation';
+import type { IngestPath, Luvio, ResourceIngest, Store } from '@luvio/engine';
+import type { FieldValueRepresentation } from '../../../generated/types/FieldValueRepresentation';
+import { equals, validate } from '../../../generated/types/FieldValueRepresentation';
 import { createLink } from '../../../generated/types/type-utils';
 import { default as helpers_FieldValueRepresentation_merge_default } from '../../../helpers/FieldValueRepresentation/merge';
 import { default as helpers_FieldValueRepresentation_normalize_default } from '../../../helpers/FieldValueRepresentation/normalize';
-import { RecordConflictMap } from '../../../helpers/RecordRepresentation/resolveConflict';
-import { RecordFieldTrie } from '../../../util/records';
+import type { RecordConflictMap } from '../../../helpers/RecordRepresentation/resolveConflict';
+import type { RecordFieldTrie } from '../../../util/records';
 
 export function makeIngest(
     fieldsTrie: RecordFieldTrie,
@@ -32,11 +29,6 @@ export function makeIngest(
         const key = path.fullPath;
 
         let existingRecord = store.records[key];
-        // do not ingest locked records
-        if (existingRecord !== undefined && existingRecord.__type === 'locked') {
-            path.state.result.type = 'locked';
-            return createLink(key);
-        }
 
         let incomingRecord = helpers_FieldValueRepresentation_normalize_default(
             input,
@@ -45,7 +37,6 @@ export function makeIngest(
                 fullPath: key,
                 parent: path.parent,
                 propertyName: path.propertyName,
-                state: path.state,
             } as IngestPath,
             luvio,
             store,

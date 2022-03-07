@@ -1,10 +1,10 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, flushPromises } from 'test-util';
+import { getRelatedListRecordsBatch_imperative } from 'lds-adapters-uiapi';
 import {
     expireRecords,
     expireRelatedListRecordCollection,
     mockGetRelatedListRecordsBatchNetwork,
     mockGetRelatedListRecordsNetworkPost,
-    convertRelatedListsBatchParamsToResourceParams,
     extractRelatedListsBatchParamsFromMockData,
 } from 'uiapi-test-util';
 
@@ -31,7 +31,6 @@ async function createSingleComponentsFromBatchData(mockData) {
                 fields: relatedListRecordCollection.fields,
                 optionalFields: relatedListRecordCollection.optionalFields,
                 pageSize: relatedListRecordCollection.pageSize,
-                pageToken: '0',
                 sortBy: relatedListRecordCollection.sortBy,
             },
         };
@@ -41,7 +40,6 @@ async function createSingleComponentsFromBatchData(mockData) {
             fields: relatedListRecordCollection.fields,
             optionalFields: relatedListRecordCollection.optionalFields,
             pageSize: relatedListRecordCollection.pageSize,
-            pageToken: '0',
             sortBy: relatedListRecordCollection.sortBy,
         };
         mockGetRelatedListRecordsNetworkPost(singleResourceConfig, relatedListRecordCollection);
@@ -53,25 +51,23 @@ describe('basic', () => {
     it('gets data with valid parentRecordId and relatedListIds', async () => {
         const mockData = getMock('related-list-records-standard-defaults-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
 
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it('gets data with valid parameters', async () => {
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
         const element = await setupElement(params, RelatedListRecordsBatch);
 
         const wireData = element.getWiredData();
-        expect(wireData).toEqualSnapshotWithoutEtags(mockData);
+        expect(wireData).toEqualSyntheticCursorListSnapshot(mockData);
     });
 });
 
@@ -79,25 +75,23 @@ describe('batching', () => {
     it('returns cached result when cached data is available', async () => {
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
 
         // populate cache
         await setupElement(params, RelatedListRecordsBatch);
         // second component should have the cached data without hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it('returns updated result when cached data is expired', async () => {
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const updatedMockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
         Object.assign(updatedMockData.results[0].result.records[0], {
             eTag: 'e7c7f7e02c57bdcfa9d751b5a508f907',
         });
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mockData, updatedMockData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [mockData, updatedMockData]);
 
         // populate cache
         await setupElement(params, RelatedListRecordsBatch);
@@ -105,7 +99,7 @@ describe('batching', () => {
         expireRecords();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it('returns updated result when cached data is expired with no record linking', async () => {
@@ -113,9 +107,8 @@ describe('batching', () => {
         const noRecordsMockData = getMock('related-list-no-records-Custom');
 
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [noRecordsMockData, mockData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [noRecordsMockData, mockData]);
 
         // populate cache
         await setupElement(params, RelatedListRecordsBatch);
@@ -123,7 +116,7 @@ describe('batching', () => {
         expireRelatedListRecordCollection();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     // should provide a cache hit for existing single data
@@ -138,7 +131,7 @@ describe('batching', () => {
 
         // // second component should have the cached data without hitting network
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     // 1 single wire calls
@@ -151,12 +144,10 @@ describe('batching', () => {
 
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const batchComponentParams = extractRelatedListsBatchParamsFromMockData(mockData);
-        const batchResourceConfig =
-            convertRelatedListsBatchParamsToResourceParams(batchComponentParams);
 
-        mockGetRelatedListRecordsBatchNetwork(batchResourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(batchComponentParams, mockData);
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 });
 
@@ -164,63 +155,92 @@ describe('error cases', () => {
     it('adapter handles error responses.', async () => {
         const mockData = getMock('related-list-records-standard-error-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        params.relatedLists.push({
+        params.relatedListParameters.push({
             relatedListId: 'missingRelatedList',
         });
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsBatchNetwork(params, mockData);
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     it("emits to component twice with error data - 400 status doesn't cache", async () => {
         const mockErrorData = getMock('related-list-records-standard-error-Custom');
         const mockFullData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockFullData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mockErrorData, mockFullData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [mockErrorData, mockFullData]);
 
         // Get data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockErrorData);
+        expect(errorElement.getWiredData()).toEqualSyntheticCursorListSnapshot(mockErrorData);
 
         // Network is mocked only once, should still retrieve data here.
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockFullData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockFullData);
     });
 
     it('should retrieve actual data after error response cache expired', async () => {
         const mockError = getMock('related-list-records-standard-error-Custom');
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const params = extractRelatedListsBatchParamsFromMockData(mockData);
-        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
-        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [mockError, mockData]);
+        mockGetRelatedListRecordsBatchNetwork(params, [mockError, mockData]);
 
         // Get error data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockError);
+        expect(errorElement.getWiredData()).toEqualSyntheticCursorListSnapshot(mockError);
 
         // Cache bust
         expireRecords();
 
         // Should get the real data now
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toEqualSyntheticCursorListSnapshot(mockData);
     });
 
     describe('gack cases', () => {
         it('gets data with valid parameters', async () => {
             const mockData = getMock('related-list-records-pagination');
             const params = extractRelatedListsBatchParamsFromMockData(mockData);
-            const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
 
-            mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+            mockGetRelatedListRecordsBatchNetwork(params, mockData);
             const element = await setupElement(params, RelatedListRecordsBatch);
 
             const wireData = element.getWiredData();
-            expect(wireData).toEqualSnapshotWithoutEtags(mockData);
+            expect(wireData).toEqualSyntheticCursorListSnapshot(mockData);
+        });
+    });
+
+    describe('getRelatedListRecordsBatch_imperative', () => {
+        it('uses caller-supplied cache policy', async () => {
+            const mock1 = getMock('related-list-records-standard-fields-Custom');
+            const mock2 = getMock('related-list-records-standard-fields-Custom');
+            mock2.results[0].result.records[0].fields.Name.value = 'NewName';
+            mock2.results[0].result.records[0].eTag = '33f99fd969583cd3a1b31ed8b5121e62';
+
+            const config = extractRelatedListsBatchParamsFromMockData(mock1);
+
+            mockGetRelatedListRecordsBatchNetwork(config, [mock1, mock2]);
+
+            const callback = jasmine.createSpy();
+
+            // populate cache with mock1
+            getRelatedListRecordsBatch_imperative.invoke(config, undefined, callback);
+            await flushPromises();
+
+            callback.calls.reset();
+
+            // should emit mock1 from cache, then make network call & emit mock2
+            getRelatedListRecordsBatch_imperative.subscribe(
+                config,
+                { cachePolicy: { type: 'cache-and-network' } },
+                callback
+            );
+            await flushPromises();
+
+            expect(callback).toHaveBeenCalledTimes(2);
+            expect(callback.calls.argsFor(0)[0].data).toEqualSyntheticCursorListSnapshot(mock1);
+            expect(callback.calls.argsFor(1)[0].data).toEqualSyntheticCursorListSnapshot(mock2);
         });
     });
 });

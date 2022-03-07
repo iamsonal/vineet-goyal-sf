@@ -1,0 +1,73 @@
+{
+    "isSuccess": true,
+    "message": "Build Context for Identity Verification API called successfully for Process Definition: SampleVerificationFlow",
+    "processDefinition": {
+        "layoutType": "Tab",
+        "processDetail": [
+            {
+                "dataSourceType": "Salesforce",
+                "optionalVerifierCount": 1,
+                "searchObjectName": "Account",
+                "searchResultSortOrder": "Name",
+                "searchResultUniqueIdField": "Id",
+                "searchSequenceNo": 1,
+                "searchType": "Text-Based",
+                "searchResultFilter": "",
+                "apexClassName": "",
+                "verificationProcessFieldList": {
+                    "verificationProcessFields": [
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "Name",
+                            "developerName": "SampleAccountName",
+                            "fieldName": "Name",
+                            "fieldType": "requiredVerifier",
+                            "label": "Account Name"
+                        },
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "Phone",
+                            "developerName": "SamplePhone",
+                            "fieldName": "Phone",
+                            "fieldType": "optionalVerifier",
+                            "label": "Phone"
+                        },
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "Text",
+                            "developerName": "SamplePostalCode",
+                            "fieldName": "BillingPostalCode",
+                            "fieldType": "optionalVerifier",
+                            "label": "Billing Zip/Postal Code"
+                        },
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "Name",
+                            "developerName": "SampleAccount",
+                            "fieldName": "Name",
+                            "fieldType": "resultField",
+                            "label": "Account Name"
+                        },
+                        {
+                            "dataSourceType": "Salesforce",
+                            "dataType": "Phone",
+                            "developerName": "SamplePhoneNumber",
+                            "fieldName": "Phone",
+                            "fieldType": "resultField",
+                            "label": "Phone"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "selectedSearchResult": {
+        "objectName": "Account",
+        "selectedRecordId": "sample-record-id",
+        "selectedRecordObject": []
+    },
+    "verifiedResult": {
+        "optionalVerifiers": [],
+        "requiredVerifiers": []
+    }
+}

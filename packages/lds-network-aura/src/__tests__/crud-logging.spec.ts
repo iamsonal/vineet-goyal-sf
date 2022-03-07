@@ -2,8 +2,6 @@ import * as aura from 'aura';
 import networkAdapter from '../main';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { buildResourceRequest, ERROR_RESPONSE } from './test-utils';
-import { generateMockedRecordFields } from './execute-aggregate-ui.spec';
-import { HttpStatusCode } from '@luvio/engine';
 
 jest.mock('@salesforce/lds-environment-settings', () => {
     return {
@@ -14,20 +12,10 @@ jest.mock('@salesforce/lds-environment-settings', () => {
     };
 });
 
-jest.mock('@salesforce/lds-instrumentation', () => {
-    return {
-        incrementAggregateUiConnectErrorCount: () => {},
-        registerLdsCacheStats: () => {},
-    };
-});
-
 import { instrumentation } from '../instrumentation';
 
 const instrumentationSpies = {
     logCrud: jest.spyOn(instrumentation, 'logCrud'),
-    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
-    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
-    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
 };
 
 beforeEach(() => {
@@ -174,7 +162,7 @@ describe('crud logging', () => {
                 count: 1,
                 currentPageToken: '0',
                 currentPageUrl:
-                    '/services/data/v54.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
+                    '/services/data/v55.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
                 fields: ['Contact.Id', 'Contact.Name'],
                 listInfoETag: null,
                 listReference: {
@@ -292,7 +280,7 @@ describe('crud logging', () => {
                 count: 1,
                 currentPageToken: 0,
                 currentPageUrl:
-                    '/services/data/v54.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
+                    '/services/data/v55.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
                 fields: ['Contact.Id', 'Contact.Name'],
                 listInfoETag: null,
                 listReference: {
@@ -351,14 +339,23 @@ describe('crud logging', () => {
             }
         });
 
-        it('logs read event when getRelatedListRecordsBatch is called', async () => {
+        it('logs read event when postRelatedListRecordsBatch is called', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/a00RM0000004aVwYAI/CwcCustom02s__r,CwcCustom01s__r`,
+                basePath: `/related-list-records/batch/a00RM0000004aVwYAI`,
                 urlParams: {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                },
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'CwcCustom02s__r',
+                        },
+                        {
+                            relatedListId: 'CwcCustom01s__r',
+                        },
+                    ],
                 },
                 queryParams: {},
             };
@@ -370,7 +367,7 @@ describe('crud logging', () => {
                             count: 0,
                             currentPageToken: '0',
                             currentPageUrl:
-                                '/services/data/v54.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
+                                '/services/data/v55.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
                             fields: [],
                             listInfoETag: null,
                             listReference: {
@@ -413,7 +410,7 @@ describe('crud logging', () => {
                             count: 8,
                             currentPageToken: 0,
                             currentPageUrl:
-                                '/services/data/v54.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?pageSize=50&pageToken=0',
+                                '/services/data/v55.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?pageSize=50&pageToken=0',
                             fields: [],
                             listInfoETag: null,
                             listReference: {
@@ -500,14 +497,23 @@ describe('crud logging', () => {
             });
         });
 
-        it('logs read event when getRelatedListRecordsBatch is called but a result is error', async () => {
+        it('logs read event when postRelatedListRecordsBatch is called but a result is error', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/a00RM0000004aVwYAI/CwcCustom02s__r,CwcCustom01s__r`,
+                basePath: `/related-list-records/batch/a00RM0000004aVwYAI`,
                 urlParams: {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                },
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'CwcCustom02s__r',
+                        },
+                        {
+                            relatedListId: 'CwcCustom01s__r',
+                        },
+                    ],
                 },
                 queryParams: {},
             };
@@ -519,7 +525,7 @@ describe('crud logging', () => {
                             count: 0,
                             currentPageToken: '0',
                             currentPageUrl:
-                                '/services/data/v54.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
+                                '/services/data/v55.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
                             fields: [],
                             listInfoETag: null,
                             listReference: {
@@ -583,14 +589,23 @@ describe('crud logging', () => {
             });
         });
 
-        it('logs read event when getRelatedListRecordsBatch is called but returns error', async () => {
+        it('logs read event when postRelatedListRecordsBatch is called but returns error', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/a00RM0000004aVwYAI/CwcCustom02s__r,CwcCustom01s__r`,
+                basePath: `/related-list-records/batch/a00RM0000004aVwYAI`,
                 urlParams: {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                },
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'CwcCustom02s__r',
+                        },
+                        {
+                            relatedListId: 'CwcCustom01s__r',
+                        },
+                    ],
                 },
                 queryParams: {},
             };
@@ -602,110 +617,7 @@ describe('crud logging', () => {
                 expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
                 expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('reads', {
                     parentRecordId: 'a00RM0000004aVwYAI',
-                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
-                    state: 'ERROR',
-                });
-            }
-        });
-    });
-    describe('executeAggregateUi', () => {
-        it('logs read event when getRecord is called', async () => {
-            const request = {
-                method: 'get',
-                baseUri: UI_API_BASE_URI,
-                basePath: `/records/1234`,
-                urlParams: {
-                    recordId: '1234',
-                },
-                queryParams: {
-                    fields: generateMockedRecordFields(800),
-                },
-            };
-
-            const response = {
-                compositeResponse: [
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field1__c: { value: '1', displayValue: '10' } },
-                        },
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field2__c: { value: '2', displayValue: '20' } },
-                        },
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field3__c: { value: '3', displayValue: '30' } },
-                        },
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                ],
-            };
-
-            jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
-            await networkAdapter(buildResourceRequest(request));
-
-            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
-                recordId: '1234',
-                recordType: 'Foo',
-                state: 'SUCCESS',
-            });
-        });
-
-        it('logs read event when getRecord is called but returns error', async () => {
-            const request = {
-                method: 'get',
-                baseUri: UI_API_BASE_URI,
-                basePath: `/records/1234`,
-                urlParams: {
-                    recordId: '1234',
-                },
-                queryParams: {
-                    fields: generateMockedRecordFields(800),
-                },
-            };
-
-            const aggregateErrorResponse = {
-                compositeResponse: [
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field1__c: { value: '1', displayValue: '10' } },
-                        },
-                    },
-                    {
-                        httpStatusCode: HttpStatusCode.ServerError,
-                    },
-                    {
-                        body: {
-                            recordId: '1234',
-                            apiName: 'Foo',
-                            fields: { Field3__c: { value: '3', displayValue: '30' } },
-                        },
-                    },
-                ],
-            };
-
-            jest.spyOn(aura, 'executeGlobalController').mockRejectedValueOnce(
-                aggregateErrorResponse
-            );
-            try {
-                await networkAdapter(buildResourceRequest(request));
-            } catch (err) {
-                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
-                    recordId: '1234',
+                    relatedListIds: ['CwcCustom02s__r', 'CwcCustom01s__r'],
                     state: 'ERROR',
                 });
             }

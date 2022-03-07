@@ -176,10 +176,10 @@
             ],
             "createable": true,
             "custom": true,
-            "defaultRecordTypeId": "012xx0000005tVYAAY",
+            "defaultRecordTypeId": "012T10000004iLtIAI",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "6ac28f7c17ebb1fe1cca51b24c6a08ea",
+            "eTag": "360d99b1ff51cc2b0ac089740d214439",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -603,7 +603,7 @@
                     "updateable": false
                 }
             },
-            "keyPrefix": "a07",
+            "keyPrefix": "a09",
             "label": "Custom Object 2",
             "labelPlural": "Custom Object 2",
             "layoutable": true,
@@ -618,12 +618,12 @@
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012xx0000005tVYAAY": {
+                "012T10000004iLtIAI": {
                     "available": true,
                     "defaultRecordTypeMapping": true,
                     "master": false,
                     "name": "Custom Object 2 Type 1",
-                    "recordTypeId": "012xx0000005tVYAAY"
+                    "recordTypeId": "012T10000004iLtIAI"
                 }
             },
             "searchable": false,
@@ -637,6 +637,6 @@
     "record": {
         "apiName": "Custom_Object_2__c",
         "fields": {},
-        "recordTypeId": "012xx0000005tVYAAY"
+        "recordTypeId": "012T10000004iLtIAI"
     }
 }

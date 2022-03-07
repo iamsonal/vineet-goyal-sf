@@ -1,5 +1,5 @@
 import { getEnvironmentSetting, EnvironmentSettings } from '@salesforce/lds-environment-settings';
-import { InstrumentationRejectCallback, InstrumentationResolveCallback } from './utils';
+import type { InstrumentationRejectCallback, InstrumentationResolveCallback } from './utils';
 
 export enum CrudEventType {
     CREATE = 'create',
@@ -23,8 +23,8 @@ export interface RecordInstrumentationCallbacks {
     createRecordResolveFunction: InstrumentationResolveCallback;
     deleteRecordRejectFunction: InstrumentationRejectCallback;
     deleteRecordResolveFunction: InstrumentationResolveCallback;
-    getRecordAggregateRejectFunction: InstrumentationRejectCallback;
-    getRecordAggregateResolveFunction: InstrumentationResolveCallback;
+    getRecordAggregateRejectFunction: InstrumentationRejectCallback; // handled in lds-network-adapter
+    getRecordAggregateResolveFunction: InstrumentationResolveCallback; // handled in lds-network-adapter
     getRecordRejectFunction: InstrumentationRejectCallback;
     getRecordResolveFunction: InstrumentationResolveCallback;
     updateRecordRejectFunction: InstrumentationRejectCallback;

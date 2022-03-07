@@ -12,25 +12,25 @@
     "contentKey": "MCIR7L42KO6BEALHEB5AFFSU3GUY",
     "contentSpace": {
         "id": "0Zuxx0000000001CAA",
-        "resourceUrl": "/services/data/v54.0/connect/cms/spaces/0Zuxx0000000001CAA"
+        "resourceUrl": "/services/data/v55.0/connect/cms/spaces/0Zuxx0000000001CAA"
     },
     "contentType": {
         "fullyQualifiedName": "news"
     },
     "createdBy": {
         "id": "005xx000001X7fNAAS",
-        "resourceUrl": "/services/data/v54.0/chatter/users/005xx000001X7fNAAS"
+        "resourceUrl": "/services/data/v55.0/chatter/users/005xx000001X7fNAAS"
     },
     "createdDate": "2021-05-31T10:08:26.000Z",
     "folder": {
         "id": "9Puxx0000004C92CAE",
-        "resourceUrl": "/services/data/v54.0/connect/cms/folders/9Puxx0000004C92CAE"
+        "resourceUrl": "/services/data/v55.0/connect/cms/folders/9Puxx0000004C92CAE"
     },
     "isPublished": false,
     "language": "en_US",
     "lastModifiedBy": {
         "id": "005xx000001X7fNAAS",
-        "resourceUrl": "/services/data/v54.0/chatter/users/005xx000001X7fNAAS"
+        "resourceUrl": "/services/data/v55.0/chatter/users/005xx000001X7fNAAS"
     },
     "lastModifiedDate": "2021-05-31T10:08:26.000Z",
     "managedContentId": "20Yxx0000011Ux4EAE",

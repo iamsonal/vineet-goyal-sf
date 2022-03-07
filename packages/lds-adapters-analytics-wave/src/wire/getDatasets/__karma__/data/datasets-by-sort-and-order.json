@@ -1,0 +1,230 @@
+{
+    "datasets": [
+        {
+            "clientShardsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004ZEwKAM/shards",
+            "createdBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-05-21T20:53:51.000Z",
+            "currentVersionId": "0FcS700000057w4KAA",
+            "currentVersionUrl": "/services/data/v55.0/wave/datasets/0FbS70000004ZEwKAM/versions/0FcS700000057w4KAA",
+            "dataRefreshDate": "2021-05-21T20:53:51.000Z",
+            "datasetType": "live",
+            "folder": {
+                "id": "00lS7000000GxGlIAK",
+                "label": "Shared App",
+                "name": "SharedApp",
+                "url": "/services/data/v55.0/wave/folders/00lS7000000GxGlIAK"
+            },
+            "id": "0FbS70000004ZEwKAM",
+            "label": "ACCOUNTBRAND",
+            "lastAccessedDate": "2022-01-17T21:59:34.000Z",
+            "lastModifiedBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-05-21T20:53:51.000Z",
+            "liveConnection": {
+                "connectionLabel": "Snowflake Live",
+                "connectionName": "Snowflake_Live",
+                "connectionType": "SnowflakeDirect",
+                "sourceObjectName": "ACCOUNTBRAND"
+            },
+            "name": "ACCOUNTBRAND",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v55.0/wave/datasets/0FbS70000004ZEwKAM",
+            "versionsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004ZEwKAM/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004YCjKAM/shards",
+            "createdBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-05-18T00:23:03.000Z",
+            "currentVersionId": "0FcS700000056TXKAY",
+            "currentVersionUrl": "/services/data/v55.0/wave/datasets/0FbS70000004YCjKAM/versions/0FcS700000056TXKAY",
+            "dataRefreshDate": "2021-05-18T00:23:04.000Z",
+            "datasetType": "live",
+            "folder": {
+                "id": "00lS7000000GxGlIAK",
+                "label": "Shared App",
+                "name": "SharedApp",
+                "url": "/services/data/v55.0/wave/folders/00lS7000000GxGlIAK"
+            },
+            "id": "0FbS70000004YCjKAM",
+            "label": "ACCOUNT_OPPTY_JUNC__C",
+            "lastAccessedDate": "2022-01-17T22:00:45.000Z",
+            "lastModifiedBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-05-18T00:23:04.000Z",
+            "liveConnection": {
+                "connectionLabel": "Snowflake Live",
+                "connectionName": "Snowflake_Live",
+                "connectionType": "SnowflakeDirect",
+                "sourceObjectName": "ACCOUNT_OPPTY_JUNC__C"
+            },
+            "name": "ACCOUNT_OPPTY_JUNC_C",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v55.0/wave/datasets/0FbS70000004YCjKAM",
+            "versionsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004YCjKAM/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004YCZKA2/shards",
+            "createdBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-05-18T00:07:18.000Z",
+            "currentVersionId": "0FcS700000056TSKAY",
+            "currentVersionUrl": "/services/data/v55.0/wave/datasets/0FbS70000004YCZKA2/versions/0FcS700000056TSKAY",
+            "dataRefreshDate": "2021-05-18T00:07:19.000Z",
+            "datasetType": "live",
+            "folder": {
+                "id": "00lS7000000GxGlIAK",
+                "label": "Shared App",
+                "name": "SharedApp",
+                "url": "/services/data/v55.0/wave/folders/00lS7000000GxGlIAK"
+            },
+            "id": "0FbS70000004YCZKA2",
+            "label": "AIAPPLICATION",
+            "lastModifiedBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-05-18T00:07:19.000Z",
+            "liveConnection": {
+                "connectionLabel": "Snowflake Live",
+                "connectionName": "Snowflake_Live",
+                "connectionType": "SnowflakeDirect",
+                "sourceObjectName": "AIAPPLICATION"
+            },
+            "name": "AIAPPLICATION",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v55.0/wave/datasets/0FbS70000004YCZKA2",
+            "versionsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004YCZKA2/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004ZF1KAM/shards",
+            "createdBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-05-21T20:57:26.000Z",
+            "currentVersionId": "0FcS700000057wdKAA",
+            "currentVersionUrl": "/services/data/v55.0/wave/datasets/0FbS70000004ZF1KAM/versions/0FcS700000057wdKAA",
+            "dataRefreshDate": "2021-05-21T20:57:27.000Z",
+            "datasetType": "live",
+            "folder": {
+                "id": "00lS7000000GxGlIAK",
+                "label": "Shared App",
+                "name": "SharedApp",
+                "url": "/services/data/v55.0/wave/folders/00lS7000000GxGlIAK"
+            },
+            "id": "0FbS70000004ZF1KAM",
+            "label": "AIRLINE_DELAYS",
+            "lastModifiedBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-05-21T20:57:27.000Z",
+            "liveConnection": {
+                "connectionLabel": "Snowflake Live",
+                "connectionName": "Snowflake_Live",
+                "connectionType": "SnowflakeDirect",
+                "sourceObjectName": "AIRLINE_DELAYS"
+            },
+            "name": "AIRLINE_DELAYS",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v55.0/wave/datasets/0FbS70000004ZF1KAM",
+            "versionsUrl": "/services/data/v55.0/wave/datasets/0FbS70000004ZF1KAM/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v55.0/wave/datasets/0FbS70000003pKPKAY/shards",
+            "createdBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-05-18T21:16:40.000Z",
+            "currentVersionId": "0FcS70000003y5ZKAQ",
+            "currentVersionUrl": "/services/data/v55.0/wave/datasets/0FbS70000003pKPKAY/versions/0FcS70000003y5ZKAQ",
+            "dataRefreshDate": "2021-05-18T21:16:40.000Z",
+            "datasetType": "live",
+            "folder": {
+                "id": "00lS7000000GxGlIAK",
+                "label": "Shared App",
+                "name": "SharedApp",
+                "url": "/services/data/v55.0/wave/folders/00lS7000000GxGlIAK"
+            },
+            "id": "0FbS70000003pKPKAY",
+            "label": "CONTACT",
+            "lastAccessedDate": "2022-01-07T23:36:12.000Z",
+            "lastModifiedBy": {
+                "id": "005S7000000VQ6fIAG",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-05-18T21:16:40.000Z",
+            "liveConnection": {
+                "connectionLabel": "Live 2",
+                "connectionName": "Live2",
+                "connectionType": "SnowflakeDirect",
+                "sourceObjectName": "CONTACT"
+            },
+            "name": "CONTACT",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v55.0/wave/datasets/0FbS70000003pKPKAY",
+            "versionsUrl": "/services/data/v55.0/wave/datasets/0FbS70000003pKPKAY/versions",
+            "visibility": "All"
+        }
+    ],
+    "nextPageUrl": null,
+    "totalSize": 5,
+    "url": "/services/data/v55.0/wave/datasets?order=Descending&sort=ConnectionName"
+}

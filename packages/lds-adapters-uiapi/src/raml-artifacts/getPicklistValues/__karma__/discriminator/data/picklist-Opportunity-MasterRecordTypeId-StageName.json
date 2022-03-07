@@ -1,0 +1,128 @@
+{
+    "controllerValues": {},
+    "defaultValue": null,
+    "eTag": "4dc0cad4675288feae5d0baab448873e",
+    "url": "/services/data/v55.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/StageName",
+    "values": [
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 10,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Prospecting",
+            "validFor": [],
+            "value": "Prospecting"
+        },
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 10,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Qualification",
+            "validFor": [],
+            "value": "Qualification"
+        },
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 20,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Needs Analysis",
+            "validFor": [],
+            "value": "Needs Analysis"
+        },
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 50,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Value Proposition",
+            "validFor": [],
+            "value": "Value Proposition"
+        },
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 60,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Id. Decision Makers",
+            "validFor": [],
+            "value": "Id. Decision Makers"
+        },
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 70,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Perception Analysis",
+            "validFor": [],
+            "value": "Perception Analysis"
+        },
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 75,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Proposal/Price Quote",
+            "validFor": [],
+            "value": "Proposal/Price Quote"
+        },
+        {
+            "attributes": {
+                "closed": false,
+                "defaultProbability": 90,
+                "forecastCategoryName": "Pipeline",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Negotiation/Review",
+            "validFor": [],
+            "value": "Negotiation/Review"
+        },
+        {
+            "attributes": {
+                "closed": true,
+                "defaultProbability": 100,
+                "forecastCategoryName": "Closed",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": true
+            },
+            "label": "Closed Won",
+            "validFor": [],
+            "value": "Closed Won"
+        },
+        {
+            "attributes": {
+                "closed": true,
+                "defaultProbability": 0,
+                "forecastCategoryName": "Omitted",
+                "picklistAtrributesValueType": "OpportunityStage",
+                "won": false
+            },
+            "label": "Closed Lost",
+            "validFor": [],
+            "value": "Closed Lost"
+        }
+    ]
+}

@@ -1,13 +1,10 @@
-import { ResourceRequest } from '@luvio/engine';
-import {
-    DurableStore,
-    DurableStoreEntry,
-    DurableStoreOperation,
-    DurableStoreOperationType,
-} from '@luvio/environments';
+import type { ResourceRequest } from '@luvio/engine';
+import type { DurableStore, DurableStoreEntry, DurableStoreOperation } from '@luvio/environments';
+import { DurableStoreOperationType } from '@luvio/environments';
 
-import { DraftAction, DraftIdMappingEntry, QueueOperation, QueueOperationType } from './DraftQueue';
-import { DraftStore } from './DraftStore';
+import type { DraftAction, DraftIdMappingEntry, QueueOperation } from './DraftQueue';
+import { QueueOperationType } from './DraftQueue';
+import type { DraftStore } from './DraftStore';
 import { DRAFT_ID_MAPPINGS_SEGMENT } from './DurableDraftQueue';
 import { DRAFT_SEGMENT } from './main';
 import { ObjectKeys } from './utils/language';
@@ -54,7 +51,7 @@ export class DurableDraftStore implements DraftStore {
 
         return this.enqueueAction(addAction);
     }
-    getAllDrafts<R, D>(): Promise<DraftAction<unknown, unknown>[]> {
+    getAllDrafts<_R, _D>(): Promise<DraftAction<unknown, unknown>[]> {
         const waitForOngoingSync = this.syncPromise || Promise.resolve();
 
         return waitForOngoingSync.then(() => {

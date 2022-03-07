@@ -1,12 +1,15 @@
 import timekeeper from 'timekeeper';
-import { Luvio, Store, Environment, NetworkAdapter, AdapterFactory, Snapshot } from '@luvio/engine';
-import { makeDurable, makeOffline, DurableEnvironment } from '@luvio/environments';
+import type { NetworkAdapter, AdapterFactory, Snapshot } from '@luvio/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
+import { makeDurable } from '@luvio/environments';
+import type { MockPayload } from '@luvio/adapter-test-library';
 import {
     buildMockNetworkAdapter,
     MockDurableStore,
     getMockNetworkAdapterCallCount,
-    MockPayload,
 } from '@luvio/adapter-test-library';
+import { flushPromises } from './utils';
 
 export type CustomEnvironmentFactory = (
     environment: Environment,
@@ -18,10 +21,6 @@ export interface OfflineOptions {
     customEnvironment?: CustomEnvironmentFactory;
 }
 
-function flushPromises() {
-    return new Promise((resolve) => setImmediate(resolve));
-}
-
 export function buildOfflineLuvio(
     durableStore: MockDurableStore,
     network: NetworkAdapter,
@@ -31,7 +30,7 @@ export function buildOfflineLuvio(
     // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: use default scheduler
     const store = new Store({ scheduler: () => {} });
-    let env = makeDurable(makeOffline(new Environment(store, network)), {
+    let env = makeDurable(new Environment(store, network), {
         durableStore,
     });
     if (customEnvironment !== undefined) {
@@ -105,8 +104,8 @@ export async function testDataEmittedWhenStale<Config, DataType>(
     }
     expect(staleResult.state).toBe('Stale');
 
-    // makeOffline will kick off a refresh, wait for that to ensure it doesn't
-    // throw any errors
+    // default makeDurable cache policy (stale-while-revalidate) will kick off a
+    // refresh, wait for that to ensure it doesn't throw any errors
     await flushPromises();
 }
 

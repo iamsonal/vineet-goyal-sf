@@ -18,6 +18,7 @@ const chokidar = require('chokidar');
 const { rollup } = require('rollup');
 const lwcRollupPlugin = require('@lwc/rollup-plugin');
 const compatRollupPlugin = require('rollup-plugin-compat');
+const commonjs = require('@rollup/plugin-commonjs');
 
 // in a test specific directory or has a reserved test filename (e.g. foo.spec.js)
 function isTestSource(filename) {
@@ -76,6 +77,7 @@ function createPreprocessor(config, emitter, logger) {
             // time.
             resolveFromPackages: false,
         }),
+        commonjs(),
     ];
 
     if (compat) {

@@ -14,4 +14,5 @@ module.exports = {
             lines: 25,
         },
     },
+    transformIgnorePatterns: ['/node_modules/(?!@luvio/graphql-parser)'], // this module uses ES syntax instead of CJS
 };

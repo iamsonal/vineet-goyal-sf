@@ -1,26 +1,27 @@
 {
     "PaymentsBatchSchedulerInput": {
         "schedulerName": "BatchScheduler",
-        "startDate": "2021-05-11T05:01:06.000Z",
-        "endDate": "2021-05-15T05:01:06.000Z",
+        "startDate": "2021-05-11",
+        "endDate": "2021-05-15",
         "preferredTime": "10:00 AM",
         "frequencyCadence": "Monthly",
         "recursEveryMonthOnDay": "28",
-        "criteriaExpression": "1 AND 2",
+        "criteriaMatchType": "MatchAny",
+        "criteriaExpression": "1 OR 2",
         "status": "Active",
         "filterCriteria": [
             {
-                "objectName": "PaymentSchedule",
-                "fieldName": "ReferenceEntityAccount",
+                "objectName": "PaymentScheduleItem",
+                "fieldName": "BatchRun",
                 "operation": "Equals",
-                "value": "001xx000003GiznAAC",
+                "value": "Batch1",
                 "criteriaSequence": 1
             },
             {
-                "objectName": "PaymentGateway",
-                "fieldName": "Id",
+                "objectName": "PaymentScheduleItem",
+                "fieldName": "BatchRun",
                 "operation": "Equals",
-                "value": "0b0xx000000035xAAA",
+                "value": "Batch2",
                 "criteriaSequence": 2
             }
         ]

@@ -1,19 +1,18 @@
+import { getListUi_imperative } from 'lds-adapters-uiapi';
 import ListViewId from '../lwc/listViewId';
 import ObjectAndListViewApiName from '../lwc/objectAndListViewApiName';
 import { beforeEach as util_beforeEach, convertToFieldIds } from '../util';
 import {
+    flushPromises,
+    getMock as globalGetMock,
     mockNetworkOnce,
     mockNetworkSequence,
-    flushPromises,
     setupElement,
     updateElement,
-    getMock as globalGetMock,
 } from 'test-util';
 import { URL_BASE, expireDefaultTTL } from 'uiapi-test-util';
 import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
-
-window.engine = window.ldsEngine;
 
 const MOCK_PREFIX = 'wire/getListUi/__karma__/listViewId/data/';
 
@@ -22,9 +21,7 @@ function getMock(filename) {
 }
 
 function mockNetworkListUi(config, mockData) {
-    const listViewId = config.listViewId;
-    const queryParams = { ...config };
-    delete queryParams.listViewId;
+    const { listViewId, ...queryParams } = config;
 
     const paramMatch = sinon.match({
         basePath: `${URL_BASE}/list-ui/${listViewId}`,
@@ -39,9 +36,7 @@ function mockNetworkListUi(config, mockData) {
 }
 
 function mockNetworkListRecords(config, mockData) {
-    const listViewId = config.listViewId;
-    const queryParams = { ...config };
-    delete queryParams.listViewId;
+    const { listViewId, ...queryParams } = config;
 
     const paramMatch = sinon.match({
         basePath: `${URL_BASE}/list-records/${listViewId}`,
@@ -51,11 +46,7 @@ function mockNetworkListRecords(config, mockData) {
 }
 
 function mockNetworkByApiNames(config, mockData) {
-    const objectApiName = config.objectApiName;
-    const listViewApiName = config.listViewApiName;
-    const queryParams = { ...config };
-    delete queryParams.objectApiName;
-    delete queryParams.listViewApiName;
+    const { objectApiName, listViewApiName, ...queryParams } = config;
 
     const paramMatch = sinon.match({
         basePath: `${URL_BASE}/list-ui/${objectApiName}/${listViewApiName}`,
@@ -151,8 +142,9 @@ describe('with listViewId', () => {
             };
             mockNetworkListRecords(config3_3, mockData3_3);
 
-            element.pageSize = config0_3.pageSize + config3_3.pageSize;
-            await flushPromises();
+            await updateElement(element, {
+                pageSize: config0_3.pageSize + config3_3.pageSize,
+            });
 
             // should have made the list-records call and emitted 6 records
             expect(karmaNetworkAdapter.callCount).toBe(2);
@@ -166,9 +158,10 @@ describe('with listViewId', () => {
             expect(wiredData).toEqualListUi(expected);
 
             // @wire pageToken='3', pageSize=3, should not make any requests
-            element.pageToken = '3';
-            element.pageSize = 3;
-            await flushPromises();
+            await updateElement(element, {
+                pageToken: '3',
+                pageSize: 3,
+            });
 
             // verify the adapter constructed the same response that the server would have
             expected = getMock('list-ui-All-Opportunities-pageToken-3-pageSize-3');
@@ -227,7 +220,7 @@ describe('with listViewId', () => {
             mockNetworkListUi(config, mockData);
 
             const element = await setupElement(config, ListViewId);
-            updateElement(ListViewId, { fields: 'Account.Name' });
+            await updateElement(ListViewId, { fields: 'Account.Name' });
 
             const wiredData = element.getWiredData();
             expect(wiredData).toEqualListUi(mockData);
@@ -246,7 +239,7 @@ describe('with listViewId', () => {
 
             const element = await setupElement(config, ListViewId);
             const fields = element.fields.slice(0, 1);
-            updateElement(ListViewId, { fields });
+            await updateElement(ListViewId, { fields });
 
             const wiredData = element.getWiredData();
             expect(wiredData).toEqualListUi(mockData);
@@ -322,8 +315,9 @@ describe('with listViewId', () => {
             };
             mockNetworkListRecords(config3_3, mockData3_3);
 
-            element.pageSize = config0_3.pageSize + config3_3.pageSize;
-            await flushPromises();
+            await updateElement(element, {
+                pageSize: config0_3.pageSize + config3_3.pageSize,
+            });
 
             // should have made the list-records call and emitted 6 records
             expect(karmaNetworkAdapter.callCount).toBe(2);
@@ -337,9 +331,10 @@ describe('with listViewId', () => {
             expect(wiredData).toEqualListUi(expected);
 
             // @wire pageToken='3', pageSize=3, should not make any requests
-            element.pageToken = '3';
-            element.pageSize = 3;
-            await flushPromises();
+            await updateElement(element, {
+                pageToken: '3',
+                pageSize: 3,
+            });
 
             // verify the adapter constructed the same response that the server would have
             expected = getMock(
@@ -370,8 +365,9 @@ describe('with listViewId', () => {
             };
             mockNetworkListUi(config, mockData);
 
-            element.sortBy = ['Account.Name'];
-            await flushPromises();
+            await updateElement(element, {
+                sortBy: ['Account.Name'],
+            });
 
             expect(element.getWiredData()).toEqualListUi(mockData);
 
@@ -384,8 +380,9 @@ describe('with listViewId', () => {
             };
             mockNetworkListUi(config, mockData);
 
-            element.sortBy = ['-Account.Name'];
-            await flushPromises();
+            await updateElement(element, {
+                sortBy: ['-Account.Name'],
+            });
 
             expect(element.getWiredData()).toEqualListUi(mockData);
         });
@@ -457,5 +454,44 @@ describe('with listViewId', () => {
 
             expect(element.getWiredData()).toEqualListUi(mockData);
         });
+    });
+});
+
+describe('getListUi_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mockData = getMock('list-ui-All-Opportunities-pageSize-3');
+        const config = {
+            listViewId: mockData.info.listReference.id,
+            pageSize: mockData.records.pageSize,
+        };
+
+        const refreshed = getMock('list-ui-All-Opportunities-pageSize-3');
+        const record = refreshed.records.records[0];
+        record.lastModifiedDate = new Date(
+            new Date(record.lastModifiedDate).getTime() + 60 * 1000
+        ).toISOString();
+        record.weakEtag = record.weakEtag + 999;
+
+        mockNetworkListUi(config, [mockData, refreshed]);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mockListUiData1
+        getListUi_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mockListUiData1 from cache, then make network call & emit mockListUiData2
+        getListUi_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)[0]).toEqualListUi(mockData);
+        expect(callback.calls.argsFor(1)[0]).toEqualListUi(refreshed);
     });
 });

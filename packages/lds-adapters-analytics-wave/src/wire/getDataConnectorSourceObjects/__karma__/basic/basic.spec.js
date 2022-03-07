@@ -26,6 +26,16 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets data connector source objects with search', async () => {
+        const mock = getMock('data-connector-source-objects-search');
+        const config = { connectorIdOrApiName, q: 'ADMINCustomEntity__' };
+        mockGetDataConnectorSourceObjectsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDataConnectorSourceObjects);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets data connectors with params', async () => {
         const mock = getMock('data-connector-source-objects-with-params');
         const config = {

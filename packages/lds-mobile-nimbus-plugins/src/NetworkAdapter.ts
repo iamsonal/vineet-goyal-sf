@@ -1,5 +1,6 @@
 // NOTE: do not remove this import, even though it looks unused it is necessary
 // for TS module merging to work properly
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NimbusPlugins } from 'nimbus-types';
 declare module 'nimbus-types' {
     export interface NimbusPlugins {
@@ -8,10 +9,37 @@ declare module 'nimbus-types' {
 }
 
 /**
+ *  ObservabilityContext helps us trace the path of a request
+ *  through the Native and JS layers
+ */
+export interface ObservabilityContext {
+    /**
+     * Uniquely identify a root activity like Priming, Navigation etc
+     * Multiple adapter calls can be tied to one root activity
+     *
+     * Optional
+     */
+    rootId?: string;
+
+    /**
+     * Should we transmit the activity from the client side
+     *
+     * Required if rootId is provided.
+     */
+    isRootActivitySampled?: boolean;
+
+    /**
+     * Uniquely identifies each adapter call
+     *
+     * Optional
+     */
+    traceId?: string;
+}
+
+/**
  * A `NetworkError` represents a type of transient request error and an associated message
  * if one is available.
  */
-
 export interface NetworkError {
     type: 'timeout' | 'unspecified';
     message: string | null;
@@ -50,10 +78,12 @@ export interface NetworkAdapter {
  */
 export interface Request {
     method: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE';
+    priority: 'background' | 'normal' | 'high';
     path: string;
     headers: { [key: string]: string };
     queryParams: { [key: string]: string };
     body: string | null;
+    observabilityContext: ObservabilityContext | null;
 }
 
 /**

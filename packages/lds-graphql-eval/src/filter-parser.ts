@@ -1,11 +1,11 @@
-import {
+import type {
     LuvioArgumentNode,
     LuvioListValueNode,
     LuvioObjectValueNode,
     LuvioValueNode,
     StringValueNode,
-} from '@salesforce/lds-graphql-parser';
-import {
+} from '@luvio/graphql-parser';
+import type {
     BooleanValueNode,
     EnumValueNode,
     FloatValueNode,
@@ -13,13 +13,13 @@ import {
     ListValueNode,
     NullValueNode,
 } from 'graphql/language';
-import { DataType, ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
-import {
+import type { PredicateError } from './Error';
+import { message } from './Error';
+import type { DataType, ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
+import type {
     BooleanLiteral,
-    ComparisonOperator,
-    CompoundOperator,
     DateArray,
-    DateEnumType,
+    DateFunctionPredicate,
     DateInput,
     DateRange,
     DateTimeArray,
@@ -29,36 +29,27 @@ import {
     IntLiteral,
     JsonExtract,
     NotPredicate,
-    NullComparisonOperator,
     NullValue,
     NumberArray,
     Predicate,
     PredicateContainer,
-    PredicateType,
     RelativeDate,
     StringArray,
     StringLiteral,
-    ValueType,
 } from './Predicate';
 import {
-    errors,
-    failure,
-    flattenResults,
-    isFailure,
-    isSuccess,
-    PredicateError,
-    PredicateResult,
-    Result,
-    success,
-    values,
-} from './Result';
-import {
-    ExtractKind,
-    is,
-    isCompoundOperator,
-    isListValueNode,
-    isObjectValueNode,
-} from './type-guards';
+    ComparisonOperator,
+    CompoundOperator,
+    DateEnumType,
+    DateFunction,
+    NullComparisonOperator,
+    PredicateType,
+    ValueType,
+} from './Predicate';
+import type { PredicateResult, Result } from './Result';
+import { errors, failure, flattenResults, isFailure, isSuccess, success, values } from './Result';
+import type { ExtractKind } from './type-guards';
+import { is, isCompoundOperator, isListValueNode, isObjectValueNode } from './type-guards';
 import {
     combinePredicates,
     comparison,
@@ -71,7 +62,7 @@ import {
 import { flatMap, flatten } from './util/flatten';
 
 const NotOperator = 'not';
-const { eq, ne, gt, gte, lt, lte, nin, like } = ComparisonOperator;
+const { eq, ne, gt, gte, lt, lte, nin, like, includes, excludes } = ComparisonOperator;
 const inOp = ComparisonOperator.in;
 
 function fieldsToFilters(
@@ -84,7 +75,7 @@ function fieldsToFilters(
     const results = fieldValues
         .map((value): PredicateResult[] => {
             if (!isObjectValueNode(value)) {
-                return [failure(['Parent filter node should be an object.'])];
+                return [failure([message('Parent filter node should be an object.')])];
             }
 
             return Object.entries(value.fields).map(([key, value]) =>
@@ -139,7 +130,7 @@ function filter<T extends LuvioValueNode>(
 ): PredicateResult {
     if (isCompoundOperator(name)) {
         if (!isListValueNode(value)) {
-            return failure([`Value for ${name} node must be a list.`]);
+            return failure([message(`Value for ${name} node must be a list.`)]);
         }
 
         return compoundPredicate(name, value, tableAlias, apiName, input);
@@ -153,7 +144,7 @@ function filter<T extends LuvioValueNode>(
     }
 
     if (!isObjectValueNode(value)) {
-        return failure(['Filter node must be an object or list.']);
+        return failure([message('Filter node must be an object or list.')]);
     }
 
     return fieldFilter(name, value, tableAlias, apiName, input);
@@ -182,13 +173,13 @@ function spanningFilter(
     const joinPredicate = referencePredicate(alias, jsonAlias, fieldName);
 
     if (referenceInfo === undefined) {
-        return failure([`No reference info found for ${fieldName}`]);
+        return failure([message(`No reference info found for ${fieldName}`)]);
     }
 
     const { apiName } = referenceInfo;
     const path = extractPath('ApiName');
     const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path };
-    const typePredicate = comparison(extract, eq, stringLiteral(apiName));
+    const typePredicate = comparison(extract, eq, stringLiteral(apiName, true, true));
 
     return fieldsToFilters([fieldNode], jsonAlias, apiName, input).map((container) => {
         const { predicate, joinNames: names, joinPredicates: predicates } = container;
@@ -206,19 +197,34 @@ function fieldFilter(
     apiName: string,
     input: { [name: string]: ObjectInfo }
 ): PredicateResult {
-    const fieldInfo = getFieldInfo(apiName, fieldName, input);
+    const fieldInfoResult = getFieldInfo(apiName, fieldName, input);
+    if (fieldInfoResult.isSuccess === false) {
+        return failure([fieldInfoResult.error]);
+    }
 
+    const fieldInfo = fieldInfoResult.value;
     if (fieldInfo === undefined) {
-        return failure([`Field ${fieldName} for type ${apiName} not found.`]);
+        return failure([message(`Field ${fieldName} for type ${apiName} not found.`)]);
     }
 
     if (fieldInfo.dataType === 'Reference' && fieldInfo.relationshipName === fieldName) {
         return spanningFilter(fieldInfo, fieldNode, alias, input);
     }
 
+    const extract: JsonExtract = {
+        type: ValueType.Extract,
+        jsonAlias: alias,
+        path: extractPath(fieldName),
+    };
+    const dateFunction = dateFunctions(fieldNode, extract, fieldInfo.dataType);
+
     //It's possible for a field to have more than one comparison operator which
     //should combine into compound predicate with 'and'
     const operators = fieldOperators(fieldNode, fieldInfo.dataType);
+
+    if (dateFunction.isSuccess === false) {
+        return failure(dateFunction.error);
+    }
 
     if (operators.isSuccess === false) {
         return failure(operators.error);
@@ -226,11 +232,6 @@ function fieldFilter(
 
     const comparisons = operators.value.map(
         (op: ScalarOperators | SetOperators | NullOperator): Predicate => {
-            const extract: JsonExtract = {
-                type: ValueType.Extract,
-                jsonAlias: alias,
-                path: extractPath(fieldName),
-            };
             if (op.type === 'NullOperator') {
                 return { type: PredicateType.nullComparison, left: extract, operator: op.operator };
             }
@@ -243,12 +244,30 @@ function fieldFilter(
                 return dateRangeComparison(op.value, op.operator, extract);
             }
 
+            if (op.type === 'MultiPicklistSetOperator') {
+                return {
+                    type: PredicateType.compound,
+                    operator: CompoundOperator.or,
+                    children: op.value.value.map((term) => {
+                        return comparison(extract, op.operator, {
+                            type: ValueType.MultiPicklistSet,
+                            value: term,
+                        });
+                    }),
+                };
+            }
+
             return comparison(extract, op.operator, op.value);
         }
     );
 
+    const combined = combinePredicates(
+        comparisons.concat(...dateFunction.value),
+        CompoundOperator.and
+    );
+
     const container = {
-        predicate: combinePredicates(comparisons, CompoundOperator.and),
+        predicate: combined,
         joinNames: [],
         joinPredicates: [],
     };
@@ -299,7 +318,9 @@ type ScalarOperatorType =
 type SetOperatorType = ComparisonOperator.in | ComparisonOperator.nin;
 type StringOperatorType = ScalarOperatorType | ComparisonOperator.like;
 type BooleanOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
-type NullOperatorType = NullComparisonOperator;
+type PicklistOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
+type MultiPicklistOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
+type MultiPicklistSetOperatorType = ComparisonOperator.includes | ComparisonOperator.excludes;
 
 interface Operator<Operator, ValueType, OperatorType> {
     operator: Operator;
@@ -320,12 +341,30 @@ type DoubleOperator = Operator<ScalarOperatorType, DoubleLiteral, 'DoubleOperato
 type BooleanOperator = Operator<ScalarOperatorType, BooleanLiteral, 'BooleanOperator'>;
 type DateOperator = Operator<ScalarOperatorType, DateInput, 'DateOperator'>;
 type DateTimeOperator = Operator<ScalarOperatorType, DateTimeInput, 'DateTimeOperator'>;
+type PicklistOperator = Operator<PicklistOperatorType, StringLiteral, 'PicklistOperator'>;
+type CurrencyOperator = Operator<ScalarOperatorType, DoubleLiteral, 'CurrencyOperator'>;
+type TimeOperator = Operator<ScalarOperatorType, StringLiteral, 'TimeOperator'>;
+type PhoneOperator = Operator<ScalarOperatorType, StringLiteral, 'PhoneOperator'>;
+type MultiPicklistOperator = Operator<
+    MultiPicklistOperatorType,
+    StringLiteral,
+    'MultiPicklistOperator'
+>;
 
 type StringSetOperator = Operator<SetOperatorType, StringArray, 'StringSetOperator'>;
+type PicklistSetOperator = Operator<SetOperatorType, StringArray, 'PicklistSetOperator'>;
 type DateSetOperator = Operator<SetOperatorType, DateArray, 'DateSetOperator'>;
 type DateTimeSetOperator = Operator<SetOperatorType, DateTimeArray, 'DateTimeSetOperator'>;
 type IntSetOperator = Operator<SetOperatorType, NumberArray, 'IntSetOperator'>;
 type DoubleSetOperator = Operator<SetOperatorType, NumberArray, 'DoubleSetOperator'>;
+type CurrencySetOperator = Operator<SetOperatorType, NumberArray, 'CurrencySetOperator'>;
+type TimeSetOperator = Operator<SetOperatorType, StringArray, 'TimeSetOperator'>;
+type PhoneSetOperator = Operator<SetOperatorType, StringArray, 'PhoneSetOperator'>;
+type MultiPicklistSetOperator = Operator<
+    MultiPicklistSetOperatorType,
+    StringArray,
+    'MultiPicklistSetOperator'
+>;
 
 type ScalarOperators =
     | StringOperator
@@ -333,26 +372,89 @@ type ScalarOperators =
     | DateTimeOperator
     | IntOperator
     | DoubleOperator
-    | BooleanOperator;
+    | BooleanOperator
+    | PicklistOperator
+    | CurrencyOperator
+    | MultiPicklistOperator
+    | TimeOperator
+    | PhoneOperator;
 
 type SetOperators =
     | StringSetOperator
     | DateSetOperator
     | DateTimeSetOperator
     | IntSetOperator
-    | DoubleSetOperator;
+    | DoubleSetOperator
+    | PicklistSetOperator
+    | CurrencySetOperator
+    | MultiPicklistSetOperator
+    | TimeSetOperator
+    | PhoneSetOperator;
 
 const dateRegEx = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
 const dateTimeRegEx =
     /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))T(2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]\.[0-9]{3}Z$/;
 
+function dateFunctions(
+    operatorNode: LuvioObjectValueNode,
+    extract: JsonExtract,
+    dataType: DataType
+): Result<DateFunctionPredicate[], PredicateError[]> {
+    if (dataType !== 'Date' && dataType !== 'DateTime') {
+        return success([]);
+    }
+
+    const results = Object.entries(operatorNode.fields).map(
+        ([key, valueNode]): Result<DateFunctionPredicate[], PredicateError[]> => {
+            if (isFilterFunction(key) === false) {
+                return success([]);
+            }
+            if (!isObjectValueNode(valueNode)) {
+                return failure([message('Date function expects an object node.')]);
+            }
+
+            const [opKey, opValue] = Object.entries(valueNode.fields)[0];
+            const result = operatorWithValue(opKey, opValue, 'Int')
+                .flatMap((op): Result<DateFunctionPredicate, PredicateError[]> => {
+                    if (op.type !== 'IntOperator') {
+                        return failure([message('Date function expects Int values')]);
+                    }
+
+                    const predicate: DateFunctionPredicate = {
+                        type: PredicateType.dateFunction,
+                        operator: op.operator,
+                        function: DateFunction.dayOfMonth,
+                        value: op.value.value,
+                        extract,
+                    };
+                    return success(predicate);
+                })
+                .map((r) => [r]);
+
+            return result;
+        }
+    );
+
+    const fails = results.filter(isFailure).reduce(flatMap(errors), []);
+    if (fails.length > 0) {
+        return failure(fails);
+    }
+    const vals = results.filter(isSuccess).reduce(flatMap(values), []);
+
+    return success(vals);
+}
+
+function isFilterFunction(name: string): boolean {
+    return name === 'DAY_OF_MONTH';
+}
+
 function fieldOperators(
     operatorNode: LuvioObjectValueNode,
     dataType: DataType
-): Result<(ScalarOperators | SetOperators | NullOperator)[], PredicateError[]> {
-    const results = Object.entries(operatorNode.fields).map(([key, value]) =>
-        operatorWithValue(key, value, dataType)
-    );
+): Result<(ScalarOperators | SetOperators | NullOperator | PicklistOperator)[], PredicateError[]> {
+    const results = Object.entries(operatorNode.fields)
+        .filter(([key, _]) => isFilterFunction(key) === false)
+        .map(([key, value]) => operatorWithValue(key, value, dataType));
 
     const _values = results.filter(isSuccess).map(values);
     const fails = results.filter(isFailure).reduce(flatMap(errors), []);
@@ -367,6 +469,11 @@ function fieldOperators(
 function isSetOperatorType(value: string): value is SetOperatorType {
     let values: SetOperatorType[] = [inOp, nin];
     return values.includes(value as SetOperatorType);
+}
+
+function isMultiPicklistSetOperatorType(value: string): value is MultiPicklistSetOperatorType {
+    let values: MultiPicklistSetOperatorType[] = [excludes, includes];
+    return values.includes(value as MultiPicklistSetOperatorType);
 }
 
 function isScalarOperatorType(value: string): value is ScalarOperatorType {
@@ -391,6 +498,20 @@ function isStringOperatorType(value: string): value is StringOperatorType {
     return isScalarOperatorType(value) || value === like;
 }
 
+function isPicklistOperatorType(value: string): value is PicklistOperatorType {
+    let values: PicklistOperatorType[] = [eq, ne];
+    return values.includes(value as PicklistOperatorType);
+}
+
+function isCurrencyOperatorType(value: string): value is ScalarOperatorType {
+    return isScalarOperatorType(value);
+}
+
+function isMultiPicklistOperatorType(value: string): value is MultiPicklistOperatorType {
+    let values: MultiPicklistOperatorType[] = [eq, ne];
+    return values.includes(value as MultiPicklistOperatorType);
+}
+
 function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
     list: { values: LuvioValueNode[] },
     kind: ExtractKind<T>
@@ -399,7 +520,9 @@ function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
 
     const badValue = list.values.filter((n) => !typeAssert(n))[0];
     if (badValue !== undefined) {
-        return failure(`${JSON.stringify(badValue)} is not a valid value in list of ${kind}.`);
+        return failure(
+            message(`${JSON.stringify(badValue)} is not a valid value in list of ${kind}.`)
+        );
     }
 
     const values = list.values.filter(typeAssert).map((u) => u.value);
@@ -410,21 +533,21 @@ function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
 function operatorWithValue(
     operator: string,
     value: LuvioValueNode,
-    schemaType: DataType
+    objectInfoDataType: DataType
 ): Result<ScalarOperators | SetOperators | NullOperator, PredicateError[]> {
     if (is<NullValueNode>(value, 'NullValue')) {
         return parseNullValue(operator).mapError((e) => [e]);
     }
 
-    if (schemaType === 'String' || schemaType === 'Reference') {
+    if (['String', 'Reference', 'Phone', 'Url', 'Email', 'TextArea'].includes(objectInfoDataType)) {
         if (isStringOperatorType(operator)) {
             return is<StringValueNode>(value, 'StringValue')
                 ? success({
-                      type: 'StringOperator',
+                      type: `StringOperator`,
                       operator,
-                      value: { type: ValueType.StringLiteral, value: value.value },
+                      value: stringLiteral(value.value),
                   })
-                : failure([`Comparison value must be a string.`]);
+                : failure([message(`Comparison value must be a ${objectInfoDataType}.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -438,11 +561,11 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([`Comparison value must be a string array.`]);
+                : failure([message(`Comparison value must be a ${objectInfoDataType} array.`)]);
         }
     }
 
-    if (schemaType === 'Int') {
+    if (objectInfoDataType === 'Int') {
         if (isScalarOperatorType(operator)) {
             return is<IntValueNode>(value, 'IntValue')
                 ? success({
@@ -450,7 +573,7 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.IntLiteral, value: parseInt(value.value) },
                   })
-                : failure([`Comparison value must be an int.`]);
+                : failure([message(`Comparison value must be an int.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -467,11 +590,11 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([`Comparison value must be an int array.`]);
+                : failure([message(`Comparison value must be an int array.`)]);
         }
     }
 
-    if (schemaType === 'Double') {
+    if (objectInfoDataType === 'Double') {
         if (isScalarOperatorType(operator)) {
             return is<FloatValueNode>(value, 'FloatValue')
                 ? success({
@@ -479,7 +602,7 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.DoubleLiteral, value: parseFloat(value.value) },
                   })
-                : failure([`Comparison value must be a double.`]);
+                : failure([message(`Comparison value must be a double.`)]);
         }
 
         if (isSetOperatorType(operator)) {
@@ -496,11 +619,67 @@ function operatorWithValue(
                           };
                       })
                       .mapError((e) => [e])
-                : failure([`Comparison value must be a double array.`]);
+                : failure([message(`Comparison value must be a double array.`)]);
         }
     }
 
-    if (schemaType === 'Boolean') {
+    if (objectInfoDataType === 'Percent') {
+        if (isScalarOperatorType(operator)) {
+            // Percents are documented as being Double-like, but in practice the UIAPI GraphQL
+            // API will accent Integer (50) and Float (50.0) inputs and treat them equally
+            const isPercentLike =
+                (is<FloatValueNode>(value, 'FloatValue') || is<IntValueNode>(value, 'IntValue')) &&
+                !isNaN(parseFloat(value.value));
+
+            if (isPercentLike) {
+                return success({
+                    type: 'DoubleOperator',
+                    operator,
+                    value: { type: ValueType.DoubleLiteral, value: parseFloat(value.value) },
+                });
+            } else {
+                return failure([message(`Comparison value must be a ${objectInfoDataType}.`)]);
+            }
+        }
+
+        if (isSetOperatorType(operator)) {
+            if (is<ListValueNode>(value, 'ListValue')) {
+                const typeErrors: PredicateError[] = [];
+                const values = [];
+
+                for (const node of value.values) {
+                    if (
+                        is<FloatValueNode>(node, 'FloatValue') ||
+                        is<IntValueNode>(node, 'IntValue')
+                    ) {
+                        values.push(parseFloat(node.value));
+                    } else {
+                        typeErrors.push(
+                            message(`Comparison value must be a ${objectInfoDataType} array.`)
+                        );
+                    }
+                }
+                if (typeErrors.length) {
+                    return failure(typeErrors);
+                }
+
+                return success({
+                    operator,
+                    type: 'DoubleSetOperator',
+                    value: {
+                        type: ValueType.NumberArray,
+                        value: values,
+                    },
+                });
+            } else {
+                return failure([
+                    message(`Comparison value must be a ${objectInfoDataType} array.`),
+                ]);
+            }
+        }
+    }
+
+    if (objectInfoDataType === 'Boolean') {
         if (isBooleanOperatorType(operator)) {
             return is<BooleanValueNode>(value, 'BooleanValue')
                 ? success({
@@ -508,11 +687,11 @@ function operatorWithValue(
                       operator,
                       value: { type: ValueType.BooleanLiteral, value: value.value },
                   })
-                : failure([`Comparison value must be a boolean.`]);
+                : failure([message(`Comparison value must be a boolean.`)]);
         }
     }
 
-    if (schemaType === 'Date') {
+    if (objectInfoDataType === 'Date') {
         if (isScalarOperatorType(operator)) {
             const result = dateInput(value).mapError((e) => [e]);
             if (result.isSuccess === false) {
@@ -538,11 +717,11 @@ function operatorWithValue(
                 });
             }
 
-            return failure(['Comparison value must be a date array.']);
+            return failure([message('Comparison value must be a date array.')]);
         }
     }
 
-    if (schemaType === 'DateTime') {
+    if (objectInfoDataType === 'DateTime') {
         if (isScalarOperatorType(operator)) {
             const result = dateTimeInput(value).mapError((e) => [e]);
             if (result.isSuccess === false) {
@@ -568,11 +747,124 @@ function operatorWithValue(
                 });
             }
 
-            return failure(['Comparison value must be a date time array.']);
+            return failure([message('Comparison value must be a date time array.')]);
         }
     }
 
-    return failure([`Comparison operator ${operator} is not supported for type ${schemaType}.`]);
+    if (objectInfoDataType === 'Picklist') {
+        if (isPicklistOperatorType(operator)) {
+            return is<StringValueNode>(value, 'StringValue')
+                ? success({
+                      type: 'PicklistOperator',
+                      operator,
+                      value: stringLiteral(value.value),
+                  })
+                : failure([message(`Comparison value must be a Picklist.`)]);
+        }
+
+        if (isSetOperatorType(operator)) {
+            return is<ListValueNode>(value, 'ListValue')
+                ? listNodeToTypeArray<StringValueNode, string>(value, 'StringValue')
+                      .map((value): PicklistSetOperator => {
+                          return {
+                              operator,
+                              type: 'PicklistSetOperator',
+                              value: { type: ValueType.StringArray, value },
+                          };
+                      })
+                      .mapError((e) => [e])
+                : failure([message(`Comparison value must be a Picklist array.`)]);
+        }
+    }
+
+    if (objectInfoDataType === 'Currency') {
+        if (isCurrencyOperatorType(operator)) {
+            return is<FloatValueNode>(value, 'FloatValue')
+                ? success({
+                      type: 'CurrencyOperator',
+                      operator,
+                      value: { type: ValueType.DoubleLiteral, value: parseFloat(value.value) },
+                  })
+                : failure([message(`Comparison value must be a Currency.`)]);
+        }
+
+        if (isSetOperatorType(operator)) {
+            return is<ListValueNode>(value, 'ListValue')
+                ? listNodeToTypeArray<FloatValueNode, string>(value, 'FloatValue')
+                      .map((strings): CurrencySetOperator => {
+                          return {
+                              operator,
+                              type: 'CurrencySetOperator',
+                              value: {
+                                  type: ValueType.NumberArray,
+                                  value: strings.map(parseFloat),
+                              },
+                          };
+                      })
+                      .mapError((e) => [e])
+                : failure([message(`Comparison value must be a Currency array.`)]);
+        }
+    }
+
+    if (objectInfoDataType === 'MultiPicklist') {
+        if (isMultiPicklistOperatorType(operator)) {
+            if (is<StringValueNode>(value, 'StringValue')) {
+                return success<MultiPicklistOperator, PredicateError[]>({
+                    type: 'MultiPicklistOperator',
+                    operator,
+                    value: stringLiteral(value.value),
+                });
+            }
+
+            return failure([message(`Comparison value must be a MultiPicklist`)]);
+        }
+
+        if (isMultiPicklistSetOperatorType(operator)) {
+            if (is<ListValueNode>(value, 'ListValue')) {
+                return listNodeToTypeArray<StringValueNode, string>(value, 'StringValue')
+                    .map((val): MultiPicklistSetOperator => {
+                        return {
+                            operator,
+                            type: 'MultiPicklistSetOperator',
+                            value: { type: ValueType.StringArray, value: val },
+                        };
+                    })
+                    .mapError((e) => [e]);
+            } else {
+                return failure([message(`Comparison value must be a MultiPicklist array.`)]);
+            }
+        }
+    }
+
+    if (objectInfoDataType === 'Time') {
+        if (isScalarOperatorType(operator)) {
+            return is<StringValueNode>(value, 'StringValue')
+                ? success({
+                      type: 'TimeOperator',
+                      operator,
+                      value: stringLiteral(value.value),
+                  })
+                : failure([message(`Comparison value must be a Time`)]);
+        }
+
+        if (isSetOperatorType(operator)) {
+            return is<ListValueNode>(value, 'ListValue')
+                ? listNodeToTypeArray<StringValueNode, string>(value, 'StringValue')
+                      .map((value): TimeSetOperator => {
+                          return {
+                              operator,
+                              type: 'TimeSetOperator',
+                              value: { type: ValueType.StringArray, value },
+                          };
+                      })
+                      .mapError((e) => [e])
+                : failure([message(`Comparison value must be a Time array.`)]);
+        }
+    }
+
+    return failure([
+        message(`Comparison operator ${operator} is not supported for type ${objectInfoDataType}.`),
+    ]);
 }
 
 function dateInput(node: LuvioValueNode): Result<DateInput, PredicateError> {
@@ -605,13 +897,13 @@ function dateTimeInput(node: LuvioValueNode): Result<DateTimeInput, PredicateErr
     });
 }
 
-function parseNullValue(op: string): Result<NullOperator, string> {
+function parseNullValue(op: string): Result<NullOperator, PredicateError> {
     const operator = nullOperatorTypeFrom(op);
     if (operator !== undefined) {
         return success({ type: 'NullOperator', operator });
     }
 
-    return failure(`Null can not be compared with ${op}`);
+    return failure(message(`Null can not be compared with ${op}`));
 }
 
 type DateNodeResult =
@@ -628,24 +920,24 @@ function parseDateNode(
 ): Result<DateNodeResult, PredicateError> {
     const typeName = hasTime ? 'DateTime' : 'Date';
     if (!isObjectValueNode(node)) {
-        return failure(`Comparison value must be a ${typeName} input.`);
+        return failure(message(`Comparison value must be a ${typeName} input.`));
     }
 
     const valueField = node.fields['value'];
     if (valueField !== undefined) {
         if (is<StringValueNode>(valueField, 'StringValue')) {
             if (valueField.value.match(regex)) {
-                return success({ type: ValueType.StringLiteral, value: valueField.value });
+                return success(stringLiteral(valueField.value));
             }
 
-            return failure(`${typeName} format must be ${dateFormat}.`);
+            return failure(message(`${typeName} format must be ${dateFormat}.`));
         }
 
         if (is<NullValueNode>(valueField, 'NullValue')) {
             return success({ type: ValueType.NullValue });
         }
 
-        return failure(`${typeName} input value field must be a string.`);
+        return failure(message(`${typeName} input value field must be a string.`));
     }
 
     const literalField = node.fields['literal'];
@@ -657,11 +949,11 @@ function parseDateNode(
                 case 'TOMORROW':
                     return success({ type: 'enum', value: DateEnumType.tomorrow });
                 default:
-                    return failure(`Unknown ${typeName} literal ${literalField.value}.`);
+                    return failure(message(`Unknown ${typeName} literal ${literalField.value}.`));
             }
         }
 
-        return failure(`${typeName} input literal field must be an enum.`);
+        return failure(message(`${typeName} input literal field must be an enum.`));
     }
 
     const rangeField = node.fields['range'];
@@ -752,10 +1044,10 @@ function parseDateNode(
                     return success({ type: 'range', start, end });
                 }
             }
-            return failure(`invalid date range name`);
+            return failure(message(`invalid date range name`));
         }
-        return failure(`${typeName} range must be an object.`);
+        return failure(message(`${typeName} range must be an object.`));
     }
 
-    return failure(`${typeName} input must include a value or literal field.`);
+    return failure(message(`${typeName} input must include a value or literal field.`));
 }

@@ -12,5 +12,13 @@ export function instrumentGraphqlAdapter(createFunction: Function, _metadata: an
     return createFunction;
 }
 export function setupInstrumentation(_luvio: any, _store: any) {}
+export function instrumentLuvio(_context: unknown) {}
 
 export const REFRESH_UIAPI_KEY = 'refreshUiApi';
+
+export const METRIC_KEYS = {};
+export const O11Y_NAMESPACE_LDS_MOBILE = 'lds-mobile';
+export const withInstrumentation = () => undefined;
+export class MetricsReporter {
+    reportGraphqlQueryParseError() {}
+}

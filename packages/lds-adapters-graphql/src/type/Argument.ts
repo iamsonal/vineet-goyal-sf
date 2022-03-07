@@ -1,14 +1,14 @@
-import {
+import type {
     LuvioArgumentNode,
     LuvioListValueNode,
     LuvioObjectValueNode,
     LuvioValueNode,
     LuvioVariableNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { serializeValueNode } from '../util/ast-to-string';
 import { ObjectKeys } from '../util/language';
 import { sortAndCopyUsingObjectKey } from '../util/sortUsingKey';
-import { GraphQLVariables } from './Variable';
+import type { GraphQLVariables } from './Variable';
 import { stableJSONStringify } from '../util/adapter';
 
 export type SerializationOptions =

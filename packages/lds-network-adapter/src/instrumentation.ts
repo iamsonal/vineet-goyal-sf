@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
 
 export interface Instrumentation {
     networkRateLimitExceeded(): void;

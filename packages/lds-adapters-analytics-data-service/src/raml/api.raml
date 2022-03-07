@@ -1,13 +1,13 @@
 #%RAML 1.0
-# This RAML has been modified and "ELT Foundation - Analytics" is responsible for maintaing it
+# This RAML has been modified and "Data Services - Analytics" is responsible for maintaining it
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '52.0'
+version: '55.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v54.0
+baseUri: /services/data/v55.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -27,83 +27,170 @@ annotationTypes:
     allowedTargets: TypeDeclaration
 types:
   ConnectorCollectionRepresentation:
-    description: A list of Data Connectors.
+    description: A collection of Synchronization Connectors available to Analytics
+      Data Service
     type: object
     properties:
       connectors:
-        description: A list of Data Connectors.
+        description: The list of connectors.
         type: array
         items:
           type: ConnectorRepresentation
       totalSize:
-        description: Number of items in the collection
+        description: The total number of connectors in the collection.
         type: integer
       url:
-        description: The URL to get the collection.
+        description: The url of this collection.
         type: string
   ConnectorRepresentation:
-    description: Data Service Connector input representation
+    description: A Synchronization Connector available to Analytics Data Service
     discriminatorValue: connector
     type: object
     properties:
       id:
-        description: Id
+        description: The unique identifier of this Connector.
         type: string
       label:
-        description:
+        description: The Connector label.
         type: string
       name:
-        description: Name of the connector
+        description: The name of this Connector.
         type: string
       url:
-        description: Name of the connector
+        description: The URL of this Connector.
         type: string
   ConnectionCollectionRepresentation:
-    description: List of Connections Representation
+    description: A collection of Synchronization Connections for Analytics Data Service
     type: object
     properties:
       connections:
-        description: List of Connections
+        description: The list of connections.
         type: array
         items:
           type: ConnectionRepresentation
       totalSize:
-        description: Number of items in the collection
+        description: The total number of connections in the collection.
         type: integer
       url:
-        description: The URL to get the collection.
+        description: The url of this collection.
         type: string
   ConnectionRepresentation:
     description: A Connection used to synchronize data with Analytics Data Service
     type: object
     properties:
       connector:
-        description: Connector Reference
+        description: The Connector that this Connection uses
         type: ResourceReferenceRepresentation
         required: false
       id:
-        description: Connection Id
-        type: string
-      name:
-        description: Connection Name
+        description: The unique identifier of this Connection.
         type: string
       label:
-        description: Connection Label
+        description: A label to use for this Connection.
         type: string
-      schema:
-        description: Reference to the Schema
-        type: ResourceReferenceRepresentation
+      name:
+        description: The name of this Connection.
+        type: string
       sourceObjectsUrl:
-        description: Source Objects Url
+        description: The URL to get the source objects for this connection
         type: string
         required: false
-      targetUrl:
-        description: Target Url
+      state:
+        description: The current state of this Connection
+        type: string
+        enum:
+          - Active
+          - Inactive
+          - InvalidConfig
+          - Pending
+      targetSchema:
+        description: The target Analytics Data Service Schema for this Connection
+        type: ResourceReferenceRepresentation
+        required: false
+      targetsUrl:
+        description: The URL to get the targets for this connection
         type: string
         required: false
       url:
-        description: Url
+        description: The URL for this Connection.
         type: string
+  ConnectionInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for connection input representation
+    type: object
+    properties:
+      connection:
+        type: ConnectionInputRepresentation
+        description: connection input representation
+  ConnectionInputRepresentation:
+    description: 'A definition used to create a Synchronization Connection in Analytics
+      Data Service '
+    type: object
+    properties:
+      connectorId:
+        description: The identifier of the Connector for this Connection
+        type: string
+      name:
+        description: The name to use for this Connection
+        type: string
+  DataTypeInfoRepresentation:
+    description: 'Type information about a field '
+    type: object
+    properties:
+      type:
+        description: The type of the field in ADS.
+        type: string
+        enum:
+          - Array
+          - Binary
+          - Boolean
+          - Datetime
+          - Numeric
+          - String
+
+  FieldCollectionRepresentation:
+    description: A paged collection of fields available on a source object
+    type: object
+    properties:
+      fields:
+        description: A list of Fields.
+        type: array
+        items:
+          type: FieldRepresentation
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective
+          of the page.
+        type: integer
+      url:
+        description: URL to get the collection.
+        type: string
+  FieldRepresentation:
+    description: A Field represents a field belonging to a source object on a connection
+    type: object
+    properties:
+      info:
+        description: Information about this field. Can contain warnings or other information
+        type: array
+        items:
+          type: SourceObjectInfoRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The name of the field in the source system.
+        type: string
+      state:
+        description: The replication state of this field.
+        type: string
+        enum:
+          - Connected
+          - NotConnectable
+          - NotConnected
+          - Required
+      type:
+        description: The type information about this field.
+        type: DataTypeInfoRepresentation
 
   ResourceReferenceRepresentation:
     description: A reference to a resource in the API that contains basic information about the resource and a URL to locate it.
@@ -119,10 +206,714 @@ types:
       url:
         description: Resource Url
         type: string
+        required: false # TODO Hand-rolled W-8253396
       label:
         description: Resource Label
         type: string
         required: false
+  SourceObjectCollectionRepresentation:
+    description: A paged list of Source Objects.
+    type: object
+    properties:
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string
+      sourceObjects:
+        description: A list of Source Objects.
+        type: array
+        items:
+          type: SourceObjectRepresentation
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective
+          of the page.
+        type: integer
+      url:
+        description: URL to get the collection.
+        type: string
+  SourceObjectInfoRepresentation:
+    description: Information from the source system about an object / field
+    type: object
+    properties:
+      message:
+        description: The message for this particular information.
+        type: string
+  SourceObjectInputRepresentation:
+    description: A source object for synchronization.
+    type: object
+    properties:
+      name:
+        description: The source object name, e.g. Account.
+        type: string
+  SourceObjectRepresentation:
+    description: A Source Object represents a type of data that the ADS Connection
+      knows about. When a Source Object is replicated into ADS, it creates a Table
+      in a Schema
+    type: object
+    properties:
+      fieldsUrl:
+        description: The URL to get the list of Source Fields that this Source Object
+          has.
+        type: string
+      info:
+        description: List of information about this source Object. Could contain why
+          this is not synchronizable, or warnings
+        type: array
+        items:
+          type: SourceObjectInfoRepresentation
+      name:
+        description: The name of this Source Object in the external system. The specifics
+          will depend on the connector type.
+        type: string
+      state:
+        description: The synchronization state of this source object for this connection.
+        type: string
+        enum:
+          - Connected
+          - NotConnectable
+          - NotConnected
+          - Required
+      url:
+        description: The URL to get this Source Object.
+        type: string
+
+  TargetCollectionRepresentation:
+    description: A collection of Synchronization Targets for Analytics Data Service
+    type: object
+    properties:
+      targets:
+        description: The list of targets
+        type: array
+        items:
+          type: TargetRepresentation
+      totalSize:
+        description: The total number of targets in the collection
+        type: integer
+      url:
+        description: The url of this collection
+        type: string
+
+  TargetRepresentation:
+    description: Details about an Analytics Data Service synchronization target
+    type: object
+    properties:
+      connection:
+        description: The connection that synchronizes this target
+        type: ResourceReferenceRepresentation
+      fields:
+        description: The synchronized fields
+        type: array
+        items:
+          type: TargetFieldRepresentation
+      id:
+        description: The unique identifier of this target
+        type: string
+      name:
+        description: The name of this target. Often, the target name is the same as the source object name
+        type: string
+      sourceObject:
+        description: The synchronized source object
+        type: ResourceReferenceRepresentation
+      status:
+        description: The synchronization status
+        type: StatusRepresentation
+      table:
+        description: The target table
+        type: ResourceReferenceRepresentation
+      url:
+        description: The URL of this target
+        type: string
+
+  TargetFieldRepresentation:
+    description: A field that is replicated to a target ADS table
+    type: object
+    properties:
+      name:
+        description: The name of the field
+        type: string
+
+  TargetInputRepresentation:
+    description: Input representation for creating a synchronization target
+    type: object
+    properties:
+      connectionId:
+        description: The unique ID of the connection doing synchronization
+        type: string
+      fields:
+        description: The fields in the source object
+        type: array
+        items:
+          type: FieldInputRepresentation
+      sourceObject:
+        description: The Source object for synchronization
+        type: SourceObjectInputRepresentation
+
+  TargetInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for target input representation
+    type: object
+    properties:
+      targetInput:
+        type: TargetInputRepresentation
+        description: Target input representation
+
+  UpdateTargetInputRepresentation:
+    description: Input representation for updating a synchronization target
+    type: object
+    properties:
+      fields:
+        description: The fields in the source object
+        type: array
+        items:
+          type: UpdateFieldInputRepresentation
+
+  UpdateFieldInputRepresentation:
+    description: A source object field update.
+    type: object
+    properties:
+      name:
+        description: The source object field name.
+        type: string
+      operation:
+        description: The update operation.
+        type: string
+        enum:
+          - Add
+          - Remove
+
+  UpdateTargetInputWrapperRepresentation: # TODO Hand-rolled W-10128739
+    description: Wrapper for update target input representation
+    type: object
+    properties:
+      target:
+        type: UpdateTargetInputRepresentation
+        description: Update target input representation
+
+  FieldInputRepresentation:
+    description: A source object field for synchronization
+    type: object
+    properties:
+      name:
+        description: The source object field name
+        type: string
+
+  StatusRepresentation:
+    description: The synchronization status of a synchronized object
+    type: object
+    properties:
+      errorCount:
+        description: The number of errors during the last synchronization
+        format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      frequency:
+        description: The frequency of synchronization in seconds
+        type: integer
+      lastSync:
+        description: The date and time of the last successful synchronization
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      sourceRecordCount:
+        description: The number of records in the source object
+        format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+      state:
+        description: The actual synchronization state
+        type: string
+        enum:
+          - Error
+          - InvalidConfig
+          - New
+          - Synced
+          - Syncing
+      targetRecordCount:
+        description: The number of records in the target table
+        format: double # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        type: number
+        required: false # TODO Hand-rolled W-9314597
+
+  DatabaseCollectionRepresentation:
+    description: Representation of a collection of Analytics Data Service Databases
+    type: object
+    properties:
+      databases:
+        description: The list of databases.
+        type: array
+        items:
+          type: DatabaseRepresentation
+      totalSize:
+        description: The total number of databases returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  DatabaseRepresentation:
+    description: Details about an Analytics Data Service Database
+    type: object
+    properties:
+      description:
+        description: The description of the database.
+        type: string | nil
+        required: false
+      name:
+        description: The name of the database. Maximum of 80 characters
+        type: string
+      qualifiedName:
+        description: The qualified name of the database.
+        type: string
+      schemasUrl:
+        description: The URL of the schemas resource, listing the schemas contained
+          in this database.
+        type: string
+      url:
+        description: The URL of this database.
+        type: string
+
+  SchemaCollectionRepresentation:
+    description: A list of Analytics Data Service Schemas
+    type: object
+    properties:
+      schemas:
+        description: The list of schemas.
+        type: array
+        items:
+          type: SchemaRepresentation
+      totalSize:
+        description: The total number of schemas returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  SchemaRepresentation:
+    description: Details about an Analytics Data Service Schema
+    type: object
+    properties:
+      database:
+        description: The database that this schema belongs to
+        type: ResourceReferenceRepresentation
+      description:
+        description: The description of the schema.
+        type: string | nil
+        required: false
+      name:
+        description: The name of the schema.
+        type: string
+      qualifiedName:
+        description: The qualified name of the schema.
+        type: string
+      tablesUrl:
+        description: The URL of the tables resource, listing the tables contained
+          in this schema.
+        type: string
+      url:
+        description: The URL of this schema.
+        type: string
+
+  TableCollectionRepresentation:
+    description: A list of Analytics Data Service Tables
+    type: object
+    properties:
+      tables:
+        description: The list of tables.
+        type: array
+        items:
+          type: TableRepresentation
+      totalSize:
+        description: The total number of tables returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  TableRepresentation:
+    description: Details about an Analytics Data Service Table
+    type: object
+    properties:
+      createdOnDate:
+        description: The date and time that the table was created.
+        type: string
+      database:
+        description: The database that this table belongs to.
+        type: ResourceReferenceRepresentation
+      deletedBy:
+        description: The user that deleted this table. This field is not present if
+          the table is not deleted.
+        type: ResourceReferenceRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      deletedOnDate:
+        description: The date and time that this table was deleted. This field is
+          not present if the table is not deleted.
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      description:
+        description: The description of the table.
+        type: string | nil
+        required: false
+      lastDataUpdate:
+        description: The date and time that the data in the table was last changed
+        type: string | nil
+        required: false
+      lastUpdatedDate:
+        description: The date and time that the table was last modified.
+        type: string | nil
+        required: false
+      location:
+        description: The location of the table.
+        type: string | nil
+        required: false
+      managedBy:
+        description: The identity of the service that currently manages this table.
+        type: string
+        enum:
+          - Ingest
+          - Recipe
+          - Sync
+        required: false # TODO Hand-rolled W-9314597
+      name:
+        description: The name of the table.
+        type: string
+      qualifiedName:
+        description: The qualified 3 part name of the table.
+        type: string
+      schema:
+        description: The schema that this table belongs to.
+        type: ResourceReferenceRepresentation
+      state:
+        description: The current state of this table.
+        type: string
+        enum:
+          - Creating
+          - Deleted
+          - Ready
+          - Updating
+        required: false # TODO Hand-rolled W-9314597
+      undeleteToken:
+        description: A token that can be used to restore a deleted table
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      url:
+        description: The URL of the table resource
+        type: string
+  GrantCollectionRepresentation:
+    description: A list of grants for Analytics Data Service assets
+    type: object
+    properties:
+      grants:
+        description: The list of grants.
+        type: array
+        items:
+          type: GrantRepresentation
+      nextPageUrl:
+        description: The url of the next page in the collection.
+        type: string
+      totalSize:
+        description: The total number of grants returned.
+        type: integer
+      url:
+        description: The url of this collection.
+        type: string
+  GrantInputCollectionWrapperRepresentation:
+    description: Wrapper for grant input collection representation
+    type: object
+    properties:
+      grants:
+        type: GrantInputCollectionRepresentation
+        description: grant input collection representation
+  GrantInputCollectionRepresentation:
+    description: A definition used to grant or revoke new grants
+    type: object
+    properties:
+      grants:
+        description: Grants to process
+        type: array
+        items:
+          type: GrantInputRepresentation
+      requestId:
+        description: The id of this request in the originating system
+        type: string
+  GrantInputRepresentation:
+    description: A definition used to grant or revoke an access grant
+    type: object
+    properties:
+      grantee:
+        description: salesforce Id of the grantee for this permission
+        type: string
+      operation:
+        description: Is this operation a grant or revoke
+        type: string
+        enum:
+          - Grant
+          - Revoke
+      permission:
+        description: The permission to grant or revoke
+        type: string
+        enum:
+          - CreateSchema
+          - CreateTable
+          - Delete
+          - Insert
+          - Ownership
+          - Select
+          - Update
+          - Usage
+      qualifiedName:
+        description: qualified name for the asset this request is operating on
+        type: string
+  GrantRepresentation:
+    description: Details about an Analytics Data Service access grant
+    type: object
+    properties:
+      grantDate:
+        description: Time of the initial grant
+        type: string
+      grantee:
+        description: Grantee that holds this permission
+        type: GrantUrogRepresentation
+      grantor:
+        description: User that granted this permission
+        type: GrantUrogRepresentation
+      permission:
+        description: Permission this grant allows
+        type: string
+        enum:
+          - CreateSchema
+          - CreateTable
+          - Delete
+          - Insert
+          - Ownership
+          - Select
+          - Update
+          - Usage
+      resource:
+        description: Resource this grant is for
+        type: ResourceReferenceRepresentation
+  GrantUpdateCollectionRepresentation:
+    description: A list of Updated Grants for ADS assets
+    type: object
+    properties:
+      grants:
+        description: The list of grants that have been updated from this update request.
+        type: array
+        items:
+          type: GrantUpdateRepresentation
+      requestId:
+        description: The provided request id.
+        type: string
+  GrantUpdateRepresentation:
+    description: Details about an Analytics Data Service access grant that has been
+      granted or revoked
+    type: object
+    properties:
+      grantee:
+        description: Grantee that permission was granted/revoked for
+        type: GrantUrogRepresentation
+      operation:
+        description: Is this permission being granted, or revoked?
+        type: string
+        enum:
+          - Grant
+          - Revoke
+      permission:
+        description: Permission this grant allows
+        type: string
+        enum:
+          - CreateSchema
+          - CreateTable
+          - Delete
+          - Insert
+          - Ownership
+          - Select
+          - Update
+          - Usage
+      qualifiedName:
+        description: Fully qualified name of the resource this grant is for
+        type: string
+  GrantUrogRepresentation:
+    description: Details about a user, role, or group granted access to an ADS asset
+    type: object
+    properties:
+      displayName:
+        description: display name of the grant holder - full user name, group name,
+          or role name
+        type: string
+      id:
+        description: Id of the grant holder
+        type: string
+      type:
+        description: type of the grant holder - user/group/role at
+        type: string
+        enum:
+          - Group
+          - RoleAt
+          - RoleDown
+          - RoleDownInternal
+          - User
+
+/analytics/data-service:
+  /catalog:
+    /databases:
+      get:
+        description: Retrieve a list of Databases.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatabaseCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          userId:
+            type: string
+            required: false
+    /databases/{database}:
+      delete:
+        description: Delete a Database
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Get a Database by it's name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatabaseRepresentation
+        queryParameters:
+          userId:
+            type: string
+            required: false
+      uriParameters:
+        database:
+          type: string
+          required: true
+    /schemas:
+      get:
+        description: Retrieve a list of Analytics Data Service Schemas.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SchemaCollectionRepresentation
+        queryParameters:
+          database:
+            type: string
+            required: false
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          userId:
+            type: string
+            required: false
+    /schemas/{qualifiedName}:
+      delete:
+        description: Delete a Schema
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Get a Schema by its name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SchemaRepresentation
+        queryParameters:
+          userId:
+            type: string
+            required: false
+      uriParameters:
+        qualifiedName:
+          type: string
+          required: true
+    /tables:
+      get:
+        description: Retrieve a list of Analytics Data Service Tables.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TableCollectionRepresentation
+        queryParameters:
+          database:
+            type: string
+            required: false
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          schema:
+            type: string
+            required: false
+          userId:
+            type: string
+            required: false
+    /tables/{qualifiedName}:
+      delete:
+        description: Delete a Table
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Get a Table by its name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TableRepresentation
+        queryParameters:
+          userId:
+            type: string
+            required: false
+      uriParameters:
+        qualifiedName:
+          type: string
+          required: true
+    /grants:
+      get:
+        description: Retrieve a list of Analytics Data Service Grants.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: GrantCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          qualifiedName:
+            type: string
+            required: false
+      post:
+        description: Grant or revoke Analytics Data Service Grants
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: GrantUpdateCollectionRepresentation
+        body:
+          application/json:
+            description: List of Grant/Revoke statements
+            # TODO Hand-rolled W-10128739. Original type: GrantInputCollectionRepresentation
+            type: GrantInputCollectionWrapperRepresentation
+            (oas-body-name): grants
 
 /analytics/data-service/sync:
   /connectors:
@@ -157,6 +948,18 @@ types:
           body:
             application/json:
               type: ConnectionCollectionRepresentation
+    post:
+      description: Create a new Connection.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ConnectionRepresentation
+      body:
+        application/json:
+          type: ConnectionInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ConnectionInputRepresentation
+          (oas-body-name): connection
 
   /connections/{id}:
     get:
@@ -167,6 +970,128 @@ types:
           body:
             application/json:
               type: ConnectionRepresentation
+    uriParameters:
+      id:
+        type: string
+        required: true
+
+    /source-objects:
+      get:
+        description: Get Connection Source Objects
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SourceObjectCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          q:
+            type: string
+            required: false
+      uriParameters:
+        id:
+          type: string
+    /source-objects/{sourceObjectName}:
+      get:
+        description: Get Connection Source Object by Name
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SourceObjectRepresentation
+      uriParameters:
+        id:
+          type: string
+        sourceObjectName:
+          type: string
+  /connections/{id}/source-objects/{sourceObjectName}/fields:
+    get:
+      description: Get a list of all the Fields belonging to a source object.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FieldCollectionRepresentation
+      queryParameters:
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+    uriParameters:
+      id:
+        type: string
+        required: true
+      sourceObjectName:
+        type: string
+        required: true
+  /targets:
+    get:
+      description: Get the list of synchronization targets
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetCollectionRepresentation
+      queryParameters:
+        connectionId:
+          description: Connection Id for which to get the targets
+          type: string
+          required: false
+    post:
+      description: Add a synchronization target to a connection
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetRepresentation
+      body:
+        application/json:
+          # TODO Hand-rolled W-8334626. Original type: TargetInputRepresentation
+          type: TargetInputWrapperRepresentation
+          (oas-body-name): targetInput
+  /targets/{id}:
+    delete:
+      description: Deletes the mapping and the synced data in ADS.
+      responses:
+        '204':
+          description: Success
+    get:
+      description: Get the details about a synchronization target
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetRepresentation
+    patch:
+      description: Update a synchronization target
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TargetRepresentation
+      body:
+        application/json:
+          description: Target update payload
+          # TODO Hand-rolled W-10128739. Original type: UpdateTargetInputRepresentation
+          type: UpdateTargetInputWrapperRepresentation
+          (oas-body-name): target
     uriParameters:
       id:
         type: string

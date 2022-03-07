@@ -44,7 +44,7 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
-    it('gets datasets by dataset types', async () => {
+    it('gets datasets by dataset types: Default and Trended', async () => {
         const mock = getMock('datasets');
         const config = { datasetTypes: ['Default', 'Trended'] };
         mockGetDatasetsNetworkOnce(config, mock);
@@ -55,9 +55,52 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets datasets by dataset types: StagedData', async () => {
+        const mock = getMock('datasets-by-stagedData');
+        const config = { datasetTypes: ['StagedData'] };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const setupConfig = { types: ['StagedData'] };
+        const el = await setupElement(setupConfig, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets datasets by sort', async () => {
+        const mock = getMock('datasets-by-sort');
+        const config = { datasetTypes: ['Live'], sort: 'ConnectionName' };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const setupConfig = { types: ['Live'], sort: 'ConnectionName' };
+        const el = await setupElement(setupConfig, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets datasets by sort and order', async () => {
+        const mock = getMock('datasets-by-sort-and-order');
+        const config = { datasetTypes: ['Live'], sort: 'ConnectionName', order: 'Descending' };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const setupConfig = { types: ['Live'], sort: 'ConnectionName', order: 'Descending' };
+        const el = await setupElement(setupConfig, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets datasets by license type', async () => {
         const mock = getMock('datasets-by-license');
         const config = { licenseType: 'EinsteinAnalytics' };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets MDP datasets', async () => {
+        const mock = getMock('datasets-mdp');
+        const config = { licenseType: 'MulesoftDataPath' };
         mockGetDatasetsNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetDatasets);

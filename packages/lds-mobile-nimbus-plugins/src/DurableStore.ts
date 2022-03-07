@@ -1,5 +1,6 @@
 // NOTE: do not remove this import, even though it looks unused it is necessary
 // for TS module merging to work properly
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NimbusPlugins } from 'nimbus-types';
 declare module 'nimbus-types' {
     export interface NimbusPlugins {
@@ -24,6 +25,35 @@ export interface DurableStoreChange {
  * A `DurableStore` persists entries beyond the lifetime of the LDS instance.
  */
 export interface DurableStore {
+    /**
+     * Evaluates SQL on the durable store. evaluateSQL is intended
+     * for SQL which returns results in a JSON encoded string. The shape of the
+     * returned JSON is determined by the JSON shape specified by the SQL.
+     * The results should be be parsable by JSON.parse.
+     *
+     * @param sql The SQL string to evaluate
+     * @param params An array of parameters corresponding to placeholders in the SQL
+     * @param onResult A callback that receives a JSON encoded string
+     * @param onError Callback that receives an error string when evaluation fails
+     */
+    evaluateSQL(
+        sql: string,
+        params: string[],
+        onResult: (result: string) => void,
+        onError: (message: string) => void
+    ): Promise<void>;
+
+    /**
+     * Updates indices in the SQL database.  Each index SQL
+     * should be written to only update the DB the first
+     * time it is sent.
+     *
+     * @param indices An array up index SQL to apply
+     * @returns A void promise.  If the indices can not be
+     * updated, the promise will reject.
+     */
+    updateIndices(indices: string[]): Promise<void>;
+
     /**
      * Looks up a set of entries based on their id.
      *

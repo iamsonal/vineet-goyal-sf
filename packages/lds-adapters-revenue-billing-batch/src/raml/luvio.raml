@@ -11,7 +11,12 @@ types:
     (luvio.ttl): 1000
     (luvio.opaque): true
     (luvio.key):
-      billingBatchSchedulerId: schedulerDetails.billingBatchSchedulerId
+      billingBatchSchedulerId: billingBatchScheduler.id
+  InvoicesBatchSchedulerOutputRepresentation:
+    (luvio.ttl): 1000
+    (luvio.opaque): true
+    (luvio.key):
+      billingBatchSchedulerId: billingBatchScheduler.id
 
 /billing/batch/payments/schedulers:
   post:
@@ -23,27 +28,28 @@ types:
             { "PaymentsBatchSchedulerInput":
               {
                 "schedulerName": "Batch Scheduler",
-                "startDate": "2021-05-11T05:01:06.000Z",
-                "endDate": "2021-05-15T05:01:06.000Z",
+                "startDate": "2021-05-11",
+                "endDate": "2021-05-15",
                 "preferredTime": "10:00 AM",
                 "frequencyCadence": "Monthly",
                 "recursEveryMonthOnDay": "28",
-                "criteriaExpression": "1 AND 2",
+                "criteriaMatchType": "MatchAny",
+                "criteriaExpression": "1 OR 2",
                 "status" : "Active",
                 "filterCriteria":
                   [
                     {
-                        "objectName": "PaymentSchedule",
-                        "fieldName": "ReferenceEntityAccount",
+                        "objectName": "PaymentScheduleItem",
+                        "fieldName": "BatchRun",
                         "operation": "Equals",
-                        "value": "001xx000003GiznAAC",
+                        "value": "Batch1",
                         "criteriaSequence": 1
                     },
                     {
-                        "objectName": "PaymentGateway",
-                        "fieldName": "Id",
+                        "objectName": "PaymentScheduleItem",
+                        "fieldName": "BatchRun",
                         "operation": "Equals",
-                        "value": "0b0xx000000035xAAA",
+                        "value": "Batch2",
                         "criteriaSequence": 2
                     }
                   ]
@@ -53,11 +59,12 @@ types:
             { "PaymentsBatchSchedulerInput":
               {
                 "schedulerName": "Batch Scheduler",
-                "startDate": "2021-05-11T05:01:06.000Z",
-                "endDate": "2021-05-15T05:01:06.000Z",
+                "startDate": "2021-05-11",
+                "endDate": "2021-05-15",
                 "preferredTime": "10:00 AM",
                 "frequencyCadence": "Daily",
-                "criteriaExpression": "1 AND 2",
+                "criteriaMatchType": "MatchAny",
+                "criteriaExpression": "1 OR 2",
                 "status": "Active",
                 "filterCriteria": []
               }
@@ -70,16 +77,85 @@ types:
           - |
             {
               "schedulerName": "Batch Scheduler",
-              "startDate": "2021-05-11T05:01:06.000Z",
-              "endDate": "2021-05-15T05:01:06.000Z",
+              "startDate": "2021-05-11",
+              "endDate": "2021-05-15",
               "preferredTime": "10:00 AM",
               "frequencyCadence": "Daily",
-              "criteriaExpression": "1 AND 2",
+              "criteriaMatchType": "MatchAny",
+              "criteriaExpression": "1 OR 2",
               "status": "Draft",
               "filterCriteria": []
             }
           - |
             { "PaymentsBatchSchedulerInput":
+              {
+                "schedulerName": "Batch Scheduler"
+              }
+            }
+/billing/batch/invoices/schedulers:
+  post:
+    (luvio.adapter):
+      name: createInvoicesBatchScheduler
+      tests:
+        validConfigs:
+          - |
+            { "BatchInvoiceSchedulerInput":
+              {
+                "schedulerName": "Invoice Batch Scheduler",
+                "startDate": "2021-05-11",
+                "endDate": "2021-05-15",
+                "preferredTime": "10:00 AM",
+                "frequencyCadence": "Monthly",
+                "recursEveryMonthOnDay": "1",
+                "status" : "Active",
+                "filterCriteria":
+                  [
+                    {
+                        "objectName": "BillingSchedule",
+                        "fieldName": "Currency_Iso_code",
+                        "operation": "Equals",
+                        "value": "USD",
+                        "criteriaSequence": 1
+                    },
+                    {
+                        "objectName": "BillingSchedule",
+                        "fieldName": "InvoiceRunBatch",
+                        "operation": "Equals",
+                        "value": "Batch1",
+                        "criteriaSequence": 2
+                    }
+                  ]
+                }
+              }
+          - |
+            { "BatchInvoiceSchedulerInput":
+              {
+                "schedulerName": "Invoice Batch Scheduler",
+                "startDate": "2021-05-11",
+                "endDate": "2021-05-15",
+                "preferredTime": "10:00 AM",
+                "frequencyCadence": "Monthly",
+                "status": "Active",
+                "filterCriteria": []
+              }
+            }
+        invalidConfigs:
+          - |
+            {
+              "schedulerName": "Batch Scheduler"
+            }
+          - |
+            {
+              "schedulerName": "Batch Scheduler",
+              "startDate": "2021-05-11",
+              "endDate": "2021-05-15",
+              "preferredTime": "10:00 AM",
+              "frequencyCadence": "Daily",
+              "status": "Draft",
+              "filterCriteria": []
+            }
+          - |
+            { "BatchInvoiceSchedulerInput":
               {
                 "schedulerName": "Batch Scheduler"
               }

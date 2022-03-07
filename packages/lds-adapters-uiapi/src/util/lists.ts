@@ -1,21 +1,21 @@
-import {
+import type {
     Luvio,
     PathSelection,
     AdapterContext,
     Snapshot,
-    SnapshotRefresh,
     FulfilledSnapshot,
     StaleSnapshot,
+    StoreLookup,
 } from '@luvio/engine';
+import type { ListInfoRepresentation } from '../generated/types/ListInfoRepresentation';
 import {
     keyBuilder as ListInfoRepresentation_keyBuilder,
-    ListInfoRepresentation,
     select as ListInfoRepresentation_select,
 } from '../generated/types/ListInfoRepresentation';
 import { keyBuilder as ListRecordCollection_keyBuilder } from '../generated/types/ListRecordCollectionRepresentation';
-import { ListReferenceRepresentation } from '../generated/types/ListReferenceRepresentation';
-import { ListUiRepresentation } from '../generated/types/ListUiRepresentation';
-import { RecordRepresentation } from '../generated/types/RecordRepresentation';
+import type { ListReferenceRepresentation } from '../generated/types/ListReferenceRepresentation';
+import type { ListUiRepresentation } from '../generated/types/ListUiRepresentation';
+import type { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { ObjectKeys } from './language';
 import { isGraphNode } from './records';
 
@@ -95,21 +95,14 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
  */
 export function getListInfo(
     listRef: ListReferenceRepresentation,
-    luvio: Luvio,
-    // TODO [W-9601746]: today makeDurable environment needs a refresh set for
-    // "resolveSnapshot" override to work properly, but once this work
-    // item is done we won't need refresh set anymore and this parameter can go away
-    refresh?: SnapshotRefresh<ListInfoRepresentation>
+    storeLookup: StoreLookup<ListInfoRepresentation>
 ): Snapshot<ListInfoRepresentation> {
     const key = ListInfoRepresentation_keyBuilder(listRef);
-    return luvio.storeLookup<ListInfoRepresentation>(
-        {
-            recordId: key,
-            node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
-            variables: {},
-        },
-        refresh
-    );
+    return storeLookup({
+        recordId: key,
+        node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
+        variables: {},
+    });
 }
 
 // The server assumes defaults for certain config fields, which makes caching

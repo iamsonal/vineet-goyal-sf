@@ -1,0 +1,8 @@
+{
+    "unpublishInput": {
+        "channelIds": ["0apx0000000GmanAAC"],
+        "description": "Test Description",
+        "contentIds": ["20YRM0000000CPi2AM", "20YRM0000000CPi2AN"],
+        "variantIds": []
+    }
+}

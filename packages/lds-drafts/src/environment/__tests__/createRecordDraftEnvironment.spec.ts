@@ -1,20 +1,21 @@
-import { HttpStatusCode } from '@luvio/engine';
+import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import { DRAFT_ERROR_CODE } from '../../DraftFetchResponse';
-import { getRecordKeyForId } from '../../utils/records';
 import {
-    flushPromises,
     createPostRequest,
     DEFAULT_API_NAME,
     DEFAULT_NAME_FIELD_VALUE,
     populateDurableStoreWithRecord,
     RECORD_ID,
     setupDraftEnvironment,
+    mockDurableStoreResponse,
 } from './test-utils';
 import { DefaultDurableSegment } from '@luvio/environments';
+import * as RecordUtils from '../../utils/records';
+const { getRecordKeyForId } = RecordUtils;
 
 const CREATE_DRAFT_RECORD_ID = '001x000001XL1tAAG';
 const STORE_KEY_DRAFT_RECORD = `UiApi::RecordRepresentation:${CREATE_DRAFT_RECORD_ID}`;
@@ -43,7 +44,7 @@ describe('draft environment tests', () => {
             const { draftEnvironment } = await setupDraftEnvironment();
             const { rejects } = await expect(
                 draftEnvironment.dispatchResourceRequest({
-                    baseUri: '/services/data/v54.0',
+                    baseUri: '/services/data/v55.0',
                     basePath: `/ui-api/records/`,
                     method: 'post',
                     body: {
@@ -54,6 +55,7 @@ describe('draft environment tests', () => {
                     urlParams: {},
                     queryParams: {},
                     headers: {},
+                    priority: 'normal',
                 })
             );
             rejects.toMatchObject({
@@ -92,8 +94,8 @@ describe('draft environment tests', () => {
                     weakEtag: -1,
                 });
             });
-            const request = {
-                baseUri: '/services/data/v54.0',
+            const request: ResourceRequest = {
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${CREATE_DRAFT_RECORD_ID}`,
                 method: 'post',
                 body: {
@@ -105,6 +107,7 @@ describe('draft environment tests', () => {
                 urlParams: {},
                 queryParams: {},
                 headers: {},
+                priority: 'normal',
             };
 
             const result = await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(
@@ -144,8 +147,8 @@ describe('draft environment tests', () => {
                     weakEtag: -1,
                 });
             });
-            const request = {
-                baseUri: '/services/data/v54.0',
+            const request: ResourceRequest = {
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'post',
                 body: {
@@ -157,6 +160,7 @@ describe('draft environment tests', () => {
                 urlParams: {},
                 queryParams: {},
                 headers: {},
+                priority: 'normal',
             };
 
             await draftEnvironment.dispatchResourceRequest(request);
@@ -256,8 +260,8 @@ describe('draft environment tests', () => {
 
             store.redirect(draftReferenceKey, canonicalReferenceKey);
 
-            const request = {
-                baseUri: '/services/data/v54.0',
+            const request: ResourceRequest = {
+                baseUri: '/services/data/v55.0',
                 basePath: `/ui-api/records/`,
                 method: 'post',
                 body: {
@@ -269,6 +273,7 @@ describe('draft environment tests', () => {
                 urlParams: {},
                 queryParams: {},
                 headers: {},
+                priority: 'normal',
             };
             const expectedRequest = {
                 ...request,
@@ -358,34 +363,123 @@ describe('draft environment tests', () => {
         });
 
         it('created record never expires', async () => {
-            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
-                isDraftId: () => true,
-            });
+            const { draftEnvironment, durableStore, baseEnvironment } = await setupDraftEnvironment(
+                {
+                    isDraftId: () => true,
+                }
+            );
 
             draftEnvironment.storePublish(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_DATA);
             draftEnvironment.publishStoreMetadata(STORE_KEY_DRAFT_RECORD, {
                 expirationTimestamp: 1,
-                staleTimestamp: 1,
                 namespace: 'UiApi',
                 representationName: 'RecordRepresentation',
                 ingestionTimestamp: 1,
             });
 
-            // broadcast so staging store flushes to L2
-            draftEnvironment.storeBroadcast(
-                draftEnvironment.rebuildSnapshot,
-                draftEnvironment.snapshotAvailable
-            );
+            // flush to L2
+            await baseEnvironment.publishChangesToDurableStore();
 
-            // wait for flush to finish before reading L2 values
-            await flushPromises();
-
-            const record = (durableStore as unknown as MockDurableStore).segments[
-                DefaultDurableSegment
-            ][STORE_KEY_DRAFT_RECORD];
+            const record = (
+                await (durableStore as unknown as MockDurableStore).persistence.get(
+                    DefaultDurableSegment
+                )
+            )[STORE_KEY_DRAFT_RECORD];
             const metadata = record.metadata;
             expect(metadata.expirationTimestamp).toBe(Number.MAX_SAFE_INTEGER);
-            expect(metadata.staleTimestamp).toBe(Number.MAX_SAFE_INTEGER);
+        });
+
+        describe('assertDraftPrerequisitesSatisfied', () => {
+            let request,
+                draftEnvironment,
+                durableStore,
+                ensureObjectInfoCachedMock,
+                ensureReferencedIdsAreCachedMock;
+            beforeEach(async () => {
+                ensureObjectInfoCachedMock = jest.fn().mockName('ensureObjectInfoCachedMock');
+
+                ensureReferencedIdsAreCachedMock = jest
+                    .spyOn(RecordUtils, 'ensureReferencedIdsAreCached')
+                    .mockResolvedValue(null);
+
+                ({ draftEnvironment, durableStore } = await setupDraftEnvironment({
+                    ensureObjectInfoCached: ensureObjectInfoCachedMock,
+                }));
+                mockDurableStoreResponse(durableStore);
+                request = createPostRequest();
+            });
+
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('should call ensureObjectInfoCached', async () => {
+                // Arrange
+
+                // Act
+                await draftEnvironment.dispatchResourceRequest(request);
+
+                // Assert
+                expect(ensureObjectInfoCachedMock).toBeCalledTimes(1);
+                expect(ensureObjectInfoCachedMock).toBeCalledWith(DEFAULT_API_NAME);
+            });
+
+            it('should call ensureReferencedIdsAreCached', async () => {
+                // Arrange
+
+                // Act
+                await draftEnvironment.dispatchResourceRequest(request);
+
+                // Assert
+                expect(ensureReferencedIdsAreCachedMock).toBeCalledTimes(1);
+                expect(ensureReferencedIdsAreCachedMock).toBeCalledWith(
+                    durableStore,
+                    DEFAULT_API_NAME,
+                    {
+                        Name: DEFAULT_NAME_FIELD_VALUE,
+                    },
+                    expect.any(Function)
+                );
+            });
+
+            it('should throw if ensureObjectInfoCached throws', async () => {
+                // Arrange
+                ensureObjectInfoCachedMock.mockRejectedValueOnce({});
+                let expectedError = null;
+
+                // Act
+                try {
+                    await draftEnvironment.dispatchResourceRequest(request);
+                } catch (err) {
+                    expectedError = err;
+                }
+
+                // Assert
+                expect(expectedError).not.toBe(null);
+            });
+
+            it('should throw if ensureReferencedIdsAreCached throws', async () => {
+                // Arrange
+                ensureReferencedIdsAreCachedMock.mockRejectedValueOnce({});
+                let expectedError = null;
+
+                // Act
+                try {
+                    await draftEnvironment.dispatchResourceRequest(request);
+                } catch (err) {
+                    expectedError = err;
+                }
+
+                // Assert
+                expect(expectedError).toEqual({
+                    body: {
+                        errorCode: 'DRAFT_ERROR',
+                        message: 'failed to synthesize draft response',
+                    },
+                    headers: {},
+                    status: 400,
+                });
+            });
         });
     });
 });

@@ -21,10 +21,9 @@ describe('basic', () => {
     it('basic save questionnaire invocation: update progress', async () => {
         const mock = getMock('save-questionnaire');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            questionnaireId: 'test_questionnaire',
+            questionnaireName: mock.developerName,
             questionnaireData: {
-                progress: 'Completed',
+                status: 'Completed',
                 questionToAnswer: {},
             },
         };
@@ -39,8 +38,7 @@ describe('basic', () => {
     it('basic save questionnaire invocation: supply answer', async () => {
         const mock = getMock('save-questionnaire');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            questionnaireId: 'test_questionnaire',
+            questionnaireName: mock.developerName,
             questionnaireData: {
                 questionToAnswer: {
                     role: {
@@ -49,7 +47,7 @@ describe('basic', () => {
                         whenAnswered: Date.now().toString(),
                     },
                 },
-                progress: 'Completed',
+                status: 'Completed',
             },
         };
         mockSaveQuestionnaireNetworkOnce(config, mock);
@@ -62,10 +60,9 @@ describe('basic', () => {
     });
     it('displays error when network request 404s', async () => {
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            questionnaireId: 'test_questionnaire',
+            questionnaireName: getMock('save-questionnaire').developerName,
             questionnaireData: {
-                progress: 'Completed',
+                status: 'Completed',
                 questionToAnswer: {},
             },
         };
@@ -92,10 +89,9 @@ describe('basic', () => {
     it('getQuestionnaire after saveQuestionnaire does not fetch', async () => {
         const mock = getMock('save-questionnaire');
         const config = {
-            assistantGroup: 'test_assistant_group_id',
-            questionnaireId: 'test_questionnaire',
+            questionnaireName: mock.developerName,
             questionnaireData: {
-                progress: 'Completed',
+                status: 'Completed',
                 questionToAnswer: {},
             },
         };

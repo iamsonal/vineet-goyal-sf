@@ -2,11 +2,11 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '53.0'
+version: '55.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v54.0
+baseUri: /services/data/v55.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -26,29 +26,13 @@ annotationTypes:
     allowedTargets: TypeDeclaration
 types:
   BatchFilterCriteriaInputRepresentation:
-    description: Billing Batch Filter Criteria Input Representation
+    description: Common elements of Billing Batch Filter Criteria Input Representation
+    discriminator: criteriaSequence # TODO hand rolled. W-9275787
     type: object
     properties:
       criteriaSequence:
         description: Sequence number for the criteria
         type: integer
-      fieldName:
-        description: Field Name
-        type: string
-        enum:
-          - Currency_Iso_code
-          - Id
-          - PaymentMethod
-          - PaymentRunBatch
-          - ReferenceEntity
-          - ReferenceEntityAccount
-      objectName:
-        description: Object Name
-        type: string
-        enum:
-          - PaymentGateway
-          - PaymentSchedule
-          - PaymentScheduleItem
       operation:
         description: Operation to be performed
         type: string
@@ -58,16 +42,11 @@ types:
       value:
         description: Value to be compared
         type: string
-  BillingBatchSchedulerOutputRepresentation:
+  BillingBatchSchedulerRepresentation:
     description: Billing Batch Scheduler Output Representation
     type: object
     properties:
-      billingBatchFilterCriteriaId:
-        description: List of Billing Batch Filter Criteria IDs
-        type: array
-        items:
-          type: string
-      billingBatchSchedulerId:
+      id:
         description: Billing Batch Scheduler Id
         type: string
 
@@ -78,30 +57,64 @@ types:
       PaymentsBatchSchedulerInput:
         type: PaymentsBatchSchedulerInputRepresentation
         description: Payments Batch Scheduler Input Representation
+  PaymentRunBatchFilterCriteriaInputRepresentation:
+    description: Billing Batch Filter Criteria Input Representation
+    type: BatchFilterCriteriaInputRepresentation
+    properties:
+      fieldName:
+        description: Field Name
+        type: string
+        enum:
+          - Currency_Iso_code
+          - Id
+          - PaymentMethod
+          - BatchRun
+          - ReferenceEntity
+          - PaymentAccount
+      objectName:
+        description: Object Name
+        type: string
+        enum:
+          - PaymentGateway
+          - PaymentSchedule
+          - PaymentScheduleItem
+  PaymentRunBatchFilterCriteriaInputRepresentations:
+    description: Batch Payments Filter Criteria Input Representations
+    type: object
+    properties:
+      filterCriteria:
+        description: List of filter criteria line items
+        type: array
+        items:
+          type: object
   PaymentsBatchSchedulerInputRepresentation:
     description: Payments Batch Scheduler Input Representation
     type: ScheduleOptionsInputRepresentation
     properties:
       criteriaExpression:
         description: Filter Criteria Expression
-        type: string
         required: false # TODO handrolled W-9314597
+        type: string
+      criteriaMatchType:
+        description: Filter Criteria Match Type
+        required: false # TODO handrolled W-9314597
+        type: string
+        enum:
+          - MatchAny
+          - MatchNone
       filterCriteria:
         description: List of filter criteria line items
-        type: array
         required: false # TODO handrolled W-9314597
+        type: array
         items:
           type: object
   PaymentsBatchSchedulerOutputRepresentation:
     description: Payments Batch Scheduler Output Representation
     type: object
     properties:
-      paymentBatchRunCriteriaId:
-        description: Payment Batch Run Criteria Id
-        type: string
-      schedulerDetails:
+      billingBatchScheduler:
         description: Billing Batch Scheduler Details
-        type: BillingBatchSchedulerOutputRepresentation
+        type: BillingBatchSchedulerRepresentation
   ScheduleOptionsInputRepresentation:
     description: Batch Scheduler Options Input Representation
     discriminator: schedulerName # TODO hand rolled. W-9275787
@@ -109,8 +122,8 @@ types:
     properties:
       endDate:
         description: Batch Job End Date
-        type: string
         required: false # TODO handrolled W-9314597
+        type: string
       frequencyCadence:
         description: Frequency Cadence for the Batch Job
         type: string
@@ -123,8 +136,8 @@ types:
         type: string
       recursEveryMonthOnDay:
         description: Batch Job Recurrence Day for Monthly Frequency Option
-        type: string
         required: false # TODO handrolled W-9314597
+        type: string
       schedulerName:
         description: Name of the batch scheduler
         type: string
@@ -135,10 +148,34 @@ types:
         description: Scheduler Status for the Batch Job
         type: string
         enum:
-          - Draft
           - Active
-          - Inactive
           - Canceled
+          - Draft
+          - Inactive
+  InvoicesBatchSchedulerOutputRepresentation:
+    description: Invoices Batch Scheduler Output Representation
+    type: object
+    properties:
+      billingBatchScheduler:
+        description: Billing Batch Scheduler Details
+        type: BillingBatchSchedulerRepresentation
+  BatchInvoiceSchedulerInputWrapperRepresentation:
+    description: Wrapper for invoice batch scheduler input representation
+    type: object
+    properties:
+      BatchInvoiceSchedulerInput:
+        type: BatchInvoiceSchedulerInputRepresentation
+        description: Invoices Batch Scheduler Input Representation
+  BatchInvoiceSchedulerInputRepresentation:
+    description: Invoices Batch Scheduler Input Representation
+    type: ScheduleOptionsInputRepresentation
+    properties:
+      filterCriteria:
+        description: List of filter criteria line items
+        type: array
+        required: false # TODO handrolled W-9314597
+        items:
+          type: object
 /billing/batch/payments/schedulers:
   post:
     description: Create Payments Batch Job Scheduler
@@ -153,3 +190,17 @@ types:
         type: PaymentsBatchSchedulerInputWrapperRepresentation
         #required: false # TODO handrolled W-9314597
         (oas-body-name): PaymentsBatchSchedulerInput
+/billing/batch/invoices/schedulers:
+  post:
+    description: Create Invoices Batch Job Scheduler
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: InvoicesBatchSchedulerOutputRepresentation
+    body:
+      application/json:
+        type: BatchInvoiceSchedulerInputWrapperRepresentation
+        #required: false # TODO handrolled W-9314597
+        (oas-body-name): BatchInvoiceSchedulerInput

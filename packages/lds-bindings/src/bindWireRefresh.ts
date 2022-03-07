@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import { bindWireRefresh as luvioBindWireRefresh } from '@luvio/lwc-luvio';
 import { instrumentation } from './instrumentation';
 

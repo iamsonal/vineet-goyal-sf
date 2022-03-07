@@ -1,4 +1,4 @@
-import {
+import type {
     LuvioDefinitionNode,
     LuvioListValueNode,
     LuvioObjectValueNode,
@@ -8,8 +8,8 @@ import {
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
-} from '@salesforce/lds-graphql-parser/dist/ast';
-import { DataType, FieldInfo } from './info-types';
+} from '@luvio/graphql-parser';
+import type { DataType, FieldInfo } from './info-types';
 import { ComparisonOperator, CompoundOperator } from './Predicate';
 
 export function isListValueNode(node: LuvioValueNode): node is LuvioListValueNode {
@@ -72,11 +72,21 @@ export function isIdField(fieldInfo: FieldInfo): boolean {
 }
 
 export function isScalarDataType(type: DataType): boolean {
-    return (
-        type === 'Boolean' ||
-        type === 'String' ||
-        type === 'Double' ||
-        type === 'DateTime' ||
-        type === 'Int'
-    );
+    return [
+        'Boolean',
+        'String',
+        'Double',
+        'DateTime',
+        'Int',
+        'WeakEtag',
+        'Picklist',
+        'Currency',
+        'MultiPicklist',
+        'Time',
+        'Phone',
+        'Url',
+        'Email',
+        'TextArea',
+        'Percent',
+    ].includes(type);
 }

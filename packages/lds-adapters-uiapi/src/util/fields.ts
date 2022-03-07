@@ -1,5 +1,5 @@
-import { PathSelection, LinkSelection, StoreLink } from '@luvio/engine';
-import { FieldValueRepresentation } from '../generated/types/FieldValueRepresentation';
+import type { PathSelection, LinkSelection, StoreLink } from '@luvio/engine';
+import type { FieldValueRepresentation } from '../generated/types/FieldValueRepresentation';
 import {
     isSpanningRecord,
     buildSelectionFromRecord,
@@ -7,7 +7,7 @@ import {
 } from '../selectors/record';
 
 import { ObjectKeys, ArrayPrototypePush } from '../util/language';
-import { RecordFieldTrie } from '../util/records';
+import type { RecordFieldTrie } from '../util/records';
 
 export type FieldMapRepresentationNormalized = {
     apiName: string;

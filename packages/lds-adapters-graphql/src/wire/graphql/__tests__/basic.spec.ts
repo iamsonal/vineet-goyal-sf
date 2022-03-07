@@ -4,11 +4,16 @@ import {
     MockPayload,
 } from '@luvio/adapter-test-library';
 import { Environment, Luvio, Store } from '@luvio/engine';
-import parseAndVisit from '@salesforce/lds-graphql-parser';
-import { graphQLAdapterFactory } from '../../../main';
+import { parseAndVisit } from '@luvio/graphql-parser';
+import { graphQLAdapterFactory, configuration, buildCachedSnapshot } from '../../../main';
 import { namespace, representationName } from '../../../util/adapter';
+import timekeeper from 'timekeeper';
 
 import mockData_Account_fields_Name from './data/RecordQuery-Account-fields-Name.json';
+
+beforeEach(() => {
+    timekeeper.reset();
+});
 
 describe('graphQL adapter', () => {
     const setup = () => {
@@ -91,6 +96,89 @@ describe('graphQL adapter', () => {
 
             // verify the root key is there and is composed properly
             expect(cacheKeys).toContain(`${namespace}::${representationName}`);
+        });
+    });
+
+    describe('metadata', () => {
+        it('should publish metadata for all pieces of the query', async () => {
+            timekeeper.freeze(100);
+            const { adapter, store, config } = setup();
+            await adapter(config);
+
+            expect(store.metadata).toMatchInlineSnapshot(`
+                Object {
+                  "GraphQL::Connection:Account(where:{Name:{like:\\"Account1\\"}})": Object {
+                    "expirationTimestamp": 30100,
+                    "ingestionTimestamp": 100,
+                    "namespace": "GraphQL",
+                    "representationName": "AccountConnection",
+                  },
+                  "GraphQL::Connection:Account(where:{Name:{like:\\"Account1\\"}})__edges__0": Object {
+                    "expirationTimestamp": 30100,
+                    "ingestionTimestamp": 100,
+                    "namespace": "GraphQL",
+                    "representationName": "AccountEdge",
+                  },
+                  "GraphQL::graphql": Object {
+                    "expirationTimestamp": 30100,
+                    "ingestionTimestamp": 100,
+                    "namespace": "GraphQL",
+                    "representationName": "Query",
+                  },
+                  "GraphQL::graphql__uiapi": Object {
+                    "expirationTimestamp": 30100,
+                    "ingestionTimestamp": 100,
+                    "namespace": "GraphQL",
+                    "representationName": "UIAPI",
+                  },
+                  "GraphQL::graphql__uiapi__query": Object {
+                    "expirationTimestamp": 30100,
+                    "ingestionTimestamp": 100,
+                    "namespace": "GraphQL",
+                    "representationName": "RecordQuery",
+                  },
+                  "UiApi::RecordRepresentation:001RM000004uuhnYAA": Object {
+                    "expirationTimestamp": 30100,
+                    "ingestionTimestamp": 100,
+                    "namespace": "UiApi",
+                    "representationName": "RecordRepresentation",
+                  },
+                }
+            `);
+        });
+    });
+
+    describe('buildCachedSnapshot', () => {
+        const context: any = { config: { query: {} } };
+        it('calls buildInMemorySnapshot when storeEval is undefined', async () => {
+            const lookupSpy = jest.fn();
+            (lookupSpy as any).ttlStrategy = () => undefined;
+
+            await buildCachedSnapshot(context, lookupSpy);
+
+            expect(lookupSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('buildCachedSnapshot does not call storeEval', async () => {
+            const storeEval = jest.fn(() => Promise.resolve({ state: 'Fulfilled' } as any));
+            const lookupSpy = jest.fn();
+            (lookupSpy as any).ttlStrategy = () => undefined;
+
+            configuration.setStoreEval(storeEval);
+            await buildCachedSnapshot(context, lookupSpy);
+
+            expect(lookupSpy).toHaveBeenCalledTimes(1);
+            expect(storeEval).toHaveBeenCalledTimes(0);
+        });
+
+        it('calls storeEval when defined', async () => {
+            const storeEval = jest.fn(() => Promise.resolve({ state: 'Fulfilled' } as any));
+            configuration.setStoreEval(storeEval);
+
+            const { adapter, config } = setup();
+            await adapter(config);
+
+            expect(storeEval).toHaveBeenCalledTimes(1);
         });
     });
 });

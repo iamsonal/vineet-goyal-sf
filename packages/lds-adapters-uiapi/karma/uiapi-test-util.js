@@ -31,9 +31,10 @@ import {
     DUPLICATE_CONFIGURATION_TTL,
     DUPLICATES_TTL,
     RELATED_LIST_RECORD_COLLECTION_TTL,
+    RELATED_LIST_USER_PREFERENCES_TTL,
 } from './dist/uiapi-constants';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/ui-api`;
 
@@ -139,6 +140,42 @@ function mockGetListInfoByNameNetwork(config, mockData) {
         basePath: `${URL_BASE}/list-info/${objectApiName}/${listViewApiName}`,
         queryParams,
     });
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRecordDeepParamsNetwork(config, mockData) {
+    const { recordId, ...queryParams } = config;
+
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/records/${recordId}`,
+        queryParams: {
+            fields: queryParams.fields || undefined,
+            optionalFields: queryParams.optionalFields || undefined,
+        },
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetListInfosByNameNetwork(config, mockData) {
+    const { names } = config;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/list-info/batch`,
+        queryParams: {
+            names,
+        },
+    });
+
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -470,15 +507,45 @@ function mockGetRelatedListRecordsNetworkPost(config, mockData) {
 }
 
 function mockGetRelatedListRecordsBatchNetwork(config, mockData) {
-    const { parentRecordId, relatedListIds } = config;
-    const queryParams = { ...config };
-    delete queryParams.parentRecordId;
-    delete queryParams.relatedListIds;
-
-    const csvRelatedListIds = relatedListIds.join();
+    const { parentRecordId, relatedListParameters } = config;
 
     const paramMatch = sinon.match({
-        basePath: `${URL_BASE}/related-list-records/batch/${parentRecordId}/${csvRelatedListIds}`,
+        basePath: `${URL_BASE}/related-list-records/batch/${parentRecordId}`,
+        body: {
+            relatedListParameters,
+        },
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRelatedListPreferencesNetwork(config, mockData) {
+    const { preferencesId } = config;
+    const queryParams = { ...config };
+    delete queryParams.preferencesId;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-preferences/${preferencesId}`,
+        queryParams,
+    });
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRelatedListPreferencesBatchNetwork(config, mockData) {
+    const preferencesIds = config.preferencesIds;
+    const queryParams = { ...config };
+    delete queryParams.preferencesIds;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-preferences/batch/${preferencesIds}`,
         queryParams,
     });
 
@@ -813,6 +880,14 @@ function expireRelatedListRecordCollection() {
     timekeeper.travel(Date.now() + RELATED_LIST_RECORD_COLLECTION_TTL + 1);
 }
 
+/**
+ * Force a cache expiration for related-list-preferencs by fast-forwarding time past the
+ * standard related list user preferences TTL.
+ */
+function expireRelatedListUserPreferences() {
+    timekeeper.travel(Date.now() + RELATED_LIST_USER_PREFERENCES_TTL + 1);
+}
+
 function isSpanningRecord(value) {
     return value !== null && typeof value === 'object';
 }
@@ -861,9 +936,13 @@ function extractRecordFields(record, options) {
     let fields = extractRecordFieldsAtPath(path);
 
     if (options) {
-        const { omit, add } = options;
+        const { omit, useNewTrackedFieldBehavior, add } = options;
         if (omit) {
             fields = fields.filter((name) => options.omit.indexOf(name) === -1);
+        }
+        if (useNewTrackedFieldBehavior) {
+            const pattern = /^\w+\.\w+(\.Id)?$/;
+            fields = fields.filter((name) => pattern.test(name));
         }
         if (add) {
             fields.push(...add);
@@ -874,49 +953,11 @@ function extractRecordFields(record, options) {
     return fields;
 }
 
-function convertRelatedListsBatchParamsToResourceParams(parameters) {
-    var relatedListIds = [];
-    var fields = [];
-    var optionalFields = [];
-    var pageSize = [];
-    var sortBy = [];
-    parameters.relatedLists.forEach((relatedList) => {
-        relatedListIds.push(relatedList.relatedListId);
-        if (relatedList.fields && relatedList.fields.length) {
-            fields.push(relatedList.relatedListId + ':' + relatedList.fields.join());
-        }
-        if (relatedList.optionalFields && relatedList.optionalFields.length) {
-            optionalFields.push(
-                relatedList.relatedListId + ':' + relatedList.optionalFields.join()
-            );
-        }
-        if (relatedList.pageSize) {
-            pageSize.push(relatedList.relatedListId + ':' + relatedList.pageSize);
-        }
-        if (!!relatedList.sortBy && relatedList.sortBy.length) {
-            sortBy.push(relatedList.relatedListId + ':' + relatedList.sortBy.join());
-        }
-    });
-    const fieldsParam = fields.join(';');
-    const optionalFieldsParam = optionalFields.join(';');
-    const pageSizeParam = pageSize.join(';');
-    const sortByParam = sortBy.join(';');
-
-    return {
-        parentRecordId: parameters.parentRecordId,
-        relatedListIds: relatedListIds,
-        fields: fieldsParam,
-        optionalFields: optionalFieldsParam,
-        pageSize: pageSizeParam,
-        sortBy: sortByParam,
-    };
-}
-
 function extractRelatedListsBatchParamsFromMockData(mockData) {
     if (mockData.results && mockData.results.length > 0) {
         const parentRecordId = mockData.results.find((item) => item.result.listReference).result
             .listReference.inContextOfRecordId;
-        const relatedLists = mockData.results
+        const relatedListParameters = mockData.results
             .filter((result) => result.result.listReference)
             .map((item) => {
                 return {
@@ -928,8 +969,8 @@ function extractRelatedListsBatchParamsFromMockData(mockData) {
                 };
             });
         return {
-            parentRecordId: parentRecordId,
-            relatedLists: relatedLists,
+            parentRecordId,
+            relatedListParameters,
         };
     } else {
         return {};
@@ -943,6 +984,10 @@ function setTrackedFieldsConfig(_includeLeafNodeIdOnly) {
     configuration.setTrackedFieldDepthOnCacheMiss(depth);
     configuration.setTrackedFieldDepthOnCacheMergeConflict(depth);
     configuration.setTrackedFieldDepthOnNotifyChange(depth);
+}
+
+function getTrackedFieldLeafNodeIdOnly() {
+    return configuration.getTrackedFieldLeafNodeIdOnly();
 }
 
 export {
@@ -976,6 +1021,7 @@ export {
     expireDuplicateConfiguration,
     expireDuplicatesRepresentation,
     expireRelatedListRecordCollection,
+    expireRelatedListUserPreferences,
     // network mock utils
     mockCreateRecordNetwork,
     mockDeleteRecordNetwork,
@@ -983,10 +1029,12 @@ export {
     mockGetLayoutNetwork,
     mockGetLayoutUserStateNetwork,
     mockGetListInfoByNameNetwork,
+    mockGetListInfosByNameNetwork,
     mockGetObjectInfoNetwork,
     mockGetObjectInfosNetwork,
     mockGetPicklistValuesNetwork,
     mockGetRecordNetwork,
+    mockGetRecordDeepParamsNetwork,
     mockGetRecordsNetwork,
     mockGetRecordActionsNetwork,
     mockGetGlobalActionsNetwork,
@@ -1003,6 +1051,8 @@ export {
     mockGetRelatedListRecordsNetwork,
     mockGetRelatedListRecordsNetworkPost,
     mockGetRelatedListRecordsBatchNetwork,
+    mockGetRelatedListPreferencesNetwork,
+    mockGetRelatedListPreferencesBatchNetwork,
     mockUpdateRecordNetwork,
     mockUpdateLayoutUserStateNetwork,
     mockGetRelatedListInfoNetwork,
@@ -1012,9 +1062,9 @@ export {
     mockGetDuplicatesNetwork,
     // mock data utils
     extractRecordFields,
-    convertRelatedListsBatchParamsToResourceParams,
     extractRelatedListsBatchParamsFromMockData,
     setTrackedFieldsConfig,
+    getTrackedFieldLeafNodeIdOnly,
 };
 
 export { instrument } from 'lds-adapters-uiapi';

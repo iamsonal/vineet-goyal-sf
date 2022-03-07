@@ -1,4 +1,4 @@
-import { Instrumentation } from 'o11y/client';
+import type { Instrumentation } from 'o11y/client';
 import { instrumentation } from './instrumentation';
 
 export { activity } from './activity';

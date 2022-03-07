@@ -16,6 +16,7 @@ import {
     PredicateType,
     ValueType,
 } from '../Predicate';
+import { unwrappedError, unwrappedValue } from '../Result';
 
 const objectInfoMap = infoJson as ObjectInfoMap;
 describe('utils', () => {
@@ -26,7 +27,7 @@ describe('utils', () => {
                 dataType: 'String',
                 apiName: 'TimeSheetNumber',
             };
-            expect(actual).toEqual(expected);
+            expect(unwrappedValue(actual)).toEqual(expected);
         });
 
         it('returns reference field with relationshipName', () => {
@@ -37,17 +38,20 @@ describe('utils', () => {
                 relationshipName: 'Owner',
                 referenceToInfos: [{ apiName: 'User' }],
             };
-            expect(actual).toEqual(expected);
+            expect(unwrappedValue(actual)).toEqual(expected);
         });
 
         it('returns undefined when no matching scalar or reference field exists', () => {
             const actual = getFieldInfo('TimeSheet', 'NotAField', objectInfoMap);
-            expect(actual).toBeUndefined();
+            expect(unwrappedValue(actual)).toBeUndefined();
         });
 
         it('returns undefined when no object info with apiName exists', () => {
             const actual = getFieldInfo('NotAType', 'NotAField', objectInfoMap);
-            expect(actual).toBeUndefined();
+            expect(unwrappedError(actual)).toEqual({
+                type: 'MissingObjectInfoError',
+                object: 'NotAType',
+            });
         });
     });
 
@@ -59,17 +63,20 @@ describe('utils', () => {
                 relationshipName: 'TimeSheetEntries',
                 childObjectApiName: 'TimeSheetEntry',
             };
-            expect(actual).toEqual(expected);
+            expect(unwrappedValue(actual)).toEqual(expected);
         });
 
         it('returns undefined when no relationship with fieldName exists', () => {
             const actual = getRelationshipInfo('TimeSheet', 'NotARelationship', objectInfoMap);
-            expect(actual).toBeUndefined();
+            expect(unwrappedValue(actual)).toBeUndefined();
         });
 
         it('returns undefined when no object info with apiName exists', () => {
             const actual = getRelationshipInfo('NotAType', 'TimeSheetEntries', objectInfoMap);
-            expect(actual).toBeUndefined();
+            expect(unwrappedError(actual)).toEqual({
+                type: 'MissingObjectInfoError',
+                object: 'NotAType',
+            });
         });
     });
 

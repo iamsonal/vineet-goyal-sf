@@ -1,6 +1,6 @@
-import resolve from 'rollup-plugin-node-resolve';
-import cjs from 'rollup-plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
+import cjs from '@rollup/plugin-commonjs';
 
 export default {
     input: './scripts/memory/test.js',

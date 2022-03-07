@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 
 import { mark } from './aura-instrumentation/main';
 import { clearStorages } from '@salesforce/lds-aura-storage';

@@ -1,27 +1,27 @@
-import { RecordSource, Store, StoreLink } from '@luvio/engine';
-import {
-    DefaultDurableSegment,
+import type { RecordSource, Store, StoreLink } from '@luvio/engine';
+import type {
     DurableStore,
     DurableStoreEntries,
     DurableStoreEntry,
+    DurableStoreOperation,
 } from '@luvio/environments';
-import {
+import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
+import type {
     FieldValueRepresentation,
-    keyBuilderRecord,
     RecordRepresentationNormalized,
 } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import {
     buildRecordFieldStoreKey,
     extractRecordIdFromStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
 import { ObjectAssign, ObjectCreate, ObjectKeys } from '../utils/language';
-import {
+import type {
     DraftRecordRepresentation,
     DurableRecordEntry,
     DurableRecordRepresentation,
-    isEntryDurableRecordRepresentation,
-    isStoreRecordError,
 } from '../utils/records';
+import { isEntryDurableRecordRepresentation, isStoreRecordError } from '../utils/records';
 
 /**
  * Records are stored in the durable store with scalar fields denormalized. This function takes that denoramlized
@@ -204,14 +204,9 @@ export function makeRecordDenormalizingDurableStore(
         });
     };
 
-    const setEntries: typeof durableStore['setEntries'] = function <T>(
-        entries: DurableStoreEntries<T>,
-        segment: string
-    ): Promise<void> {
-        if (segment !== DefaultDurableSegment) {
-            return durableStore.setEntries(entries, segment);
-        }
-
+    const denormalizeEntries = function <T>(
+        entries: DurableStoreEntries<T>
+    ): DurableStoreEntries<T> {
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);
         const putRecords: { [key: string]: boolean } = {};
@@ -264,7 +259,44 @@ export function makeRecordDenormalizingDurableStore(
             }
         }
 
+        return putEntries;
+    };
+
+    const setEntries: typeof durableStore['setEntries'] = function <T>(
+        entries: DurableStoreEntries<T>,
+        segment: string
+    ): Promise<void> {
+        if (segment !== DefaultDurableSegment) {
+            return durableStore.setEntries(entries, segment);
+        }
+
+        const putEntries = denormalizeEntries(entries);
+
         return durableStore.setEntries(putEntries, segment);
+    };
+
+    const batchOperations: typeof durableStore['batchOperations'] = function <T>(
+        operations: DurableStoreOperation<T>[]
+    ): Promise<void> {
+        const operationsWithDenormedRecords: DurableStoreOperation<T>[] = [];
+        for (let i = 0, len = operations.length; i < len; i++) {
+            const operation = operations[i];
+
+            if (
+                operation.segment !== DefaultDurableSegment ||
+                operation.type !== DurableStoreOperationType.SetEntries
+            ) {
+                operationsWithDenormedRecords.push(operation);
+                continue;
+            }
+
+            operationsWithDenormedRecords.push({
+                ...operation,
+                entries: denormalizeEntries(operation.entries),
+            });
+        }
+
+        return durableStore.batchOperations(operationsWithDenormedRecords);
     };
 
     /**
@@ -300,10 +332,10 @@ export function makeRecordDenormalizingDurableStore(
         });
     };
 
-    // TODO [W-9103958]: record fields needs to be denormalized if included in a batch operation
     return ObjectCreate(durableStore, {
         getEntries: { value: getEntries, writable: true },
         setEntries: { value: setEntries, writable: true },
+        batchOperations: { value: batchOperations, writable: true },
         getDenormalizedRecord: { value: getDenormalizedRecord, writable: true },
     });
 }

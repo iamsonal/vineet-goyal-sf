@@ -17,7 +17,8 @@
         "browser": true,
         "es6": true,
         "node": true,
-        "jest": true
+        "jest": true,
+        "jasmine": true
     },
 
     "rules": {
@@ -34,18 +35,28 @@
         "@salesforce/lds/no-optional-chaining": "error",
         "@salesforce/lds/no-invalid-todo": "error",
         "@salesforce/lds/no-error-in-production": "error",
+
+        "@typescript-eslint/consistent-type-imports":[
+            "error",
+            {
+                "prefer": "type-imports"
+            }
+        ],
         "@typescript-eslint/no-unused-vars": [
             "error",
-            { "argsIgnorePattern": "^_" }
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
         ],
 
         "jest/no-focused-tests": "error",
         "jest/no-identical-title": "error",
-        "jest/valid-describe": "error",
+        "jest/valid-describe-callback": "error",
         "jest/valid-expect-in-promise": "error",
         "jest/valid-expect": "error",
         "jest/consistent-test-it": "error",
-        "jest/lowercase-name": [
+        "jest/prefer-lowercase-title": [
             "error",
             {
                 "ignore": ["describe", "test"]
@@ -101,6 +112,17 @@
                 "@salesforce/lds/no-optional-chaining": "off",
                 "@salesforce/lds/no-invalid-todo": "warn",
                 "@salesforce/lds/no-error-in-production": "off"
+            }
+        },
+        {
+            "files": [
+                "*.spec.ts",
+                "*.d.ts",
+                "packages/**/__tests__/**",
+                "packages/**/__mocks__/**"
+            ],
+            "rules": {
+                "@typescript-eslint/consistent-type-imports": "off"
             }
         }
     ]

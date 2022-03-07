@@ -1,10 +1,113 @@
 {
-    "count": 0,
+    "count": 3,
     "currentPageToken": null,
-    "currentPageUrl": "/services/data/v54.0/ui-api/lookups/Case/ContactId/Contact?q=jak&searchType=TypeAhead&page=1&pageSize=10",
+    "currentPageUrl": "/services/data/v55.0/ui-api/lookups/Case/ContactId/Contact?q=jak&searchType=TypeAhead&page=1&pageSize=10",
     "nextPageToken": null,
     "nextPageUrl": null,
     "previousPageToken": null,
     "previousPageUrl": null,
-    "records": []
+    "records": [
+        {
+            "apiName": "Contact",
+            "childRelationships": {},
+            "eTag": "bb422b4b7d8c5e53454f606110c5b12a",
+            "fields": {
+                "Account": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "FirstName": {
+                    "displayValue": null,
+                    "value": "Jake"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "003T10000016ms1IAA"
+                },
+                "LastName": {
+                    "displayValue": null,
+                    "value": "Norris"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Jake Norris"
+                }
+            },
+            "id": "003T10000016ms1IAA",
+            "lastModifiedById": "005T1000000IJQGIA4",
+            "lastModifiedDate": "2021-12-02T19:56:02.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2021-12-02T19:56:02.000Z",
+            "weakEtag": 1638474962000
+        },
+        {
+            "apiName": "Contact",
+            "childRelationships": {},
+            "eTag": "950b885bda4e8f64e2456572d799c162",
+            "fields": {
+                "Account": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "FirstName": {
+                    "displayValue": null,
+                    "value": "Jake"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "003T1000001UAsvIAG"
+                },
+                "LastName": {
+                    "displayValue": null,
+                    "value": "Archibald"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Jake Archibald"
+                }
+            },
+            "id": "003T1000001UAsvIAG",
+            "lastModifiedById": "005T1000000IJQGIA4",
+            "lastModifiedDate": "2021-12-02T19:55:58.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2021-12-02T19:55:58.000Z",
+            "weakEtag": 1638474958000
+        },
+        {
+            "apiName": "Contact",
+            "childRelationships": {},
+            "eTag": "c532cbb0645a4a36aa793d64698a3e37",
+            "fields": {
+                "Account": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "FirstName": {
+                    "displayValue": null,
+                    "value": "Michelle"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "003T1000001UAt0IAG"
+                },
+                "LastName": {
+                    "displayValue": null,
+                    "value": "Jakuba"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Michelle Jakuba"
+                }
+            },
+            "id": "003T1000001UAt0IAG",
+            "lastModifiedById": "005T1000000IJQGIA4",
+            "lastModifiedDate": "2021-12-02T19:56:01.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2021-12-02T19:56:01.000Z",
+            "weakEtag": 1638474961000
+        }
+    ]
 }

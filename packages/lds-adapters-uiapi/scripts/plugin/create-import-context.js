@@ -27,10 +27,18 @@ function createImportsMap(importContext) {
             'createFieldsIngestion'
         ),
         FULFILLED_SNAPSHOT: namedImport('@luvio/engine', 'FulfilledSnapshot'),
+        STALE_SNAPSHOT: namedImport('@luvio/engine', 'StaleSnapshot'),
+        PENDING_SNAPSHOT: namedImport('@luvio/engine', 'PendingSnapshot'),
         FETCH_RESPONSE: namedImport(`@luvio/engine`, 'FetchResponse'),
         UNFULFILLED_SNAPSHOT_IMPORT: namedImport('@luvio/engine', 'UnfulfilledSnapshot'),
+        SNAPSHOT_REFRESH_TYPE: namedImport(`@luvio/engine`, 'SnapshotRefresh'),
         RESOURCE_REQUEST_OVERRIDE: namedImport(`@luvio/engine`, 'ResourceRequestOverride'),
+        DISPATCH_RESOURCE_REQUEST_CONTEXT: namedImport(
+            `@luvio/engine`,
+            'DispatchResourceRequestContext'
+        ),
         RESOURCE_INGEST_INTERFACE: namedImport(`@luvio/engine`, 'ResourceIngest'),
+        RESOURCE_RESPONSE_INTERFACE: namedImport(`@luvio/engine`, 'ResourceResponse'),
 
         // uiapi fields/records imports
         FIELD_MAP_REPRESENTATION_IMPORT: namedImport(src_util_fields, 'FieldMapRepresentation'),
@@ -52,20 +60,26 @@ function createImportsMap(importContext) {
             src_helpers_RecordRepresentation_resolveConflict,
             'resolveConflict'
         ),
-        BLANK_RECORD_FIELDS_TRIE: importAbsolutePath(src_util_records, 'BLANK_RECORD_FIELDS_TRIE'),
-        RECORD_INGEST: importAbsolutePath(src_util_record_ingest, 'createRecordIngest'),
 
         RECORD_FIELD_TRIE: importAbsolutePath(src_util_records, 'RecordFieldTrie'),
+        BLANK_RECORD_FIELDS_TRIE: importAbsolutePath(src_util_records, 'BLANK_RECORD_FIELDS_TRIE'),
+        CONVERT_FIELDS_TO_TRIE_IMPORT: importAbsolutePath(src_util_records, 'convertFieldsToTrie'),
+
+        RECORD_INGEST: importAbsolutePath(src_util_record_ingest, 'createRecordIngest'),
 
         RESOLVE_RECORD_MAP_INTERFACE: importAbsolutePath(
             src_helpers_RecordRepresentation_resolveConflict,
             'RecordConflictMap'
         ),
         CREATE_FIELDS_SELECTION: importAbsolutePath(src_util_fields, 'createPathSelection'),
-        CONVERT_FIELDS_TO_TRIE_IMPORT: importAbsolutePath(src_util_records, 'convertFieldsToTrie'),
+
         GENERATE_FIELDS_SELECTION: importAbsolutePath(
             src_util_select_records,
             'generateFieldsSelection'
+        ),
+        BUILD_SELECTION_FROM_FIELDS: importAbsolutePath(
+            src_util_select_records,
+            'buildSelectionFromFields'
         ),
 
         // configuration

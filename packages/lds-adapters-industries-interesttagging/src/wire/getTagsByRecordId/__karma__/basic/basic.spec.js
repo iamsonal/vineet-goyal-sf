@@ -79,8 +79,8 @@ describe('basic getTagsByRecordId tests', () => {
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredTagDetail()).toEqual(outputMock);
 
-        // el2 should not have received new value
-        expect(el2.pushCount()).toBe(1);
+        // el1 should not have received new value
+        expect(el1.pushCount()).toBe(1);
     });
 
     it('test Server 404 Emits Correctly to Component- displays error when network request 404s', async () => {
@@ -99,7 +99,7 @@ describe('basic getTagsByRecordId tests', () => {
 
         const el = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
         expect(el.pushCount()).toBe(1);
-        expect(el.getError()).toEqual(mock);
+        expect(el.getError()).toEqualImmutable(mock);
     });
 
     it('test Server 404 Cache Hit Scenario- should cause a cache hit when details are queried after server returned 404', async () => {
@@ -121,12 +121,10 @@ describe('basic getTagsByRecordId tests', () => {
         });
 
         const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
-        expect(el1.getError()).toEqual(mockError);
-        expect(el1.getError()).toBeImmutable();
+        expect(el1.getError()).toEqualImmutable(mockError);
 
         const el2 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
-        expect(el2.getError()).toEqual(mockError);
-        expect(el2.getError()).toBeImmutable();
+        expect(el2.getError()).toEqualImmutable(mockError);
     });
 
     it('test Expired Server 404 Cache Miss Scenario- should refetch details when ingested properties error TTLs out', async () => {
@@ -153,7 +151,7 @@ describe('basic getTagsByRecordId tests', () => {
         ]);
 
         const el1 = await setupElement(MOCK_TEST_CONFIG, GetTagsByRecordId);
-        expect(el1.getError()).toEqual(mockError);
+        expect(el1.getError()).toEqualImmutable(mockError);
 
         clearCache();
 

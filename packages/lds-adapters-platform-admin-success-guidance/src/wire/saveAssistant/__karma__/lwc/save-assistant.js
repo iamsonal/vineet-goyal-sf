@@ -3,22 +3,19 @@ import { saveAssistant, getAssistant } from 'lds-adapters-platform-admin-success
 
 export default class SaveAssistant extends LightningElement {
     @track assistantData;
-    @track assistantGroup;
+    @track assistantName;
     @track error;
-    @track scenarioId;
     @wire(getAssistant, {
-        assistantGroup: '$assistantGroup',
-        scenarioId: '$scenarioId',
+        assistantName: '$assistantName',
     })
     assistantWireResult;
 
     @api
-    invokeSaveAssistant({ assistantGroup, assistantData, scenarioId }) {
-        saveAssistant({ assistantGroup, assistantData, scenarioId })
+    invokeSaveAssistant({ assistantName, assistantData }) {
+        saveAssistant({ assistantName, assistantData })
             .then((data) => {
+                this.assistantName = assistantName;
                 this.assistantData = data;
-                this.assistantGroup = assistantGroup;
-                this.scenarioId = scenarioId;
             })
             .catch((error) => {
                 this.error = error;
@@ -29,6 +26,7 @@ export default class SaveAssistant extends LightningElement {
     getAssistant() {
         return this.assistantData;
     }
+
     @api
     getAssistantWire() {
         return this.assistantWireResult && this.assistantWireResult.data;

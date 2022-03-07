@@ -1,0 +1,15 @@
+{
+    "data": {},
+    "errors": [
+        {
+            "locations": [
+                {
+                    "column": 25,
+                    "line": 7
+                }
+            ],
+            "message": "Validation error of type WrongType: argument 'orderBy.Service_Level_Agreement__r' with value 'ObjectValue{objectFields=[ObjectField{name='Service_Level_Agreement__r', value=ObjectValue{objectFields=[ObjectField{name='order', value=EnumValue{name='DESC'}}]}}]}' contains a field not in 'Service_Level_Agreement__mdt_OrderBy': 'order' @ 'uiapi/query/Support_Tier__mdt'",
+            "paths": []
+        }
+    ]
+}

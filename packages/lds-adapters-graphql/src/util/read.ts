@@ -1,16 +1,16 @@
-import { Reader, ReaderFragment } from '@luvio/engine';
-import {
+import type { Reader, ReaderFragment } from '@luvio/engine';
+import type {
     LuvioOperationDefinitionNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { followLink, getLuvioFieldNodeSelection } from '../type/Selection';
 import { createRead as connectionCreateRead } from '../custom/connection';
 import { createRead as recordCreateRead } from '../custom/record';
 import { readScalarFieldSelection } from '../type/ScalarField';
 import { render as renderField } from '../type/Field';
-import { GraphQLVariables } from '../type/Variable';
+import type { GraphQLVariables } from '../type/Variable';
 
 function createCustomFieldRead(
     sel: LuvioSelectionCustomFieldNode,

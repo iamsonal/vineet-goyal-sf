@@ -1,0 +1,62 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  TenantCertificateStateRepresentation:
+    description: Output Representation of TPM Tenant Certificate State.
+    type: object
+    properties:
+      isCertAvailable:
+        description: Availibility of Certificate
+        type: boolean
+      state:
+        description: Tenant Registration State
+        type: string
+  TenantCertificateUpdateStatusRepresentation:
+    description: Output Representation of TPM Tenant Certificate State.
+    type: object
+    properties:
+      certificateUpdateStatus:
+        description: Created/Updated - This returned from falcon endpoint based on 201 or 200
+        type: string
+/connect:
+  /consumer-goods/tenant-registration:
+    get:
+      description: Get Tenant Registration State
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TenantCertificateStateRepresentation
+    put:
+      description: Put Tenant Certificate
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TenantCertificateUpdateStatusRepresentation

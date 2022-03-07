@@ -1,28 +1,49 @@
-import { Luvio, Store, Adapter, UnfulfilledSnapshot } from '@luvio/engine';
-import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
+import type {
+    FetchResponse,
+    Luvio,
+    Store,
+    Adapter,
+    UnfulfilledSnapshot,
+    HttpStatusCode,
+    AdapterRequestContext,
+} from '@luvio/engine';
+import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@salesforce/lds-bindings';
+import type { CacheStatsLogger, Counter, MetricsKey, Timer } from 'instrumentation/service';
 import {
-    CacheStatsLogger,
-    Counter,
     counter,
     interaction,
     mark as instrumentationServiceMark,
-    MetricsKey,
-    percentileHistogram,
     perfStart,
     perfEnd,
     registerCacheStats,
     registerPeriodicLogger,
-    PercentileHistogram,
     timer,
-    Timer,
 } from 'instrumentation/service';
-import { LRUCache } from '@salesforce/lds-instrumentation';
+import {
+    incrementCounterMetric,
+    incrementGetRecordNotifyChangeAllowCount,
+    incrementGetRecordNotifyChangeDropCount,
+    instrumentAdapter as o11yInstrumentAdapter,
+    instrumentLuvio as o11yInstrumentLuvio,
+    updatePercentileHistogramMetric,
+    LRUCache,
+    setupInstrumentation as ldsInstrumentationSetupInstrumentation,
+} from '@salesforce/lds-instrumentation';
+import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
+import { instrument as networkAdapterInstrument } from '@salesforce/lds-network-adapter';
+import {
+    instrument as networkAuraInstrument,
+    forceRecordTransactionsDisabled,
+} from '@salesforce/lds-network-aura';
+import { instrument as lwcBindingsInstrument } from '@salesforce/lds-bindings';
+import { instrument as adsBridgeInstrument } from '@salesforce/lds-ads-bridge';
 
 import {
     OBSERVABILITY_NAMESPACE,
     ADAPTER_INVOCATION_COUNT_METRIC_NAME,
     ADAPTER_ERROR_COUNT_METRIC_NAME,
     GET_APEX_REQUEST_COUNT,
+    NETWORK_ADAPTER_RESPONSE_METRIC_NAME,
     TOTAL_ADAPTER_ERROR_COUNT,
     TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT,
 } from './utils/observability';
@@ -181,13 +202,13 @@ export class Instrumentation {
                   )
               );
 
-        const instrumentedAdapter = (config: C) => {
+        const instrumentedAdapter = (config: C, requestContext?: AdapterRequestContext) => {
             // increment overall and adapter request metrics
             wireAdapterRequestMetric.increment(1);
             totalAdapterRequestSuccessMetric.increment(1);
 
             // execute adapter logic
-            const result = adapter(config);
+            const result = adapter(config, requestContext);
             // In the case where the adapter returns a non-Pending Snapshot it is constructed out of the store
             // (cache hit) whereas a Promise<Snapshot> or Pending Snapshot indicates a network request (cache miss).
             //
@@ -227,7 +248,7 @@ export class Instrumentation {
         Object.defineProperty(instrumentedAdapter, 'name', {
             value: name + '__instrumented',
         });
-        return instrumentedAdapter;
+        return o11yInstrumentAdapter(instrumentedAdapter, metadata);
     }
 
     /**
@@ -263,6 +284,8 @@ export class Instrumentation {
      * @param context The transaction context.
      */
     public instrumentLuvio(context: unknown): void {
+        o11yInstrumentLuvio(context);
+
         if (this.isRefreshAdapterEvent(context)) {
             this.aggregateRefreshAdapterEvents(context);
         } else if (this.isAdapterUnfulfilledError(context)) {
@@ -506,40 +529,6 @@ export function log(_schema: any, payload: LightningInteractionSchema): void {
     interaction(target, scope, context, eventSource, eventType, attributes);
 }
 
-const counterMetricTracker: Record<string, Counter> = ObjectCreate(null);
-/**
- * Calls instrumentation/service telemetry counter
- * @param name Name of the metric
- * @param value number to increment by, if undefined increment by 1
- */
-export function incrementCounterMetric(name: string, value?: number) {
-    let metric = counterMetricTracker[name];
-    if (metric === undefined) {
-        metric = counter(createMetricsKey(NAMESPACE, name));
-        counterMetricTracker[name] = metric;
-    }
-    if (value === undefined) {
-        metric.increment(1);
-    } else {
-        metric.increment(value);
-    }
-}
-
-const percentileHistogramMetricTracker: Record<string, PercentileHistogram> = ObjectCreate(null);
-/**
- * Calls instrumentation/service telemetry percentileHistogram
- * @param name Name of the metric
- * @param value number to update the percentileHistogram with
- */
-export function updatePercentileHistogramMetric(name: string, value: number) {
-    let metric = percentileHistogramMetricTracker[name];
-    if (metric === undefined) {
-        metric = percentileHistogram(createMetricsKey(NAMESPACE, name));
-        percentileHistogramMetricTracker[name] = metric;
-    }
-    metric.update(value);
-}
-
 const timerMetricTracker: Record<string, Timer> = ObjectCreate(null);
 /**
  * Calls instrumentation/service telemetry timer
@@ -563,6 +552,27 @@ export function timerMetricAddDuration(timer: Timer, duration: number) {
 }
 
 /**
+ * W-10315098
+ * Increments the counter associated with the request response. Counts are bucketed by status.
+ */
+const requestResponseMetricTracker: Record<HttpStatusCode, Counter> = ObjectCreate(null);
+export function incrementRequestResponseCount(cb: () => FetchResponse<unknown>) {
+    const status = cb().status;
+    let metric = requestResponseMetricTracker[status];
+    if (metric === undefined) {
+        metric = counter(
+            createMetricsKey(
+                OBSERVABILITY_NAMESPACE,
+                NETWORK_ADAPTER_RESPONSE_METRIC_NAME,
+                `${status.valueOf()}`
+            )
+        );
+        requestResponseMetricTracker[status] = metric;
+    }
+    metric.increment();
+}
+
+/**
  * Add a mark to the metrics service.
  *
  * @param name The mark name.
@@ -582,13 +592,72 @@ export function registerLdsCacheStats(name: string): CacheStatsLogger {
 }
 
 /**
+ * Add or overwrite hooks that require aura implementations
+ */
+export function setAuraInstrumentationHooks() {
+    adaptersUiApiInstrument({
+        recordConflictsResolved: (serverRequestCount: number) =>
+            updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
+        nullDisplayValueConflict: ({ fieldType, areValuesEqual }) => {
+            const metricName = `merge-null-dv-count.${fieldType}`;
+            if (fieldType === 'scalar') {
+                incrementCounterMetric(`${metricName}.${areValuesEqual}`);
+            } else {
+                incrementCounterMetric(metricName);
+            }
+        },
+        getRecordNotifyChangeAllowed: incrementGetRecordNotifyChangeAllowCount,
+        getRecordNotifyChangeDropped: incrementGetRecordNotifyChangeDropCount,
+        recordApiNameChanged:
+            instrumentation.incrementRecordApiNameChangeCount.bind(instrumentation),
+        weakEtagZero: instrumentation.aggregateWeakETagEvents.bind(instrumentation),
+        getRecordNotifyChangeNetworkResult:
+            instrumentation.notifyChangeNetwork.bind(instrumentation),
+    });
+    networkAuraInstrument({
+        logCrud: logCRUDLightningInteraction,
+        networkResponse: incrementRequestResponseCount,
+    });
+    lwcBindingsInstrument({
+        refreshCalled: instrumentation.handleRefreshApiCall.bind(instrumentation),
+        instrumentAdapter: instrumentation.instrumentAdapter.bind(instrumentation),
+    });
+    adsBridgeInstrument({
+        timerMetricAddDuration: updateTimerMetric,
+    });
+    // Our getRecord through aggregate-ui CRUD logging has moved
+    // to lds-network-adapter. We still need to respect the
+    // orgs environment setting
+    if (forceRecordTransactionsDisabled === false) {
+        networkAdapterInstrument({
+            getRecordAggregateResolve: (cb) => {
+                const { recordId, apiName } = cb();
+                logCRUDLightningInteraction('read', {
+                    recordId,
+                    recordType: apiName,
+                    state: 'SUCCESS',
+                });
+            },
+            getRecordAggregateReject: (cb) => {
+                const recordId = cb();
+                logCRUDLightningInteraction('read', {
+                    recordId,
+                    state: 'ERROR',
+                });
+            },
+        });
+    }
+}
+
+/**
  * Initialize the instrumentation and instrument the LDS instance and the Store.
  *
  * @param luvio The Luvio instance to instrument.
  * @param store The Store to instrument.
  */
-export function setupInstrumentation(_luvio: Luvio, _store: Store): void {
-    // set instrumentation hooks for runtime
+export function setupInstrumentation(luvio: Luvio, store: Store): void {
+    ldsInstrumentationSetupInstrumentation(luvio, store);
+    setAuraInstrumentationHooks();
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import { deleteRecordAdapterFactory } from '../../generated/adapters/deleteRecord';
 
 export const factory = (luvio: Luvio) => {

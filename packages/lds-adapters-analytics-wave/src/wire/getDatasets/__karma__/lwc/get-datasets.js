@@ -12,6 +12,8 @@ export default class GetDatasets extends LightningElement {
     @api pageSize;
     @api q;
     @api scope;
+    @api sort;
+    @api order;
 
     @wire(getDatasets, {
         datasetTypes: '$types',
@@ -22,6 +24,8 @@ export default class GetDatasets extends LightningElement {
         pageSize: '$pageSize',
         q: '$q',
         scope: '$scope',
+        sort: '$sort',
+        order: '$order',
     })
     onGetDatasets({ data, error }) {
         this.data = data;

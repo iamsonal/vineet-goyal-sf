@@ -1,6 +1,7 @@
-import { Luvio } from '@luvio/engine';
-import { DurableStore, DurableStoreEntry } from '@luvio/environments';
-import { DRAFT_ID_MAPPINGS_SEGMENT, DraftIdMappingEntry } from '@salesforce/lds-drafts';
+import type { Luvio } from '@luvio/engine';
+import type { DurableStore, DurableStoreEntry } from '@luvio/environments';
+import type { DraftIdMappingEntry } from '@salesforce/lds-drafts';
+import { DRAFT_ID_MAPPINGS_SEGMENT } from '@salesforce/lds-drafts';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { ObjectKeys } from './language';
 

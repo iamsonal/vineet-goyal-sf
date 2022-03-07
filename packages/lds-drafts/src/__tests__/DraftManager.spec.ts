@@ -10,6 +10,7 @@ import {
     DraftActionOperationType,
     DraftManager,
     DraftQueueItem,
+    DraftQueueListener,
     DraftQueueOperationType,
 } from '../DraftManager';
 import {
@@ -271,7 +272,7 @@ describe('DraftManager', () => {
             });
         });
 
-        it('sends updated draft action to listners', async () => {
+        it('sends updated draft action to listeners', async () => {
             expect.assertions(3);
             const action = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
             manager.registerDraftQueueChangedListener((state, type, queueItem) => {
@@ -283,6 +284,42 @@ describe('DraftManager', () => {
                 type: DraftQueueEventType.ActionUpdated,
                 action,
             });
+        });
+
+        it('fires a queue started event with operation type', async () => {
+            // Arrange
+            let operationType = null;
+            const listener: DraftQueueListener = (manager, type) => {
+                operationType = type;
+            };
+            manager.registerDraftQueueChangedListener(listener);
+
+            // Act
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.QueueStateChanged,
+                state: DraftQueueState.Started,
+            });
+
+            // Assert
+            expect(operationType).toBe(DraftQueueOperationType.QueueStarted);
+        });
+
+        it('fires a queue stopped event with operation type', async () => {
+            // Arrange
+            let operationType = null;
+            const listener: DraftQueueListener = (manager, type) => {
+                operationType = type;
+            };
+            manager.registerDraftQueueChangedListener(listener);
+
+            // Act
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.QueueStateChanged,
+                state: DraftQueueState.Stopped,
+            });
+
+            // Assert
+            expect(operationType).toBe(DraftQueueOperationType.QueueStopped);
         });
     });
 
@@ -310,23 +347,21 @@ describe('DraftManager', () => {
     });
 
     describe('queue', () => {
-        it('starts when startQueue is called', async (done) => {
+        it('starts when startQueue is called', async () => {
             const startSpy = jest.fn((): Promise<void> => {
-                done();
                 return Promise.resolve();
             });
             mockDraftQueue.startQueue = startSpy;
-            manager.startQueue();
+            await manager.startQueue();
             expect(mockDraftQueue.startQueue).toBeCalledTimes(1);
         });
 
-        it('stops when stopQueue is called', async (done) => {
+        it('stops when stopQueue is called', async () => {
             const stopSpy = jest.fn((): Promise<void> => {
-                done();
                 return Promise.resolve();
             });
             mockDraftQueue.stopQueue = stopSpy;
-            manager.stopQueue();
+            await manager.stopQueue();
             expect(mockDraftQueue.stopQueue).toBeCalledTimes(1);
         });
     });
@@ -334,13 +369,13 @@ describe('DraftManager', () => {
     describe('swap action', () => {
         it('successfully swaps actions', async () => {
             const editAction = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
-            const swapSpy = jest.fn((actionId, forActionId): Promise<
-                DraftAction<unknown, unknown>
-            > => {
-                expect(actionId).toBe('mockIdOne');
-                expect(forActionId).toBe('mockIdTwo');
-                return Promise.resolve(editAction);
-            });
+            const swapSpy = jest.fn(
+                (actionId, forActionId): Promise<DraftAction<unknown, unknown>> => {
+                    expect(actionId).toBe('mockIdOne');
+                    expect(forActionId).toBe('mockIdTwo');
+                    return Promise.resolve(editAction);
+                }
+            );
             mockDraftQueue.replaceAction = swapSpy;
             const result = await manager.replaceAction('mockIdOne', 'mockIdTwo');
             expect(result.id).toBe(editAction.id);
@@ -350,17 +385,17 @@ describe('DraftManager', () => {
 
     describe('metadata', () => {
         it('calls draft queue metadata when saving', async (done) => {
-            const metadataSpy = jest.fn((actionId, metadata): Promise<
-                DraftAction<unknown, unknown>
-            > => {
-                expect(actionId).toBe('foo');
-                expect(metadata).toEqual({ bar: 'baz' });
-                done();
-                let action = createPostDraftAction('blah', 'target');
-                action.id = 'foo';
-                action.metadata = metadata;
-                return Promise.resolve(action);
-            });
+            const metadataSpy = jest.fn(
+                (actionId, metadata): Promise<DraftAction<unknown, unknown>> => {
+                    expect(actionId).toBe('foo');
+                    expect(metadata).toEqual({ bar: 'baz' });
+                    done();
+                    let action = createPostDraftAction('blah', 'target');
+                    action.id = 'foo';
+                    action.metadata = metadata;
+                    return Promise.resolve(action);
+                }
+            );
             mockDraftQueue.setMetadata = metadataSpy;
             const updatedItem = await manager.setMetadata('foo', { bar: 'baz' });
             expect(metadataSpy).toBeCalledTimes(1);
@@ -452,13 +487,11 @@ const MockDraftQueue = jest.fn(
             stopQueue: jest.fn(),
             replaceAction: jest.fn(),
             setMetadata: jest.fn(),
-            registerOnChangedListener: jest.fn(
-                (listener: DraftQueueChangeListener): (() => Promise<void>) => {
-                    globalDraftQueueListener = listener;
-                    return () => {
-                        return Promise.resolve();
-                    };
-                }
-            ),
+            registerOnChangedListener: (listener: DraftQueueChangeListener) => {
+                globalDraftQueueListener = listener;
+
+                // Return a "function" that returns a Promise
+                return Promise.resolve;
+            },
         } as DraftQueue)
 );

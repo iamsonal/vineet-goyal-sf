@@ -1,0 +1,28 @@
+{
+    "sourceObjects": [
+        {
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent/fields",
+            "name": "ADMINCustomEntity__ChangeEvent",
+            "replicated": false,
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent",
+            "dataConnector": {
+                "id": "0Itxx0000004C92CAE",
+                "name": "SFDC_LOCAL"
+            }
+        },
+        {
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule/fields",
+            "name": "ADMINCustomEntity__OwnerSharingRule",
+            "replicated": false,
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule",
+            "dataConnector": {
+                "id": "0Itxx0000004C92CAE",
+                "name": "SFDC_LOCAL"
+            }
+        }
+    ],
+    "totalSize": 2,
+    "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects"
+}

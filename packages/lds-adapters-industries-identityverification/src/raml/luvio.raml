@@ -1,0 +1,33 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'IdentityVerification'
+
+types:
+  VerificationContextOutputRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      message: message
+  SearchOutputRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      message: message
+
+/connect/identity-verification:
+  /build-context/{processDefinitionName}:
+    post:
+      (luvio.adapter):
+        name: buildVerificationContext
+
+  /search:
+    post:
+      (luvio.adapter):
+        name: searchRecords
+
+  /verification:
+    post:
+      (luvio.adapter):
+        name: identityVerification

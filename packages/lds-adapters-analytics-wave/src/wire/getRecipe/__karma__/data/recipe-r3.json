@@ -7,9 +7,9 @@
     },
     "createdDate": "2020-11-16T19:48:57.000Z",
     "dataflowLastUpdate": "2021-01-13T00:13:37.000Z",
-    "fileUrl": "/services/data/v54.0/wave/recipes/05vRM0000000324YAB/file",
+    "fileUrl": "/services/data/v55.0/wave/recipes/05vRM0000000324YAB/file",
     "format": "R3",
-    "historiesUrl": "/services/data/v54.0/wave/recipes/05vRM0000000324YAB/histories",
+    "historiesUrl": "/services/data/v55.0/wave/recipes/05vRM0000000324YAB/histories",
     "id": "05vRM0000000324YAB",
     "label": "Test Local Opp",
     "lastModifiedBy": {
@@ -28,6 +28,6 @@
     "scheduleType": "eventdriven",
     "targetDataflowId": "02KRM0000002UY32AN",
     "type": "recipe",
-    "url": "/services/data/v54.0/wave/recipes/05vRM0000000324YAB?format=R3",
+    "url": "/services/data/v55.0/wave/recipes/05vRM0000000324YAB?format=R3",
     "validationDetails": []
 }

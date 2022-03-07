@@ -4,7 +4,9 @@ import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetDataConnectorsNetworkOnce,
     mockGetDataConnectorsNetworkErrorOnce,
+    mockGetReplicatedDatasetsNetworkOnce,
 } from 'analytics-wave-test-util';
+import GetReplicatedDatasets from '../../../getReplicatedDatasets/__karma__/lwc/get-replicated-datasets';
 
 const MOCK_PREFIX = 'wire/getDataConnectors/__karma__/data/';
 const TTL = 300;
@@ -93,6 +95,28 @@ describe('basic', () => {
         const el2 = await setupElement(config, GetDataConnectors);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
+    });
+
+    it('replicated datasets wire does not trigger a callback even if connector representation contains different data', async () => {
+        const connectorConfig = {};
+        const connectorsMock = getMock('connectors');
+        mockGetDataConnectorsNetworkOnce(connectorConfig, connectorsMock);
+        const getConnectorsEl = await setupElement(connectorConfig, GetDataConnectors);
+        expect(getConnectorsEl.pushCount()).toBe(1);
+        expect(getConnectorsEl.getWiredData()).toEqual(connectorsMock);
+
+        const replicatedDatasetConfig = {};
+        const replicatedDatasetMock = getMock('replicated-datasets');
+        mockGetReplicatedDatasetsNetworkOnce(replicatedDatasetConfig, replicatedDatasetMock);
+        const getReplicatedDatasetsEl = await setupElement(
+            replicatedDatasetConfig,
+            GetReplicatedDatasets
+        );
+        expect(getReplicatedDatasetsEl.pushCount()).toBe(1);
+        expect(getReplicatedDatasetsEl.getWiredData()).toEqual(replicatedDatasetMock);
+
+        // Assert GetDataConnectors callback was not fired again
+        expect(getConnectorsEl.pushCount()).toBe(1);
     });
 });
 

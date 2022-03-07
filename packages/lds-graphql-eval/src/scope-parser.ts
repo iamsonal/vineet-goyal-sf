@@ -1,15 +1,11 @@
-import { LuvioArgumentNode } from 'packages/lds-graphql-parser/dist/ast';
-import { ParserInput } from './ast-parser';
-import {
-    Predicate,
-    PredicateType,
-    ComparisonOperator,
-    ValueType,
-    ExistsPredicate,
-    CompoundPredicate,
-    CompoundOperator,
-} from './Predicate';
-import { Result, success, failure } from './Result';
+import type { LuvioArgumentNode } from '@luvio/graphql-parser';
+import type { ParserInput } from './ast-parser';
+import type { PredicateError } from './Error';
+import { message } from './Error';
+import type { Predicate, ExistsPredicate, CompoundPredicate } from './Predicate';
+import { PredicateType, ComparisonOperator, ValueType, CompoundOperator } from './Predicate';
+import type { Result } from './Result';
+import { success, failure } from './Result';
 import { getFieldInfo, extractPath, comparison, stringLiteral } from './util';
 
 export function scopeFilter(
@@ -17,23 +13,29 @@ export function scopeFilter(
     jsonAlias: string,
     apiName: string,
     input: ParserInput
-): Result<Predicate | undefined, string> {
+): Result<Predicate | undefined, PredicateError> {
     if (scopeArg === undefined) {
         return success(undefined);
     }
 
     const value = scopeArg.value;
     if (value.kind !== 'EnumValue') {
-        return failure('Scope type should be an EnumValueNode.');
+        return failure(message('Scope type should be an EnumValueNode.'));
     }
 
     const scope = value.value;
 
     if (scope === 'MINE') {
-        const fieldInfo = getFieldInfo(apiName, 'OwnerId', input.objectInfoMap);
+        const fieldInfoResult = getFieldInfo(apiName, 'OwnerId', input.objectInfoMap);
+        if (fieldInfoResult.isSuccess === false) {
+            return failure(fieldInfoResult.error);
+        }
 
+        const fieldInfo = fieldInfoResult.value;
         if (fieldInfo === undefined) {
-            return failure('Scope MINE requires the entity type to have an OwnerId field.');
+            return failure(
+                message('Scope MINE requires the entity type to have an OwnerId field.')
+            );
         }
 
         return success({
@@ -44,22 +46,19 @@ export function scopeFilter(
                 path: extractPath(fieldInfo.apiName),
             },
             operator: ComparisonOperator.eq,
-            right: {
-                type: ValueType.StringLiteral,
-                value: input.userId,
-            },
+            right: stringLiteral(input.userId),
         });
     }
 
     if (scope === 'ASSIGNEDTOME') {
         if (apiName !== 'ServiceAppointment') {
-            return failure('ASSIGNEDTOME can only be used with ServiceAppointment');
+            return failure(message('ASSIGNEDTOME can only be used with ServiceAppointment'));
         }
 
         return success(assignedToMe(input));
     }
 
-    return failure(`Scope '${scope} is not supported.`);
+    return failure(message(`Scope '${scope} is not supported.`));
 }
 
 function assignedToMe(input: ParserInput): ExistsPredicate {
@@ -85,17 +84,17 @@ function assignedToMe(input: ParserInput): ExistsPredicate {
     const userIdPredicate = comparison(
         { type: ValueType.Extract, jsonAlias: srApiName, path: relatedRecordIdPath },
         ComparisonOperator.eq,
-        { type: ValueType.StringLiteral, value: input.userId }
+        stringLiteral(input.userId)
     );
     const arTypePredicate = comparison(
         { type: ValueType.Extract, jsonAlias: arApiName, path: apiNamePath },
         ComparisonOperator.eq,
-        stringLiteral(arApiName)
+        stringLiteral(arApiName, true, true)
     );
     const srTypePredicate = comparison(
         { type: ValueType.Extract, jsonAlias: srApiName, path: apiNamePath },
         ComparisonOperator.eq,
-        stringLiteral(srApiName)
+        stringLiteral(srApiName, true, true)
     );
 
     const compound: CompoundPredicate = {

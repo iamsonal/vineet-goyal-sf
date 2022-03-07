@@ -1,0 +1,28 @@
+{
+    "code": "200",
+    "benefits": [
+        {
+            "id": "1gdRM000000000aYAA",
+            "name": "benefit-1",
+            "type": "Counselling",
+            "status": "active",
+            "minimumAmount": 1000.0,
+            "maximumAmount": 50000.0,
+            "goalDefinitionId": "1gdRM000000000aYAB",
+            "goalDefinitionName": "goal-name-1",
+            "goalDefinitionStatus": "Active"
+        },
+        {
+            "id": "1gdRM000000000aYBB",
+            "name": "benefit-2",
+            "type": "Counselling",
+            "status": "active",
+            "minimumAmount": 1000.0,
+            "maximumAmount": 50000.0,
+            "goalDefinitionId": "1gdRM000000000aYBC",
+            "goalDefinitionName": "goal-name-1",
+            "goalDefinitionStatus": "Active"
+        }
+    ],
+    "isSuccess": true
+}

@@ -1,14 +1,13 @@
-import { IngestPath, Luvio, Store } from '@luvio/engine';
-import {
-    resolveConflict,
-    RecordConflictMap,
-} from '../../../helpers/RecordRepresentation/resolveConflict';
-import {
+import type { IngestPath, Luvio, Store } from '@luvio/engine';
+import type { RecordConflictMap } from '../../../helpers/RecordRepresentation/resolveConflict';
+import { resolveConflict } from '../../../helpers/RecordRepresentation/resolveConflict';
+import type {
     ingest as generatedIngest,
     RecordRepresentation,
 } from '../../../generated/types/RecordRepresentation';
 import { createRecordIngest } from '../../../util/record-ingest';
-import { BLANK_RECORD_FIELDS_TRIE, RecordFieldTrie } from '../../../util/records';
+import type { RecordFieldTrie } from '../../../util/records';
+import { BLANK_RECORD_FIELDS_TRIE } from '../../../util/records';
 
 export const createIngestRecordWithFields: (
     fields: RecordFieldTrie,

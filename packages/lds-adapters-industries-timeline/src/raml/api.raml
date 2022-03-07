@@ -1,0 +1,141 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  TimelineDataGetResultRepresentation:
+    description: Output representation of Timeline Data from the GET Resource
+    type: object
+    properties:
+      errors:
+        description: TimelineData GET Resource List of Errors
+        type: array
+        items:
+          type: TimelineErrorRepresentation
+      eventTypes:
+        description: TimelineData GET Resource Event Types
+        type: array
+        items:
+          type: TimelineEventTypeRepresentation
+      events:
+        description: TimelineData GET Resource fetch all events
+        type: array
+        items:
+          type: TimelineEventRepresentation
+      hasMoreData:
+        description: TimelineData Get Resource - more Data to be fetched
+        type: boolean
+      isSuccess:
+        description: TimelineData get status flag
+        type: boolean
+  TimelineErrorRepresentation:
+    description: Error response representation
+    type: object
+    properties:
+      code:
+        description: Code for Error
+        type: string
+      message:
+        description: Message Error
+        type: string
+  TimelineEventFieldRepresentation:
+    description: Output representation of the Event Field that is returned as part
+      of the GET Timeline Data Result
+    type: object
+    properties:
+      name:
+        description: Event Field Name
+        type: string | nil
+      value:
+        description: Event Field Value
+        type: string | nil
+  TimelineEventRepresentation:
+    description: Output representation of the Event that is returned as part of the
+      GET Timeline Data Result
+    type: object
+    properties:
+      description:
+        description: Description of the Event Entity
+        type: string | nil
+      eventDateTime:
+        description: Date Time of the Event
+        type: string | nil
+      fields:
+        description: Fields of the Event
+        type: array
+        items:
+          type: TimelineEventFieldRepresentation
+      id:
+        description: Record Id
+        type: string | nil
+      title:
+        description: Title of the Event Entity
+        type: string | nil
+      type:
+        description: Event Entity Type
+        type: string | nil
+  TimelineEventTypeRepresentation:
+    description: Output representation of EventType that is returned as part of the
+      GET Timeline Data Result
+    type: object
+    properties:
+      eventApiName:
+        description: Event API Name
+        type: string | nil
+      offset:
+        description: Timeline Data Offset
+        type: integer | nil
+/connect/timeline/{timelineObjRecordId}/timeline-definitions/{timelineConfigFullName}/events:
+  get:
+    description: API to get Timeline data
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: TimelineDataGetResultRepresentation
+    queryParameters:
+      direction:
+        type: string
+        required: false
+      endDate:
+        type: string
+        required: false
+      eventTypeOffsets:
+        type: string
+        required: false
+      eventTypes:
+        type: string
+        required: false
+      startDate:
+        type: string
+        required: false
+  uriParameters:
+    timelineConfigFullName:
+      type: string
+      required: true
+    timelineObjRecordId:
+      type: string
+      required: true

@@ -1,0 +1,15 @@
+{
+    "requestId": "requestId",
+    "grants": [
+        {
+            "qualifiedName": "Account",
+            "grantee": {
+                "id": "0ZGRM0000004Dn04AE",
+                "displayName": "Bart Simpson",
+                "type": "User"
+            },
+            "permission": "Usage",
+            "operation": "Grant"
+        }
+    ]
+}

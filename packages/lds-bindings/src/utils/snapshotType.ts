@@ -1,4 +1,4 @@
-import { ErrorSnapshot, PendingSnapshot, Snapshot } from '@luvio/engine';
+import type { ErrorSnapshot, PendingSnapshot, Snapshot } from '@luvio/engine';
 
 enum SnapshotState {
     Fulfilled = 'Fulfilled',

@@ -1,19 +1,15 @@
-import { Luvio, FulfilledSnapshot, ResourceResponse, StaleSnapshot } from '@luvio/engine';
+import type { Luvio, FulfilledSnapshot, ResourceResponse, StaleSnapshot } from '@luvio/engine';
 import {
     ObjectFreeze,
     getFetchResponseStatusText,
     ObjectCreate,
 } from '../../../generated/adapters/adapter-utils';
-import {
-    keyBuilder as getUiApiRecordsByRecordId_keyBuilder,
-    ResourceRequestConfig as getUiApiRecordsByRecordId_ResourceRequestConfig,
-} from '../../../generated/resources/getUiApiRecordsByRecordId';
-import { BatchRepresentation } from '../../../generated/types/BatchRepresentation';
-import { BatchResultRepresentation } from '../../../generated/types/BatchResultRepresentation';
-import {
-    RecordRepresentation,
-    TTL as RecordRepresentationTTL,
-} from '../../../generated/types/RecordRepresentation';
+import type { ResourceRequestConfig as getUiApiRecordsByRecordId_ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsByRecordId';
+import { keyBuilder as getUiApiRecordsByRecordId_keyBuilder } from '../../../generated/resources/getUiApiRecordsByRecordId';
+import type { BatchRepresentation } from '../../../generated/types/BatchRepresentation';
+import type { BatchResultRepresentation } from '../../../generated/types/BatchResultRepresentation';
+import type { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
+import { TTL as RecordRepresentationTTL } from '../../../generated/types/RecordRepresentation';
 import {
     ingestSuccess as getRecord_onResourceSuccess,
     ingestError as getRecord_onResourceError,

@@ -322,7 +322,8 @@ describe('AdsBridge', () => {
                     expect.objectContaining({
                         basePath: '/ui-api/records/123',
                         method: 'get',
-                    })
+                    }),
+                    undefined
                 );
             });
 
@@ -405,7 +406,8 @@ describe('AdsBridge', () => {
                     expect.objectContaining({
                         basePath: '/ui-api/records/456',
                         method: 'get',
-                    })
+                    }),
+                    undefined
                 );
             });
         });

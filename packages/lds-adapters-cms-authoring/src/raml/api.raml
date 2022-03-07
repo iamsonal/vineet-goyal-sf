@@ -6,7 +6,7 @@ version: '53.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v54.0
+baseUri: /services/data/v55.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -567,7 +567,7 @@ types:
           type: string
         required: false # TODO handrolled W-9314597
       contentIds:
-        description: '[Optional] The content to publish.'
+        description: '[Optional] The contents to publish. Not valid to have both contentIds and variantIds.'
         type: array
         items:
           type: string
@@ -583,10 +583,20 @@ types:
         description: '[Optional] Execute all staged deployments.'
         type: boolean
         required: false # TODO handrolled W-9314597
+      includeContentReferences:
+        description: '[Optional] Include Content References for deployment.'
+        type: boolean
+        required: false # TODO handrolled W-10340822
       scheduledDate:
         description: '[Optional] Scheduled date for deployment.'
         type: string
         required: false # TODO handrolled W-9314597
+      variantIds:
+        description: '[Optional] The variants to publish. Not valid to have both contentIds and variantIds'
+        type: array
+        items:
+          type: string
+        required: false # TODO handrolled W-10340822
   ManagedContentDeploymentInputWrapperRepresentation: # TODO Hand-rolled W-8334626
     description: wrapper for Input required for creating a deployment
     type: object
@@ -1243,8 +1253,16 @@ types:
       isFolder:
         description: Boolean flag to indicate whether this folder item is a folder
         type: boolean
+      isPublished:
+        description: Boolean flag to indicate whether this folder item is published
+        type: boolean
+        required: false # TODO hand rolled --> see: W-9965762
       lastModifiedBy:
         description: The User ID for the user which last modified the ManagedContentVariant
+          or ManagedContentSpaceFolder
+        type: string
+      lastModifiedByName:
+        description: The User Name for the user which last modified the ManagedContentVariant
           or ManagedContentSpaceFolder
         type: string
       lastModifiedDate:
@@ -1258,14 +1276,9 @@ types:
         description: Latest Managed Content Variant Id of the folder item is ManagedContent
         type: string
         required: false # TODO hand rolled --> see: W-9965762
-      publishedDate:
-        description: Date when the ManagedContent was last published
+      mimeType:
+        description: The mimetype for the content
         type: string
-        required: false # TODO hand rolled --> see: W-9965762
-      status:
-        description: Status of the Managed Content
-        type: string
-        required: false # TODO hand rolled --> see: W-9965762
       title:
         description: Title of the ManagedContent/ManagedContentSpaceFolder
         type: string
@@ -1663,6 +1676,49 @@ types:
         type: string
         enum:
           - LightningView
+  ManagedContentUnpublishInputWrapperRepresentation: # TODO Hand-rolled W-9800110
+    description: Wrapper for Input required for unpublish managed content or variants
+    type: object
+    properties:
+      unpublishInput:
+        type: ManagedContentUnpublishInputRepresentation
+  ManagedContentUnpublishInputRepresentation:
+    description: Input required for unpublishing content
+    type: object
+    properties:
+      channelIds:
+        description: '[Optional] The target channel or channels to unpublish content to.'
+        type: array
+        items:
+          type: string
+      contentIds:
+        description: '[Optional] The contents to unpublish. Either contentIds or variantIds
+          are required.'
+        type: array
+        items:
+          type: string
+      description:
+        description: Description for unpublish Action.
+        type: string
+      variantIds:
+        description: '[Optional] The variants to unpublish. Either contentIds or variantIds
+          are required.'
+        type: array
+        items:
+          type: string
+  ManagedContentUnpublishOutputRepresentation:
+    description: Information about a Unpublished action
+    type: object
+    properties:
+      deploymentId:
+        description: ManagedContentDeployment Entity Id
+        type: string
+      description:
+        description: Provided description.
+        type: string | nil
+      unpublishedDate:
+        description: Unpublished Date
+        type: string | nil
   ManagedContentUserSummaryRepresentation:
     description: Information about a user who created/modified content.
     type: object
@@ -2697,7 +2753,26 @@ types:
             type: ManagedContentInputWrapperRepresentation
             #required: false # TODO hand rolled. W-9275477
             (oas-body-name): ManagedContentInputParam
+      /unpublish:
+        post:
+          description: Unpublish content to specified channels
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentUnpublishOutputRepresentation
+          body:
+            application/json:
+              type: ManagedContentUnpublishInputWrapperRepresentation
+              #required: false # TODO hand rolled. W-9275477
+              (oas-body-name): unpublishInput
       /variants/{variantId}:
+        delete:
+          description: Delete a managed content variant given its Id
+          responses:
+            '200':
+              description: Success
         get:
           description: Gets a managed content variant by Id.
           responses:

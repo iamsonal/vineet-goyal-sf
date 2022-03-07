@@ -12,12 +12,13 @@
             "hasChildFolders": false,
             "isFolder": false,
             "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedByName": "Admin User",
             "lastModifiedDate": "2021-09-17T20:41:15.000Z",
             "managedContentOrFolderId": "20YRM0000000BD42AM",
             "managedContentVariantId": "9PsRM000000001t0AA",
-            "publishedDate": "",
-            "status": "draft",
-            "title": "Content 1 - Document"
+            "isPublished": false,
+            "title": "Content 1 - Document",
+            "mimeType": "application/msword"
         },
         {
             "contentKey": "MC7PQGOJQBOVGIPJXZG3FRHGJ7B4",
@@ -29,12 +30,13 @@
             "hasChildFolders": false,
             "isFolder": false,
             "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedByName": "Admin User",
             "lastModifiedDate": "2021-09-17T20:40:57.000Z",
             "managedContentOrFolderId": "20YRM0000000BCz2AM",
             "managedContentVariantId": "9PsRM000000001o0AA",
-            "publishedDate": "",
-            "status": "draft",
-            "title": "Content 2 - News"
+            "isPublished": false,
+            "title": "Content 2 - News",
+            "mimeType": ""
         },
         {
             "contentKey": "MCPMTMBO2QVBHXHM6Q26A65ZPEI4",
@@ -46,12 +48,13 @@
             "hasChildFolders": false,
             "isFolder": false,
             "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedByName": "Admin User",
             "lastModifiedDate": "2021-09-17T20:40:32.000Z",
             "managedContentOrFolderId": "20YRM0000000BCu2AM",
             "managedContentVariantId": "9PsRM000000001j0AA",
-            "publishedDate": "",
-            "status": "draft",
-            "title": "Content 3 - Image"
+            "isPublished": false,
+            "title": "Content 3 - Image",
+            "mimeType": "image/png"
         },
         {
             "contentKey": "MCYXINZEI4EJAVTCHNQBURO7BTBI",
@@ -63,12 +66,13 @@
             "hasChildFolders": false,
             "isFolder": false,
             "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedByName": "Admin User",
             "lastModifiedDate": "2021-09-17T20:40:10.000Z",
             "managedContentOrFolderId": "20YRM0000000BCp2AM",
             "managedContentVariantId": "9PsRM000000001e0AA",
-            "publishedDate": "",
-            "status": "draft",
-            "title": "Content 4 - Image"
+            "isPublished": false,
+            "title": "Content 4 - Image",
+            "mimeType": "image/png"
         },
         {
             "contentKey": "MC2CE4GAEE4VGABC54RWEDINJZSA",
@@ -79,22 +83,26 @@
             "createdDate": "2021-09-28T23:49:55.000Z",
             "isFolder": false,
             "lastModifiedBy": "005xx000001X7gzAAC",
+            "lastModifiedByName": "Admin User",
             "lastModifiedDate": "2021-09-28T23:49:55.000Z",
             "managedContentOrFolderId": "20Yxx0000011QzuEAE",
             "managedContentVariantId": "9Psxx0000004C92CAE",
-            "status": "draft",
+            "isPublished": false,
             "title": "Content 5 - News",
-            "hasChildFolders": false
+            "hasChildFolders": false,
+            "mimeType": "image/png"
         },
         {
             "createdBy": "005xx000001X7gzAAC",
             "createdDate": "2021-09-16T00:13:34.000Z",
             "isFolder": true,
             "lastModifiedBy": "005xx000001X7gzAAC",
+            "lastModifiedByName": "Admin User",
             "lastModifiedDate": "2021-09-28T23:50:54.000Z",
             "managedContentOrFolderId": "9Puxx0000004CDsCAM",
             "title": "Folder Level 1",
-            "hasChildFolders": false
+            "hasChildFolders": false,
+            "mimeType": ""
         }
     ]
 }

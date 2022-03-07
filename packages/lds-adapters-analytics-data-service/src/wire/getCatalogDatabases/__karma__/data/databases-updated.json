@@ -1,0 +1,13 @@
+{
+    "databases": [
+        {
+            "description": "updated test db",
+            "name": "testDBInsert01",
+            "qualifiedName": "testDatabase01",
+            "schemasUrl": "/services/data/v55.0/analytics/data-service/catalog/schemas/testDatabase01",
+            "url": "/services/data/v55.0/analytics/data-service/catalog/databases/testDBInsert01"
+        }
+    ],
+    "totalSize": 2,
+    "url": "/services/data/v55.0/analytics/data-service/catalog/databases?page=1&pageSize=25"
+}

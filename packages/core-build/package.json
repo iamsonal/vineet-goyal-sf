@@ -1,7 +1,7 @@
 {
     "name": "@salesforce/core-build",
     "private": false,
-    "version": "1.32.0",
+    "version": "1.41.0",
     "description": "LDS Build System",
     "license": "MIT",
     "files": [
@@ -15,6 +15,7 @@
         ],
         "expose": [
             "forcelds/adsBridge",
+            "forcelds/ldsAdaptersAnalyticsSmartDataDiscovery",
             "forcelds/ldsAdaptersAnalyticsWave",
             "forcelds/ldsAdaptersApex",
             "forcelds/ldsAdaptersCmsDelivery",

@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 
 export interface AdapterMetadata {
     apiFamily: string;

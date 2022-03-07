@@ -1,15 +1,19 @@
-import { ProxyGraphNode, GraphNode } from '@luvio/engine';
-import { FieldRepresentation } from '../generated/types/FieldRepresentation';
-import {
+import type { ProxyGraphNode, GraphNode } from '@luvio/engine';
+import type { FieldRepresentation } from '../generated/types/FieldRepresentation';
+import type {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
 } from '../generated/types/FieldValueRepresentation';
-import { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
-import { RecordInputRepresentation } from '../generated/types/RecordInputRepresentation';
-import {
-    keyBuilder as recordRepresentationKeyBuilder,
+import type { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
+import type { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
+import type { RecordInputRepresentation } from '../generated/types/RecordInputRepresentation';
+import type {
     RecordRepresentation,
     RecordRepresentationNormalized,
+} from '../generated/types/RecordRepresentation';
+import {
+    keyBuilder as recordRepresentationKeyBuilder,
+    TTL as RecordRepresentationTTL,
 } from '../generated/types/RecordRepresentation';
 import {
     ArrayPrototypeConcat,
@@ -21,20 +25,16 @@ import {
     StringPrototypeEndsWith,
     ObjectCreate,
 } from './language';
-import { FieldId, splitQualifiedFieldApiName } from '../primitives/FieldId';
+import type { FieldId } from '../primitives/FieldId';
+import { splitQualifiedFieldApiName } from '../primitives/FieldId';
 import getFieldApiName from '../primitives/FieldId/coerce';
 import { dedupe } from '../validation/utils';
 import { MASTER_RECORD_TYPE_ID } from './layout';
 import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
 import { isSpanningRecord } from '../selectors/record';
-import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
-import { ObjectFreeze } from '../generated/adapters/adapter-utils';
-import {
-    FieldMapRepresentation,
-    insertFieldsIntoTrie,
-    MAX_RECORD_DEPTH,
-    FieldMapRepresentationNormalized,
-} from './fields';
+import { keyPrefix, ObjectFreeze } from '../generated/adapters/adapter-utils';
+import type { FieldMapRepresentation, FieldMapRepresentationNormalized } from './fields';
+import { insertFieldsIntoTrie, MAX_RECORD_DEPTH } from './fields';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 
@@ -42,12 +42,14 @@ const CUSTOM_API_NAME_SUFFIX = '__c';
 const DMO_API_NAME_SUFFIX = '__dlm';
 const CUSTOM_EXTERNAL_OBJECT_FIELD_SUFFIX = '__x';
 
+export const RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS = {
+    representationName: '', // empty string for unknown representation
+    namespace: keyPrefix,
+    ttl: RecordRepresentationTTL,
+};
+
 export interface FieldValueRepresentationLinkState {
     fields: string[];
-}
-
-export interface ResourceRequestWithConfig {
-    configOptionalFields?: string[];
 }
 
 export interface RecordLayoutFragment {
@@ -106,12 +108,11 @@ export function extractTrackedFields(
 
     for (let i = 0, len = keys.length; i < len; i += 1) {
         const key = keys[i];
-        const fieldValueRep =
-            fields.link<
-                FieldValueRepresentationNormalized,
-                FieldValueRepresentation,
-                FieldValueRepresentationLinkState
-            >(key);
+        const fieldValueRep = fields.link<
+            FieldValueRepresentationNormalized,
+            FieldValueRepresentation,
+            FieldValueRepresentationLinkState
+        >(key);
 
         const fieldName = `${parentFieldName}.${key}`;
         if (fieldValueRep.isMissing()) {
@@ -199,12 +200,11 @@ export function extractTrackedFieldsToTrie(
     let current = root;
     for (let i = 0, len = keys.length; i < len; i += 1) {
         const key = keys[i] as string;
-        const fieldValueRep =
-            fields.link<
-                FieldValueRepresentationNormalized,
-                FieldValueRepresentation,
-                FieldValueRepresentationLinkState
-            >(key);
+        const fieldValueRep = fields.link<
+            FieldValueRepresentationNormalized,
+            FieldValueRepresentation,
+            FieldValueRepresentationLinkState
+        >(key);
 
         let next: RecordFieldTrie = current.children[key];
         if (next === undefined) {
@@ -233,8 +233,10 @@ export function extractTrackedFieldsToTrie(
                     continue;
                 }
 
-                const spanningLink =
-                    field.link<RecordRepresentationNormalized, RecordRepresentation>('value');
+                const spanningLink = field.link<
+                    RecordRepresentationNormalized,
+                    RecordRepresentation
+                >('value');
 
                 const spanning = spanningLink.follow();
 
@@ -687,12 +689,11 @@ function markNulledOutPath(
         return;
     }
 
-    const link =
-        fieldValueRepresentation.link<
-            FieldValueRepresentationNormalized,
-            FieldValueRepresentation,
-            FieldValueRepresentationLinkState
-        >(fieldName);
+    const link = fieldValueRepresentation.link<
+        FieldValueRepresentationNormalized,
+        FieldValueRepresentation,
+        FieldValueRepresentationLinkState
+    >(fieldName);
     const resolved = link.follow();
 
     if (isGraphNode(resolved) && resolved.isScalar('value') && path.length > 0) {
@@ -743,10 +744,10 @@ function _markMissingPath(
         return;
     }
 
-    const link =
-        fieldValueRepresentation.link<FieldValueRepresentationNormalized, FieldValueRepresentation>(
-            fieldName
-        );
+    const link = fieldValueRepresentation.link<
+        FieldValueRepresentationNormalized,
+        FieldValueRepresentation
+    >(fieldName);
 
     if (link.isPending()) {
         // TODO [W-6900046]: remove cast, make RecordRepresentationNormalized['fields'] accept

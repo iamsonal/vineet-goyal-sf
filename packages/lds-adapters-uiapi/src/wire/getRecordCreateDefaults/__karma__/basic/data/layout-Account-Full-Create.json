@@ -1,6 +1,6 @@
 {
-    "eTag": "5672d8ddeef3c75ee3b0b390a1520e27",
-    "id": "00hxx0000019cU3AAI",
+    "eTag": "1f815b43350d4e3d3c2288f8dfc99c2b",
+    "id": "00hT1000000H5lgIAC",
     "layoutType": "Full",
     "mode": "Create",
     "objectApiName": "Account",
@@ -11,7 +11,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Account Information",
-            "id": "01Bxx000002CDUREA4",
+            "id": "01BT1000000cUphMAE",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -293,7 +293,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Address Information",
-            "id": "01Bxx000002CDUVEA4",
+            "id": "01BT1000000cUplMAE",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -375,154 +375,9 @@
         },
         {
             "collapsible": false,
-            "columns": 2,
-            "heading": "Additional Information",
-            "id": "01Bxx000002CDUSEA4",
-            "layoutRows": [
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Customer Priority",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "CustomerPriority__c",
-                                    "componentType": "Field",
-                                    "label": "Customer Priority"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "SLA",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "SLA__c",
-                                    "componentType": "Field",
-                                    "label": "SLA"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "SLA Expiration Date",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "SLAExpirationDate__c",
-                                    "componentType": "Field",
-                                    "label": "SLA Expiration Date"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "SLA Serial Number",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "SLASerialNumber__c",
-                                    "componentType": "Field",
-                                    "label": "SLA Serial Number"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Number of Locations",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "NumberofLocations__c",
-                                    "componentType": "Field",
-                                    "label": "Number of Locations"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Upsell Opportunity",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "UpsellOpportunity__c",
-                                    "componentType": "Field",
-                                    "label": "Upsell Opportunity"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Active",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "Active__c",
-                                    "componentType": "Field",
-                                    "label": "Active"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "",
-                            "layoutComponents": [
-                                {
-                                    "apiName": null,
-                                    "componentType": "EmptySpace"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                }
-            ],
-            "rows": 4,
-            "useHeading": true
-        },
-        {
-            "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01Bxx000002CDUWEA4",
+            "id": "01BT1000000cUpmMAE",
             "layoutRows": [
                 {
                     "layoutItems": [

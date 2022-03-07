@@ -1,0 +1,106 @@
+{
+    "data": {
+        "__typename": "Query",
+        "uiapi": {
+            "__typename": "UIAPI",
+            "query": {
+                "__typename": "RecordQuery",
+                "Support_Tier__mdt": {
+                    "__typename": "Support_Tier__mdtConnection",
+                    "edges": [
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Label": {
+                                    "__typename": "StringValue",
+                                    "value": "Tier 0",
+                                    "displayValue": null
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "Id": "m00xx000000bqDVAAY",
+                                "DisplayValue": "Tier_0",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "LastModifiedDate": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6MA=="
+                        },
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Label": {
+                                    "__typename": "StringValue",
+                                    "value": "Tier 1",
+                                    "displayValue": null
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "Id": "m00xx000000bqF7AAI",
+                                "DisplayValue": "Tier_1",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "LastModifiedDate": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6MQ=="
+                        },
+                        {
+                            "__typename": "Support_Tier__mdtEdge",
+                            "node": {
+                                "Label": {
+                                    "__typename": "StringValue",
+                                    "value": "Tier 2",
+                                    "displayValue": null
+                                },
+                                "__typename": "Support_Tier__mdt",
+                                "ApiName": "Support_Tier__mdt",
+                                "WeakEtag": 0,
+                                "Id": "m00xx000000bqGjAAI",
+                                "DisplayValue": "Tier_2",
+                                "SystemModstamp": {
+                                    "value": null
+                                },
+                                "LastModifiedById": {
+                                    "value": null
+                                },
+                                "LastModifiedDate": {
+                                    "value": null
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            },
+                            "cursor": "djE6Mg=="
+                        }
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 3
+                }
+            }
+        }
+    },
+    "errors": []
+}

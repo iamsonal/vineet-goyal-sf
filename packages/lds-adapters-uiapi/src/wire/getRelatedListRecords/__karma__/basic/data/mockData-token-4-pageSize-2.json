@@ -1,0 +1,44 @@
+{
+    "count": 1,
+    "currentPageToken": "4",
+    "currentPageUrl": "/services/data/v55.0/ui-api/related-list-records/001T1000002HadrIAC/Opportunities?fields=Opportunity.Name&pageSize=2&pageToken=4",
+    "fields": ["Opportunity.Name"],
+    "listInfoETag": null,
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": "001T1000002HadrIAC",
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "Account",
+        "recordTypeId": null,
+        "relatedListId": "Opportunities",
+        "type": "relatedList"
+    },
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "optionalFields": [],
+    "pageSize": 2,
+    "previousPageToken": "2",
+    "previousPageUrl": "/services/data/v55.0/ui-api/related-list-records/001T1000002HadrIAC/Opportunities?fields=Opportunity.Name&pageSize=2&pageToken=2",
+    "records": [
+        {
+            "apiName": "Opportunity",
+            "childRelationships": {},
+            "eTag": "d7003c2f4ce685daa2b771d4974511ce",
+            "fields": {
+                "Name": {
+                    "displayValue": null,
+                    "value": "RelatedListTestOpp1"
+                }
+            },
+            "id": "006T1000001rraZIAQ",
+            "lastModifiedById": "005T1000000IJpMIAW",
+            "lastModifiedDate": "2022-01-28T05:32:42.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2022-01-28T05:32:42.000Z",
+            "weakEtag": 1643347962000
+        }
+    ],
+    "sortBy": []
+}

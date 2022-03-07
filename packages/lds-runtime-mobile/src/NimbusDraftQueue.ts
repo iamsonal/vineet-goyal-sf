@@ -1,7 +1,7 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import {
+import type {
     DraftAction,
     DraftQueue,
     DraftActionMap,

@@ -1,0 +1,13 @@
+{
+    "servicePlanTemplateBenefits": {
+        "records": [
+            {
+                "benefitId": "0jiS70000000001IAA"
+            },
+            {
+                "benefitId": "0jiS70000000001IAB",
+                "priority": "High"
+            }
+        ]
+    }
+}

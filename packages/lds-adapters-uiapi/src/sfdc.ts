@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import {
     bindWireRefresh,
     createLDSAdapter,
@@ -10,6 +10,7 @@ import {
     GetRecordNotifyChange,
     updateLayoutUserStateAdapterFactory,
     updateRelatedListInfoAdapterFactory,
+    updateRelatedListPreferencesAdapterFactory,
 } from './main';
 import { instrumentation } from './instrumentation';
 
@@ -65,6 +66,28 @@ export const updateRelatedListInfo = (
     return Promise.resolve(value.data);
 };
 
+let baseUpdateRelatedListPreferences: ReturnType<typeof updateRelatedListPreferencesAdapterFactory>;
+
+export const updateRelatedListPreferences = (
+    config: Parameters<ReturnType<typeof updateRelatedListPreferencesAdapterFactory>>[0]
+) => {
+    const value = baseUpdateRelatedListPreferences(config);
+    if (value === null) {
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('Invalid config for updateRelatedListPreferences');
+        }
+        return;
+    }
+    if ('then' in value) {
+        return value.then((snapshot) => snapshot.data);
+    }
+    if (value.state === 'Error') {
+        return Promise.reject(value.error);
+    }
+
+    return Promise.resolve(value.data);
+};
+
 /** SFDC utils */
 export let getRecordNotifyChange: any;
 
@@ -81,6 +104,12 @@ withDefaultLuvio((luvio: Luvio) => {
         luvio,
         'baseUpdateRelatedListInfo',
         updateRelatedListInfoAdapterFactory
+    );
+
+    baseUpdateRelatedListPreferences = createLDSAdapter(
+        luvio,
+        'baseUpdateRelatedListPreferences',
+        updateRelatedListPreferencesAdapterFactory
     );
 
     getRecordNotifyChange = throttle(

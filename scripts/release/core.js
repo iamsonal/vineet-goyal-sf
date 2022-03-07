@@ -63,7 +63,7 @@ const argv = require('yargs')
     .boolean('skip-git-check')
     .describe('skip-git-check', 'skips git branch and status check')
     .boolean('skip-build')
-    .describe('skip-build', 'skips building (and cleaning)')
+    .describe('skip-build', 'skips installing and building (and cleaning)')
     .boolean('skip-clean')
     .describe('skip-clean', 'skips cleaning')
     .boolean('print-commits-only')
@@ -218,12 +218,25 @@ function clean() {
     });
 }
 
-function build() {
-    console.log('* Build');
+function install() {
+    console.log('* Install');
     execSync('yarn', {
         cwd: REPO_ROOT,
         stdio: 'ignore',
     });
+}
+
+function build() {
+    console.log('* Build');
+    execSync('yarn build', {
+        cwd: REPO_ROOT,
+        stdio: 'ignore',
+    });
+}
+
+function installAndBuild() {
+    install();
+    build();
 }
 
 function printCommits(corePath) {
@@ -357,8 +370,9 @@ function deployAdapterPackage() {
         clean();
     }
 
+    // Implicitly install and then build
     if (!argv['skip-build']) {
-        build();
+        installAndBuild();
     }
 
     try {

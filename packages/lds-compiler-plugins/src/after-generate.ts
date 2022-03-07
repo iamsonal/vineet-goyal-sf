@@ -1,4 +1,4 @@
-import { CompilerConfig, ModelInfo } from '@luvio/compiler';
+import type { CompilerConfig, ModelInfo } from '@luvio/compiler';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
@@ -57,8 +57,8 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
                 : `{ apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl} }`;
 
         if (method === 'get') {
-            ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
-            bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
+            ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_INSTRUMENTED_ADAPTER}(${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier}), ${adapterMetadataIdentifier})`;
+            bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
             imperativeGetBind = `${imperativeAdapterNameIdentifier}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
         } else if (method === 'delete') {
             bind = `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier})`;

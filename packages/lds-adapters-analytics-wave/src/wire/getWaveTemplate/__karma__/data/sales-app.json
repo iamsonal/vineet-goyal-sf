@@ -1,0 +1,118 @@
+{
+    "assetVersion": 49,
+    "configurationUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Sales_Analytics_Flex/configuration",
+    "createdBy": {},
+    "createdDate": null,
+    "customAttributes": [
+        {
+            "label": "Features",
+            "values": [
+                "Embeddable Dashboards",
+                "Mobile Ready",
+                "Prebuilt Dashboards",
+                "Prebuilt Lenses",
+                "Dataflow",
+                "KPI Rich Datasets"
+            ]
+        },
+        {
+            "label": "Salesforce Objects",
+            "values": [
+                "Account",
+                "Opportunity",
+                "Opportunity Splits",
+                "Opportunity Line Item",
+                "Opportunity Product Schedules",
+                "Opportunity History",
+                "Product",
+                "Price Book",
+                "Opportunity Team Member",
+                "Account Team Member",
+                "Leads",
+                "Task",
+                "Event",
+                "Case",
+                "Campaign",
+                "Campaign Member",
+                "ForecastingItem",
+                "User",
+                "UserRole"
+            ]
+        },
+        {
+            "label": "Publisher",
+            "values": ["Tableau CRM"]
+        }
+    ],
+    "description": "The latest version of the app, which helps your entire sales team unlock the full power of Sales Cloud data. With clear visibility into pipeline and historical trends, it’s never been easier to build a winning sales team. v5.0 #050",
+    "folderSource": null,
+    "icons": {
+        "appBadge": {
+            "name": "6.png",
+            "url": "/analytics/wave/web/proto/images/app/icons/6.png"
+        },
+        "templateBadge": {
+            "name": "sales.png",
+            "namespace": "sfdc_internal",
+            "url": "/analytics/wave/web/proto/images/template/icons/sales.png"
+        },
+        "templatePreviews": [
+            {
+                "description": "Start exploring Sales Analytics with an overview of top-level year-to-date key performance indicators (KPIs)",
+                "label": "Sales Analytics Home",
+                "name": "preview_sales.jpg",
+                "namespace": "sfdc_internal",
+                "url": "/analytics/wave/web/proto/images/template/icons/preview_sales.jpg"
+            },
+            {
+                "description": "Gives sales leaders an overview of team and individual rep performance, including quota attainment, pipe coverage, bookings, pipe generation, closed won business, average sales cycle time, and sales activities.",
+                "label": "Leaderboard",
+                "name": "preview_sales1.jpg",
+                "namespace": "sfdc_internal",
+                "url": "/analytics/wave/web/proto/images/template/icons/preview_sales1.jpg"
+            },
+            {
+                "description": "View pipeline changes for a given period, including beginning and end values of the pipe as well as what’s moved in and out.",
+                "label": "Trending",
+                "name": "preview_sales2.jpg",
+                "namespace": "sfdc_internal",
+                "url": "/analytics/wave/web/proto/images/template/icons/preview_sales2.jpg"
+            },
+            {
+                "description": "Shows how deals move through stages of the sales process and if deals are moving smoothly.Also reveals bottlenecks and exposes at-risk opportunities.",
+                "label": "Sales Stage Analysis",
+                "name": "preview_sales3.jpg",
+                "namespace": "sfdc_internal",
+                "url": "/analytics/wave/web/proto/images/template/icons/preview_sales3.jpg"
+            },
+            {
+                "description": "Use this dashboard to uncover resell and upsell opportunities by viewing whitespace.Whitespace means accounts that you can revisit to create new business.",
+                "label": "Whitespace Analysis",
+                "name": "preview_sales4.jpg",
+                "namespace": "sfdc_internal",
+                "url": "/analytics/wave/web/proto/images/template/icons/preview_sales4.jpg"
+            },
+            {
+                "description": "Sales executives get instant pipeline status. You can view the current amount in the pipe,comparison to the previous period, projected closing, and top deals by lead source, product, account, and region. Also get top-level views of sales and service performance.",
+                "label": "Executive Overview",
+                "name": "preview_sales5.jpg",
+                "namespace": "sfdc_internal",
+                "url": "/analytics/wave/web/proto/images/template/icons/preview_sales5.jpg"
+            }
+        ]
+    },
+    "id": "sfdc_internal__Sales_Analytics_Flex",
+    "label": "Sales Analytics",
+    "lastModifiedBy": {},
+    "lastModifiedDate": null,
+    "name": "Sales_Analytics_Flex",
+    "namespace": "sfdc_internal",
+    "releaseInfo": {
+        "notesUrl": "/services/data/v55.0/wave/templates/sfdc_internal__Sales_Analytics_Flex/releasenotes",
+        "templateVersion": "5.0"
+    },
+    "tags": ["Sales", "Trending", "Customer 360", "Featured"],
+    "templateType": "app",
+    "url": "/services/data/v55.0/wave/templates/sfdc_internal__Sales_Analytics_Flex",
+    "videos": []
+}

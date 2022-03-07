@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import { createImperativeAdapter as ldsBindingsCreateImperativeAdapter } from '@salesforce/lds-bindings';
 
 export function createLDSAdapter(luvio: Luvio, name: string, factory: any) {
@@ -9,7 +9,11 @@ export function createWireAdapterConstructor() {
     return jest.fn();
 }
 
-export function createInstrumentedAdapter(_luvio: Luvio, adapter: any, _metadata: any) {
+export function createInfiniteScrollingWireAdapterConstructor() {
+    return jest.fn();
+}
+
+export function createInstrumentedAdapter(adapter: any, _metadata: any) {
     return adapter;
 }
 

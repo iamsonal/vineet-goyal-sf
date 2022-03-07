@@ -1,14 +1,43 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "Account": {
+                    "__typename": "AccountConnection",
                     "edges": [
                         {
+                            "__typename": "AccountEdge",
                             "node": {
+                                "Owner": {
+                                    "Name": {
+                                        "__typename": "StringValue",
+                                        "value": "Admin User",
+                                        "displayValue": null
+                                    },
+                                    "__typename": "User",
+                                    "ApiName": "User",
+                                    "WeakEtag": 1636411365000,
+                                    "Id": "005RM000002492xYAA",
+                                    "DisplayValue": "Admin User",
+                                    "SystemModstamp": {
+                                        "value": "2021-11-08T22:42:45.000Z"
+                                    },
+                                    "LastModifiedById": {
+                                        "value": "005RM000002492xYAA"
+                                    },
+                                    "LastModifiedDate": {
+                                        "value": "2021-06-23T15:50:36.000Z"
+                                    },
+                                    "RecordTypeId": {
+                                        "value": null
+                                    }
+                                },
                                 "__typename": "Account",
                                 "ApiName": "Account",
-                                "WeakEtag": 1615493739000,
+                                "WeakEtag": 1621975562000,
                                 "Id": "001RM000004uuhnYAA",
                                 "DisplayValue": "Account1",
                                 "SystemModstamp": {
@@ -22,33 +51,16 @@
                                 },
                                 "RecordTypeId": {
                                     "value": "012RM000000E79WYAS"
-                                },
-                                "Owner": {
-                                    "__typename": "User",
-                                    "ApiName": "User",
-                                    "WeakEtag": 1621975361000,
-                                    "Id": "005RM000002492xYAA",
-                                    "DisplayValue": "Admin User",
-                                    "SystemModstamp": {
-                                        "value": "2021-05-25T20:42:41.000Z"
-                                    },
-                                    "LastModifiedById": {
-                                        "value": "005RM000002492xYAA"
-                                    },
-                                    "LastModifiedDate": {
-                                        "value": "2021-02-20T06:31:45.000Z"
-                                    },
-                                    "RecordTypeId": {
-                                        "value": null
-                                    },
-                                    "Name": {
-                                        "value": "Admin User",
-                                        "displayValue": null
-                                    }
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

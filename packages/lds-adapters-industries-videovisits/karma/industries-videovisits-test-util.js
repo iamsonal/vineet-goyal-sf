@@ -3,7 +3,7 @@ import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkErrorOnce } from 'test-util';
 import sinon from 'sinon';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const CONNECT_BASE_URI = `/services/data/${API_VERSION}`;
 
 export function clone(obj) {
@@ -22,6 +22,16 @@ export function mockJoinChimeMeetingNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+export function mockLeaveChimeMeetingNetworkOnce(config, mockData) {
+    const paramMatch = leaveChimeMeetingMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockLeaveChimeMeetingNetworkErrorOnce(config, mockData) {
+    const paramMatch = leaveChimeMeetingMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function joinChimeMeetingMatcher(config) {
     let { externalMeetingId, region } = config;
 
@@ -34,6 +44,22 @@ function joinChimeMeetingMatcher(config) {
         method: 'post',
         baseUri: CONNECT_BASE_URI,
         basePath: `/connect/health/video-visits/chime-meeting`,
+        queryParams: {},
+    });
+}
+
+function leaveChimeMeetingMatcher(config) {
+    let { attendeeId, externalMeetingId } = config;
+
+    return sinon.match({
+        body: {
+            attendeeId,
+            externalMeetingId,
+        },
+        headers: {},
+        method: 'put',
+        baseUri: CONNECT_BASE_URI,
+        basePath: `/connect/health/video-visits/leave-chime-meeting`,
         queryParams: {},
     });
 }

@@ -1,13 +1,13 @@
-import { NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import type { NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import type { AggregateResponse } from './utils';
 import {
-    AggregateResponse,
     buildCompositeRequestByFields,
     createAggregateUiRequest,
     mergeAggregateUiResponse,
     mergeRecordFields,
     createAggregateBatchRequestInfo,
 } from './utils';
-import {
+import type {
     RecordRepresentation,
     RelatedListRecordCollectionRepresentation,
 } from '@salesforce/lds-adapters-uiapi';

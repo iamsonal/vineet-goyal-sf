@@ -1,9 +1,10 @@
 import { buildSuccessMockPayload, MockPayload } from '@luvio/adapter-test-library';
+import { testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
 
 import { factory as getRecordAdapterFactory } from '../index';
 
 import singleRecordWithIdName from './mockData/record-Account-fields-Account.Id,Account.Name.json';
-import { testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
+
 const recordId_Account = '001xx000003Gn4WAAS';
 const recordFields_Account = ['Account.Id', 'Account.Name'];
 const recordRequest_Account: MockPayload['networkArgs'] = {

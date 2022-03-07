@@ -12,7 +12,7 @@ import {
     testDurableHitDoesNotHitNetwork,
 } from '@salesforce/lds-jest';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
-import parseAndVisit from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 
 import { graphQLAdapterFactory } from '../../../main';
 import { flushPromises } from './test-utils';
@@ -285,9 +285,9 @@ describe('graphQL adapter offline', () => {
             // populate it
             await adapter(config);
 
-            const expirationTimestamp =
-                durableStore.segments[DefaultDurableSegment][recordKey].metadata
-                    .expirationTimestamp;
+            const expirationTimestamp = (await durableStore.persistence.get(DefaultDurableSegment))[
+                recordKey
+            ].metadata.expirationTimestamp;
             timekeeper.travel(expirationTimestamp + 10);
             const result = await adapter(config);
 

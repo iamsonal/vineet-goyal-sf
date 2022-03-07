@@ -1,25 +1,32 @@
 import { removeDuplicatePredicates } from './comparison';
-import { FieldInfo, ObjectInfo, RelationshipInfo } from './info-types';
-import {
+import type { PredicateError } from './Error';
+import { missingObjectInfo } from './Error';
+import type { FieldInfo, ObjectInfo, RelationshipInfo } from './info-types';
+import type {
     BooleanLiteral,
-    ComparisonOperator,
     ComparisonPredicate,
     CompoundOperator,
     DoubleLiteral,
     Expression,
     IntLiteral,
+    JsonExtract,
+    Predicate,
+    StringLiteral,
+} from './Predicate';
+import {
+    ComparisonOperator,
     isBetweenPredicate,
     isComparisonPredicate,
     isCompoundPredicate,
+    isDateFunctionPredicate,
     isExistsPredicate,
     isNotPredicate,
     isNullComparisonPredicate,
-    JsonExtract,
-    Predicate,
     PredicateType,
-    StringLiteral,
     ValueType,
 } from './Predicate';
+import type { Result } from './Result';
+import { failure, success } from './Result';
 
 import { flatten } from './util/flatten';
 
@@ -27,32 +34,50 @@ export function getFieldInfo(
     apiName: string,
     fieldName: string,
     infoMap: { [name: string]: ObjectInfo }
-): FieldInfo | undefined {
+): Result<FieldInfo | undefined, PredicateError> {
     const objInfo = infoMap[apiName];
 
     if (objInfo === undefined) {
-        return undefined;
+        return failure(missingObjectInfo(apiName));
     }
 
-    return Object.values(objInfo.fields).filter(
+    // Special casing for WeakEtag which is represented in the GraphQL schema but
+    // has no ObjectInfo representation
+    if (fieldName === 'WeakEtag') {
+        return success({
+            apiName: 'WeakEtag',
+            dataType: 'WeakEtag',
+        });
+    }
+
+    const fieldInfo = Object.values(objInfo.fields).filter(
         (field) =>
             field.apiName === fieldName ||
             (field.dataType === 'Reference' && field.relationshipName === fieldName)
     )[0];
+
+    return success(fieldInfo);
 }
 
 export function getRelationshipInfo(
     apiName: string,
     fieldName: string,
     infoMap: { [name: string]: ObjectInfo }
-): RelationshipInfo | undefined {
+): Result<RelationshipInfo | undefined, PredicateError> {
     const objInfo = infoMap[apiName];
 
-    return objInfo !== undefined ? objInfo.childRelationships[fieldName] : undefined;
+    if (objInfo === undefined) {
+        return failure(missingObjectInfo(apiName));
+    }
+    return success(objInfo.childRelationships[fieldName]);
 }
 
-export function stringLiteral(value: string): StringLiteral {
-    return { type: ValueType.StringLiteral, value };
+export function stringLiteral(
+    value: string,
+    safe: boolean = false,
+    isCaseSensitive: boolean = false
+): StringLiteral {
+    return { type: ValueType.StringLiteral, value, safe, isCaseSensitive };
 }
 
 export function intLiteral(value: number): IntLiteral {
@@ -112,6 +137,7 @@ export function combinePredicates(predicates: Predicate[], operator: CompoundOpe
             isComparisonPredicate(pred) ||
             isNullComparisonPredicate(pred) ||
             isExistsPredicate(pred) ||
+            isDateFunctionPredicate(pred) ||
             isBetweenPredicate(pred) ||
             isNotPredicate(pred)
     );
@@ -143,6 +169,12 @@ export function extractPath(fieldName: string, subfield: string | undefined = un
             return 'data.id';
         case 'ApiName':
             return 'data.apiName';
+        case 'drafts':
+            return 'data.drafts';
+        case 'metadata':
+            return 'metadata';
+        case 'WeakEtag':
+            return 'data.weakEtag';
         default: {
             const sub = subfield !== undefined ? subfield : 'value';
             return `data.fields.${fieldName}.${sub}`;

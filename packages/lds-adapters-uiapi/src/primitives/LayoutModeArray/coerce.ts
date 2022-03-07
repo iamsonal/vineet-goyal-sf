@@ -1,4 +1,4 @@
-import { LayoutMode } from '../LayoutMode';
+import type { LayoutMode } from '../LayoutMode';
 import getLayoutMode from '../LayoutMode/coerce';
 import { ArrayIsArray, ArrayPrototypePush } from '../../util/language';
 import { dedupe } from '../../validation/utils';

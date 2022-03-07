@@ -1,0 +1,12 @@
+{
+    "DeploymentInput": {
+        "contentSpaceId": "0Zux0000000KykTCAS",
+        "channelIds": ["0apx0000000GmanAAC"],
+        "description": "Test Description",
+        "contentIds": [],
+        "executeStagedDeployments": false,
+        "includeContentReferences": true,
+        "scheduledDate": "2021-03-23T17:14:00.000Z",
+        "variantIds": ["9Psxx0000004DwKCAU"]
+    }
+}

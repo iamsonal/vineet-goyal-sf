@@ -1,0 +1,40 @@
+{
+    "clientShardsUrl": "/services/data/v55.0/wave/datasets/0FbS700000049PZKAY/shards",
+    "createdBy": {
+        "id": "005S7000000VQ6fIAG",
+        "name": "Admin User",
+        "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+    },
+    "createdDate": "2021-10-21T18:42:32.000Z",
+    "currentVersionId": "0FcS70000005apdKAA",
+    "currentVersionUrl": "/services/data/v55.0/wave/datasets/0FbS700000049PZKAY/versions/0FcS70000005apdKAA",
+    "dataRefreshDate": "2021-10-21T18:43:23.000Z",
+    "datasetType": "stagedData",
+    "description": "Created from the stageddata recipe.",
+    "folder": {
+        "id": "005S7000000VQ6fIAG",
+        "label": "Admin User"
+    },
+    "id": "0FbS700000049PZKAY",
+    "label": "stagedtest",
+    "lastModifiedBy": {
+        "id": "005S7000000GHNKIA4",
+        "name": "Integration User",
+        "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+    },
+    "lastModifiedDate": "2021-10-21T18:43:24.000Z",
+    "licenseAttributes": {
+        "type": "einsteinanalytics"
+    },
+    "name": "stagedtest",
+    "permissions": {
+        "create": true,
+        "manage": true,
+        "modify": true,
+        "view": true
+    },
+    "type": "dataset",
+    "url": "/services/data/v55.0/wave/datasets/0FbS700000049PZKAY",
+    "versionsUrl": "/services/data/v55.0/wave/datasets/0FbS700000049PZKAY/versions",
+    "visibility": "All"
+}

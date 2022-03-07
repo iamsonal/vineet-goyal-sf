@@ -4,9 +4,10 @@ import { mockNetworkOnce, mockNetworkErrorOnce } from 'test-util';
 import sinon from 'sinon';
 import timekeeper from 'timekeeper';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const INTERACTION_TTL = 1000;
+const EXP_URI = `/connect/decision-explainer/action-logs`;
 
 export function clone(obj) {
     // this is needed for compat tests, because the toEqual matcher can't
@@ -24,13 +25,13 @@ export function mockExplainabilityActionLogsNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockPostExplainabilityActionLogNetworkOnce(config, mockData) {
-    const paramMatch = postExplainabilityActionLogMatcher(config);
+export function mockStoreExplainabilityActionLogNetworkOnce(config, mockData) {
+    const paramMatch = storeExplainabilityActionLogMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockPostExplainabilityActionLogNetworkErrorOnce(config, mockData) {
-    const paramMatch = postExplainabilityActionLogMatcher(config);
+export function mockStoreExplainabilityActionLogNetworkErrorOnce(config, mockData) {
+    const paramMatch = storeExplainabilityActionLogMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -42,22 +43,22 @@ function getExplainabilityActionLogsMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `/connect/explainability-service/action-logs`,
+        basePath: EXP_URI,
         queryParams: { actionContextCode, applicationType, applicationSubType },
     });
 }
 
-function postExplainabilityActionLogMatcher(config) {
-    let { explainabilityActionLog } = config;
+function storeExplainabilityActionLogMatcher(config) {
+    let { explainabilityActionLogDefinition } = config;
 
     return sinon.match({
         body: {
-            explainabilityActionLog,
+            explainabilityActionLogDefinition,
         },
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
-        basePath: `/connect/explainability-service/action-logs`,
+        basePath: EXP_URI,
         queryParams: {},
     });
 }

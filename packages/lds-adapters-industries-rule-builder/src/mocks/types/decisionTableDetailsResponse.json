@@ -1,0 +1,32 @@
+{
+    "description": "test DT 1",
+    "id": "00xx1234abcd123",
+    "code": "success",
+    "isSuccess": true,
+    "message": "expected result",
+    "inputVariables": [
+        {
+            "dataType": "Text",
+            "id": "0lJxx0000000001EAA",
+            "name": "IP 1"
+        },
+        {
+            "dataType": "Text",
+            "id": "0lJxx000000001dEAA",
+            "name": "IP 2"
+        }
+    ],
+    "name": "Test Decision Table 1",
+    "outputVariables": [
+        {
+            "dataType": "Text",
+            "id": "0lJxx000000003FEAQ",
+            "name": "OP 1"
+        },
+        {
+            "dataType": "Text",
+            "id": "0lJxx000000003GEAQ",
+            "name": "OP 2"
+        }
+    ]
+}

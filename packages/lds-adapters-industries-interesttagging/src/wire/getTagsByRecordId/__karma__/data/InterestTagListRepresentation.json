@@ -3,10 +3,12 @@
         {
             "tagId": "0TOi000001AWbWugta",
             "name": "Golf",
+            "recordAssignmentId": "0qTxx00000001YpEAI",
             "categories": [
                 {
                     "categoryId": "0ZOi000001CkbWugna",
-                    "name": "Sports"
+                    "name": "Sports",
+                    "icon": "referenceToStaticIcon"
                 }
             ]
         }

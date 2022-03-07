@@ -1,98 +1,127 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "ServiceAppointment": {
+                    "__typename": "ServiceAppointmentConnection",
                     "edges": [
                         {
+                            "__typename": "ServiceAppointmentEdge",
                             "node": {
-                                "Id": "08pRM0000004sJLYAY",
+                                "Id": "08pRM0000004u1hYAA",
                                 "ParentRecordId": {
+                                    "__typename": "IDValue",
                                     "value": "001RM000004uuhnYAA",
                                     "displayValue": null
                                 },
                                 "ParentRecordStatusCategory": {
+                                    "__typename": "PicklistValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "Street": {
+                                    "__typename": "TextAreaValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "City": {
+                                    "__typename": "StringValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "State": {
+                                    "__typename": "StringValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "Country": {
+                                    "__typename": "StringValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "PostalCode": {
+                                    "__typename": "StringValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "Latitude": {
+                                    "__typename": "LatitudeValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "Longitude": {
+                                    "__typename": "LongitudeValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "Contact": null,
                                 "AppointmentNumber": {
-                                    "value": "SA-0002",
+                                    "__typename": "StringValue",
+                                    "value": "SA-0003",
                                     "displayValue": null
                                 },
                                 "Subject": {
+                                    "__typename": "StringValue",
                                     "value": null,
                                     "displayValue": null
                                 },
                                 "Description": {
-                                    "value": "Test Service Appointment",
+                                    "__typename": "LongTextAreaValue",
+                                    "value": null,
                                     "displayValue": null
                                 },
                                 "Status": {
+                                    "__typename": "PicklistValue",
                                     "value": "Scheduled",
                                     "displayValue": "Scheduled"
                                 },
                                 "SchedStartTime": {
-                                    "value": "2021-06-14T19:00:00.000Z",
-                                    "displayValue": "6/14/2021, 12:00 PM"
+                                    "__typename": "DateTimeValue",
+                                    "value": "2021-11-08T20:00:00.000Z",
+                                    "displayValue": "11/8/2021, 12:00 PM"
                                 },
                                 "SchedEndTime": {
-                                    "value": "2021-06-16T19:00:00.000Z",
-                                    "displayValue": "6/16/2021, 12:00 PM"
+                                    "__typename": "DateTimeValue",
+                                    "value": "2021-11-23T20:00:00.000Z",
+                                    "displayValue": "11/23/2021, 12:00 PM"
                                 },
                                 "CreatedDate": {
-                                    "value": "2021-06-11T17:00:12.000Z",
-                                    "displayValue": "6/11/2021, 10:00 AM"
+                                    "__typename": "DateTimeValue",
+                                    "value": "2021-11-10T17:35:29.000Z",
+                                    "displayValue": "11/10/2021, 9:35 AM"
                                 },
                                 "LastModifiedDate": {
-                                    "value": "2021-06-11T17:00:12.000Z",
-                                    "displayValue": "6/11/2021, 10:00 AM"
+                                    "__typename": "DateTimeValue",
+                                    "value": "2021-11-10T17:37:37.000Z",
+                                    "displayValue": "11/10/2021, 9:37 AM"
                                 },
                                 "SystemModstamp": {
-                                    "value": "2021-06-11T17:00:12.000Z",
-                                    "displayValue": "6/11/2021, 10:00 AM"
+                                    "__typename": "DateTimeValue",
+                                    "value": "2021-11-10T17:37:37.000Z",
+                                    "displayValue": "11/10/2021, 9:37 AM"
                                 },
                                 "__typename": "ServiceAppointment",
                                 "ApiName": "ServiceAppointment",
-                                "WeakEtag": 1623430812000,
-                                "DisplayValue": "SA-0002",
+                                "WeakEtag": 1636565857000,
+                                "DisplayValue": "SA-0003",
                                 "LastModifiedById": {
                                     "value": "005RM000002492xYAA"
                                 },
                                 "RecordTypeId": {
-                                    "value": "012000000000000AAA"
+                                    "value": null
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

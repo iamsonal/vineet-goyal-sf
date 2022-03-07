@@ -1,6 +1,6 @@
-import { ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
+import type { ResourceRequestConfig } from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
 import { ArrayPrototypePush } from '../../../generated/adapters/adapter-utils';
-import { GetRecordsConfig } from './GetRecordsConfig';
+import type { GetRecordsConfig } from './GetRecordsConfig';
 
 export function createResourceParams(config: GetRecordsConfig): ResourceRequestConfig {
     const { records: configRecords } = config;

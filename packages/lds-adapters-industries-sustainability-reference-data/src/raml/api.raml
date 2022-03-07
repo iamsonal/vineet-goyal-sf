@@ -1,0 +1,54 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  SCReferenceDataOutputRepresentation:
+    description: Represents the response and its status
+    type: object
+    properties:
+      code:
+        description: Reference Data Output Code
+        type: integer
+      message:
+        description: Reference Data Output Message
+        type: string
+/connect/sustainability/reference-data/{category}/upload:
+  post:
+    description: Used for uploading Reference Data based on the category
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: SCReferenceDataOutputRepresentation
+    queryParameters:
+      recordTypeId:
+        type: string
+        required: false
+  uriParameters:
+    category:
+      type: string
+      required: true

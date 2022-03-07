@@ -1,0 +1,71 @@
+{
+    "results": [
+        {
+            "result": {
+                "cloneable": false,
+                "createable": false,
+                "deletable": false,
+                "displayColumns": [
+                    {
+                        "fieldApiName": "Name",
+                        "label": "Account Name",
+                        "sortable": true
+                    },
+                    {
+                        "fieldApiName": "Phone",
+                        "label": "Phone",
+                        "sortable": true
+                    },
+                    {
+                        "fieldApiName": "Owner.Alias",
+                        "label": "Account Owner Alias",
+                        "sortable": true
+                    },
+                    {
+                        "fieldApiName": "User__r.Name",
+                        "label": "User",
+                        "sortable": true
+                    }
+                ],
+                "eTag": "7f228204c89dd38132e8c6e2cc0ffe6a",
+                "filterLogicString": null,
+                "filteredByInfo": [],
+                "label": null,
+                "listReference": {
+                    "id": null,
+                    "listViewApiName": "__SearchResult",
+                    "objectApiName": "Account",
+                    "type": "listView"
+                },
+                "orderedByInfo": [],
+                "updateable": false,
+                "userPreferences": {
+                    "columnWidths": {
+                        "User__r.Name": 217,
+                        "Owner.Alias": 307,
+                        "Phone": 484,
+                        "Name": 259
+                    },
+                    "columnWrap": {
+                        "User__r.Name": false,
+                        "Owner.Alias": false,
+                        "Phone": false,
+                        "Name": false
+                    }
+                },
+                "visibility": "Public",
+                "visibilityEditable": false
+            },
+            "statusCode": 200
+        },
+        {
+            "result": [
+                {
+                    "errorCode": "INTERNAL_SERVER_ERROR",
+                    "message": "Object User is not supported in UI API"
+                }
+            ],
+            "statusCode": 500
+        }
+    ]
+}

@@ -1,13 +1,17 @@
-import { executeGlobalController, ActionConfig } from 'aura';
-import { AuraStorage } from 'aura-storage';
-import { registerCacheStats, CacheStatsLogger } from 'instrumentation/service';
+import type { ActionConfig } from 'aura';
+import { executeGlobalController } from 'aura';
+import type { AuraStorage } from 'aura-storage';
+import type { CacheStatsLogger } from 'instrumentation/service';
+import { registerCacheStats } from 'instrumentation/service';
 
-import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
+import type { FetchResponse, ResourceRequest } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 
 import appRouter from '../router';
 
 import { ObjectKeys } from '../utils/language';
+import { instrumentation } from '../instrumentation';
 
 export type ControllerInvoker = (
     resourceRequest: ResourceRequest,
@@ -111,6 +115,26 @@ function createOkResponse(body: unknown): AuraFetchResponse<unknown> {
     return new AuraFetchResponse(HttpStatusCode.Ok, body);
 }
 
+type FetchFromNetwork = () => Promise<FetchResponse<unknown>>;
+/**
+ * Wraps the FetchFromNetwork function to provide instrumentation hooks
+ * for network requests and responses.
+ */
+function instrumentFetchFromNetwork(fetchFromNetwork: FetchFromNetwork): FetchFromNetwork {
+    return () => {
+        instrumentation.networkRequest();
+        return fetchFromNetwork()
+            .then((response: FetchResponse<unknown>) => {
+                instrumentation.networkResponse(() => response);
+                return response;
+            })
+            .catch((response: FetchResponse<unknown>) => {
+                instrumentation.networkResponse(() => response);
+                throw response;
+            });
+    };
+}
+
 /** Invoke an Aura controller with the pass parameters. */
 export function dispatchAction(
     endpoint: string,
@@ -120,7 +144,7 @@ export function dispatchAction(
 ): Promise<AuraFetchResponse<unknown>> {
     const { action: actionConfig, cache: cacheConfig } = config;
 
-    const fetchFromNetwork = () => {
+    const fetchFromNetwork = instrumentFetchFromNetwork(() => {
         return executeGlobalController(endpoint, params, actionConfig).then(
             (body: UiApiBody) => {
                 // If a cache is passed, store the action body in the cache before returning the
@@ -148,7 +172,7 @@ export function dispatchAction(
                     });
                 }
 
-                // Handle ConnectedInJava exception shapes
+                // Handle ConnectInJava exception shapes
                 if (err.data !== undefined && err.data.statusCode !== undefined) {
                     const { data } = err as ConnectInJavaError;
                     throw new AuraFetchResponse(data.statusCode, data);
@@ -160,7 +184,7 @@ export function dispatchAction(
                 });
             }
         );
-    };
+    });
 
     // If no cache is passed or if the action should be refreshed, directly fetch the action from
     // the server.
@@ -278,17 +302,4 @@ export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
             }[adapterName]
         );
     });
-}
-
-export function auraResponseIsQueryTooComplicated(error: AuraFetchResponse<any>) {
-    const { body } = error;
-
-    if (error.status === HttpStatusCode.BadRequest && body !== undefined) {
-        return (
-            body.statusCode === HttpStatusCode.BadRequest &&
-            body.errorCode === 'QUERY_TOO_COMPLICATED'
-        );
-    }
-
-    return false;
 }

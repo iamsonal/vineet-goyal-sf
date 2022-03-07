@@ -13,11 +13,26 @@ const basePlugin = require('../../lds-compiler-plugins');
 // the custom adapter partial files
 const RAML_ARTIFACTS = {
     '/adapters/getDataset': [
-        'buildInMemorySnapshotCachePolicy',
+        'buildCachedSnapshotCachePolicy',
         'onResourceResponseSuccess',
         'onResourceResponseError',
     ],
     '/adapters/deleteDataset': ['buildNetworkSnapshot'],
+    '/adapters/getWaveTemplate': [
+        'buildCachedSnapshotCachePolicy',
+        'onResourceResponseSuccess',
+        'onResourceResponseError',
+    ],
+    '/adapters/getWaveTemplateConfig': [
+        'buildCachedSnapshotCachePolicy',
+        'onResourceResponseSuccess',
+        'onResourceResponseError',
+    ],
+    '/adapters/getWaveTemplateReleaseNotes': [
+        'buildCachedSnapshotCachePolicy',
+        'onResourceResponseSuccess',
+        'onResourceResponseError',
+    ],
 };
 
 // extend the basePlugin to add the logic for the partial raml artifacts

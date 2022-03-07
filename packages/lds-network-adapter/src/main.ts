@@ -1,6 +1,11 @@
-import { NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import type { NetworkAdapter, ResourceRequest } from '@luvio/engine';
 import { dedupeRequest } from './dispatch/dedupe';
-import { getDisaptcher, SalesforceResourceRequest } from './dispatch/main';
+import type { SalesforceResourceRequest } from './dispatch/main';
+import { getDisaptcher } from './dispatch/main';
+import {
+    convertPostRelatedListRecordsToGet,
+    isRelatedListPostRecordsResourceRequest,
+} from './dispatch/related-lists';
 import tokenBucket from './token-bucket';
 import { instrumentation } from './instrumentation';
 
@@ -13,11 +18,22 @@ export default function platformNetworkAdapter(baseNetworkAdapter: NetworkAdapte
             instrumentation.networkRateLimitExceeded();
         }
 
+        let innerResourceRequest: ResourceRequest;
+
+        // W-10698167: Check if this is a getRelatedListRecords POST
+        if (isRelatedListPostRecordsResourceRequest(resourceRequest)) {
+            innerResourceRequest = convertPostRelatedListRecordsToGet(resourceRequest);
+        } else {
+            innerResourceRequest = resourceRequest;
+        }
+
         const salesforceRequest: SalesforceResourceRequest = {
             networkAdapter: baseNetworkAdapter,
-            resourceRequest,
+            resourceRequest: innerResourceRequest,
         };
-        const { method } = resourceRequest;
+
+        const { method } = salesforceRequest.resourceRequest;
+
         if (method.toLowerCase() !== 'get') {
             const dispatch = getDisaptcher(resourceRequest);
             return dispatch(salesforceRequest);

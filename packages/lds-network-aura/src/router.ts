@@ -1,6 +1,6 @@
-import { ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
 
-import { ControllerInvoker } from './middlewares/utils';
+import type { ControllerInvoker } from './middlewares/utils';
 import { ObjectCreate } from './utils/language';
 
 type RoutePredicate = (path: string) => boolean;

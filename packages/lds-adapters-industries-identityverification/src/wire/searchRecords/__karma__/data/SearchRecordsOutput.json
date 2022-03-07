@@ -1,0 +1,48 @@
+{
+    "isSuccess": true,
+    "message": "Search is a success",
+    "searchResult": [
+        {
+            "searchFields": [
+                {
+                    "developerName": "Sample_Account_Name",
+                    "value": "Test Value"
+                },
+                {
+                    "developerName": "Sample_Phone_Number",
+                    "value": "09154892836"
+                },
+                {
+                    "developerName": "Sample_Postal_Code",
+                    "value": "786125"
+                },
+                {
+                    "developerName": "Id",
+                    "value": "001xx000003GYcFAAW"
+                }
+            ]
+        }
+    ],
+    "searchResultHeader": [
+        {
+            "dataType": "Name",
+            "developerName": "Sample_Account_Name",
+            "displayLabel": "Account Name"
+        },
+        {
+            "dataType": "Phone",
+            "developerName": "Sample_Phone_Number",
+            "displayLabel": "Phone"
+        },
+        {
+            "dataType": "Text",
+            "developerName": "Sample_Postal_Code",
+            "displayLabel": "Sample_Postal_Code"
+        },
+        {
+            "dataType": "Lookup",
+            "developerName": "Id",
+            "displayLabel": "Account ID"
+        }
+    ]
+}

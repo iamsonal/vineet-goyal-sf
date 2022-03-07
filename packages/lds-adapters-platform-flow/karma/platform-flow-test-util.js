@@ -2,7 +2,7 @@ import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkErrorOnce, mockNetworkSequence } from 'test-util';
 import sinon from 'sinon';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/connect`;
 
@@ -55,16 +55,19 @@ function startFlowMatcher(config) {
     let { flowDevName } = config;
 
     return sinon.match({
+        body: {
+            flowDevName,
+        },
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/interaction/runtime/${flowDevName}/startFlow`,
+        basePath: `${URL_BASE}/interaction/runtime/startFlow`,
         queryParams: {},
     });
 }
 
 function navigateFlowMatcher(config) {
-    let { flowDevName, action } = config;
+    let { action } = config;
 
     return sinon.match({
         body: {
@@ -73,19 +76,17 @@ function navigateFlowMatcher(config) {
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/interaction/runtime/${flowDevName}/navigateFlow`,
+        basePath: `${URL_BASE}/interaction/runtime/navigateFlow`,
         queryParams: {},
     });
 }
 
-function resumeFlowMatcher(config) {
-    let { flowDevName } = config;
-
+function resumeFlowMatcher() {
     return sinon.match({
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/interaction/runtime/${flowDevName}/resumeFlow`,
+        basePath: `${URL_BASE}/interaction/runtime/resumeFlow`,
         queryParams: {},
     });
 }

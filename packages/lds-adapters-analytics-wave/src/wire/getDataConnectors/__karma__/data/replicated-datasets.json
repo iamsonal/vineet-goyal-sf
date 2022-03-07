@@ -1,0 +1,125 @@
+{
+    "replicatedDatasets": [
+        {
+            "advancedProperties": [],
+            "connectionMode": "incremental",
+            "connector": {
+                "connectionProperties": [],
+                "connectorHandler": "Legacy",
+                "connectorType": "AmazonS3",
+                "createdBy": {
+                    "id": "005RM000002AuUpYAK",
+                    "name": "Admin User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "createdDate": "2020-10-14T14:36:56.000Z",
+                "description": "s3testKeys",
+                "id": "0ItRM0000004Dfb0AE",
+                "ingestionSchedule": {
+                    "assetId": "0ItRM0000004Dfb0AE",
+                    "daysOfWeek": [],
+                    "frequency": "weekly",
+                    "notificationLevel": "warnings"
+                },
+                "label": "s3testKeys",
+                "lastModifiedBy": {
+                    "id": "005RM000002AuUpYAK",
+                    "name": "Admin User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+                "name": "s3testKeys",
+                "type": "dataconnector",
+                "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfb0AE"
+            },
+            "createdBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "createdDate": "2021-01-26T02:13:10.000Z",
+            "datasetId": "0Fbxx0000004CKKCA2",
+            "fieldCount": 36,
+            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM/fields",
+            "filterApplied": false,
+            "id": "0Iuxx0000004CAeCAM",
+            "label": "Opportunity",
+            "lastModifiedBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "lastModifiedDate": "2021-01-26T02:13:10.000Z",
+            "lastRefreshedDate": "2020-11-30T17:48:02.000Z",
+            "name": "Opportunity",
+            "replicationDataflowId": "02Kxx0000004DNNEA2",
+            "rowLevelSharing": false,
+            "sourceObjectName": "Opportunity",
+            "status": "cancelled",
+            "supportedConnectionModes": ["full", "incremental", "periodicFull"],
+            "type": "replicateddataset",
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM",
+            "uuid": "0Iuxx0000004CAeCAM"
+        },
+        {
+            "advancedProperties": [],
+            "connectionMode": "incremental",
+            "connector": {
+                "connectionProperties": [],
+                "connectorType": "SfdcLocal",
+                "createdBy": {
+                    "id": "",
+                    "name": "",
+                    "profilePhotoUrl": ""
+                },
+                "createdDate": "2021-01-26T02:13:10.000Z",
+                "description": "SFDC_LOCAL",
+                "id": "0Itxx0000004CKKCA2",
+                "ingestionSchedule": {
+                    "assetId": "0Itxx0000004CKKCA2",
+                    "daysOfWeek": [],
+                    "frequency": "weekly",
+                    "notificationLevel": "never"
+                },
+                "label": "SFDC_LOCAL",
+                "lastModifiedBy": {
+                    "id": "",
+                    "name": "",
+                    "profilePhotoUrl": ""
+                },
+                "lastModifiedDate": "2021-01-26T02:13:10.000Z",
+                "name": "SFDC_LOCAL",
+                "type": "dataconnector",
+                "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004CKKCA2"
+            },
+            "createdBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "createdDate": "2021-01-26T02:13:10.000Z",
+            "datasetId": "0Fbxx0000004CKLCA2",
+            "fieldCount": 7,
+            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM/fields",
+            "filterApplied": false,
+            "id": "0Iuxx0000004CAfCAM",
+            "label": "Case",
+            "lastModifiedBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "lastModifiedDate": "2021-01-26T02:13:10.000Z",
+            "lastRefreshedDate": "2020-11-30T19:16:04.000Z",
+            "name": "Case",
+            "replicationDataflowId": "02Kxx0000004DNOEA2",
+            "sourceObjectName": "Case",
+            "status": "cancelled",
+            "supportedConnectionModes": ["full", "incremental", "periodicFull"],
+            "type": "replicateddataset",
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM",
+            "uuid": "0Iuxx0000004CAfCAM"
+        }
+    ],
+    "url": "/services/data/v53.0/wave/replicatedDatasets"
+}

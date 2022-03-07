@@ -1,0 +1,582 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  BuildVerificationContextInputRepresentation:
+    description: Input representation for building verification context
+    type: object
+    properties:
+      objectName:
+        description: Object Name
+        type: string
+      selectedRecordId:
+        description: Selected Record Id
+        type: string
+  FieldValueInputRepresentation:
+    description: Input representation for each field
+    type: object
+    properties:
+      developerName:
+        description: Developer Name
+        type: string
+      value:
+        description: Value
+        type: string
+  FieldValueListInputRepresentation:
+    description: Input representation for Selected Search Result List
+    type: object
+    properties:
+      selectedRecordObjectList:
+        description: Selected Record Object List
+        type: array
+        items:
+          type: FieldValueInputRepresentation
+  FieldValueOutputRepresentation:
+    description: Representation of a field value
+    type: object
+    properties:
+      developerName:
+        description: Developer Name
+        type: string
+      value:
+        description: Value
+        type: string
+  ProcessDefinitionInputRepresentation:
+    description: Input representation for verification process defintion
+    type: object
+    properties:
+      layoutType:
+        description: Layout Type
+        type: string
+      processDetail:
+        description: Process Detail
+        type: ProcessDetailListInputRepresentation
+  ProcessDefinitionOutputRepresentation:
+    description: Representation of a process defintion
+    type: object
+    properties:
+      layoutType:
+        description: Layout type
+        type: string
+      processDetail:
+        description: Process Detail
+        type: array
+        items:
+          type: ProcessDetailOutputRepresentation
+  ProcessDetailInputRepresentation:
+    description: Input representation for process detail
+    type: object
+    properties:
+      apexClassName:
+        description: Apex Class Name
+        type: string
+      dataSourceType:
+        description: Data Source Type
+        type: string
+      optionalVerifierCount:
+        description: Optional Verifier Count
+        type: integer
+      searchObjectName:
+        description: Search Object Name
+        type: string
+      searchResultFilter:
+        description: Search Result Filter
+        type: string
+      searchResultSortOrder:
+        description: Search Result Sort Order
+        type: string
+      searchResultUniqueIdField:
+        description: Search Result UniqueId Field
+        type: string
+      searchSequenceNo:
+        description: Search Sequence number
+        type: integer
+      searchType:
+        description: Search Type - SOSL/SOQL
+        type: string
+      verificationProcessFieldList:
+        description: Verification Process Field List
+        type: VerificationProcessFieldListInputRepresentation
+  ProcessDetailListInputRepresentation:
+    description: Input representation for list of process detail
+    type: object
+    properties:
+      processDetailList:
+        description: Process Detail List
+        type: array
+        items:
+          type: ProcessDetailInputRepresentation
+  ProcessDetailOutputRepresentation:
+    description: Representation of Process Detail
+    type: object
+    properties:
+      apexClassName:
+        description: Apex Class Name
+        type: string
+      dataSourceType:
+        description: Data Source Type
+        type: string
+      optionalVerifierCount:
+        description: Optional Verifier Count
+        type: integer
+      searchObjectName:
+        description: Search Object Name
+        type: string
+      searchResultFilter:
+        description: Search Result Filter
+        type: string
+      searchResultSortOrder:
+        description: Search Result Sort Order
+        type: string
+      searchResultUniqueIdField:
+        description: Search Result Unique Id
+        type: string
+      searchSequenceNo:
+        description: Search Sequence Number
+        type: integer
+      searchType:
+        description: Search Type
+        type: string
+      verificationProcessFieldList:
+        description: List of verification process fields
+        type: VerificationProcessFieldListOutputRepresentation
+  SearchFieldRepresentation:
+    description: Representation of Search Result field
+    type: object
+    properties:
+      developerName:
+        description: Developer Name
+        type: string
+      value:
+        description: Field Value
+        type: string
+  SearchInputRepresentation:
+    description: Input representation for Search API
+    type: object
+    properties:
+      searchTerm:
+        description: Search Term
+        type: string
+      verificationContext:
+        description: Verification Context
+        type: VerificationContextInputRepresentation
+  SearchOutputRepresentation:
+    description: Output representation of Search API for Identity Verification feature
+    type: object
+    properties:
+      isSuccess:
+        description: Search API result success/failure
+        type: boolean
+      message:
+        description: Search API result message
+        type: string
+      searchResult:
+        description: Search API result field list
+        type: array
+        items:
+          type: SearchResultRepresentation
+      searchResultHeader:
+        description: Search API result header field list
+        type: array
+        items:
+          type: SearchResultHeaderRepresentation
+  SearchResultHeaderRepresentation:
+    description: Representation of Search API Result Header
+    type: object
+    properties:
+      dataType:
+        description: Data type of field
+        type: string
+      developerName:
+        description: Field API Name
+        type: string
+      displayLabel:
+        description: Display label for the field
+        type: string
+  SearchResultRepresentation:
+    description: Representation of Search API Result
+    type: object
+    properties:
+      searchFields:
+        description: List of search fields
+        type: array
+        items:
+          type: SearchFieldRepresentation
+  SelectedSearchResultInputRepresentation:
+    description: Input representation for Selected Search Result
+    type: object
+    properties:
+      objectName:
+        description: Object Name
+        type: string
+      selectedRecordId:
+        description: Selected Record Id
+        type: string
+      selectedRecordObject:
+        description: Selected Record Object
+        type: FieldValueListInputRepresentation
+  SelectedSearchResultOutputRepresentation:
+    description: Representation of a selected search result
+    type: object
+    properties:
+      objectName:
+        description: Object Name
+        type: string
+      selectedRecordId:
+        description: Selected Record Id
+        type: string
+      selectedRecordObject:
+        description: Selected Record Object
+        type: array
+        items:
+          type: FieldValueOutputRepresentation
+  TimelineDataGetResultRepresentation:
+    description: Output represantation of Timeline Data from the GET Resource
+    type: object
+    properties:
+      errors:
+        description: TimelineData GET Resource List of Errors
+        type: array
+        items:
+          type: TimelineErrorRepresentation
+      eventTypes:
+        description: TimelineData GET Resource Event Types
+        type: array
+        items:
+          type: TimelineEventTypeRepresentation
+      events:
+        description: TimelineData GET Resource fetch all events
+        type: array
+        items:
+          type: TimelineEventRepresentation
+      hasMoreData:
+        description: TimelineData Get Resource - more Data to be fetched
+        type: boolean
+      isSuccess:
+        description: TimelineData get status flag
+        type: boolean
+  TimelineErrorRepresentation:
+    description: Error response representation
+    type: object
+    properties:
+      code:
+        description: Code for Error
+        type: string
+      message:
+        description: Message Error
+        type: string
+  TimelineEventRepresentation:
+    description: Output representation of the Event that is returned as part of the
+      GET Timeline Data Result
+    type: object
+    properties:
+      description:
+        description: Description of the Event Entity
+        type: string
+      eventDateTime:
+        description: Date Time of the Event
+        type: string
+      id:
+        description: Record Id
+        type: string
+      title:
+        description: Title of the Event Entity
+        type: string
+      type:
+        description: Event Entity Type
+        type: string
+  TimelineEventTypeRepresentation:
+    description: Output representation of EventType that is returned as part of the
+      GET Timeline Data Result
+    type: object
+    properties:
+      eventApiName:
+        description: Event API Name
+        type: string
+      offset:
+        description: Timeline Data Offset
+        type: integer
+  VerificationContextInputRepresentation:
+    description: Input representation for verification context
+    type: object
+    properties:
+      processDefinition:
+        description: Process Definition
+        type: ProcessDefinitionInputRepresentation
+      selectedSearchResult:
+        description: Selected Search Result
+        type: SelectedSearchResultInputRepresentation
+      verifiedResult:
+        description: Verified Result
+        type: VerifiedResultInputRepresentation
+  VerificationContextOutputRepresentation:
+    description: Representation of Verification Context
+    type: object
+    properties:
+      isSuccess:
+        description: API result success/failure
+        type: boolean
+      message:
+        description: API result message
+        type: string
+      processDefinition:
+        description: Process Definition
+        type: ProcessDefinitionOutputRepresentation
+      selectedSearchResult:
+        description: Selected Search Result
+        type: SelectedSearchResultOutputRepresentation
+      verifiedResult:
+        description: Verified Result
+        type: VerifiedResultOutputRepresentation
+  VerificationProcessFieldInputRepresentation:
+    description: Input representation for verification process field
+    type: object
+    properties:
+      dataSourceType:
+        description: Data Source Type - Salesforce/External
+        type: string
+      dataType:
+        description: Data type
+        type: string
+      developerName:
+        description: Developer Name
+        type: string
+      fieldName:
+        description: Field Name
+        type: string
+      fieldType:
+        description: Field Type
+        type: string
+      label:
+        description: Label value
+        type: string
+  VerificationProcessFieldListInputRepresentation:
+    description: Input representation for list of verification process field
+    type: object
+    properties:
+      verificationProcessFields:
+        description: List of verificationProcessField
+        type: array
+        items:
+          type: VerificationProcessFieldInputRepresentation
+  VerificationProcessFieldListOutputRepresentation:
+    description: List of Verification Process Field
+    type: object
+    properties:
+      verificationProcessFields:
+        description: Verification Process Fields
+        type: array
+        items:
+          type: VerificationProcessFieldOutputRepresentation
+  VerificationProcessFieldOutputRepresentation:
+    description: Verification Process Field Output
+    type: object
+    properties:
+      dataSourceType:
+        description: Data Source Type
+        type: string
+      dataType:
+        description: Data Type
+        type: string
+      developerName:
+        description: Developer Name
+        type: string
+      fieldName:
+        description: Field Name
+        type: string
+      fieldType:
+        description: Field Type
+        type: string
+      label:
+        description: Label
+        type: string
+  VerifiedResultInputRepresentation:
+    description: Input representation for verifier result
+    type: object
+    properties:
+      optionalVerifiers:
+        description: Optional Verifiers
+        type: VerifierListInputRepresentation
+      requiredVerifiers:
+        description: Required Verifiers
+        type: VerifierListInputRepresentation
+  VerifiedResultOutputRepresentation:
+    description: Representation of a Verified result
+    type: object
+    properties:
+      optionalVerifiers:
+        description: Optional Verifiers
+        type: array
+        items:
+          type: VerifierOutputRepresentation
+      requiredVerifiers:
+        description: Required Verifiers
+        type: array
+        items:
+          type: VerifierOutputRepresentation
+  VerifierInputRepresentation:
+    description: Input representation for verifier fields
+    type: object
+    properties:
+      developerName:
+        description: Developer Name
+        type: string
+      verificationState:
+        description: Verification State
+        type: string
+  VerifierListInputRepresentation:
+    description: Input representation for verifier result
+    type: object
+    properties:
+      verifiersList:
+        description: Verifiers List
+        type: array
+        items:
+          type: VerifierInputRepresentation
+  VerifierOutputRepresentation:
+    description: Representation of a Verifier
+    type: object
+    properties:
+      developerName:
+        description: Developer Name
+        type: string
+      verificationState:
+        description: Verification State
+        type: string
+
+  # TODO Hand-rolled W-8334626: BuildVerificationContextWrapperInputRepresentation added manually
+  BuildVerificationContextWrapperInputRepresentation:
+    description: wrapper of BuildVerificationContextInputRepresentation
+    type: object
+    properties:
+      BuildContextData:
+        description: Input representation for BuildVerificationContextInputRepresentation
+        type: BuildVerificationContextInputRepresentation
+
+  # TODO Hand-rolled W-8334626: SearchWrapperInputRepresentation added manually
+  SearchWrapperInputRepresentation:
+    description: wrapper of SearchInputRepresentation
+    type: object
+    properties:
+      SearchRecordsContextData:
+        description: Input representation for SearchInputRepresentation
+        type: SearchInputRepresentation
+
+  # TODO Hand-rolled W-8334626: VerificationContextWrapperInputRepresentation added manually
+  VerificationContextWrapperInputRepresentation:
+    description: wrapper of VerificationContextInputRepresentation
+    type: object
+    properties:
+      IdentityVerificationContextData:
+        description: Input representation for VerificationContextInputRepresentation
+        type: VerificationContextInputRepresentation
+/connect:
+  /identity-verification:
+    /build-context/{processDefinitionName}:
+      post:
+        description: API to build context entity needed for all Identity Verification
+          services
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: VerificationContextOutputRepresentation
+        body:
+          application/json:
+            type: BuildVerificationContextWrapperInputRepresentation
+            # Hand Rolled Change: BuildVerificationContextWrapperInputRepresentation created manually
+
+            # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+            (oas-body-name): BuildContextData
+      uriParameters:
+        processDefinitionName:
+          type: string
+          required: true
+    /search:
+      post:
+        description: API to search records for Identity Verification service
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SearchOutputRepresentation
+        body:
+          application/json:
+            type: SearchWrapperInputRepresentation
+            # Hand Rolled Change: SearchWrapperInputRepresentation created manually
+
+            # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+            (oas-body-name): SearchRecordsContextData
+    /verification:
+      post:
+        description: API to verify a given record
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: VerificationContextOutputRepresentation
+        body:
+          application/json:
+            type: VerificationContextWrapperInputRepresentation
+            # Hand Rolled Change: VerificationContextWrapperInputRepresentation created manually
+
+            # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+            (oas-body-name): IdentityVerificationContextData
+  /timeline/{timelineObjRecordId}/timeline-definitions/{timelineConfigId}/events:
+    get:
+      description: API to get Timeline data
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TimelineDataGetResultRepresentation
+      queryParameters:
+        direction:
+          type: string
+          required: false
+        endDate:
+          type: string
+          required: false
+        eventTypeOffsets:
+          type: string
+          required: false
+        eventTypes:
+          type: string
+          required: false
+        startDate:
+          type: string
+          required: false
+    uriParameters:
+      timelineConfigId:
+        type: string
+        required: true
+      timelineObjRecordId:
+        type: string
+        required: true

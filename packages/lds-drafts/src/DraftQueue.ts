@@ -1,6 +1,6 @@
-import { FetchResponse } from '@luvio/engine';
-import { ActionHandler } from './actionHandlers/ActionHandler';
-import { CustomActionExecutor } from './actionHandlers/CustomActionHandler';
+import type { FetchResponse } from '@luvio/engine';
+import type { ActionHandler } from './actionHandlers/ActionHandler';
+import type { CustomActionExecutor } from './actionHandlers/CustomActionHandler';
 
 export enum DraftActionStatus {
     Pending = 'pending',
@@ -23,7 +23,7 @@ export interface BaseAction<Data> {
 }
 
 export type DraftActionMetadata = { [key: string]: string };
-interface BaseDraftAction<Response, Data> {
+interface BaseDraftAction<_Response, Data> {
     status: DraftActionStatus;
     id: string;
     targetId: string;
@@ -63,6 +63,12 @@ export function isDraftError<Response, Data>(
     draft: BaseDraftAction<Response, Data>
 ): draft is ErrorDraftAction<Response, Data> {
     return draft.status === DraftActionStatus.Error;
+}
+
+export function isDraftQueueStateChangeEvent(
+    event: DraftQueueEvent
+): event is DraftQueueStateChangedEvent {
+    return event.type === DraftQueueEventType.QueueStateChanged;
 }
 
 export type DraftAction<Response, Data> =
@@ -163,6 +169,10 @@ export enum DraftQueueEventType {
      * Triggered after an action has been updated by the updateAction API
      */
     ActionUpdated = 'updated',
+    /**
+     * Triggered after the Draft Queue state changes
+     */
+    QueueStateChanged = 'state',
 }
 
 export interface DraftQueueAddEvent {
@@ -204,8 +214,12 @@ export interface DraftQueueActionUpdatedEvent {
     type: DraftQueueEventType.ActionUpdated;
     action: DraftAction<unknown, unknown>;
 }
+export interface DraftQueueStateChangedEvent {
+    type: DraftQueueEventType.QueueStateChanged;
+    state: DraftQueueState;
+}
 
-export type DraftQueueEvent =
+export type DraftQueueItemEvent =
     | DraftQueueAddEvent
     | DraftQueueCompleteEvent
     | DraftQueueDeleteEvent
@@ -214,6 +228,8 @@ export type DraftQueueEvent =
     | DraftQueueActionFailedEvent
     | DraftQueueActionUpdatingEvent
     | DraftQueueActionUpdatedEvent;
+
+export type DraftQueueEvent = DraftQueueStateChangedEvent | DraftQueueItemEvent;
 
 export enum QueueOperationType {
     Add = 'add',

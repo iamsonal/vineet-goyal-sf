@@ -16,10 +16,8 @@ export {
 } from './DraftQueue';
 export {
     updateQueueOnPost,
-    durableMerge,
     DurableRecordEntry,
     isEntryDurableRecordRepresentation,
-    getDraftResolutionInfoForRecordSet,
     DraftResolutionInput,
 } from './utils/records';
 export { DurableDraftQueue, DRAFT_SEGMENT, DRAFT_ID_MAPPINGS_SEGMENT } from './DurableDraftQueue';

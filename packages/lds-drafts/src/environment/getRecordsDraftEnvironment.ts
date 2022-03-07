@@ -1,11 +1,12 @@
-import { ResourceRequest, ResourceResponse, Environment } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
-import { keyBuilderRecord, BatchRepresentation } from '@salesforce/lds-adapters-uiapi';
+import type { ResourceRequest, ResourceResponse, Environment } from '@luvio/engine';
+import type { DurableEnvironment } from '@luvio/environments';
+import type { BatchRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createOkResponse } from '../DraftFetchResponse';
 import { ArrayIsArray, ObjectCreate } from '../utils/language';
 import { getRecordKeyForId } from '../utils/records';
-import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+import type { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 export const RECORDS_ENDPOINT_REGEX = /^\/ui-api\/records\/batch\/?(([a-zA-Z0-9,]+))?$/;
 

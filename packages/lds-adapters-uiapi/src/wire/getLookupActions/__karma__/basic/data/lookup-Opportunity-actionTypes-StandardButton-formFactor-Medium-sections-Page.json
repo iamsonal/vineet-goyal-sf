@@ -7,9 +7,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006PKl:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000073GAA",
+                    "externalId": "00DT10000000rFX:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVT10000000001OAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -24,9 +24,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v54.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+            "url": "/services/data/v55.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
         }
     },
-    "eTag": "8fa6a6a7e9035edcd5272068b0ebe3e9",
-    "url": "/services/data/v54.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+    "eTag": "a8e9dee46aa4e8c0e4fa9e1ae21725ea",
+    "url": "/services/data/v55.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
 }

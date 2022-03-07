@@ -1,141 +1,38 @@
+import type { ingestSuccess as generatedIngestSuccess } from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
-    ingestSuccess as generatedIngestSuccess,
     ResourceRequestConfig,
-    select as generatedSelect,
+    select,
     keyBuilder as generatedKeyBuilder,
     keyBuilder,
     ingestError,
     createResourceRequest,
+    createPaginationParams,
+    getResponseCacheKeys,
 } from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
-import {
+import type {
     Luvio,
     SnapshotRefresh,
-    Fragment,
     FulfilledSnapshot,
     ResourceResponse,
     StoreLink,
 } from '@luvio/engine';
-import { select as RelatedListReferenceRepresentation_select } from '../../generated/types/RelatedListReferenceRepresentation';
-import { buildSelectionFromFields } from '../../selectors/record';
-import {
-    records as ListRecordCollectionRepresentation_reader_records,
-    variables as ListRecordCollectionRepresentation_reader_variables,
-    url as ListRecordCollectionRepresentation_reader_url,
-} from '../../helpers/ListRecordCollectionRepresentation/readers';
-import { staticValuePathSelection } from '../../util/pagination';
 import { markMissingOptionalFields, isGraphNode } from '../../util/records';
-import {
-    paginationKeyBuilder as RelatedListRecordCollection_paginationKeyBuilder,
-    RelatedListRecordCollectionRepresentation,
-    ingest as types_RelatedListRecordCollectionRepresentation_ingest,
-} from '../../generated/types/RelatedListRecordCollectionRepresentation';
+import type { RelatedListRecordCollectionRepresentation } from '../../generated/types/RelatedListRecordCollectionRepresentation';
+import { ingest as types_RelatedListRecordCollectionRepresentation_ingest } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
-import {
+import type {
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
 
-export { keyBuilder, ingestError, ResourceRequestConfig, createResourceRequest };
-
-const DEFAULT_PAGE_SIZE = 50;
-const RELATED_LIST_REFERENCE_SELECTIONS = RelatedListReferenceRepresentation_select().selections;
-
-export const select: typeof generatedSelect = (
-    _luvio: Luvio,
-    params: ResourceRequestConfig
-): Fragment => {
-    const { body, urlParams } = params;
-    const { relatedListId, parentRecordId } = urlParams;
-    let {
-        fields = [],
-        optionalFields = [],
-        sortBy = [],
-        pageToken,
-        pageSize = DEFAULT_PAGE_SIZE,
-    } = body;
-
-    return {
-        kind: 'Fragment',
-        private: [],
-        selections: [
-            {
-                kind: 'Custom',
-                name: 'records',
-                plural: true,
-                selections: buildSelectionFromFields(fields, optionalFields),
-                tokenDataKey: RelatedListRecordCollection_paginationKeyBuilder({
-                    sortBy,
-                    parentRecordId,
-                    relatedListId,
-                }),
-                pageToken,
-                pageSize,
-                reader: ListRecordCollectionRepresentation_reader_records,
-            },
-            {
-                kind: 'Object',
-                name: 'listReference',
-                selections: RELATED_LIST_REFERENCE_SELECTIONS,
-            },
-            {
-                kind: 'Custom',
-                name: 'count',
-                reader: ListRecordCollectionRepresentation_reader_variables,
-            },
-            {
-                kind: 'Custom',
-                name: 'currentPageToken',
-                reader: ListRecordCollectionRepresentation_reader_variables,
-            },
-            {
-                kind: 'Scalar',
-                name: 'currentPageUrl',
-            },
-            {
-                kind: 'Scalar',
-                name: 'fields',
-                plural: true,
-            },
-            {
-                kind: 'Scalar',
-                name: 'optionalFields',
-                plural: true,
-            },
-            {
-                kind: 'Scalar',
-                name: 'listInfoETag',
-            },
-            {
-                kind: 'Custom',
-                name: 'nextPageToken',
-                reader: ListRecordCollectionRepresentation_reader_variables,
-            },
-            {
-                kind: 'Custom',
-                name: 'nextPageUrl',
-                reader: ListRecordCollectionRepresentation_reader_url,
-            },
-            {
-                kind: 'Custom',
-                name: 'previousPageToken',
-                reader: ListRecordCollectionRepresentation_reader_variables,
-            },
-            {
-                kind: 'Custom',
-                name: 'previousPageUrl',
-                reader: ListRecordCollectionRepresentation_reader_url,
-            },
-            staticValuePathSelection({
-                name: 'pageSize',
-                value: pageSize === undefined ? DEFAULT_PAGE_SIZE : pageSize,
-            }),
-            {
-                kind: 'Scalar',
-                name: 'sortBy',
-                plural: true,
-            },
-        ],
-    };
+export {
+    keyBuilder,
+    ingestError,
+    ResourceRequestConfig,
+    createResourceRequest,
+    createPaginationParams,
+    getResponseCacheKeys,
+    select,
 };
 
 export const ingestSuccess: typeof generatedIngestSuccess = (
@@ -214,8 +111,9 @@ function markMissingOptionalRecordFieldsMissing(
         const record = returnedRecords[i];
         const recordKey = record.__ref;
         if (recordKey) {
-            const node =
-                luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
+            const node = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(
+                recordKey
+            );
             if (isGraphNode(node)) {
                 markMissingOptionalFields(node, optionalFields);
             }

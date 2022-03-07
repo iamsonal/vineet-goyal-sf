@@ -1,0 +1,72 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'clm'
+(luvio.ttl): 360000
+
+types:
+  ContractDocumentVersionsListRepresentation:
+    (luvio.ttl): 60000
+    (luvio.opaque): true
+  GenericOutputRepresentation:
+    (luvio.ttl): 60000
+    (luvio.opaque): true
+    (luvio.key):
+      id: id
+  TemplateListRepresentation:
+    (luvio.ttl): 60000
+    (luvio.opaque): true
+/connect/clm:
+  /contract-document-version/{contractdocumentversionid}:
+    /checkIn:
+      patch:
+        (luvio.adapter):
+          name: checkIn
+          tests:
+            validConfigs:
+              - |
+                {
+                  "contractdocumentversionid": "1"
+                }
+        description: CheckIn a Contract Document Version using Contract Document Version ID
+      uriParameters:
+        contractdocumentversionid:
+
+    /unlock:
+      patch:
+        (luvio.adapter):
+          name: unlock
+        description: Unlock a Contract Document Version using Contract Document Version ID
+      uriParameters:
+        contractdocumentversionid:
+
+  /contract/{contractId}/contract-document-version:
+    uriParameters:
+      contractId: string
+    get:
+      (luvio.adapter):
+        name: getContractDocumentVersion
+        tests:
+          validConfigs:
+            - |
+              {
+                "contractId": "12AASKASSKKAS3QQ"
+              }
+      queryParameters:
+        contractDocumentVersionId:
+  /document-templates:
+    get:
+      (luvio.adapter):
+        name: getTemplates
+        tests:
+          validConfigs:
+            - |
+              {
+                "objecttype": "Contract"
+              }
+      description: Get Template details based on version id
+      queryParameters:
+        objecttype:

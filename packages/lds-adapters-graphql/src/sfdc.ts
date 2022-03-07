@@ -1,13 +1,13 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
+import type { AdapterMetadata } from '@salesforce/lds-bindings';
 import {
-    AdapterMetadata,
     createImperativeAdapter,
     createInstrumentedAdapter,
     createLDSAdapter,
     createWireAdapterConstructor,
 } from '@salesforce/lds-bindings';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
-import { adapterName, graphQLAdapterFactory } from './main';
+import { adapterName, graphQLAdapterFactory, configuration } from './main';
 import { namespace } from './util/adapter';
 
 let graphQL: any;
@@ -28,8 +28,12 @@ withDefaultLuvio((luvio: Luvio) => {
         createInstrumentedAdapter(ldsAdapter, adapterMetadata),
         adapterMetadata
     );
-    unstable_graphQL_imperative = createImperativeAdapter(luvio, ldsAdapter, adapterMetadata);
+    unstable_graphQL_imperative = createImperativeAdapter(
+        luvio,
+        createInstrumentedAdapter(ldsAdapter, adapterMetadata),
+        adapterMetadata
+    );
     graphQLImperative = ldsAdapter;
 });
 
-export { graphQL, unstable_graphQL_imperative, graphQLImperative };
+export { graphQL, unstable_graphQL_imperative, graphQLImperative, configuration };

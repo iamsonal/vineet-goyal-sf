@@ -1,5 +1,5 @@
-import { RecordAvatarBulkMapRepresentationNormalized } from '../../generated/types/RecordAvatarBulkMapRepresentation';
-import { Luvio, IngestPath } from '@luvio/engine';
+import type { RecordAvatarBulkMapRepresentationNormalized } from '../../generated/types/RecordAvatarBulkMapRepresentation';
+import type { Luvio, IngestPath } from '@luvio/engine';
 
 export default function merge(
     existing: RecordAvatarBulkMapRepresentationNormalized | undefined,

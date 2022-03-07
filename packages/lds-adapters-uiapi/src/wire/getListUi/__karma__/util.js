@@ -138,6 +138,7 @@ export function beforeEach() {
                         patched.records.sortBy = patched.records.sortBy.split(',');
                     }
                     expect(actual.data).toEqual(patched);
+                    expect(actual.data).toBeImmutable();
 
                     return { pass: true };
                 },

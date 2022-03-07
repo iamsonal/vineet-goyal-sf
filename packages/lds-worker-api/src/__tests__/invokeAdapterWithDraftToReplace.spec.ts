@@ -6,6 +6,7 @@ import recordRep_Account from './mockData/RecordRepresentation-Account.json';
 import recordRep_Account_Edited from './mockData/RecordRepresentation-Account-Edited.json';
 import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi';
 import { recordEndpointPath, objectInfoAccountPath } from './urlPaths';
+import { flushPromises } from './utils';
 
 describe('invokeAdapterWithDraftToReplace', () => {
     let invokeAdapter,
@@ -15,6 +16,7 @@ describe('invokeAdapterWithDraftToReplace', () => {
         invokeAdapterWithMetadata;
 
     beforeEach(async () => {
+        await flushPromises();
         jest.resetModules();
         ({
             invokeAdapter,
@@ -68,6 +70,8 @@ describe('invokeAdapterWithDraftToReplace', () => {
                 resolve(undefined);
             });
         });
+
+        await flushPromises();
 
         const config: UpdateRecordConfig = {
             fields: { Name: recordRep_Account_Edited.fields.Name.value },
@@ -139,6 +143,81 @@ describe('invokeAdapterWithDraftToReplace', () => {
         done();
     });
 
+    it('replaces the draft with the new one when calling deleteRecord', async () => {
+        // setup mock responses
+        addMockNetworkResponse('GET', recordEndpointPath(recordRep_Account.id), {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(recordRep_Account),
+        });
+        addMockNetworkResponse('PATCH', recordEndpointPath(recordRep_Account_Edited.id), {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(recordRep_Account_Edited),
+        });
+        addMockNetworkResponse('GET', objectInfoAccountPath(), {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(objectInfo_Account),
+        });
+
+        // ensure DS has object info
+        await new Promise((resolve) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({ objectApiName: 'Account' }), () => {
+                resolve(undefined);
+            });
+        });
+
+        await flushPromises();
+
+        const config: UpdateRecordConfig = {
+            fields: { Name: recordRep_Account_Edited.fields.Name.value },
+            recordId: recordRep_Account.id,
+        };
+
+        const metadata = { expected: 'metadata' };
+
+        //get a draft into the queue
+        await new Promise((resolve) => {
+            invokeAdapterWithMetadata(
+                'updateRecord',
+                JSON.stringify(config),
+                metadata,
+                (responseValue) => {
+                    const { data, error } = responseValue;
+                    expect(data).toBeDefined();
+                    expect(error).toBeUndefined();
+                    resolve(undefined);
+                }
+            );
+        });
+        let drafts = await draftManager.getQueue();
+        expect(drafts.items.length).toBe(1);
+        const draftToReplace = drafts.items[0];
+        expect(draftToReplace.metadata.expected).toEqual('metadata');
+
+        // call the replace action invokeAdapter overload
+        await new Promise((resolve) => {
+            invokeAdapterWithDraftToReplace(
+                'deleteRecord',
+                JSON.stringify(recordRep_Account.id),
+                draftToReplace.id,
+                (responseValue) => {
+                    const { data, error } = responseValue;
+                    expect(data).toBeUndefined();
+                    expect(error).toBeUndefined();
+                    resolve(undefined);
+                }
+            );
+        });
+
+        drafts = await draftManager.getQueue();
+        expect(drafts.items.length).toBe(1);
+        const replacedDraft = drafts.items[0];
+        expect(replacedDraft.id).toBe(draftToReplace.id);
+        expect(replacedDraft.metadata.expected).toEqual('metadata');
+    });
+
     it('errors when calling with an adapter that is not mutating', async (done) => {
         // setup mock responses
         addMockNetworkResponse('GET', recordEndpointPath(recordRep_Account.id), {
@@ -163,6 +242,8 @@ describe('invokeAdapterWithDraftToReplace', () => {
                 resolve(undefined);
             });
         });
+
+        await flushPromises();
 
         const config: UpdateRecordConfig = {
             fields: { Name: recordRep_Account_Edited.fields.Name.value },
@@ -218,6 +299,8 @@ describe('invokeAdapterWithDraftToReplace', () => {
                 resolve(undefined);
             });
         });
+
+        await flushPromises();
 
         const testUpdatedDate = new Date();
         timekeeper.freeze(testUpdatedDate);

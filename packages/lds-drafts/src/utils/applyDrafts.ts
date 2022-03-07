@@ -1,14 +1,15 @@
-import {
+import type {
     FieldValueRepresentationNormalized,
-    keyBuilderRecord,
     ObjectInfoRepresentation,
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '@salesforce/lds-adapters-uiapi';
-import { ResourceRequest } from '@luvio/engine';
-import { DraftAction } from '../DraftQueue';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
+import type { ResourceRequest } from '@luvio/engine';
+import type { DraftAction } from '../DraftQueue';
 import { ObjectAssign, ObjectKeys } from './language';
-import { createLink, DraftRepresentation, ScalarFieldRepresentationValue } from './records';
+import type { DraftRepresentation, ScalarFieldRepresentationValue } from './records';
+import { createLink } from './records';
 import { buildRecordFieldStoreKey } from '@salesforce/lds-uiapi-record-utils';
 
 export interface DraftRecordRepresentationNormalized extends RecordRepresentationNormalized {

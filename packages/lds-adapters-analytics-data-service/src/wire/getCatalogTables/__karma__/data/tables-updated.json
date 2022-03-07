@@ -1,0 +1,37 @@
+{
+    "tables": [
+        {
+            "createdOnDate": "2021-10-19T18:16:52.000Z",
+            "database": {
+                "id": "testDBInsert01",
+                "name": "testDBInsert01",
+                "url": "/services/data/v55.0/analytics/data-service/catalog/databases/testDBInsert01",
+                "label": "testDBInsert01"
+            },
+            "deletedBy": {
+                "id": "0x",
+                "name": "Cleaner",
+                "url": "/services/data/v55.0/user/",
+                "label": "Cleanup"
+            },
+            "deletedOnDate": "2021-11-19T18:16:52.000Z",
+            "description": "updated",
+            "lastUpdatedDate": null,
+            "location": null,
+            "managedBy": "Ingest",
+            "name": "testTable01",
+            "qualifiedName": "testDBInsert01.testSchema01.testTable01",
+            "schema": {
+                "id": "testSchema01",
+                "name": "testSchema01",
+                "url": "/services/data/v55.0/analytics/data-service/catalog/schemas/testSchema01",
+                "label": "testSchema01"
+            },
+            "state": "Ready",
+            "undeleteToken": "undeleteToken",
+            "url": ""
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v55.0/analytics/data-service/catalog/tables?database=testDatabase01&schema=testSchema01?page=1&pageSize=25"
+}

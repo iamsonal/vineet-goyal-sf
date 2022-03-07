@@ -1,9 +1,17 @@
-import { clone, getMock as globalGetMock, setupElement } from 'test-util';
+import { getRecordUi_imperative } from 'lds-adapters-uiapi';
+import {
+    clone,
+    flushPromises,
+    getMock as globalGetMock,
+    setupElement,
+    stripEtags,
+} from 'test-util';
 import {
     expireObjectInfo,
     expireRecords,
     expireLayoutUserState,
     extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
     LayoutMode,
     LayoutType,
     MASTER_RECORD_TYPE_ID,
@@ -13,7 +21,7 @@ import {
     mockGetRecordUiNetwork,
 } from 'uiapi-test-util';
 
-import GetLayoutUserState from '../../../getLayoutUserState/__karma__/lwc/get-layout-user-state';
+import GetLayoutUserState from '../../../../raml-artifacts/adapters/getLayoutUserState/__karma__/lwc/get-layout-user-state';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import RecordUi from '../lwc/record-ui';
 import ObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';
@@ -42,6 +50,7 @@ describe('refresh', () => {
         const recordId = getRecordIdFromMock(mockRecordUiData);
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
 
@@ -76,6 +85,7 @@ describe('refresh', () => {
         const recordId = getRecordIdFromMock(mockRecordUiData);
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
 
@@ -143,6 +153,7 @@ describe('refresh', () => {
 
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
         const config = {
@@ -187,6 +198,7 @@ describe('refresh', () => {
 
         const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
         const config = {
@@ -436,6 +448,7 @@ describe('refresh', () => {
         const recordIdTwo = getRecordIdFromMock(mockRecordUiData, 1);
         const recordFieldsOne = extractRecordFields(mockRecordUiData.records[recordIdOne], {
             add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
             omit: ['Account.Parent'],
         });
 
@@ -489,5 +502,58 @@ describe('Non-layoutable entities', () => {
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+    });
+});
+
+describe('getRecordUi_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const mockRecordUiData1 = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData1);
+        const recordFields = extractRecordFields(mockRecordUiData1.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
+            omit: ['Account.Parent'],
+        });
+
+        const mockRecordUiData2 = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const updatedRecord = mockRecordUiData2.records[recordId];
+        updateRefreshRecord(updatedRecord);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+            optionalFields: ['Account.Industry'],
+        };
+
+        mockGetRecordUiNetwork(config, [mockRecordUiData1, mockRecordUiData2]);
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            mockRecordUiData2.records[recordId]
+        );
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mockRecordUiData1
+        getRecordUi_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mockRecordUiData1 from cache, then make network call & emit mockRecordUiData2
+        getRecordUi_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(2);
+        expect(callback.calls.argsFor(0)).toEqual([
+            { data: stripEtags(mockRecordUiData1), error: undefined },
+        ]);
+        expect(callback.calls.argsFor(1)).toEqual([
+            { data: stripEtags(mockRecordUiData2), error: undefined },
+        ]);
     });
 });

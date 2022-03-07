@@ -22,9 +22,15 @@ types:
     (luvio.opaque): true
     (luvio.key):
       content_key: contentKey
+      language: language
   ManagedContentSpaceFolderItemCollectionRepresentation:
     (luvio.ttl): 100
     (luvio.opaque): true
+  ManagedContentUnpublishOutputRepresentation:
+    (luvio.ttl): 100
+    (luvio.opaque): true
+    (luvio.key):
+      id: deploymentId
 
 /cms:
   /deployments:
@@ -44,10 +50,96 @@ types:
                   "description": "Test Description",
                   "contentIds":
                     [
-                      "0apx0000000GmanAAC"
+                      "20Yxx0000011VYAEA2"
                     ],
                   "executeStagedDeployments": false,
                   "scheduledDate": "2021-03-23T17:14:00.000Z"
+                }
+              }
+            - |
+              { "DeploymentInput":
+                {
+                  "contentSpaceId": "0Zux0000000KykTCAS",
+                  "channelIds":
+                    [
+                      "0apx0000000GmanAAC"
+                    ],
+                  "description": "Test Description",
+                  "contentIds":
+                    [
+                      "20Yxx0000011VYAEA2"
+                    ],
+                  "executeStagedDeployments": false,
+                  "includeContentReferences": true,
+                  "scheduledDate": "2021-03-23T17:14:00.000Z"
+                }
+              }
+            - |
+              { "DeploymentInput":
+                {
+                  "contentSpaceId": "0Zux0000000KykTCAS",
+                  "channelIds":
+                    [
+                    ],
+                  "description": "Test Description",
+                  "contentIds":
+                    [
+                      "20Yxx0000011VYAEA2"
+                    ],
+                  "executeStagedDeployments": false,
+                  "scheduledDate": "2021-03-23T17:14:00.000Z"
+                }
+              }
+            - |
+              { "DeploymentInput":
+                {
+                  "contentSpaceId": "0Zux0000000KykTCAS",
+                  "channelIds":
+                    [
+                    ],
+                  "description": "Test Description",
+                  "contentIds":
+                    [
+                      "20Yxx0000011VYAEA2"
+                    ],
+                  "executeStagedDeployments": false,
+                  "includeContentReferences": true,
+                  "scheduledDate": "2021-03-23T17:14:00.000Z"
+                }
+              }
+            - |
+              { "DeploymentInput":
+                {
+                  "contentSpaceId": "0Zux0000000KykTCAS",
+                  "channelIds":
+                    [
+                      "20Yxx0000011VYAEA2"
+                    ],
+                  "description": "Test Description",
+                  "executeStagedDeployments": false,
+                  "includeContentReferences": true,
+                  "scheduledDate": "2021-03-23T17:14:00.000Z",
+                  "variantIds":
+                    [
+                      "9Psxx0000004DwKCAU"
+                    ]
+                }
+              }
+            - |
+              { "DeploymentInput":
+                {
+                  "contentSpaceId": "0Zux0000000KykTCAS",
+                  "channelIds":
+                    [
+                    ],
+                  "description": "Test Description",
+                  "executeStagedDeployments": false,
+                  "includeContentReferences": true,
+                  "scheduledDate": "2021-03-23T17:14:00.000Z",
+                  "variantIds":
+                    [
+                      "9Psxx0000004DwKCAU"
+                    ]
                 }
               }
             - |
@@ -85,7 +177,7 @@ types:
                 "description": "Test Description",
                 "contentIds":
                   [
-                    "0apx0000000GmanAAC"
+                    "20Yxx0000011VYAEA2"
                   ],
                 "executeStagedDeployments": false,
                 "scheduledDate": "2021-03-23T17:14:00.000Z"
@@ -100,7 +192,7 @@ types:
                   "description": "Test Description",
                   "contentIds":
                     [
-                      "0apx0000000GmanAAC"
+                      "20Yxx0000011VYAEA2"
                     ],
                   "executeStagedDeployments": false,
                   "scheduledDate": "2021-03-23T17:14:00.000Z"
@@ -201,7 +293,13 @@ types:
             name: getManagedContent
           (luvio.key):
             content_key: urlParams.contentKeyOrId
+            language: queryParams.language || ''
       /variants/{variantId}:
+        delete:
+          (luvio.adapter):
+            name: deleteManagedContentVariant
+          (luvio.key):
+            id: urlParams.variantId
         get:
           (luvio.adapter):
             name: getManagedContentVariant
@@ -250,7 +348,38 @@ types:
                         "urlName":"testurl"
                     }
                   }
-
+      /unpublish:
+        post:
+          (luvio.adapter):
+            name: unpublishManagedContent
+            tests:
+              validConfigs:
+                - |
+                  {
+                    "unpublishInput": {
+                      "channelIds": ["0apx0000000GmanAAC"],
+                      "description": "Test Description",
+                      "contentIds": ["20YRM0000000CPi2AM", "20YRM0000000CPi2AN"],
+                      "variantIds": []
+                    }
+                  }
+                - |
+                  {
+                    "unpublishInput": {
+                      "channelIds": [],
+                      "description": "Test Description",
+                      "contentIds": [],
+                      "variantIds": ["9Psxx0000004DwKCAU", "9Psxx0000004DwKCAV"]
+                    }
+                  }
+              invalidConfigs:
+                - |
+                  {
+                    "channelIds": [],
+                    "description": "Test Description",
+                      "contentIds": ["20YRM0000000CPi2AM"],
+                      "variantIds": ["9Psxx0000004DwKCAU"]
+                  }
     /folders/{folderId}/items:
       get:
         (luvio.adapter):

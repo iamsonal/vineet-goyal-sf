@@ -1,21 +1,27 @@
-import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
-import {
+import type {
+    IngestPath,
+    Luvio,
+    Reader,
+    ReaderFragment,
+    ResourceIngest,
+    Store,
+} from '@luvio/engine';
+import type {
     LuvioSelectionCustomFieldNode,
     LuvioSelectionNode,
     LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser';
-import {
+} from '@luvio/graphql-parser';
+import type {
     RecordRepresentation,
-    createIngestRecordWithFields,
     RecordRepresentationNormalized,
     FieldValueRepresentationNormalized,
     FieldValueRepresentation,
-    keyBuilderRecord,
 } from '@salesforce/lds-adapters-uiapi';
+import { createIngestRecordWithFields, keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
+import type { GqlConnection } from './connection';
 import {
     createRead as createConnectionRead,
     createIngest as createConnectionIngest,
-    GqlConnection,
     CUSTOM_FIELD_NODE_TYPE as CUSTOM_FIELD_NODE_TYPE_CONNECTION,
 } from './connection';
 import {
@@ -25,7 +31,7 @@ import {
     PropertyLookupResultState,
     resolveKey,
 } from '../type/Selection';
-import { GraphQLVariables } from '../type/Variable';
+import type { GraphQLVariables } from '../type/Variable';
 
 type RecordFieldTrie = Parameters<typeof createIngestRecordWithFields>[0];
 
@@ -269,7 +275,6 @@ export const createIngest: (
                         existing: undefined,
                     },
                     fullPath: fullPath,
-                    state: path.state,
                     propertyName: propertyName,
                 },
                 luvio,

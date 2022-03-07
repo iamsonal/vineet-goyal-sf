@@ -1,0 +1,36 @@
+{
+    "createdBy": {
+        "id": "005xx000001XCD8AAO",
+        "name": "Automated Process",
+        "profilePhotoUrl": "/profilephoto/005/T"
+    },
+    "createdDate": "2021-01-20T18:57:06.000Z",
+    "dataRefreshDate": "2021-01-20T18:57:06.000Z",
+    "datasetType": "default",
+    "folder": {
+        "id": "00lxx000000j9TBAAY",
+        "label": "Learning Adventure",
+        "name": "Learning_Adventure",
+        "url": "/services/data/v55.0/wave/folders/00lxx000000j9TBAAY"
+    },
+    "id": "0Fbxx0000004Cx3CAE",
+    "label": "DTC_Opportunity_SAMPLE2",
+    "lastAccessedDate": "2021-01-22T19:30:00.000Z",
+    "lastModifiedBy": {
+        "id": "005xx000001XCD8AAO",
+        "name": "Automated Process",
+        "profilePhotoUrl": "/profilephoto/005/T"
+    },
+    "lastModifiedDate": "2021-01-20T18:57:06.000Z",
+    "name": "DTC_Opportunity_SAMPLE",
+    "permissions": {
+        "create": true,
+        "manage": true,
+        "modify": true,
+        "view": true
+    },
+    "type": "dataset",
+    "url": "/services/data/v55.0/wave/datasets/0Fbxx0000004Cx3CAE",
+    "versionsUrl": "/services/data/v55.0/wave/datasets/0Fbxx0000004Cx3CAE/versions",
+    "visibility": "All"
+}

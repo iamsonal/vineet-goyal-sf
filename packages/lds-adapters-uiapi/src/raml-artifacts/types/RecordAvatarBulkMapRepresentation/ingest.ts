@@ -1,10 +1,12 @@
-import { StoreLink, IngestPath, Luvio, Store } from '@luvio/engine';
-import {
+import type { StoreLink, IngestPath, Luvio, Store } from '@luvio/engine';
+import type {
     RecordAvatarBulkMapRepresentation,
+    ingest as generatedIngest,
+} from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import {
     validate,
     normalize,
     equals,
-    ingest as generatedIngest,
 } from '../../../generated/types/RecordAvatarBulkMapRepresentation';
 import { createLink } from '../../../generated/types/type-utils';
 import { default as helpers_RecordAvatarBulkRepresentation_merge_default } from '../../../helpers/RecordAvatarBulkRepresentation/merge';
@@ -25,11 +27,6 @@ export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepres
 
     const key = path.fullPath;
     const existingRecord = store.records[key];
-    // do not ingest locked records
-    if (existingRecord !== undefined && existingRecord.__type === 'locked') {
-        path.state.result.type = 'locked';
-        return createLink(key);
-    }
 
     let incomingRecord = normalize(
         input,
@@ -38,7 +35,6 @@ export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepres
             fullPath: key,
             propertyName: path.propertyName,
             parent: path.parent,
-            state: path.state,
         } as IngestPath,
         luvio,
         store,

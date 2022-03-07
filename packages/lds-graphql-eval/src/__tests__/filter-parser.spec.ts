@@ -3,7 +3,7 @@ import {
     LuvioListValueNode,
     LuvioObjectValueNode,
     LuvioValueNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { recordFilter } from '../filter-parser';
 import { ObjectInfoMap } from '../info-types';
 import {
@@ -16,9 +16,10 @@ import {
 } from '../Predicate';
 import { comparison, combinePredicates, stringLiteral } from '../util';
 import infoJson from './mockData/objectInfos.json';
-import { unwrappedError, unwrappedValue } from '../Result';
+import { Failure, unwrappedError, unwrappedValue } from '../Result';
+import { message, PredicateError, MessageError } from '../Error';
 
-const infoMap = infoJson as ObjectInfoMap;
+const objectInfoMap = infoJson as ObjectInfoMap;
 const { eq, ne, gt, gte, like, lt, lte, nin } = ComparisonOperator;
 
 function jsonExtract(object: string, path: string): JsonExtract {
@@ -80,7 +81,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(true);
@@ -105,7 +106,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -136,7 +137,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User')
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
@@ -158,7 +159,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -189,7 +190,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User')
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
@@ -202,13 +203,15 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(false);
 
             expect(unwrappedError(filter).length).toEqual(1);
-            expect(unwrappedError(filter)[0]).toEqual('Value for and node must be a list.');
+            expect(unwrappedError(filter)[0]).toEqual(
+                message('Value for and node must be a list.')
+            );
         });
 
         it('returns undefined filter for empty AND', () => {
@@ -218,7 +221,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(true);
@@ -233,7 +236,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(true);
@@ -253,7 +256,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -268,7 +271,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User')
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -292,14 +295,14 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const errors = unwrappedError(filter);
             expect(filter.isSuccess).toEqual(false);
             expect(errors).toEqual([
-                'Comparison operator foo is not supported for type String.',
-                'Comparison operator bar is not supported for type String.',
+                message('Comparison operator foo is not supported for type Email.'),
+                message('Comparison operator bar is not supported for type Email.'),
             ]);
         });
 
@@ -315,7 +318,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -330,7 +333,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User')
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -368,7 +371,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -383,7 +386,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User')
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -434,7 +437,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -457,7 +460,7 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             const value = unwrappedValue(filter);
@@ -475,7 +478,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User')
+                    stringLiteral('User', true, true)
                 ),
                 comparison(
                     jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
@@ -485,7 +488,7 @@ describe('filter-parser', () => {
                 comparison(
                     jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
                     eq,
-                    stringLiteral('User')
+                    stringLiteral('User', true, true)
                 ),
             ]);
             expect(value.predicate).toEqual(
@@ -522,7 +525,7 @@ describe('filter-parser', () => {
                     },
                     'TimeSheet',
                     'TimeSheet',
-                    infoMap
+                    objectInfoMap
                 );
 
                 expect(filter.isSuccess).toEqual(true);
@@ -576,6 +579,45 @@ describe('filter-parser', () => {
                 [eq, ne, lt, gt, lte, gte].forEach(testWithOperator);
             });
 
+            it('returns predicate when Percent field is paired with an supported value types', () => {
+                let filter = recordFilter(
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Probability: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        in: listNode([doubleNode('33.6'), intNode('33')]),
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    'Opportunity',
+                    'Opportunity',
+                    objectInfoMap
+                );
+
+                expect(filter.isSuccess).toEqual(true);
+                expect(unwrappedValue(filter)).toEqual({
+                    predicate: {
+                        type: 'comparison',
+                        left: {
+                            type: 'JsonExtract',
+                            jsonAlias: 'Opportunity',
+                            path: 'data.fields.Probability.value',
+                        },
+                        right: { type: 'NumberArray', value: [33.6, 33] },
+                        operator: 'in',
+                    },
+                    joinNames: [],
+                    joinPredicates: [],
+                });
+            });
+
             it('returns predicate when string field is paired with an supported operators', () => {
                 const testWithOperator = (op) =>
                     testOperatorResult(
@@ -584,6 +626,8 @@ describe('filter-parser', () => {
                         expectedValue(op, 'data.fields.TimeSheetNumber.value', {
                             type: ValueType.StringLiteral,
                             value: '33',
+                            safe: false,
+                            isCaseSensitive: false,
                         }),
                         op
                     );
@@ -650,6 +694,220 @@ describe('filter-parser', () => {
 
                 [ComparisonOperator.in, nin].forEach(testWithOperator);
             });
+
+            it('returns predicate when picklist field is paired with supported scalar operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'ServiceResource',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    ResourceType: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: {
+                                                kind: 'StringValue',
+                                                value: 'T',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'ServiceResource',
+                        'ServiceResource',
+                        objectInfoMap
+                    );
+
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.ResourceType.value', {
+                            type: 'StringLiteral',
+                            value: 'T',
+                            safe: false,
+                            isCaseSensitive: false,
+                        })
+                    );
+                };
+
+                [eq, ne].forEach(testWithOperator);
+            });
+
+            it('returns predicate when picklist field is paired with supported IN, NIN operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'ServiceResource',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    ResourceType: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: listNode([stringNode('T')]),
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'ServiceResource',
+                        'ServiceResource',
+                        objectInfoMap
+                    );
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.ResourceType.value', {
+                            type: 'StringArray',
+                            value: ['T'],
+                        })
+                    );
+                };
+
+                [ComparisonOperator.in, nin].forEach(testWithOperator);
+            });
+
+            it('returns predicate when currency field is paired with supported scalar operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'Account',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    AnnualRevenue: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: {
+                                                kind: 'FloatValue',
+                                                value: '123.45',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'Account',
+                        'Account',
+                        objectInfoMap
+                    );
+
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.AnnualRevenue.value', {
+                            type: 'DoubleLiteral',
+                            value: 123.45,
+                        })
+                    );
+                };
+
+                [eq, ne, lt, gt, lte, gte].forEach(testWithOperator);
+            });
+
+            it('returns predicate when currency field is paired with supported IN, NIN operators', () => {
+                const expectedValue = (op, path, value): PredicateContainer => {
+                    return {
+                        joinNames: [],
+                        joinPredicates: [],
+                        predicate: {
+                            left: {
+                                jsonAlias: 'Account',
+                                path,
+                                type: ValueType.Extract,
+                            },
+                            operator: op,
+                            right: value,
+                            type: PredicateType.comparison,
+                        },
+                    };
+                };
+
+                const testWithOperator = (op) => {
+                    const filter = recordFilter(
+                        {
+                            kind: 'Argument',
+                            name: 'where',
+                            value: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    AnnualRevenue: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            [op]: listNode([doubleNode('123.45')]),
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        'Account',
+                        'Account',
+                        objectInfoMap
+                    );
+                    expect(filter.isSuccess).toEqual(true);
+                    expect(unwrappedValue(filter)).toEqual(
+                        expectedValue(op, 'data.fields.AnnualRevenue.value', {
+                            type: 'NumberArray',
+                            value: [123.45],
+                        })
+                    );
+                };
+
+                [ComparisonOperator.in, nin].forEach(testWithOperator);
+            });
         });
 
         describe('Field operator errors', () => {
@@ -677,12 +935,12 @@ describe('filter-parser', () => {
                     },
                     'TimeSheet',
                     'TimeSheet',
-                    infoMap
+                    objectInfoMap
                 );
 
                 expect(filter.isSuccess).toEqual(false);
                 expect(unwrappedError(filter).length).toEqual(1);
-                expect(unwrappedError(filter)[0]).toEqual(expectedError);
+                expect(unwrappedError(filter)[0]).toEqual(message(expectedError));
             }
 
             it('returns an error when double field IN or NIN ListValueNode contains a value with type different from field type', () => {
@@ -751,7 +1009,7 @@ describe('filter-parser', () => {
             });
 
             it('returns an error when string field IN is not paired with ListValueNode', () => {
-                const expected = 'Comparison value must be a string array.';
+                const expected = 'Comparison value must be a String array.';
 
                 expectedFieldError(
                     'TimeSheetNumber',
@@ -773,7 +1031,7 @@ describe('filter-parser', () => {
             });
 
             it('returns an error when string field is compared to other types', () => {
-                const expected = 'Comparison value must be a string.';
+                const expected = 'Comparison value must be a String.';
 
                 expectedFieldError('TimeSheetNumber', booleanNode(false), expected);
                 expectedFieldError('TimeSheetNumber', doubleNode('5.5'), expected);
@@ -850,6 +1108,99 @@ describe('filter-parser', () => {
                     'Field UnknownField for type TimeSheet not found.'
                 );
             });
+
+            it('returns error when picklist field is paired with unsupported operators', () => {
+                const filter = recordFilter(
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                ResourceType: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        [like]: {
+                                            kind: 'StringValue',
+                                            value: 'T',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    'ServiceResource',
+                    'ServiceResource',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                const { message } = filter.error[0] as MessageError;
+                expect(filter.isSuccess).toEqual(false);
+                expect(message).toEqual(
+                    'Comparison operator like is not supported for type Picklist.'
+                );
+            });
+
+            it('returns error when picklist operator is paired with unsupported values', () => {
+                let filter = recordFilter(
+                    where({
+                        ResourceType: objNode({
+                            [nin]: stringNode('foo'),
+                        }),
+                    }),
+                    'ServiceResource',
+                    'ServiceResource',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                expect(filter.isSuccess).toEqual(false);
+                const { message } = filter.error[0] as MessageError;
+                expect(message).toEqual('Comparison value must be a Picklist array.');
+            });
+
+            it('returns error when currency operator is paired with unsupported values', () => {
+                let filter = recordFilter(
+                    where({
+                        AnnualRevenue: objNode({
+                            [nin]: stringNode('foo'),
+                        }),
+                    }),
+                    'Account',
+                    'Account',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                expect(filter.isSuccess).toEqual(false);
+                const { message } = filter.error[0] as MessageError;
+                expect(message).toEqual('Comparison value must be a Currency array.');
+            });
+
+            it('returns an error when Percent field is paired with an unsupported value types', () => {
+                let filter = recordFilter(
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Probability: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        eq: stringNode('foo'),
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    'Opportunity',
+                    'Opportunity',
+                    objectInfoMap
+                ) as Failure<PredicateContainer, PredicateError[]>;
+
+                expect(filter.isSuccess).toEqual(false);
+                const { message } = filter.error[0] as MessageError;
+                expect(message).toEqual('Comparison value must be a Percent.');
+            });
         });
 
         it('returns undefined filter when "where" does not exist', () => {
@@ -867,7 +1218,9 @@ describe('filter-parser', () => {
             );
             expect(filter.isSuccess).toEqual(false);
             expect(unwrappedError(filter).length).toEqual(1);
-            expect(unwrappedError(filter)[0]).toEqual('Parent filter node should be an object.');
+            expect(unwrappedError(filter)[0]).toEqual(
+                message('Parent filter node should be an object.')
+            );
         });
 
         it('returns an error if field value is not an object or list', () => {
@@ -877,11 +1230,13 @@ describe('filter-parser', () => {
                 }),
                 'TimeSheet',
                 'TimeSheet',
-                infoMap
+                objectInfoMap
             );
 
             expect(filter.isSuccess).toEqual(false);
-            expect(unwrappedError(filter)[0]).toEqual('Filter node must be an object or list.');
+            expect(unwrappedError(filter)[0]).toEqual(
+                message('Filter node must be an object or list.')
+            );
         });
     });
 });

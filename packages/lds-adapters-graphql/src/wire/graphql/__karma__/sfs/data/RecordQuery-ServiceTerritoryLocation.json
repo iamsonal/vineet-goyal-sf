@@ -1,10 +1,15 @@
 {
     "data": {
+        "__typename": "Query",
         "uiapi": {
+            "__typename": "UIAPI",
             "query": {
+                "__typename": "RecordQuery",
                 "ServiceTerritoryLocation": {
+                    "__typename": "ServiceTerritoryLocationConnection",
                     "edges": [
                         {
+                            "__typename": "ServiceTerritoryLocationEdge",
                             "node": {
                                 "Id": "1SlRM00000000YB0AY",
                                 "__typename": "ServiceTerritoryLocation",
@@ -21,11 +26,17 @@
                                     "value": "2021-06-15T21:29:32.000Z"
                                 },
                                 "RecordTypeId": {
-                                    "value": "012000000000000AAA"
+                                    "value": null
                                 }
-                            }
+                            },
+                            "cursor": "djE6MA=="
                         }
-                    ]
+                    ],
+                    "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false
+                    },
+                    "totalCount": 1
                 }
             }
         }

@@ -13,15 +13,22 @@ function getMock(filename) {
 describe('basic', () => {
     it('ingest record', async () => {
         const mockResponse = getMock('record');
+
         const config = {
             communityId: '0DBR00000000lk0CAI',
-            groupBy: '',
-            keyPrefix: '00Q',
-            processType: 'Lead_MC',
-            requestBody: {
-                Name: 'James Bond',
+            requestIngestionInput: {
+                requestBody: {
+                    FirstName: 'James',
+                    LastName: 'Bond',
+                    Subscribed_to__c: true, // ensure request can include booleans
+                    NumberofLocations__c: 1, // ensure request can include integers
+                },
+                processType: 'LEAD_MS',
+                groupBy: '',
+                keyPrefix: '00Q',
             },
         };
+
         mockIngestRecordNetworkOnce(config, mockResponse);
         const data = await ingestRecord(config);
         expect(data).toEqual(mockResponse);
@@ -42,11 +49,13 @@ describe('basic', () => {
 
         const config = {
             communityId: 'not-valid-community-id',
-            groupBy: '',
-            keyPrefix: '00Q',
-            processType: 'Lead_MC',
-            requestBody: {
-                Name: 'James Bond',
+            requestIngestionInput: {
+                requestBody: {
+                    Name: 'James Bond',
+                },
+                processType: 'LEAD_MS',
+                groupBy: '',
+                keyPrefix: '00Q',
             },
         };
         mockIngestRecordInvalidCommunityIdNetworkErrorOnce(config, mock);

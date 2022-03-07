@@ -1,4 +1,4 @@
-import { Reader } from '@luvio/engine';
+import type { Reader } from '@luvio/engine';
 
 export function readScalarFieldSelection(
     builder: Reader<any>,

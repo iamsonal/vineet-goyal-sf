@@ -1,0 +1,28 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'sustainability-dgf'
+types:
+  SustainabilityDateIssueRepresentation:
+    (luvio.ttl): 300
+    (luvio.opaque): true
+    (luvio.key):
+      message: message
+  SustainabilityDGFDataGapFillerRepresentation:
+    (luvio.ttl): 300
+    (luvio.opaque): true
+    (luvio.key):
+      message: message
+
+/connect/sustainability/dgf:
+  /compute-datagap-fillers:
+    post:
+      (luvio.adapter):
+        name: computeDataGapFillers
+  /identify-date-issues:
+    post:
+      (luvio.adapter):
+        name: identifyDateIssues

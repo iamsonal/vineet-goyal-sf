@@ -1,6 +1,6 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { Adapter, Environment, FulfilledSnapshot, Luvio, Store } from '@luvio/engine';
-import { DefaultDurableSegment, DurableStore, makeDurable, makeOffline } from '@luvio/environments';
+import { DefaultDurableSegment, DurableStore, makeDurable } from '@luvio/environments';
 import {
     getRecordAdapterFactory,
     keyBuilderObjectInfo,
@@ -51,6 +51,10 @@ export async function setupDraftEnvironment(
         isDraftId?: (id: string) => boolean;
         prefixForApiName?: (apiName: string) => Promise<string>;
         apiNameForPrefix?: (prefix: string) => Promise<string>;
+        ensureObjectInfoCached?: (
+            apiName: string,
+            entry?: ObjectInfoRepresentation
+        ) => Promise<void>;
         skipPopulatingAccountObjectInfo?: boolean;
     } = {}
 ) {
@@ -72,7 +76,7 @@ export async function setupDraftEnvironment(
         () => store.metadata
     );
 
-    const baseEnvironment = makeDurable(makeOffline(new Environment(store, network)), {
+    const baseEnvironment = makeDurable(new Environment(store, network), {
         durableStore,
     });
 
@@ -87,6 +91,7 @@ export async function setupDraftEnvironment(
     const defaultPrefixForApiName = (apiName: string) => {
         return Promise.resolve(apiName === 'Account' ? '001' : undefined);
     };
+    const defaultEnsureObjectInfoCached = () => Promise.resolve();
 
     let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
     const accountEntry = { data: AccountObjectInfo };
@@ -99,7 +104,7 @@ export async function setupDraftEnvironment(
         store,
         draftQueue,
         durableStore: durableStore as RecordDenormalizingDurableStore,
-        ingestFunc: (_record: any) => {},
+        ingestFunc: (_record: any) => Promise.resolve(),
         generateId: (prefix: string) => {
             return `${prefix}${DRAFT_RECORD_ID.substring(4, DRAFT_RECORD_ID.length)}`;
         },
@@ -107,6 +112,8 @@ export async function setupDraftEnvironment(
         getRecord: adapters.getRecord,
         prefixForApiName: setupOptions.prefixForApiName || defaultPrefixForApiName,
         apiNameForPrefix: setupOptions.apiNameForPrefix || defaultApiNameForPrefix,
+        ensureObjectInfoCached:
+            setupOptions.ensureObjectInfoCached || defaultEnsureObjectInfoCached,
         userId: 'testUserId',
         registerDraftIdMapping,
         getObjectInfo: getObjectInfo,

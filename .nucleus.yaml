@@ -3,6 +3,11 @@ core-deploy:
   enabled: true
   use-core-packager: false
 steps:
+  node-build:
+    env:
+      NODE_OPTIONS: '--max_old_space_size=1024'
+    run:
+      command: yarn build:nucleus
   node-pre-release-tests:
     run:
       command: yarn test:unit:coverage
@@ -12,3 +17,34 @@ steps:
     run:
       command: yarn release:corejar
     before: core-packager
+  code-format-after-dep-patch:
+    group: publish
+    description: Code formatting fix after package.json dep patching
+    run:
+      command: yarn format:fix
+    after: node-install-patched
+  code-format-after-dep-update:
+    group: publish
+    description: Code formatting fix after package.json dep updating
+    run:
+      command: yarn format:fix
+    after: node-install-update
+  populate-test-coverage-to-gus:
+    enabled: true
+    params:
+      coverage-config:
+        tool-name: clover
+        gus-team-name: 'Lightning Data Service'
+        aggregate-team-coverage: true
+        gus-record-active: true
+        report-locations:
+          - 'packages/lds-runtime-aura/coverage/clover.xml'
+          - 'packages/lds-network-aura/coverage/clover.xml'
+          - 'packages/lds-instrumentation/coverage/clover.xml'
+          - 'packages/lds-adapters-uiapi/coverage/clover.xml'
+          - 'packages/lds-adapters-apex/coverage/clover.xml'
+notifications:
+  email:
+    address: auradataservicescrumteam@salesforce.com
+  slack:
+    channel: lds-notifications

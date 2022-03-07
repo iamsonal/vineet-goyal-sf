@@ -1,12 +1,17 @@
-import { Luvio, Store, Environment, CacheKeySet } from '@luvio/engine';
-import { makeOffline, makeDurable } from '@luvio/environments';
+import type { RecordSource } from '@luvio/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
+import { makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
+import type { StoreEval } from '@salesforce/lds-graphql-eval';
+import { storeEvalFactory } from '@salesforce/lds-graphql-eval';
+
+import type { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import {
-    RecordRepresentation,
     ingestRecord,
     keyBuilderRecord,
     buildSelectionFromRecord,
+    getTypeCacheKeysRecord,
 } from '@salesforce/lds-adapters-uiapi';
 import {
     makeDurableStoreDraftAware,
@@ -14,7 +19,13 @@ import {
     makeEnvironmentDraftAware,
     DraftManager,
 } from '@salesforce/lds-drafts';
-import { setupInstrumentation } from '@salesforce/lds-instrumentation';
+import {
+    setupInstrumentation,
+    instrumentLuvio,
+    withInstrumentation,
+    O11Y_NAMESPACE_LDS_MOBILE,
+} from '@salesforce/lds-instrumentation';
+
 import salesforceNetworkAdapter from '@salesforce/lds-network-adapter';
 
 import userId from '@salesforce/user/Id';
@@ -22,17 +33,15 @@ import { recordIdGenerator } from './RecordIdGenerator';
 
 import { NimbusNetworkAdapter } from './network/NimbusNetworkAdapter';
 import { makeNetworkAdapterChunkRecordFields } from './network/record-field-batching/makeNetworkAdapterChunkRecordFields';
-import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 import { buildInternalAdapters } from './utils/adapters';
 import { restoreDraftKeyMapping } from './utils/restoreDraftKeyMapping';
 import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
-import { makeDurableStoreWithMergeStrategy } from './durableStore/makeDurableStoreWithMergeStrategy';
-import { RecordMergeStrategy } from './durableStore/RecordMergeStrategy';
-
-import { JSONParse, JSONStringify, ObjectCreate, ObjectKeys } from './utils/language';
+import { makeDebugEnvironment } from './debug/makeDebugEnvironment';
+import { NimbusSqlDurableStore } from './NimbusSqlDurableStore';
+import { getInstrumentation } from 'o11y/client';
 
 let luvio: Luvio;
 
@@ -56,49 +65,14 @@ function onResponseSuccess(record: RecordRepresentation) {
     return snapshot;
 }
 
-// TODO [W-10054341]: this is done manually right now but can be removed when the compiler generates these functsino
-function getRecordResponseKeys(originalRecord: RecordRepresentation) {
-    const record = JSONParse(JSONStringify(originalRecord));
-    const selections = buildSelectionFromRecord(record);
-    const key = keyBuilderRecord({
-        recordId: record.id,
-    });
-
-    luvio.storeIngest(key, ingestRecord, record);
-    const snapshot = luvio.storeLookup<RecordRepresentation>({
-        recordId: key,
-        node: {
-            kind: 'Fragment',
-            private: [],
-            selections,
-        },
-        variables: {},
-    });
-
-    if (snapshot.state === 'Error') {
-        return {};
-    }
-
-    const keys = [...ObjectKeys(snapshot.seenRecords), snapshot.recordId];
-    const keySet: CacheKeySet = ObjectCreate(null);
-    for (let i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        const namespace = key.split('::')[0];
-        const representationName = key.split('::')[1].split(':')[0];
-        keySet[key] = {
-            namespace,
-            representationName,
-        };
-    }
-    return keySet;
-}
-
 // TODO [W-8291468]: have ingest get called a different way somehow
 const recordIngestFunc = (record: RecordRepresentation): Promise<void> => {
     return Promise.resolve(
         luvio.handleSuccessResponse(
             () => onResponseSuccess(record),
-            () => getRecordResponseKeys(record)
+            // getTypeCacheKeysRecord uses the response, not the full path factory
+            // so 2nd parameter will be unused
+            () => getTypeCacheKeysRecord(record, () => '')
         )
     ).then(() => {
         // the signature requires a Promise<void> result so drop the Snapshot from the result
@@ -128,29 +102,38 @@ const getDraftActionForRecordKeys = (keys: string[]) => {
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
 // non-draft-aware base services
-// TODO [W-9883150]: use default scheduler
-const storeOptions = {
-    scheduler: () => {},
-};
-const store = new Store(storeOptions);
+const store = new Store();
 const networkAdapter = salesforceNetworkAdapter(
     makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter)
 );
 
-const baseDurableStore = makeDurableStoreWithMergeStrategy(new NimbusDurableStore());
+const baseDurableStore = new NimbusSqlDurableStore({
+    withInstrumentation: withInstrumentation(getInstrumentation(O11Y_NAMESPACE_LDS_MOBILE)),
+});
 
 // specific adapters
 const internalAdapterStore = new Store();
+let getIngestRecordsForInternalAdapters: (() => RecordSource) | undefined;
+let getIngestMetadataForInternalAdapters: (() => Store['metadata']) | undefined;
 const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(
     baseDurableStore,
-    () => internalAdapterStore.records,
-    () => internalAdapterStore.metadata
+    () =>
+        getIngestRecordsForInternalAdapters !== undefined
+            ? getIngestRecordsForInternalAdapters()
+            : {},
+    () =>
+        getIngestMetadataForInternalAdapters !== undefined
+            ? getIngestMetadataForInternalAdapters()
+            : {}
 );
-const { getObjectInfo, getRecord } = buildInternalAdapters(
-    internalAdapterStore,
-    networkAdapter,
-    internalAdapterDurableStore
-);
+const {
+    adapters: { getObjectInfo, getRecord },
+    durableEnvironment: internalAdapterDurableEnvironment,
+} = buildInternalAdapters(internalAdapterStore, networkAdapter, internalAdapterDurableStore);
+getIngestRecordsForInternalAdapters =
+    internalAdapterDurableEnvironment.getIngestStagingStoreRecords;
+getIngestMetadataForInternalAdapters =
+    internalAdapterDurableEnvironment.getIngestStagingStoreRecords;
 const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = new ObjectInfoService(
     getObjectInfo,
     internalAdapterDurableStore
@@ -176,18 +159,21 @@ const pluginEnabledDurableStore = makePluginEnabledDurableStore(baseDurableStore
 pluginEnabledDurableStore.registerPlugins([objectInfoPlugin]);
 
 // creates a durable store that denormalizes scalar fields for records
+let getIngestRecords: (() => RecordSource) | undefined;
+let getIngestMetadata: (() => Store['metadata']) | undefined;
 const recordDenormingStore = makeRecordDenormalizingDurableStore(
     pluginEnabledDurableStore,
-    () => store.records,
-    () => store.metadata
+    () => (getIngestRecords !== undefined ? getIngestRecords() : {}),
+    () => (getIngestMetadata !== undefined ? getIngestMetadata() : {})
 );
 
 const baseEnv = new Environment(store, networkAdapter);
-const offlineEnv = makeOffline(baseEnv);
-const durableEnv = makeDurable(offlineEnv, {
+const durableEnv = makeDurable(baseEnv, {
     durableStore: recordDenormingStore,
 });
-const draftEnv = makeEnvironmentDraftAware(durableEnv, {
+getIngestRecords = durableEnv.getIngestStagingStoreRecords;
+getIngestMetadata = durableEnv.getIngestStagingStoreMetadata;
+let draftEnv = makeEnvironmentDraftAware(durableEnv, {
     store,
     draftQueue,
     durableStore: recordDenormingStore,
@@ -196,17 +182,23 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     isDraftId: isGenerated,
     prefixForApiName,
     apiNameForPrefix,
+    ensureObjectInfoCached,
     getRecord,
     getObjectInfo,
     userId,
     registerDraftIdMapping,
 });
 
-baseDurableStore.registerMergeStrategy(
-    new RecordMergeStrategy(baseDurableStore, getDraftActionForRecordKeys, getRecord, userId)
-);
+if (process.env.NODE_ENV !== 'production') {
+    draftEnv = makeDebugEnvironment(draftEnv);
+}
 
-luvio = new Luvio(draftEnv);
+luvio = new Luvio(draftEnv, {
+    instrument: instrumentLuvio,
+});
+
+//inject query eval to graphql adapter
+const storeEval: StoreEval<unknown> = storeEvalFactory(userId, baseDurableStore);
 
 // Draft mapping entries exists only in the Durable store.
 // Populate Luvio L1 cache with the entries from the Durable store.
@@ -218,7 +210,9 @@ setupInstrumentation(luvio, store);
 
 setDefaultLuvio({ luvio });
 
-export { luvio, draftQueue, draftManager };
+export { luvio, draftQueue, draftManager, storeEval };
+
+export { debugLog } from './debug/DebugLog';
 
 /**
  * NB: to exactly match force/ldsEngine, we'd also need to:
@@ -232,3 +226,6 @@ export { luvio, draftQueue, draftManager };
 
 // so adapter modules can find our luvio instance
 export { withDefaultLuvio } from '@salesforce/lds-default-luvio';
+
+// re-export type to avoid leaky abstraction
+export type { ObservabilityContext } from '@mobileplatform/nimbus-plugin-lds';

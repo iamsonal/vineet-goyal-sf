@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-instrumentation",
-    "version": "1.32.0",
+    "version": "1.41.0",
     "description": "Instrumentation utils for Lightning Data Service",
     "license": "MIT",
     "main": "dist/ldsInstrumentation.js",
@@ -16,10 +16,20 @@
         "clean": "rm -rf dist",
         "test:unit": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand",
+        "test:size": "bundlesize",
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-instrumentation"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.32.0",
-        "@salesforce/lds-network-adapter": "1.32.0"
-    }
+        "@salesforce/lds-adapters-uiapi": "1.41.0",
+        "@salesforce/lds-bindings": "1.41.0",
+        "@salesforce/lds-network-adapter": "1.41.0",
+        "o11y_schema": "^238.15.0"
+    },
+    "bundlesize": [
+        {
+            "path": "./dist/ldsInstrumentation.js",
+            "maxSize": "9 kB",
+            "compression": "brotli"
+        }
+    ]
 }

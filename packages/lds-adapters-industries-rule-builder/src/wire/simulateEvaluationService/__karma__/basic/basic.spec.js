@@ -30,6 +30,19 @@ describe('basic', () => {
         expect(el).toEqual(outputMock);
     });
 
+    it('test basic simulateEvaluationService when step errors', async () => {
+        const outputMock = getOutputMock('simulationResultWithStepError');
+        const inputMock = getInputMock('simulationInput');
+        const config = {
+            id: 'testId',
+            simulationInput: inputMock,
+        };
+        mockSimulateEvaluationServiceNetworkOnce(config, outputMock);
+
+        const el = await simulateEvaluationService(config);
+        expect(el).toEqual(outputMock);
+    });
+
     it('test basic simulateEvaluationService when no internal error occured', async () => {
         const outputMock = getOutputMock('simulationResultWithoutErrorField');
         const inputMock = getInputMock('simulationInput');

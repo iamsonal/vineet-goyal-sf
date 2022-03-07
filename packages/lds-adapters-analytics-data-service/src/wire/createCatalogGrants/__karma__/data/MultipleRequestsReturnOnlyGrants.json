@@ -1,0 +1,25 @@
+{
+    "requestId": "requestId",
+    "grants": [
+        {
+            "qualifiedName": "testdb01.testSchema01.Account",
+            "grantee": {
+                "id": "0ZGRM0000004Dn04AE",
+                "displayName": "Bart Simpson",
+                "type": "User"
+            },
+            "operation": "Grant",
+            "permission": "Usage"
+        },
+        {
+            "qualifiedName": "testdb01.testSchema01.Account",
+            "grantee": {
+                "id": "0ZGRM0000004Dn04AE",
+                "displayName": "Bart Simpson",
+                "type": "User"
+            },
+            "operation": "Revoke",
+            "permission": "Select"
+        }
+    ]
+}

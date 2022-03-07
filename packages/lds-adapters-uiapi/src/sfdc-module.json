@@ -1,0 +1,149 @@
+{
+    "getRelatedListsCount": {
+        "namespace": "lightning",
+        "module": "uiRelatedListApi"
+    },
+    "getRelatedListInfoBatch": {
+        "namespace": "lightning",
+        "module": "uiRelatedListApi",
+        "includeUnstable": true
+    },
+    "getRecordActions": {
+        "namespace": "lightning",
+        "module": "uiRecordActionsApi"
+    },
+    "getRelatedListActions": {
+        "namespace": "lightning",
+        "module": "uiRecordActionsApi",
+        "batch": {
+            "adapterName": "getRelatedListsActions",
+            "reducer": {
+                "importPath": "laf/batchingPortable",
+                "identifier": "RelatedListActionsBatchReducer"
+            }
+        }
+    },
+    "getRelatedListsActions": {
+        "namespace": "lightning",
+        "module": "uiRecordActionsApi"
+    },
+    "getLayout": {
+        "namespace": "lightning",
+        "module": "uiLayoutApi"
+    },
+    "getLayoutUserState": {
+        "namespace": "lightning",
+        "module": "uiLayoutApi"
+    },
+    "getRecordAvatars": {
+        "namespace": "lightning",
+        "module": "uiRecordAvatarApi",
+        "batch": {
+            "adapterName": "getRecordAvatars",
+            "reducer": {
+                "importPath": "laf/batchingPortable",
+                "identifier": "RecordAvatarBatchReducer"
+            }
+        }
+    },
+    "getRecordUi": {
+        "namespace": "lightning",
+        "module": "uiRecordApi"
+    },
+    "getRecord": {
+        "namespace": "lightning",
+        "module": "uiRecordApi",
+        "batch": {
+            "adapterName": "getRecords",
+            "reducer": {
+                "importPath": "laf/batchingPortable",
+                "identifier": "GetRecordBatchReducer"
+            }
+        }
+    },
+    "getRecords": {
+        "namespace": "lightning",
+        "module": "uiRecordApi"
+    },
+    "getRecordCreateDefaults": {
+        "namespace": "lightning",
+        "module": "uiRecordApi"
+    },
+    "getObjectInfo": {
+        "namespace": "lightning",
+        "module": "uiObjectInfoApi",
+        "batch": {
+            "adapterName": "getObjectInfos",
+            "reducer": {
+                "importPath": "laf/batchingPortable",
+                "identifier": "ObjectInfoBatchReducer"
+            }
+        }
+    },
+    "getObjectInfos": {
+        "namespace": "lightning",
+        "module": "uiObjectInfoApi",
+        "batch": {
+            "adapterName": "getObjectInfos",
+            "reducer": {
+                "importPath": "laf/batchingPortable",
+                "identifier": "ObjectInfosBatchReducer"
+            }
+        }
+    },
+    "getPicklistValues": {
+        "namespace": "lightning",
+        "module": "uiObjectInfoApi"
+    },
+    "getPicklistValuesByRecordType": {
+        "namespace": "lightning",
+        "module": "uiObjectInfoApi"
+    },
+    "getRelatedListCount": {
+        "namespace": "lightning",
+        "module": "uiRelatedListApi"
+    },
+    "getRelatedListInfo": {
+        "namespace": "lightning",
+        "module": "uiRelatedListApi",
+        "batch": {
+            "adapterName": "getRelatedListInfoBatch",
+            "reducer": {
+                "importPath": "laf/batchingPortable",
+                "identifier": "RelatedListInfoBatchReducer"
+            }
+        }
+    },
+    "getRelatedListsInfo": {
+        "namespace": "lightning",
+        "module": "uiRelatedListApi"
+    },
+    "getRelatedListRecords": {
+        "namespace": "lightning",
+        "module": "uiRelatedListApi",
+        "batch": {
+            "adapterName": "getRelatedListRecordsBatch",
+            "reducer": {
+                "importPath": "laf/batchingPortable",
+                "identifier": "RelatedListRecordsBatchReducer"
+            }
+        }
+    },
+    "getRelatedListRecordsBatch": {
+        "namespace": "lightning",
+        "module": "uiRelatedListApi",
+        "includeUnstable": true
+    },
+    "getNavItems": {
+        "namespace": "lightning",
+        "module": "uiAppsApi"
+    },
+    "getListUi": {
+        "namespace": "lightning",
+        "module": "uiListApi"
+    },
+    "getListInfoByName": {
+        "namespace": "lightning",
+        "module": "uiListsApi"
+    }
+}

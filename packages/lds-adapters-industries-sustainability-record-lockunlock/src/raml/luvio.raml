@@ -1,0 +1,24 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'sustainability-record-lockunlock'
+types:
+  SCRecordLockUnlockRepresentation:
+    (luvio.ttl): 300
+    (luvio.opaque): true
+    (luvio.key):
+      message: message
+
+/connect/sustainability:
+  /record-locking:
+    /lock/{recordId}:
+      put:
+        (luvio.adapter):
+          name: lockRecord
+    /unlock/{recordId}:
+      put:
+        (luvio.adapter):
+          name: unlockRecord

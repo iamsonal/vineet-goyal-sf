@@ -1,0 +1,16 @@
+{
+    "tags": [
+        {
+            "tagId": "0TOi000001AWbWugta",
+            "name": "Golf",
+            "recordAssignmentId": "",
+            "categories": [
+                {
+                    "categoryId": "0ZOi000001CkbWugna",
+                    "name": "Sports",
+                    "icon": "referenceToStaticIcon"
+                }
+            ]
+        }
+    ]
+}

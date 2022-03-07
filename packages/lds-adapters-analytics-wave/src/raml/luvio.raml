@@ -8,6 +8,8 @@ uses:
 (luvio.ttl): 2592000000
 
 types:
+  ActionCollectionRepresentation:
+    (luvio.ttl): 300
   BaseWaveAssetRepresentation:
     (luvio.ttl): 5000
     (luvio.key):
@@ -24,7 +26,13 @@ types:
     (luvio.ttl): 300
   DataflowJobNodeCollectionRepresentation:
     (luvio.ttl): 300
+  DependencyRepresentation:
+    (luvio.ttl): 300
   DatasetCollectionRepresentation:
+    (luvio.ttl): 300
+  DatasetVersionCollectionRepresentation:
+    (luvio.ttl): 300
+  DatasetCoverageRepresentation:
     (luvio.ttl): 300
   RecipeCollectionRepresentation:
     (luvio.ttl): 300
@@ -64,12 +72,33 @@ types:
       SourceObjectName: sourceObjectName
   SourceObjectCollectionRepresentation:
     (luvio.ttl): 300
+  SourceObjectDataRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 5000
+  TemplateCollectionRepresentation:
+    (luvio.ttl): 300000
+  TemplateConfigurationRepresentation:
+    (luvio.ttl): 300000
+    (luvio.key):
+      id: id
+  TemplateReleaseNotesRepresentation:
+    (luvio.ttl): 300000
+    (luvio.key):
+      id: id
+  TemplateRepresentation:
+    (luvio.ttl): 300000
+    (luvio.key):
+      id: id
   WaveAnalyticsLimitCollectionRepresentation:
     (luvio.ttl): 300
   WaveFolderCollectionRepresentation:
     (luvio.ttl): 300
 
 /wave:
+  /actions/{entityId}:
+    get:
+      (luvio.adapter):
+        name: getActions
   /asset/{assetId}/schedule:
     get:
       (luvio.adapter):
@@ -95,6 +124,11 @@ types:
     patch:
       (luvio.adapter):
         name: updateDataConnector
+    delete:
+      (luvio.adapter):
+        name: deleteDataConnector
+      (luvio.key):
+        id: urlParams.connectorIdOrApiName
     /sourceObjects:
       get:
         (luvio.adapter):
@@ -106,6 +140,11 @@ types:
         (luvio.key):
           connectorIdOrApiName: urlParams.connectorIdOrApiName
           SourceObjectName: urlParams.sourceObjectName
+      /dataPreview:
+        post:
+          (luvio.adapter):
+            name: getDataConnectorSourceObjectDataPreviewWithFields
+          (luvio.method): get
       /fields:
         get:
           (luvio.adapter):
@@ -170,10 +209,33 @@ types:
         name: getDataset
       (luvio.key):
         id: urlParams.datasetIdOrApiName
-  /datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}:
+    patch:
+      (luvio.adapter):
+        name: updateDataset
+    /versions:
+      get:
+        (luvio.adapter):
+          name: getDatasetVersions
+      post:
+        (luvio.adapter):
+          name: createDatasetVersion
+      /{versionId}:
+        get:
+          (luvio.adapter):
+            name: getDatasetVersion
+          (luvio.key):
+            id: urlParams.versionId
+        patch:
+          (luvio.adapter):
+            name: updateDatasetVersion
+        /xmds/{xmdType}:
+          get:
+            (luvio.adapter):
+              name: getXmd
+  /dependencies/{assetId}:
     get:
       (luvio.adapter):
-        name: getXmd
+        name: getDependencies
   /folders:
     get:
       (luvio.adapter):
@@ -211,6 +273,9 @@ types:
           name: getRecipeNotification
         (luvio.key):
           id: urlParams.id
+      put:
+        (luvio.adapter):
+          name: updateRecipeNotification
   /replicatedDatasets:
     get:
       (luvio.adapter):
@@ -241,3 +306,30 @@ types:
     patch:
       (luvio.adapter):
         name: updateReplicatedFields
+  /security/coverage:
+    /datasets/{datasetIdOrApiName}/versions/{versionId}:
+      get:
+        (luvio.adapter):
+          name: getSecurityCoverageDatasetVersion
+  /templates:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplates
+  /templates/{templateIdOrApiName}:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplate
+      (luvio.key):
+        id: urlParams.templateIdOrApiName
+  /templates/{templateIdOrApiName}/configuration:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplateConfig
+      (luvio.key):
+        id: urlParams.templateIdOrApiName
+  /templates/{templateIdOrApiName}/releasenotes:
+    get:
+      (luvio.adapter):
+        name: getWaveTemplateReleaseNotes
+      (luvio.key):
+        id: urlParams.templateIdOrApiName

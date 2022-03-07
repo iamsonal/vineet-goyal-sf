@@ -1,9 +1,0 @@
-{
-    "explainabilityActionLog": {
-        "actionContextCode": "012T00000004MUHIA2",
-        "actionLog": "{\"FinancialAssistanceEligibility\":{\"input\":{\"perAccident\":\"300\",\"perPerson\":\"100\"},\"output\":{\"calculationResults\":[{\"totalPrice\":\"45100\"}],\"aggregationResults\":{}}}}",
-        "actionLogDate": "2021-09-04T10:54:56.787Z",
-        "name": "ExpressionSet01",
-        "specificationName": "ExpressionSet01"
-    }
-}

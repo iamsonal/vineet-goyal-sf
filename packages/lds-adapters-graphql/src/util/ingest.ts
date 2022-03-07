@@ -1,15 +1,18 @@
-import { IngestPath, Luvio, Store } from '@luvio/engine';
-import {
+import type { IngestPath, Luvio, Store } from '@luvio/engine';
+import type {
     LuvioOperationDefinitionNode,
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser';
+} from '@luvio/graphql-parser';
 import { render as renderField } from '../type/Field';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { createIngest as customFieldCreateIngest } from '../type/CustomField';
 import merge from './merge';
-import { GraphQLVariables } from '../type/Variable';
+import type { GraphQLVariables } from '../type/Variable';
 import { equals } from './equal';
+import { namespace } from './adapter';
+
+export const DEFAULT_GRAPHQL_TTL = 30000;
 
 type LuvioIngestableNode =
     | LuvioOperationDefinitionNode
@@ -37,6 +40,14 @@ export function publishIfChanged(params: {
     if (existing === undefined || equals(ast, variables, existing, incoming) === false) {
         const newData = merge(existing, incoming);
         luvio.storePublish(key, newData);
+
+        if (newData && newData.__typename !== undefined) {
+            luvio.publishStoreMetadata(key, {
+                representationName: newData.__typename,
+                namespace: namespace,
+                ttl: DEFAULT_GRAPHQL_TTL,
+            });
+        }
     }
 }
 
@@ -64,7 +75,6 @@ function genericCreateIngest(ast: LuvioIngestableNode, variables: GraphQLVariabl
                 },
                 propertyName: readPropertyName,
                 fullPath: propertyFullPath,
-                state: path.state,
             };
             data[writePropertyName] = createIngest(sel, variables)(
                 data[readPropertyName],

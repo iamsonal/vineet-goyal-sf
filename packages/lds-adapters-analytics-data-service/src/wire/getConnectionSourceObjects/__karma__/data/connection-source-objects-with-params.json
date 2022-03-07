@@ -1,0 +1,21 @@
+{
+    "url": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects?page=0&pageSize=10",
+    "nextPageUrl": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects?page=1&pageSize=10",
+    "totalSize": 2,
+    "sourceObjects": [
+        {
+            "name": "Account",
+            "state": "Connected",
+            "url": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account",
+            "info": [],
+            "fieldsUrl": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account/fields"
+        },
+        {
+            "name": "FunkyObject",
+            "state": "Not Connected",
+            "url": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/FunkyObject",
+            "info": [],
+            "fieldsUrl": ".../connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/FunkyObject/fields"
+        }
+    ]
+}

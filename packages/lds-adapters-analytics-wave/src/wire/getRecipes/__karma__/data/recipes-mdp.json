@@ -1,0 +1,41 @@
+{
+    "nextPageUrl": null,
+    "recipes": [
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005xx000001X7gzAAC",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2022-02-16T01:23:24.000Z",
+            "dataflowLastUpdate": "2022-02-16T01:23:24.000Z",
+            "fileUrl": "/services/data/v55.0/wave/recipes/05vxx0000004CguAAE/file",
+            "historiesUrl": "/services/data/v55.0/wave/recipes/05vxx0000004CguAAE/histories",
+            "id": "05vxx0000004CguAAE",
+            "label": "test1234",
+            "lastModifiedBy": {
+                "id": "005xx000001X7gzAAC",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2022-02-16T02:56:58.000Z",
+            "licenseAttributes": {
+                "type": "mulesoftdatapath"
+            },
+            "name": "test1234",
+            "publishingTarget": "Dataset",
+            "scheduleAttributes": {
+                "assetId": "05vxx0000004CguAAE",
+                "frequency": "none"
+            },
+            "status": "New",
+            "targetDataflowId": "02Kxx0000004DrzEAE",
+            "type": "recipe",
+            "url": "/services/data/v55.0/wave/recipes/05vxx0000004CguAAE",
+            "validationDetails": []
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v55.0/wave/recipes"
+}

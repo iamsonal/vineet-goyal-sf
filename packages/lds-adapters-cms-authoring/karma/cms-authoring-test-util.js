@@ -3,12 +3,26 @@ import { mockNetworkOnce, mockNetworkErrorOnce, mockNetworkSequence, clearCache 
 import sinon from 'sinon';
 import timekeeper from 'timekeeper';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/connect`;
 const MANAGED_CONTENT_TTL = 100;
 const MANAGED_CONTENT_VARIANT_TTL = 3600000;
 const GET_MANAGED_CONTENT_BY_FOLDER_ID_TTL = 100;
+
+function mockUnpublishManagedContent(config, mockData) {
+    const paramMatch = getUnpublishManagedContentMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockUnpublishManagedContentErrorOnce(config, mockData) {
+    const paramMatch = getUnpublishManagedContentMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
 
 function mockCreateDeployment(config, mockData) {
     const paramMatch = getCreateDeploymentsMatcher(config);
@@ -46,6 +60,23 @@ function mockGetManagedContentByFolderId(config, mockData) {
     }
 }
 
+function getUnpublishManagedContentMatcher(config) {
+    let { channelIds, description, contentIds, variantIds } = config;
+    return sinon.match({
+        body: {
+            channelIds,
+            description,
+            contentIds,
+            variantIds,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/contents/unpublish`,
+        queryParams: {},
+    });
+}
+
 function getCreateDeploymentsMatcher(config) {
     let {
         contentSpaceId,
@@ -53,7 +84,9 @@ function getCreateDeploymentsMatcher(config) {
         description,
         contentIds,
         executeStagedDeployments,
+        includeContentReferences,
         scheduledDate,
+        variantIds,
     } = config;
     return sinon.match({
         body: {
@@ -62,7 +95,9 @@ function getCreateDeploymentsMatcher(config) {
             description,
             contentIds,
             executeStagedDeployments,
+            includeContentReferences,
             scheduledDate,
+            variantIds,
         },
         headers: {},
         method: 'post',
@@ -73,14 +108,27 @@ function getCreateDeploymentsMatcher(config) {
 }
 
 function getManagedContentMatcher(config) {
-    let { contentKeyOrId } = config;
+    let { contentKeyOrId, language, version } = config;
+
+    let queryParams = {};
+    if (language) {
+        queryParams.language = language;
+    }
+
+    if (version) {
+        queryParams.version = version;
+    }
+
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/cms/contents/${contentKeyOrId}`,
-        queryParams: {},
+        urlParams: {
+            contentKeyOrId: contentKeyOrId,
+        },
+        queryParams: queryParams,
     });
 }
 
@@ -221,7 +269,37 @@ function mockReplaceManagedContentVariantErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function getDeleteManagedContentVariantMatcher(config) {
+    const { variantId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/contents/variants/${variantId}`,
+        queryParams: {},
+    });
+}
+
+function mockDeleteManagedContentVariant(config, mockData = {}) {
+    var paramMatch = getDeleteManagedContentVariantMatcher(config);
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteManagedContentVariantErrorOnce(config, mockData = {}) {
+    var paramMatch = getDeleteManagedContentVariantMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 export {
+    URL_BASE,
+    mockUnpublishManagedContent,
+    mockUnpublishManagedContentErrorOnce,
     getCreateDeploymentsMatcher,
     mockCreateDeployment,
     mockCreateDeploymentsErrorOnce,
@@ -241,4 +319,6 @@ export {
     getReplaceManagedContentsVaraiantsMatcher,
     mockReplaceManagedContentVariant,
     mockReplaceManagedContentVariantErrorOnce,
+    mockDeleteManagedContentVariant,
+    mockDeleteManagedContentVariantErrorOnce,
 };

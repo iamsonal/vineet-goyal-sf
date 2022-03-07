@@ -7,13 +7,11 @@
             "lmsEventTriggerName": "utilityBar"
         }
     },
-    "id": "trigger_lms_pub",
+    "description": "See how the utility bar actions can be customized.",
+    "id": "test_step_name",
     "isManaged": true,
-    "labels": {
-        "title": "Show Utility Bar Actions",
-        "meta": "5:00 mins",
-        "description": "See how the utility bar actions can be customized."
-    },
-    "progress": "NotStarted",
-    "tags": ["premier"]
+    "status": "NotStarted",
+    "tags": ["premier"],
+    "title": "Show Utility Bar Actions",
+    "updateStrategy": "Periodic"
 }

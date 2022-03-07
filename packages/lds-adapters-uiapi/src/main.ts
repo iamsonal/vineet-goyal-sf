@@ -17,6 +17,7 @@ export {
     RecordRepresentationNormalized,
     keyBuilder as keyBuilderRecord,
     KeyParams as KeyParamsRecord,
+    getTypeCacheKeys as getTypeCacheKeysRecord,
 } from './generated/types/RecordRepresentation';
 export {
     ingest as ingestRecord,

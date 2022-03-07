@@ -5,6 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
  */
 'use strict';
+const dedent = require('dedent-js');
 
 /*
  * This eslint rule checks that all Errors being thrown in lds code do so inside a prod check like so,
@@ -13,8 +14,6 @@
  *       throw new Error('Can only extract apiName from record post request');
  *  }
  */
-
-const DEFAULT_INDENT = '    ';
 
 module.exports = {
     meta: {
@@ -32,12 +31,20 @@ module.exports = {
         const sourceCode = context.getSourceCode();
 
         function addProductionCheck(node) {
-            const startIndent = ' '.repeat(node.loc.start.column);
-            return `if (process.env.NODE_ENV !== 'production') { \n${startIndent}${addIndent(sourceCode.getText(node))} \n${startIndent}}`;
-        }
+            const startIndex = node.loc.start.column;
+            const fixed = dedent`
+                if (process.env.NODE_ENV !== 'production') {
+                    ${sourceCode.getText(node)}
+                }
+            `;
 
-        function addIndent(code) {
-            return `${DEFAULT_INDENT}${code.split('\n').join('\n' + DEFAULT_INDENT)}`;
+            return fixed.split('\n').map((line, index) => {
+                // the first line will have the original indent
+                if (index === 0) {
+                    return line;
+                }
+                return `${' '.repeat(startIndex)}${line}`;
+            }).join('\n');
         }
 
         function isValidProductionCheck(testNode) {
@@ -45,7 +52,7 @@ module.exports = {
                 return false;
             }
 
-            if ((isValidProductionLiteral(testNode.left) && isValidProcessEnvNodeExpression(testNode.right)) || 
+            if ((isValidProductionLiteral(testNode.left) && isValidProcessEnvNodeExpression(testNode.right)) ||
                 (isValidProductionLiteral(testNode.right) && isValidProcessEnvNodeExpression(testNode.left))) {
                 return true;
             }

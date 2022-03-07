@@ -1,31 +1,37 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     Snapshot,
     FulfilledSnapshot,
-    ResourceRequestOverride,
     Selector,
     FetchResponse,
     ResourceResponse,
     ResourceRequest,
     AdapterContext,
     SnapshotRefresh,
+    StoreLookup,
+    AdapterRequestContext,
+    CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
-import {
-    validateAdapterConfig,
-    getRecordTemplateCreate_ConfigPropertyNames,
-    createResourceParams,
+import type {
     buildNetworkSnapshot as generatedBuildNetworkSnapshot,
     GetRecordTemplateCreateConfig,
 } from '../../generated/adapters/getRecordTemplateCreate';
 import {
+    validateAdapterConfig,
+    getRecordTemplateCreate_ConfigPropertyNames,
+    createResourceParams,
+} from '../../generated/adapters/getRecordTemplateCreate';
+import type { ResourceRequestConfig } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
+import {
     createResourceRequest,
     keyBuilder,
     ingestError,
-    ResourceRequestConfig,
+    getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 import { adapterFragment } from '../../generated/fields/adapters/getRecordTemplateCreate';
-import { RecordDefaultsTemplateCreateRepresentation } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
+import type { RecordDefaultsTemplateCreateRepresentation } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
 import { keyBuilder as recordTemplateKeyBuilder } from '../../generated/types/RecordTemplateCreateRepresentation';
 import {
     BLANK_RECORD_FIELDS_TRIE,
@@ -153,7 +159,7 @@ function onResourceResponseSuccess(
 
     luvio.storeIngest<RecordDefaultsTemplateCreateRepresentation>(key, ingest, body);
 
-    const snapshot = buildInMemorySnapshot(luvio, context, {
+    const snapshot = buildCachedSnapshot(luvio, context, {
         ...config,
         recordTypeId: responseRecordTypeId as string,
     });
@@ -192,31 +198,46 @@ function buildNetworkSnapshot(
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig,
-    override?: ResourceRequestOverride
+    options?: DispatchResourceRequestContext
 ): ReturnType<typeof generatedBuildNetworkSnapshot> {
     const resourceParams = createResourceParams(config);
     const request = prepareRequest(luvio, context, config);
 
     return luvio
-        .dispatchResourceRequest<RecordDefaultsTemplateCreateRepresentation>(request, override)
+        .dispatchResourceRequest<RecordDefaultsTemplateCreateRepresentation>(request, options)
         .then(
             (response) => {
-                return onResourceResponseSuccess(
-                    luvio,
-                    context,
-                    config,
-                    request,
-                    response,
-                    resourceParams
+                return luvio.handleSuccessResponse(
+                    () => {
+                        return onResourceResponseSuccess(
+                            luvio,
+                            context,
+                            config,
+                            request,
+                            response,
+                            resourceParams
+                        );
+                    },
+                    () => {
+                        return getResponseCacheKeys(resourceParams, response.body);
+                    }
                 );
             },
             (response: FetchResponse<unknown>) => {
-                return onResourceResponseError(luvio, context, config, resourceParams, response);
+                return luvio.handleErrorResponse(() => {
+                    return onResourceResponseError(
+                        luvio,
+                        context,
+                        config,
+                        resourceParams,
+                        response
+                    );
+                });
             }
         );
 }
 
-function buildInMemorySnapshot(
+function buildCachedSnapshot(
     luvio: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig
@@ -233,13 +254,68 @@ function buildInMemorySnapshot(
     );
 }
 
+type BuildSnapshotContext = {
+    adapterContext: AdapterContext;
+    config: GetRecordTemplateCreateConfig;
+    luvio: Luvio;
+    recordTypeId: string | undefined;
+};
+
+const buildNetworkSnapshotCachePolicy: (
+    context: BuildSnapshotContext,
+    requestContext: CoercedAdapterRequestContext
+) => ReturnType<typeof buildNetworkSnapshot> = (
+    context: BuildSnapshotContext,
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
+): Promise<Snapshot<RecordDefaultsTemplateCreateRepresentation, any>> => {
+    const { config, adapterContext, luvio } = context;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
+    };
+
+    if (networkPriority !== 'normal') {
+        dispatchOptions.overrides = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, adapterContext, config, dispatchOptions);
+};
+
+const buildCachedSnapshotCachePolicy: (
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordDefaultsTemplateCreateRepresentation>
+) => ReturnType<typeof buildCachedSnapshot> = (
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordDefaultsTemplateCreateRepresentation>
+): Snapshot<RecordDefaultsTemplateCreateRepresentation, any> => {
+    const { adapterContext, config, luvio, recordTypeId } = context;
+
+    const updatedConfig = {
+        ...config,
+        recordTypeId,
+    };
+
+    const resourceParams = createResourceParams(updatedConfig);
+    const selector: Selector = {
+        recordId: keyBuilder(resourceParams),
+        node: adapterFragment(luvio, config),
+        variables: {},
+    };
+    return storeLookup(selector, buildSnapshotRefresh(luvio, adapterContext, config));
+};
+
 export const factory: AdapterFactory<
     GetRecordTemplateCreateConfig,
     RecordDefaultsTemplateCreateRepresentation
 > = (luvio: Luvio) => {
     return luvio.withContext(function UiApi__getRecordDefaultsTemplateForCreate(
         untrustedConfig: unknown,
-        context: AdapterContext
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
     ):
         | Promise<Snapshot<RecordDefaultsTemplateCreateRepresentation, any>>
         | Snapshot<RecordDefaultsTemplateCreateRepresentation, any>
@@ -254,18 +330,18 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        const recordTypeId = getRecordTypeId(context, config);
+        const recordTypeId = getRecordTypeId(adapterContext, config);
 
-        const cacheSnapshot = buildInMemorySnapshot(luvio, context, {
-            ...config,
-            recordTypeId,
-        });
-
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot)) {
-            return cacheSnapshot;
-        }
-
-        return luvio.resolveSnapshot(cacheSnapshot, buildSnapshotRefresh(luvio, context, config));
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+                recordTypeId,
+                adapterContext,
+            },
+            buildCachedSnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
     });
 };

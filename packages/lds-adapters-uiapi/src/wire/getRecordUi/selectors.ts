@@ -1,10 +1,10 @@
-import { Selector, PathSelection } from '@luvio/engine';
+import type { Selector, PathSelection } from '@luvio/engine';
 
 import { ArrayPrototypePush } from '../../util/language';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { extractFields } from '../../util/fields';
 
-import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import type { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 import { select as objectInfoSelect } from '../../generated/types/ObjectInfoRepresentation';
 import { select as recordLayoutRepresentationSelect } from '../../generated/types/RecordLayoutRepresentation';
 import { select as recordLayoutUserStateRepresentationSelect } from '../../generated/types/RecordLayoutUserStateRepresentation';

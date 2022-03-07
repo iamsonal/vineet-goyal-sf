@@ -3,6 +3,7 @@ import { getMock as globalGetMock, setupElement, clone } from 'test-util';
 import {
     expireRecords,
     extractRecordFields,
+    getTrackedFieldLeafNodeIdOnly,
     mockGetRecordNetwork,
     mockUpdateRecordNetwork,
     mockGetRecordsNetwork,
@@ -75,15 +76,12 @@ describe('update record', () => {
         const optionalFields = [
             'ADM_Work__c.Assignee__c',
             'ADM_Work__c.Assignee__r.Id',
-            'ADM_Work__c.Assignee__r.Name',
             'ADM_Work__c.CreatedBy.Id',
-            'ADM_Work__c.CreatedBy.Name',
             'ADM_Work__c.CreatedById',
             'ADM_Work__c.CreatedDate',
             'ADM_Work__c.Description__c',
             'ADM_Work__c.IsDeleted',
             'ADM_Work__c.LastModifiedBy.Id',
-            'ADM_Work__c.LastModifiedBy.Name',
             'ADM_Work__c.LastModifiedById',
             'ADM_Work__c.LastModifiedDate',
             'ADM_Work__c.Previous_Comments__c',
@@ -99,6 +97,14 @@ describe('update record', () => {
             'ADM_Work__c.Story_Points__c',
             'ADM_Work__c.Subject__c',
         ];
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields.push(
+                'ADM_Work__c.Assignee__r.Name',
+                'ADM_Work__c.CreatedBy.Name',
+                'ADM_Work__c.LastModifiedBy.Name'
+            );
+            optionalFields.sort();
+        }
         const refetchConfig = {
             recordId: isDeletedMock.id,
             optionalFields,
@@ -140,6 +146,18 @@ describe('update record', () => {
         const getRecordsRefreshedMock = getMock('records-Parent_Object-Child_Object-refreshed');
         const parentRefreshMock = getRecordsRefreshedMock.results[0].result;
 
+        const optionalFields = [
+            'Child_Object__c.Id',
+            'Child_Object__c.Name',
+            'Child_Object__c.Parent_Object__c',
+            'Child_Object__c.Parent_Object__r.Id',
+        ];
+
+        if (!getTrackedFieldLeafNodeIdOnly()) {
+            optionalFields.push('Child_Object__c.Parent_Object__r.Name');
+            optionalFields.sort();
+        }
+
         mockGetRecordsNetwork(
             {
                 records: [
@@ -153,13 +171,7 @@ describe('update record', () => {
                     },
                     {
                         recordIds: [childMock.id],
-                        optionalFields: [
-                            'Child_Object__c.Id',
-                            'Child_Object__c.Name',
-                            'Child_Object__c.Parent_Object__c',
-                            'Child_Object__c.Parent_Object__r.Id',
-                            'Child_Object__c.Parent_Object__r.Name',
-                        ],
+                        optionalFields,
                     },
                 ],
             },
@@ -540,9 +552,10 @@ describe('update record', () => {
         // 'Opportunity.NoExist', 'Opportunity.SystemModstamp' do not come back on update record request
         const firstRefreshConfig = {
             recordId: mock.id,
-            optionalFields: extractRecordFields(mockUpdatedResponse)
-                .concat(['Opportunity.NoExist', 'Opportunity.SystemModstamp'])
-                .sort(),
+            optionalFields: extractRecordFields(mockUpdatedResponse, {
+                useNewTrackedFieldBehavior: getTrackedFieldLeafNodeIdOnly(),
+                add: ['Opportunity.NoExist', 'Opportunity.SystemModstamp'],
+            }),
         };
 
         mockGetRecordNetwork(initialConfig, mock);

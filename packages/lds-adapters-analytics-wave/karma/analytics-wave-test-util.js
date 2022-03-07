@@ -4,7 +4,7 @@ import timekeeper from 'timekeeper';
 
 import sinon from 'sinon';
 
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/wave`;
 const ASSET_TTL = 5000;
@@ -33,6 +33,34 @@ function getExecuteQueryMatcher(config) {
         method: 'post',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/query`,
+    });
+}
+
+// Actions
+function mockGetActionsNetworkOnce(config, mockData) {
+    const paramMatch = getActionsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetActionsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getActionsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getActionsMatcher(config) {
+    let { entityId } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/actions/${entityId}`,
+        queryParams: {},
     });
 }
 
@@ -183,6 +211,32 @@ function updateDataConnectorMatcher(config) {
     });
 }
 
+function mockDeleteDataConnectorNetworkOnce(config, mockData = {}) {
+    const paramMatch = deleteDataConnectorMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteDataConnectorNetworkErrorOnce(config, mockData = {}) {
+    const paramMatch = deleteDataConnectorMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function deleteDataConnectorMatcher(config) {
+    let { connectorIdOrApiName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}`,
+    });
+}
+
 // Data connector source objects
 function mockGetDataConnectorSourceObjectsNetworkOnce(config, mockData) {
     const paramMatch = getDataConnectorSourceObjectsMatcher(config);
@@ -238,6 +292,34 @@ function getDataConnectorSourceObjectMatcher(config) {
         method: 'get',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}/sourceObjects/${sourceObjectName}`,
+        queryParams: {},
+    });
+}
+
+// Data connector source object preview
+function mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectDataPreviewWithFieldsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectDataPreviewWithFieldsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorSourceObjectDataPreviewWithFieldsMatcher(config) {
+    const { uriParams, body } = config;
+    const { connectorIdOrApiName, sourceObjectName } = uriParams;
+    return sinon.match({
+        body,
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}/sourceObjects/${sourceObjectName}/dataPreview`,
         queryParams: {},
     });
 }
@@ -602,6 +684,33 @@ function deleteDatasetMatcher(config) {
     });
 }
 
+function mockUpdateDatasetNetworkOnce(config, mockData = {}) {
+    const paramMatch = updateDatasetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockUpdateDatasetNetworkErrorOnce(config, mockData = {}) {
+    const paramMatch = updateDatasetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateDatasetMatcher(config) {
+    let { datasetIdOrApiName, dataset } = config;
+    return sinon.match({
+        body: {
+            dataset,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${datasetIdOrApiName}`,
+    });
+}
+
 // Datasets
 function mockGetDatasetsNetworkOnce(config, mockData) {
     const paramMatch = getDatasetsMatcher(config);
@@ -618,7 +727,7 @@ function mockGetDatasetsNetworkErrorOnce(config, mockData) {
 }
 
 function getDatasetsMatcher(config) {
-    let { datasetTypes, folderId, licenseType, page, pageSize, q, scope } = config;
+    const { datasetTypes, folderId, licenseType, page, pageSize, q, scope, sort } = config;
 
     return sinon.match({
         body: null,
@@ -633,7 +742,166 @@ function getDatasetsMatcher(config) {
             pageSize,
             q,
             scope,
+            sort,
         },
+    });
+}
+
+// Dataset version
+function mockGetDatasetVersionNetworkOnce(config, mockData) {
+    const paramMatch = getDatasetVersionMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDatasetVersionNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDatasetVersionMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDatasetVersionMatcher(config) {
+    let { idOfDataset, versionId } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${idOfDataset}/versions/${versionId}`,
+        queryParams: {},
+    });
+}
+
+function mockUpdateDatasetVersionNetworkOnce(config, mockData) {
+    const paramMatch = updateDatasetVersionMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockUpdateDatasetVersionNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateDatasetVersionMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateDatasetVersionMatcher(config) {
+    const { datasetIdOrApiName, versionId, datasetVersion } = config;
+
+    return sinon.match({
+        body: {
+            datasetVersion,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${datasetIdOrApiName}/versions/${versionId}`,
+        queryParams: {},
+    });
+}
+
+function mockGetDatasetVersionsNetworkOnce(config, mockData) {
+    const paramMatch = getDatasetVersionsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDatasetVersionsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDatasetVersionsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDatasetVersionsMatcher(config) {
+    let { idOfDataset } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${idOfDataset}/versions`,
+        queryParams: {},
+    });
+}
+
+function mockCreateDatasetVersionNetworkOnce(config, mockData) {
+    const paramMatch = createDatasetVersionMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockCreateDatasetVersionNetworkErrorOnce(config, mockData) {
+    const paramMatch = createDatasetVersionMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function createDatasetVersionMatcher(config) {
+    const { datasetIdOrApiName, sourceVersion } = config;
+    return sinon.match({
+        body: {
+            sourceVersion,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${datasetIdOrApiName}/versions`,
+        queryParams: {},
+    });
+}
+
+// Dataset version security coverage
+function mockGetSecurityCoverageDatasetVersionNetworkOnce(config, mockData) {
+    const paramMatch = getSecurityCoverageDatasetVersionMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetSecurityCoverageDatasetVersionNetworkErrorOnce(config, mockData) {
+    const paramMatch = getSecurityCoverageDatasetVersionMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getSecurityCoverageDatasetVersionMatcher(config) {
+    let { idOfDataset, versionId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/security/coverage/datasets/${idOfDataset}/versions/${versionId}`,
+        queryParams: {},
+    });
+}
+
+// Dependencies
+function mockGetDependenciesNetworkOnce(config, mockData) {
+    const paramMatch = getDependenciesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDependenciesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDependenciesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDependenciesMatcher(config) {
+    let { assetId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dependencies/${assetId}`,
+        queryParams: {},
     });
 }
 
@@ -653,7 +921,20 @@ function mockGetRecipesNetworkErrorOnce(config, mockData) {
 }
 
 function getRecipesMatcher(config) {
-    let { format, licenseType, page, pageSize, q, sort } = config;
+    let {
+        format,
+        licenseType,
+        page,
+        pageSize,
+        q,
+        sort,
+        order,
+        lastModifiedAfter,
+        lastModifiedBefore,
+        nextScheduledAfter,
+        nextScheduledBefore,
+        status,
+    } = config;
     return sinon.match({
         body: null,
         headers: {},
@@ -667,6 +948,12 @@ function getRecipesMatcher(config) {
             pageSize,
             q,
             sort,
+            order,
+            lastModifiedAfter,
+            lastModifiedBefore,
+            nextScheduledAfter,
+            nextScheduledBefore,
+            status,
         },
     });
 }
@@ -777,6 +1064,31 @@ function getRecipeNotificationMatcher(config) {
         body: null,
         headers: {},
         method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/recipes/${id}/notification`,
+        queryParams: {},
+    });
+}
+
+function mockUpdateRecipeNotificationNetworkOnce(config, mockData) {
+    const paramMatch = updateRecipeNotificationMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockUpdateRecipeNotificationNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateRecipeNotificationMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateRecipeNotificationMatcher(config) {
+    const { id, recipeNotification } = config;
+
+    return sinon.match({
+        body: {
+            recipeNotification,
+        },
+        headers: {},
+        method: 'put',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/recipes/${id}/notification`,
         queryParams: {},
@@ -1061,6 +1373,116 @@ function getWaveFoldersMatcher(config) {
     });
 }
 
+// Wave Templates
+function mockGetWaveTemplatesNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplatesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplatesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplatesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplatesMatcher(config) {
+    let { options, type } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates`,
+        queryParams: {
+            options,
+            type,
+        },
+    });
+}
+
+// Wave Template
+function mockGetWaveTemplateNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplateMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplateNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplateMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplateMatcher(config) {
+    let { templateIdOrApiName, options } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates/${templateIdOrApiName}`,
+        queryParams: { options },
+    });
+}
+
+// Wave Template Config
+function mockGetWaveTemplateConfigNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplateConfigMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplateConfigNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplateConfigMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplateConfigMatcher(config) {
+    let { templateIdOrApiName, options, disableApex } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates/${templateIdOrApiName}/configuration`,
+        queryParams: { options, disableApex },
+    });
+}
+
+// Wave Template Release Notes
+function mockGetWaveTemplateReleaseNotesNetworkOnce(config, mockData) {
+    const paramMatch = getWaveTemplateReleaseNotesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetWaveTemplateReleaseNotesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveTemplateReleaseNotesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveTemplateReleaseNotesMatcher(config) {
+    let { templateIdOrApiName } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/templates/${templateIdOrApiName}/releasenotes`,
+    });
+}
+
 // XMD
 function mockGetXmdNetworkOnce(config, mockData) {
     const paramMatch = getXmdMatcher(config);
@@ -1099,6 +1521,8 @@ function expireAsset() {
 
 export {
     URL_BASE,
+    mockGetActionsNetworkOnce,
+    mockGetActionsNetworkErrorOnce,
     mockExecuteQueryNetworkOnce,
     mockExecuteQueryNetworkErrorOnce,
     mockGetAnalyticsLimitsNetworkOnce,
@@ -1109,12 +1533,16 @@ export {
     mockGetDataConnectorNetworkErrorOnce,
     mockUpdateDataConnectorNetworkOnce,
     mockUpdateDataConnectorNetworkErrorOnce,
+    mockDeleteDataConnectorNetworkOnce,
+    mockDeleteDataConnectorNetworkErrorOnce,
     mockGetDataConnectorsNetworkOnce,
     mockGetDataConnectorsNetworkErrorOnce,
     mockGetDataConnectorSourceObjectNetworkOnce,
     mockGetDataConnectorSourceObjectNetworkErrorOnce,
     mockGetDataConnectorSourceFieldsNetworkOnce,
     mockGetDataConnectorSourceFieldsNetworkErrorOnce,
+    mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkOnce,
+    mockGetDataConnectorSourceObjectDataPreviewWithFieldsNetworkErrorOnce,
     mockGetDataConnectorSourceObjectsNetworkOnce,
     mockGetDataConnectorSourceObjectsNetworkErrorOnce,
     mockGetDataConnectorTypesNetworkOnce,
@@ -1141,8 +1569,22 @@ export {
     mockGetDatasetNetworkErrorOnce,
     mockDeleteDatasetNetworkOnce,
     mockDeleteDatasetNetworkErrorOnce,
+    mockUpdateDatasetNetworkOnce,
+    mockUpdateDatasetNetworkErrorOnce,
     mockGetDatasetsNetworkOnce,
     mockGetDatasetsNetworkErrorOnce,
+    mockGetDatasetVersionNetworkOnce,
+    mockGetDatasetVersionNetworkErrorOnce,
+    mockGetDependenciesNetworkOnce,
+    mockGetDependenciesNetworkErrorOnce,
+    mockUpdateDatasetVersionNetworkOnce,
+    mockUpdateDatasetVersionNetworkErrorOnce,
+    mockGetDatasetVersionsNetworkOnce,
+    mockGetDatasetVersionsNetworkErrorOnce,
+    mockCreateDatasetVersionNetworkOnce,
+    mockCreateDatasetVersionNetworkErrorOnce,
+    mockGetSecurityCoverageDatasetVersionNetworkOnce,
+    mockGetSecurityCoverageDatasetVersionNetworkErrorOnce,
     mockGetRecipesNetworkOnce,
     mockGetRecipesNetworkErrorOnce,
     mockGetRecipeNetworkOnce,
@@ -1153,6 +1595,8 @@ export {
     mockUpdateRecipeNetworkErrorOnce,
     mockGetRecipeNotificationNetworkOnce,
     mockGetRecipeNotificationNetworkErrorOnce,
+    mockUpdateRecipeNotificationNetworkOnce,
+    mockUpdateRecipeNotificationNetworkErrorOnce,
     mockGetReplicatedDatasetNetworkOnce,
     mockGetReplicatedDatasetNetworkErrorOnce,
     mockUpdateReplicatedDatasetNetworkOnce,
@@ -1173,6 +1617,14 @@ export {
     mockUpdateScheduleNetworkErrorOnce,
     mockGetWaveFoldersNetworkOnce,
     mockGetWaveFoldersNetworkErrorOnce,
+    mockGetWaveTemplatesNetworkOnce,
+    mockGetWaveTemplatesNetworkErrorOnce,
+    mockGetWaveTemplateNetworkOnce,
+    mockGetWaveTemplateNetworkErrorOnce,
+    mockGetWaveTemplateConfigNetworkOnce,
+    mockGetWaveTemplateConfigNetworkErrorOnce,
+    mockGetWaveTemplateReleaseNotesNetworkOnce,
+    mockGetWaveTemplateReleaseNotesNetworkErrorOnce,
     mockGetXmdNetworkOnce,
     mockGetXmdNetworkErrorOnce,
     expireAsset,

@@ -1,25 +1,7 @@
 // from https://git.soma.salesforce.com/instrumentation/next-gen-client/blob/master/src/interfaces/IdleDetector.ts
+import type { IdleDetector, Activity, Schema } from 'o11y/dist/modules/o11y/client/interfaces';
 type IdleDetectedListener = (timestamp: number) => void;
-type DoneNotifier = () => void;
 type IsBusyChecker = () => boolean;
-
-interface TaskerSingle {
-    readonly isBusy: boolean;
-    done: DoneNotifier;
-}
-
-interface TaskerMulti {
-    readonly isBusy: boolean;
-    add: () => void;
-    done: DoneNotifier;
-}
-
-interface IdleDetector {
-    requestIdleDetectedCallback(callback: IdleDetectedListener): void;
-    declareNotifierTaskSingle(name: string): TaskerSingle;
-    declareNotifierTaskMulti(name: string, existingBusyCount?: number): TaskerMulti;
-    declarePollableTaskMulti(name: string, isBusyChecker: IsBusyChecker): void;
-}
 
 function requestIdleDetectedCallback(_callback: IdleDetectedListener) {}
 
@@ -53,21 +35,10 @@ export const idleDetector: IdleDetector = {
 type SchematizedDataValue = any;
 type SchematizedData = { [k: string]: SchematizedDataValue };
 
-interface Schema {
-    namespace: string;
-    name: string;
-    pbjsSchema: any; // INamespace
-}
-
-interface Activity {
-    stop(userSchemaOrText?: Schema | string, userData?: SchematizedData): void;
-    error(error: Error, userSchemaOrText?: Schema | string, userData?: SchematizedData): void;
-}
-
 function stop(_userSchemaOrText?: Schema | string, _userData?: SchematizedData) {}
 function error(_error: Error, _userSchemaOrText?: Schema | string, _userData?: SchematizedData) {}
 
-export const activity: Activity = {
+export const activity: Partial<Activity> = {
     stop,
     error,
 };
@@ -76,7 +47,7 @@ export const activity: Activity = {
 type MetricsTags = Record<string, number | string | boolean>;
 
 function startActivity(_name: string): Activity {
-    return activity;
+    return activity as Activity;
 }
 
 export const mockInstrumentation = {

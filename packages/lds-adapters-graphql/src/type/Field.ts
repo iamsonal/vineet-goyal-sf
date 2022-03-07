@@ -1,10 +1,7 @@
-import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
-import {
-    serialize as serializeArgument,
-    render as renderArguments,
-    SerializationOptions,
-} from './Argument';
-import { GraphQLVariables } from './Variable';
+import type { LuvioFieldNode } from '@luvio/graphql-parser';
+import type { SerializationOptions } from './Argument';
+import { serialize as serializeArgument, render as renderArguments } from './Argument';
+import type { GraphQLVariables } from './Variable';
 
 export function serialize(sel: LuvioFieldNode) {
     return serializeField(sel, { render: false });

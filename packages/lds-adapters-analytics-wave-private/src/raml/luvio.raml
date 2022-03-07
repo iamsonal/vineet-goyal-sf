@@ -1,0 +1,20 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'WAVE'
+(luvio.ttl): 2592000000
+
+types:
+  SoqlQueryResultRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 5000
+
+/wave:
+  /soql:
+    post:
+      (luvio.adapter):
+        name: executeSoqlQueryPost
+      (luvio.method): get

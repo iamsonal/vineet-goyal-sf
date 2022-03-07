@@ -1,6 +1,6 @@
-import { ResourceIngest, IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
+import type { ResourceIngest, IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
+import type { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import {
-    RecordRepresentation,
     validate,
     equals,
     dynamicNormalize as dynamicNormalize_RecordRepresentation,
@@ -10,11 +10,12 @@ import {
 import { ingest as ingest_RecordCollectionRepresentation } from '../generated/types/RecordCollectionRepresentation';
 import { keyBuilderFromType } from '../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
 import { createLink } from '../generated/types/type-utils';
-import { RecordFieldTrie, BLANK_RECORD_FIELDS_TRIE } from './records';
+import type { RecordFieldTrie } from './records';
+import { BLANK_RECORD_FIELDS_TRIE } from './records';
 import merge from '../helpers/RecordRepresentation/merge';
-import { RecordConflictMap } from '../helpers/RecordRepresentation/resolveConflict';
+import type { RecordConflictMap } from '../helpers/RecordRepresentation/resolveConflict';
 import { makeIngest as dynamicIngest_FieldValueRepresentation } from '../raml-artifacts/types/FieldValueRepresentation/ingest';
-import { FieldValueRepresentation } from '../generated/types/FieldValueRepresentation';
+import type { FieldValueRepresentation } from '../generated/types/FieldValueRepresentation';
 import { addFieldsToStoreLink } from '../helpers/RecordRepresentation/normalize';
 import { keyPrefix } from '../generated/adapters/adapter-utils';
 
@@ -103,16 +104,11 @@ export const createRecordIngest = (
 
         const key = keyBuilderFromType(input);
         let existingRecord = store.records[key];
-        // do not ingest locked records
-        if (existingRecord !== undefined && existingRecord.__type === 'locked') {
-            path.state.result.type = 'locked';
-            return createLink(key);
-        }
+
         const recordPath = {
             fullPath: key,
             parent: path.parent,
             propertyName: path.propertyName,
-            state: path.state,
         } as IngestPath;
 
         let incomingRecord = childNormalize(

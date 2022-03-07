@@ -1,4 +1,4 @@
-import { Luvio } from '@luvio/engine';
+import type { Luvio } from '@luvio/engine';
 import AdsBridge from './ads-bridge';
 
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';

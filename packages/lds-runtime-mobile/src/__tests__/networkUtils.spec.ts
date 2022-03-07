@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@luvio/engine';
+import { ResourceRequest, ResourceRequestContext } from '@luvio/engine';
 import { Response } from '@mobileplatform/nimbus-plugin-lds';
 
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from '../network/networkUtils';
@@ -10,6 +10,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo/123',
                 method: 'get',
+                priority: 'normal',
                 body: {},
                 headers: { 'Foo-Header': 'Bar' },
                 queryParams: { q1: 'q1Value', q2: 'q2Value' },
@@ -20,9 +21,53 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
                 body: '{}',
                 headers: { 'Foo-Header': 'Bar' },
                 path: '/base/uri/foo/123',
+                priority: 'normal',
+                queryParams: { q1: 'q1Value', q2: 'q2Value' },
+            });
+        });
+
+        it('properly builds the observability context', () => {
+            // Arrange
+            const resourceRequest: ResourceRequest = {
+                baseUri: '/base/uri',
+                basePath: '/foo/123',
+                method: 'get',
+                priority: 'normal',
+                body: {},
+                headers: { 'Foo-Header': 'Bar' },
+                queryParams: { q1: 'q1Value', q2: 'q2Value' },
+                urlParams: { id: '123' },
+            };
+
+            const resourceRequestContext: ResourceRequestContext = {
+                requestCorrelator: {
+                    observabilityContext: {
+                        rootId: 'app-priming',
+                        isRootActivitySampled: true,
+                        traceId: 'uuid-some-uuid',
+                    },
+                },
+            };
+
+            // Act
+            const result = buildNimbusNetworkPluginRequest(resourceRequest, resourceRequestContext);
+
+            // Assert
+            expect(result).toEqual({
+                method: 'GET',
+                observabilityContext: {
+                    rootId: 'app-priming',
+                    isRootActivitySampled: true,
+                    traceId: 'uuid-some-uuid',
+                },
+                body: '{}',
+                headers: { 'Foo-Header': 'Bar' },
+                path: '/base/uri/foo/123',
+                priority: 'normal',
                 queryParams: { q1: 'q1Value', q2: 'q2Value' },
             });
         });
@@ -32,6 +77,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'get',
+                priority: 'normal',
                 body: null,
                 headers: {},
                 queryParams: { qArray: ['test1', 'test2'] },
@@ -42,9 +88,11 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
                 body: null,
                 headers: {},
                 path: '/base/uri/foo',
+                priority: 'normal',
                 queryParams: { qArray: 'test1,test2' },
             });
         });
@@ -54,6 +102,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'get',
+                priority: 'normal',
                 body: null,
                 headers: {},
                 queryParams: { qObject: { test1: 1, test2: 2 } },
@@ -64,9 +113,11 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
                 body: null,
                 headers: {},
                 path: '/base/uri/foo',
+                priority: 'normal',
                 queryParams: { qObject: '{"test1":1,"test2":2}' },
             });
         });
@@ -76,6 +127,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'get',
+                priority: 'normal',
                 body: null,
                 headers: {},
                 queryParams: { qArray: ['test1', 'test2'], uValue: undefined },
@@ -86,8 +138,10 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'GET',
+                observabilityContext: null,
                 body: null,
                 headers: {},
+                priority: 'normal',
                 path: '/base/uri/foo',
                 queryParams: { qArray: 'test1,test2' },
             });
@@ -99,6 +153,7 @@ describe('networkUtils', () => {
                 baseUri: '/base/uri',
                 basePath: '/foo',
                 method: 'post',
+                priority: 'normal',
                 body,
                 headers: {},
                 queryParams: {},
@@ -109,9 +164,11 @@ describe('networkUtils', () => {
 
             expect(result).toEqual({
                 method: 'POST',
+                observabilityContext: null,
                 body: JSON.stringify(body),
                 headers: {},
                 path: '/base/uri/foo',
+                priority: 'normal',
                 queryParams: {},
             });
         });

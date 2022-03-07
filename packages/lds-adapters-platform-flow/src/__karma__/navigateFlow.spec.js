@@ -11,7 +11,6 @@ const MOCK_PREFIX = '__karma__/data/';
 describe('navigateFlow', () => {
     it('executes a flow action', async () => {
         const mockConfig = {
-            flowDevName: 'flow1',
             request: {
                 action: 'NEXT',
                 serializedState: 'ABC',
@@ -29,7 +28,6 @@ describe('navigateFlow', () => {
      */
     it('does not use cache', async () => {
         const mockConfig = {
-            flowDevName: 'flow12',
             request: {
                 action: 'NEXT',
                 serializedState: 'ABCD',
@@ -46,7 +44,6 @@ describe('navigateFlow', () => {
 
     it('errors out on flow not found', async () => {
         const mockConfig = {
-            flowDevName: 'flow2',
             request: {
                 action: 'NEXT',
                 serializedState: 'ABC',
@@ -70,7 +67,6 @@ describe('navigateFlow', () => {
 
     it('errors out on disconnect', async () => {
         const mockConfig = {
-            flowDevName: 'flow2',
             request: {
                 action: 'NEXT',
                 serializedState: 'ABC',
@@ -93,7 +89,6 @@ describe('navigateFlow', () => {
 
     it('ingests a response with null response property', async () => {
         const mockConfig = {
-            flowDevName: 'flow1',
             request: {
                 action: 'NEXT',
                 serializedState: 'ABC',
@@ -112,7 +107,6 @@ describe('navigateFlow', () => {
 
     describe('navigates a flow when isVisible on a field is not supplied or null', () => {
         const mockConfig = {
-            flowDevName: 'flow1',
             request: {
                 action: 'NEXT',
                 serializedState: 'ABC',

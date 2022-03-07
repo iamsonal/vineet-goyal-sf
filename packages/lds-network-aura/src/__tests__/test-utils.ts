@@ -20,3 +20,18 @@ export const ERROR_RESPONSE = {
         message: 'Invalid request',
     },
 };
+
+export function generateMockedRecordFields(
+    numberOfFields: number,
+    customFieldName?: string
+): Array<string> {
+    const fields: Array<string> = new Array();
+    const fieldName =
+        customFieldName !== undefined ? customFieldName.replace(/\s+/g, '') : 'CustomField';
+
+    for (let i = 0; i < numberOfFields; i++) {
+        fields.push(`${fieldName}${i}__c`);
+    }
+
+    return fields;
+}

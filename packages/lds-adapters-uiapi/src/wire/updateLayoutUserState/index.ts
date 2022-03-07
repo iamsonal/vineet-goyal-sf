@@ -1,21 +1,22 @@
 import { deepFreeze } from '../../util/deep-freeze';
-import { Snapshot, Luvio, FetchResponse, ResourceRequest } from '@luvio/engine';
-import { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
+import type { Snapshot, Luvio, FetchResponse, ResourceRequest } from '@luvio/engine';
+import type { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
+import { buildCachedSnapshot as cacheLookupGetLayoutUserState } from '../../raml-artifacts/adapters/getLayoutUserState/buildCachedSnapshot';
+import type { GetLayoutUserStateConfig as GetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserStateConfig';
+import { validateAdapterConfig as coerceGetLayoutUserStateConfigWithDefaults } from '../../raml-artifacts/adapters/getLayoutUserState/validateAdapterConfig';
+import { getLayoutUserState_ConfigPropertyNames } from '../../raml-artifacts/adapters/getLayoutUserState/getLayoutUserState_ConfigPropertyNames';
+import type { RecordLayoutUserStateRepresentation } from '../../generated/types/RecordLayoutUserStateRepresentation';
 import {
-    buildInMemorySnapshot as cacheLookupGetLayoutUserState,
-    GetLayoutUserStateConfigWithDefaults,
-    coerceConfigWithDefaults as coerceGetLayoutUserStateConfigWithDefaults,
-} from '../getLayoutUserState';
-import {
-    RecordLayoutUserStateRepresentation,
     keyBuilder,
     ingest,
+    getTypeCacheKeys,
+    keyBuilderFromType,
 } from '../../generated/types/RecordLayoutUserStateRepresentation';
 import patchUiApiLayoutUserStateByObjectApiName from '../../generated/resources/patchUiApiLayoutUserStateByObjectApiName';
 import { validate as validateRecordLayoutUserStateInput } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
 import { JSONParse, JSONStringify, ObjectKeys } from '../../util/language';
 import { isFulfilledSnapshot } from '../../util/snapshot';
-import { RecordLayoutSectionUserStateRepresentation } from '../../generated/types/RecordLayoutSectionUserStateRepresentation';
+import type { RecordLayoutSectionUserStateRepresentation } from '../../generated/types/RecordLayoutSectionUserStateRepresentation';
 
 // Hack method- this should be removed eventually when layoutUserState raml is fixed.
 function addAdditionalFieldsForNorming(
@@ -40,7 +41,11 @@ function updateLayoutUserState(
 ) {
     return luvio.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(updateRequest).then(
         (response) => {
-            return ingestAndBroadcast(luvio, key, config, response.body);
+            const { body } = response;
+            return luvio.handleSuccessResponse(
+                () => ingestAndBroadcast(luvio, key, config, body),
+                () => getTypeCacheKeys(body, () => keyBuilderFromType(body))
+            );
         },
         (err: FetchResponse<{ error: string }>) => {
             deepFreeze(err);
@@ -147,7 +152,10 @@ function coerceConfigWithDefaults(
     untrusted: unknown,
     layoutUserStateInput: unknown
 ): UpdateUserLayoutStateConfigWithDefaults {
-    const config = coerceGetLayoutUserStateConfigWithDefaults(untrusted);
+    const config = coerceGetLayoutUserStateConfigWithDefaults(
+        untrusted,
+        getLayoutUserState_ConfigPropertyNames
+    );
     if (config === null) {
         // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error(

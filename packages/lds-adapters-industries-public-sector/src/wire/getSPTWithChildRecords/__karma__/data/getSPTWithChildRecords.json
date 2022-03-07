@@ -1,0 +1,39 @@
+{
+    "id": "1stS70000004C93IAE",
+    "name": "Service plan template name",
+    "status": "SUCCESS",
+    "servicePlanTemplateGoals": [
+        {
+            "id": "1tgxx0000000001AAA",
+            "priority": "High",
+            "associatedGoalDefinition": {
+                "id": "",
+                "name": "",
+                "status": "",
+                "type": "Global"
+            },
+            "sptBenefitIdList": "1tgxx0000000002AAA,1tgxx0000000002AAA"
+        }
+    ],
+    "servicePlanTemplateBenefits": [
+        {
+            "id": "1tgxx0000000002AAA",
+            "priority": "Low",
+            "associatedBenefit": {
+                "id": "",
+                "name": "",
+                "enrollmentCount": 10,
+                "benefitFrequency": "",
+                "minimumAmount": 20,
+                "maximumAmount": 200,
+                "status": "",
+                "isActive": true,
+                "associatedGoalDefinition": {
+                    "id": "",
+                    "name": "",
+                    "status": ""
+                }
+            }
+        }
+    ]
+}

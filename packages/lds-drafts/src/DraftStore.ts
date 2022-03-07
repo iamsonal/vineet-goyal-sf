@@ -1,4 +1,4 @@
-import { DraftAction, DraftIdMappingEntry, QueueOperation } from './DraftQueue';
+import type { DraftAction, DraftIdMappingEntry, QueueOperation } from './DraftQueue';
 
 /**
  * Defines the store where drafts are persisted

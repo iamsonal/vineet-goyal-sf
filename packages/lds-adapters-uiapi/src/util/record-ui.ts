@@ -1,7 +1,7 @@
 import { ObjectKeys } from './language';
-import { RecordRepresentation } from '../generated/types/RecordRepresentation';
-import { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
-import { RecordUiRepresentation } from '../generated/types/RecordUiRepresentation';
+import type { RecordRepresentation } from '../generated/types/RecordRepresentation';
+import type { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
+import type { RecordUiRepresentation } from '../generated/types/RecordUiRepresentation';
 import { getNameField } from './layouts';
 
 function getMissingRecordLookupFields(

@@ -1,13 +1,15 @@
 /**
  * @jest-environment jsdom
+ *
+ * Note: Aura code is only running in browser
  */
-
-import { Adapter } from '@luvio/engine';
 import timekeeper from 'timekeeper';
 
+import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
+import { Adapter, AdapterRequestContext, FetchResponse, HttpStatusCode } from '@luvio/engine';
+
 import {
-    incrementCounterMetric,
-    updatePercentileHistogramMetric,
+    incrementRequestResponseCount,
     log,
     AdapterUnfulfilledError,
     Instrumentation,
@@ -18,10 +20,9 @@ import {
     SUPPORTED_KEY,
     UNSUPPORTED_KEY,
 } from '../main';
-import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
 
-import { LRUCache } from '@salesforce/lds-instrumentation';
+import * as ldsInstrumentation from '@salesforce/lds-instrumentation';
 
 jest.mock('instrumentation/service', () => {
     const spies = {
@@ -91,7 +92,7 @@ beforeEach(() => {
     instrumentationServiceSpies.cacheStatsLogMissesSpy.mockClear();
     instrumentationServiceSpies.counterIncrementSpy.mockClear();
     instrumentationServiceSpies.counterDecrementSpy.mockClear();
-    (instrumentation as any).adapterCacheMisses = new LRUCache(250);
+    (instrumentation as any).adapterCacheMisses = new ldsInstrumentation.LRUCache(250);
     (instrumentation as any).resetRefreshStats();
 });
 
@@ -120,6 +121,33 @@ const baseCacheHitCounterIncrement = 2;
 const baseCacheMissCounterIncrement = 2;
 const GET_RECORD_TTL = 30000;
 
+describe('incrementRequestResponseCount', () => {
+    const mockFetchResponse200: FetchResponse<unknown> = {
+        status: HttpStatusCode.Ok,
+        body: {},
+        statusText: 'OK',
+        ok: true,
+        headers: undefined,
+    };
+    const mockFetchResponse400: FetchResponse<unknown> = {
+        status: HttpStatusCode.BadRequest,
+        body: {},
+        statusText: 'Bad Request',
+        ok: false,
+        headers: undefined,
+    };
+    it('should bucket counters based on status code', () => {
+        incrementRequestResponseCount(() => mockFetchResponse200);
+        incrementRequestResponseCount(() => mockFetchResponse400);
+        expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(2);
+        const expectedMetricCalls = [
+            { owner: 'LIGHTNING.lds.service', name: 'network-response.200' },
+            { owner: 'LIGHTNING.lds.service', name: 'network-response.400' },
+        ];
+        testMetricInvocations(instrumentationServiceSpies.counterIncrementSpy, expectedMetricCalls);
+    });
+});
+
 describe('instrumentation', () => {
     describe('log lines', () => {
         const interaction: LightningInteractionSchema = {
@@ -140,24 +168,44 @@ describe('instrumentation', () => {
         });
     });
 
-    describe('incrementCounterMetric', () => {
-        it('should increment `foo` counter by 1, when value not specified', () => {
-            incrementCounterMetric('foo');
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(1);
+    describe('notifyChangeNetwork', () => {
+        const NETWORK_TRANSACTION_NAME = 'lds-network';
+        const NOTIFY_CHANGE_NETWORK = 'notify-change-network';
+        it('calls perfEnd with a boolean to reflect if weakEtags are unique', () => {
+            instrumentation.notifyChangeNetwork(true);
+            expect(instrumentationServiceSpies.perfStart).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledWith(NETWORK_TRANSACTION_NAME, {
+                [NOTIFY_CHANGE_NETWORK]: true,
+            });
         });
-        it('should increment `foo` counter by 100', () => {
-            incrementCounterMetric('foo', 100);
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(100);
+        it('calls perfEnd with "error" if there was an error', () => {
+            instrumentation.notifyChangeNetwork(true, true);
+            expect(instrumentationServiceSpies.perfStart).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toBeCalledWith(NETWORK_TRANSACTION_NAME, {
+                [NOTIFY_CHANGE_NETWORK]: 'error',
+            });
         });
     });
 
-    describe('updatePercentileHistogramMetric', () => {
-        it('should increment `foo` counter by 1, when value not specified', () => {
-            updatePercentileHistogramMetric('foo', 10);
-            expect(instrumentationServiceSpies.percentileUpdateSpy).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.percentileUpdateSpy).toHaveBeenCalledWith(10);
+    describe('incrementRecordApiNameChangeCounter', () => {
+        const DUMMY_API_NAME = 'dummyApiName';
+        const testApiName = 'foo';
+        it('creates a new counter and increments it by 1', () => {
+            instrumentation.incrementRecordApiNameChangeCount(DUMMY_API_NAME, testApiName);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(1);
+            testMetricInvocations(instrumentationServiceSpies.counterIncrementSpy, [
+                { owner: 'lds', name: `record-api-name-change-count.${testApiName}` },
+            ]);
+        });
+        it('finds the existing counter in the map and increments it by 1', () => {
+            instrumentation.incrementRecordApiNameChangeCount(DUMMY_API_NAME, testApiName);
+            instrumentation.incrementRecordApiNameChangeCount(DUMMY_API_NAME, testApiName);
+            testMetricInvocations(instrumentationServiceSpies.counterIncrementSpy, [
+                { owner: 'lds', name: `record-api-name-change-count.${testApiName}` },
+                { owner: 'lds', name: `record-api-name-change-count.${testApiName}` },
+            ]);
         });
     });
 
@@ -428,6 +476,35 @@ describe('instrumentation', () => {
             );
             expect((instrumentation as any).adapterCacheMisses.size).toEqual(0);
         });
+
+        it('sends request context to the adapter', async () => {
+            const mockAdapter = jest.fn();
+            mockAdapter.mockResolvedValue({});
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            const requestContext: AdapterRequestContext = {
+                cachePolicy: {
+                    type: 'no-cache',
+                },
+            };
+            const config: any = {};
+            await instrumentedAdapter(config, requestContext);
+            expect(mockAdapter).toHaveBeenCalledWith(config, requestContext);
+        });
+
+        it('does not send request context to the adapter', async () => {
+            const mockAdapter = jest.fn();
+            mockAdapter.mockResolvedValue({});
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+            const config: any = {};
+            await instrumentedAdapter(config);
+            expect(mockAdapter).toHaveBeenCalledWith(config, undefined);
+        });
     });
 
     describe('weakETagZero', () => {
@@ -525,6 +602,7 @@ describe('instrumentation', () => {
 
     describe('Observability metrics', () => {
         it('incrementAdapterRequestErrorCount called through instrumentLuvio function', () => {
+            const o11yInstrumentLuvioSpy = jest.spyOn(ldsInstrumentation, 'instrumentLuvio');
             const context: AdapterUnfulfilledError = {
                 [ADAPTER_UNFULFILLED_ERROR]: true,
                 adapterName: 'fooAdapter',
@@ -532,6 +610,7 @@ describe('instrumentation', () => {
                 missingLinks: undefined,
             };
             instrumentation.instrumentLuvio(context);
+            expect(o11yInstrumentLuvioSpy).toBeCalled();
             expect(instrumentationSpies.incrementAdapterRequestErrorCount).toBeCalled();
         });
         it('should instrument error when UnfulfilledSnapshot is returned to the adapter', () => {
@@ -724,5 +803,3 @@ describe('instrumentation', () => {
         });
     });
 });
-
-describe('setupInstrumentation', () => {});

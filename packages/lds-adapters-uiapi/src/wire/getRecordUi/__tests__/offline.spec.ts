@@ -6,7 +6,7 @@ import {
     MockDurableStore,
     getMockNetworkAdapterCallCount,
 } from '@luvio/adapter-test-library';
-import { DefaultDurableSegment, makeDurable, makeOffline } from '@luvio/environments';
+import { DefaultDurableSegment, makeDurable } from '@luvio/environments';
 
 import { factory as getRecordUiAdapterFactory } from '../index';
 import { isFulfilledSnapshot } from '../../../util/snapshot';
@@ -55,7 +55,7 @@ function buildLds(ds?: MockDurableStore) {
         multiRecordPayload_Account,
     ]);
     const store = new Store();
-    const env = makeDurable(makeOffline(new Environment(store, network)), {
+    const env = makeDurable(new Environment(store, network), {
         durableStore,
     });
     const luvio = new Luvio(env);
@@ -95,10 +95,9 @@ describe('getRecordUi adapter offline', () => {
     describe('singleRecordResponse', () => {
         it('selector gets stored in durable store', async () => {
             const { durableStore } = await populateDurableStore([single_recordId]);
-            const selector =
-                durableStore.segments[DefaultDurableSegment][
-                    `UiApi::RecordUiRepresentation:${single_recordId}:Full:View:__selector`
-                ];
+            const selector = (await durableStore.persistence.get(DefaultDurableSegment))[
+                `UiApi::RecordUiRepresentation:${single_recordId}:Full:View:__selector`
+            ];
             expect(selector).toBeDefined();
         });
 
@@ -125,10 +124,9 @@ describe('getRecordUi adapter offline', () => {
                 recordId_Account1,
                 recordId_Account2,
             ]);
-            const selector =
-                durableStore.segments[DefaultDurableSegment][
-                    `UiApi::RecordUiRepresentation:${sortedRecordIdCSV}:Full:View:__selector`
-                ];
+            const selector = (await durableStore.persistence.get(DefaultDurableSegment))[
+                `UiApi::RecordUiRepresentation:${sortedRecordIdCSV}:Full:View:__selector`
+            ];
             expect(selector).toBeDefined();
         });
 

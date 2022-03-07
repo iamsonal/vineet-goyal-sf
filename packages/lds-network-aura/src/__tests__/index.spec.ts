@@ -1,4 +1,4 @@
-import { ResourceRequest, HttpStatusCode } from '@luvio/engine';
+import { ResourceRequest } from '@luvio/engine';
 import * as aura from 'aura';
 import auraStorage from 'aura-storage';
 import { AuraFetchResponse } from '../AuraFetchResponse';
@@ -8,8 +8,8 @@ import {
     COMMERCE_BASE_URI,
     CONNECT_BASE_URI,
     GUIDANCE_BASE_URI,
+    LEARNING_CONTENT_PLATFORM_BASE_URI,
     WAVE_BASE_URI,
-    ADATS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     CMS_BASE_URI,
     BILLING_BASE_URI,
@@ -17,11 +17,16 @@ import {
     EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
     CIB_BASE_URI,
+    ADATS_SYNC_BASE_URI,
+    ADATS_CATALOG_BASE_URI,
+    IDENTITY_VERIFICATION_BASE_URI,
+    CLM_BASE_URI,
+    SMART_DATA_DISCOVERY_BASE_URI,
+    ASSETCREATION_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
 import { default as appRouter, Route } from '../router';
-import { buildGetRecordByFieldsCompositeRequest } from '../middlewares/execute-aggregate-ui';
 import { buildResourceRequest } from './test-utils';
 
 jest.mock('@salesforce/lds-instrumentation', () => {
@@ -75,7 +80,6 @@ function testControllerInput(
         const fn = jest
             .spyOn(aura, 'executeGlobalController')
             .mockResolvedValueOnce(expectedResponseBody ? expectedResponseBody : {});
-
         await networkAdapter(buildResourceRequest(request));
 
         expect(fn).toHaveBeenCalledWith(...expectedParams);
@@ -158,21 +162,6 @@ function testStorage(storageName: string, request: Partial<ResourceRequest>) {
     });
 }
 
-function generateMockedRecordFields(
-    numberOfFields: number,
-    customFieldName?: string
-): Array<string> {
-    const fields: Array<string> = new Array();
-    const fieldName =
-        customFieldName !== undefined ? customFieldName.replace(/\s+/g, '') : 'CustomField';
-
-    for (let i = 0; i < numberOfFields; i++) {
-        fields.push(`${fieldName}${i}__c`);
-    }
-
-    return fields;
-}
-
 describe('network adapter', () => {
     it('throws an error if no matching invoker is found', () => {
         const unknownRequest = buildResourceRequest({ method: 'get', basePath: '/test' });
@@ -219,6 +208,49 @@ describe('routes', () => {
 
     afterAll(() => {
         appRouter.lookup = original;
+    });
+
+    describe('post /aggregate-ui', () => {
+        const body = {
+            input: {
+                compositeRequest: [
+                    {
+                        url: '/services/data/v55.0/ui-api/records/1234?fields=CustomField0__c',
+                        referenceId: 'LDS_Records_AggregateUi_fields',
+                    },
+                ],
+            },
+        };
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: UI_API_BASE_URI,
+                basePath: '/aggregate-ui',
+                body,
+            },
+            [
+                'RecordUiController.executeAggregateUi',
+                body,
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: UI_API_BASE_URI,
+            basePath: '/aggregate-ui',
+            body,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: UI_API_BASE_URI,
+                basePath: '/aggregate-ui',
+                body,
+            },
+            {
+                body,
+            }
+        );
     });
 
     describe('get /object-info/{apiName}', () => {
@@ -469,57 +501,6 @@ describe('routes', () => {
                     },
                     { background: false, hotspot: true, longRunning: false },
                 ]
-            );
-        });
-
-        describe('with a large amount of fields', () => {
-            let generatedFields = generateMockedRecordFields(2000, 'ExtremelyLongTestFieldName');
-            let responseBody = {
-                compositeResponse: [
-                    {
-                        body: {},
-                        httpStatusCode: HttpStatusCode.Ok,
-                    },
-                ],
-            };
-            let resourceRequest: ResourceRequest = {
-                body: null,
-                method: 'get',
-                baseUri: UI_API_BASE_URI,
-                basePath: `/records/1234`,
-                headers: null,
-                ingest: null,
-                urlParams: {
-                    recordId: '1234',
-                },
-                queryParams: {
-                    fields: generatedFields,
-                },
-            };
-
-            let expectedRequestPayload = buildGetRecordByFieldsCompositeRequest(
-                '1234',
-                resourceRequest,
-                {
-                    fieldsArray: generatedFields,
-                    optionalFieldsArray: [],
-                    fieldsLength: generatedFields.join(',').length,
-                    optionalFieldsLength: 0,
-                }
-            );
-
-            testControllerInput(
-                resourceRequest,
-                [
-                    'RecordUiController.executeAggregateUi',
-                    {
-                        input: {
-                            compositeRequest: expectedRequestPayload,
-                        },
-                    },
-                    { background: false, hotspot: true, longRunning: false },
-                ],
-                responseBody
             );
         });
 
@@ -1684,7 +1665,7 @@ describe('routes', () => {
                 },
                 defaultValue: null,
                 eTag: 'a4587e5dc7cc5157e1f07e3cc9ed94e5',
-                url: '/services/data/v54.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
+                url: '/services/data/v55.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
                 values: [
                     {
                         attributes: null,
@@ -2423,6 +2404,29 @@ describe('routes', () => {
         );
     });
 
+    describe('get /omnistudio/decision-tables/{id}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables/00xx1234abcd123`,
+            },
+            [
+                'InteractionCalculationProceduresController.getDecisionTableDetails',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables/123`,
+            },
+            {}
+        );
+    });
+
     describe('patch /omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}', () => {
         testControllerInput(
             {
@@ -2532,6 +2536,29 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: CONNECT_BASE_URI,
                 basePath: `/omnistudio/evaluation-services/version-definitions/123`,
+            },
+            {}
+        );
+    });
+
+    describe('get /socialcare/case-service-plans/{caseServicePlanId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans/12345678912345678`,
+            },
+            [
+                'PublicSectorFamilyController.getCaseServicePlan',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans/12345678912345678`,
             },
             {}
         );
@@ -2710,6 +2737,354 @@ describe('routes', () => {
         );
     });
 
+    describe('get /omnistudio/decision-tables', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables`,
+            },
+            [
+                'InteractionCalculationProceduresController.searchDecisionTableByName',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/omnistudio/decision-tables`,
+                    queryParams: {
+                        searchKey: 'DT1',
+                    },
+                },
+                [
+                    'InteractionCalculationProceduresController.searchDecisionTableByName',
+                    {
+                        searchKey: 'DT1',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-tables`,
+            },
+            {}
+        );
+    });
+
+    describe('get /socialcare/goal-definitions', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/goal-definitions`,
+            },
+            [
+                'PublicSectorFamilyController.searchGoalDefinitionByName',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/socialcare/goal-definitions`,
+                    queryParams: {
+                        searchKey: 'Goal1',
+                    },
+                },
+                [
+                    'PublicSectorFamilyController.searchGoalDefinitionByName',
+                    {
+                        searchKey: 'Goal1',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/goal-definitions`,
+            },
+            {}
+        );
+    });
+
+    describe('get /socialcare/benefits', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/benefits`,
+            },
+            [
+                'PublicSectorFamilyController.getActiveBenefitsByNameSearch',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/socialcare/benefits`,
+                    queryParams: {
+                        searchKey: 'bene',
+                        offset: 0,
+                    },
+                },
+                [
+                    'PublicSectorFamilyController.getActiveBenefitsByNameSearch',
+                    {
+                        searchKey: 'bene',
+                        offset: 0,
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/benefits`,
+            },
+            {}
+        );
+    });
+
+    describe('get /socialcare/serviceplan-templates/{servicePlanTemplateId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE`,
+                urlParams: {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                },
+            },
+            [
+                'PublicSectorFamilyController.getSPTWithChildRecords',
+                {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE`,
+            },
+            {}
+        );
+    });
+
+    describe('post /socialcare/serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE/actions/associate`,
+                urlParams: {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                    actionType: 'associate',
+                },
+                body: {
+                    servicePlanTemplateRecord: {
+                        servicePlanTemplateGoals: {
+                            records: [
+                                {
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        servicePlanTemplateBenefits: {
+                            records: [
+                                {
+                                    benefitId: '0jiS70000000001IAA',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+            [
+                'PublicSectorFamilyController.associateSPTChildRecords',
+                {
+                    servicePlanTemplateId: '1stS70000004C93IAE',
+                    actionType: 'associate',
+                    servicePlanTemplateRecord: {
+                        servicePlanTemplateGoals: {
+                            records: [
+                                {
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        servicePlanTemplateBenefits: {
+                            records: [
+                                {
+                                    benefitId: '0jiS70000000001IAA',
+                                },
+                            ],
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                id: '1stS70000004C93IAE',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE/actions/associate`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/serviceplan-templates/1stS70000004C93IAE/actions/associate`,
+            },
+            {
+                versionId: '1stS70000004C93IAE',
+            }
+        );
+    });
+
+    describe('post /socialcare/case-service-plans', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans`,
+                urlParams: {},
+                body: {
+                    caseServicePlan: {
+                        publicServiceGoals: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    targetCompletionDate: '2023-02-03',
+                                    completionPercentage: 20.0,
+                                    status: 'In-progress',
+                                    goalAssigneeId: '0jiS70000000001IAA',
+                                    goalType: 'Individual',
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        enrolleeBenefits: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    endDate: '2023-02-03',
+                                    benefitFrequency: 'monthly',
+                                    enrollmentCount: 2,
+                                    minimumAmount: 5000.0,
+                                    maximumAmount: 10000.0,
+                                    participantId: '0jiS70000000001IAA',
+                                    benefitId: '0jiS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        status: 'active',
+                        description: 'description',
+                        startDate: '2022-02-03',
+                        endDate: '2023-02-03',
+                        caseId: '0jiS70000000001IAA',
+                        servicePlanTemplateId: '1stS70000004C93IAE',
+                    },
+                },
+            },
+            [
+                'PublicSectorFamilyController.createOrUpdateCaseServicePlan',
+                {
+                    caseServicePlan: {
+                        publicServiceGoals: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    targetCompletionDate: '2023-02-03',
+                                    completionPercentage: 20.0,
+                                    status: 'In-progress',
+                                    goalAssigneeId: '0jiS70000000001IAA',
+                                    goalType: 'Individual',
+                                    goalDefinitionId: '1gdS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        enrolleeBenefits: {
+                            records: [
+                                {
+                                    startDate: '2022-02-03',
+                                    endDate: '2023-02-03',
+                                    benefitFrequency: 'monthly',
+                                    enrollmentCount: 2,
+                                    minimumAmount: 5000.0,
+                                    maximumAmount: 10000.0,
+                                    participantId: '0jiS70000000001IAA',
+                                    benefitId: '0jiS70000000001IAA',
+                                    priority: 'High',
+                                },
+                            ],
+                        },
+                        status: 'active',
+                        description: 'description',
+                        startDate: '2022-02-03',
+                        endDate: '2023-02-03',
+                        caseId: '0jiS70000000001IAA',
+                        servicePlanTemplateId: '1stS70000004C93IAE',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                id: '1spS70000004C93IAE',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/socialcare/case-service-plans`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/socialcare/case-service-plans`,
+            },
+            {
+                id: '1spS70000004C93IAE',
+            }
+        );
+    });
+
     describe('get /action-logs', () => {
         testControllerInput(
             {
@@ -2759,11 +3134,12 @@ describe('routes', () => {
                         actionLogDate: '2021-10-04T10:54:56.787Z',
                         name: 'ExpressionSet01',
                         specificationName: 'ExpressionSet01',
+                        actionLogOwnerId: '005T00000004MUHIA2',
                     },
                 },
             },
             [
-                'ExplainabilityServiceController.postExplainabilityActionLog',
+                'ExplainabilityServiceController.storeExplainabilityActionLog',
                 {
                     explainabilityActionLogDefinitionx: {
                         actionContextCode: '012T00000004MUHIA2',
@@ -2772,6 +3148,7 @@ describe('routes', () => {
                         actionLogDate: '2021-10-04T10:54:56.787Z',
                         name: 'ExpressionSet01',
                         specificationName: 'ExpressionSet01',
+                        actionLogOwnerId: '005T00000004MUHIA2',
                     },
                 },
                 { background: false, hotspot: true, longRunning: false },
@@ -2890,6 +3267,274 @@ describe('routes', () => {
                 basePath: `/loyalty/programs/Prog1/processes/Process1/rule/Rule1`,
             },
             {}
+        );
+    });
+
+    describe('put /record-locking/lock/{recordId}', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/lock/012T00000004MUHIA2`,
+                urlParams: {
+                    recordId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.lockRecord',
+                {
+                    recordId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/lock/012T00000004MUHIA2`,
+            },
+            {
+                code: 1,
+                message: 'lock called successfully',
+            }
+        );
+    });
+
+    describe('put /record-locking/unlock/{recordId}', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/unlock/012T00000004MUHIA2`,
+                urlParams: {
+                    recordId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.unlockRecord',
+                {
+                    recordId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/record-locking/unlock/012T00000004MUHIA2`,
+            },
+            {
+                code: 1,
+                message: 'unlock called successfully',
+            }
+        );
+    });
+
+    describe('post /reference-data/{category}/upload', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/reference-data/ABCDE/upload`,
+                urlParams: {
+                    category: 'ABCDE',
+                },
+                queryParams: {
+                    recordTypeId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.uploadReferenceData',
+                {
+                    category: 'ABCDE',
+                    recordTypeId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/reference-data/ABCDE/upload`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
+    describe('post /bei/recalculate/{recordId}', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/bei/recalculate/0o3xx0000000001AAA`,
+                urlParams: {
+                    recordId: '0o3xx0000000001AAA',
+                },
+            },
+            [
+                'SustainabilityFamilyController.performBuildingEnergyIntensityCalculation',
+                {
+                    recordId: '0o3xx0000000001AAA',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/bei/recalculate/0o3xx0000000001AAA`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
+    describe('get /consumer-goods/tenant-registration', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            [
+                'RCGTenantManagementController.getTenantRegistrationStatus',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            {
+                isCertAvailable: true,
+                state: 'registerd',
+            }
+        );
+    });
+
+    describe('post /dgf/compute-datagap-fillers', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/compute-datagap-fillers`,
+            },
+            [
+                'SustainabilityFamilyController.computeDataGapFillers',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/compute-datagap-fillers`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
+
+    describe('post /dgf/identify-date-issues', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/identify-date-issues`,
+            },
+            [
+                'SustainabilityFamilyController.identifyDateIssues',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/dgf/identify-date-issues`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
+        );
+    });
+    describe('put /consumer-goods/tenant-registration', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            [
+                'RCGTenantManagementController.updateTenantCertificate',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/consumer-goods/tenant-registration`,
+            },
+            {
+                certificateUpdateStatus: 'success',
+            }
+        );
+    });
+
+    describe('post /footprint-calculation/recalculate/', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/footprint-calculation/recalculate/`,
+                urlParams: {
+                    recordId: '012T00000004MUHIA2',
+                },
+            },
+            [
+                'SustainabilityFamilyController.performSustainabilityFootprintCalculationOnRecord',
+                {
+                    recordId: '012T00000004MUHIA2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sustainability/footprint-calculation/recalculate/`,
+            },
+            {
+                code: 1,
+                message: 'called successfully',
+            }
         );
     });
 
@@ -3100,17 +3745,17 @@ describe('routes', () => {
         );
     });
 
-    describe('post /related-list-records/{parentRecordId}/{relatedListId}', () => {
+    describe('get /related-list-records/{parentRecordId}/{relatedListId}', () => {
         testControllerInput(
             {
-                method: 'post',
+                method: 'get',
                 baseUri: UI_API_BASE_URI,
                 basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
                 urlParams: {
                     parentRecordId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
                 },
-                body: {
+                queryParams: {
                     fields: ['Id'],
                     optionalFields: ['Name'],
                     pageSize: 50,
@@ -3119,24 +3764,22 @@ describe('routes', () => {
                 },
             },
             [
-                'RelatedListUiController.postRelatedListRecords',
+                'RelatedListUiController.getRelatedListRecords',
                 {
                     parentRecordId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
-                    listRecordsQuery: {
-                        fields: ['Id'],
-                        optionalFields: ['Name'],
-                        pageSize: 50,
-                        pageToken: 0,
-                        sortBy: ['Id'],
-                    },
+                    fields: ['Id'],
+                    optionalFields: ['Name'],
+                    pageSize: 50,
+                    pageToken: 0,
+                    sortBy: ['Id'],
                 },
                 undefined,
             ]
         );
 
         testRejectFetchResponse({
-            method: 'post',
+            method: 'get',
             baseUri: UI_API_BASE_URI,
             basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
             urlParams: {
@@ -3146,44 +3789,67 @@ describe('routes', () => {
         });
     });
 
-    describe('get /related-list-records/batch/{parentRecordId}/{relatedListIds}', () => {
+    describe('post /related-list-records/batch/{parentRecordId}', () => {
         testControllerInput(
             {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
-                basePath: `/related-list-records/batch/{parentRecordId}/{relatedListIds}`,
+                basePath: `/related-list-records/batch/{parentRecordId}`,
                 urlParams: {
                     parentRecordId: '012T00000004MUHIA2',
-                    relatedListIds: ['Contact__r', 'Opportunity__r'],
                 },
-                queryParams: {
-                    fields: 'Contact__r:Name,Id;Opportunity__r:Name',
-                    optionalFields: 'Contact__r:Account.Name;Opportunity__r:Account.Name',
-                    pageSize: 'Contact__r:5;Opportunity__r:7',
-                    sortBy: 'Contact__r:Name,Id;Opportunity__r:Name',
+                body: {
+                    relatedListParameters: [
+                        {
+                            relatedListId: 'Contact__r',
+                            fields: ['Account.Name'],
+                            optionalFields: ['Account.Name'],
+                            pageSize: 5,
+                            sortBy: ['Name', 'Id'],
+                        },
+                        {
+                            relatedListId: 'Opportunity__r',
+                            fields: ['Account.Name'],
+                            optionalFields: ['Account.Name'],
+                            pageSize: 7,
+                            sortBy: ['Name'],
+                        },
+                    ],
                 },
             },
             [
-                'RelatedListUiController.getRelatedListRecordsBatch',
+                'RelatedListUiController.postRelatedListRecordsBatch',
                 {
                     parentRecordId: '012T00000004MUHIA2',
-                    relatedListIds: ['Contact__r', 'Opportunity__r'],
-                    fields: 'Contact__r:Name,Id;Opportunity__r:Name',
-                    optionalFields: 'Contact__r:Account.Name;Opportunity__r:Account.Name',
-                    pageSize: 'Contact__r:5;Opportunity__r:7',
-                    sortBy: 'Contact__r:Name,Id;Opportunity__r:Name',
+                    listRecordsQuery: {
+                        relatedListParameters: [
+                            {
+                                relatedListId: 'Contact__r',
+                                fields: ['Account.Name'],
+                                optionalFields: ['Account.Name'],
+                                pageSize: 5,
+                                sortBy: ['Name', 'Id'],
+                            },
+                            {
+                                relatedListId: 'Opportunity__r',
+                                fields: ['Account.Name'],
+                                optionalFields: ['Account.Name'],
+                                pageSize: 7,
+                                sortBy: ['Name'],
+                            },
+                        ],
+                    },
                 },
                 undefined,
             ]
         );
 
         testRejectFetchResponse({
-            method: 'get',
+            method: 'post',
             baseUri: UI_API_BASE_URI,
-            basePath: `/related-list-records/batch/{parentRecordId}/{relatedListIds}`,
+            basePath: `/related-list-records/batch/{parentRecordId}`,
             urlParams: {
                 parentObjectId: '012T00000004MUHIA2',
-                relatedListIds: 'Contact__r',
             },
         });
     });
@@ -3334,6 +4000,213 @@ describe('routes', () => {
             }
         );
     });
+
+    describe('get /related-list-preferences/{preferencesId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+            },
+            [
+                'RelatedListUiController.getRelatedListPreferences',
+                {
+                    preferencesId: 'Random',
+                },
+                undefined,
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-preferences/Random`,
+            urlParams: {
+                preferencesId: 'Random',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+            },
+            null
+        );
+    });
+
+    describe('patch /related-list-preferences/{preferencesId}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+                body: {
+                    columnWidths: {
+                        testSetPreferences_agfgq: 17,
+                    },
+                    columnWrap: {
+                        testSetPreferences_agfgq: false,
+                    },
+                    orderedBy: [
+                        {
+                            fieldApiName: 'testSetPreferences_agfgq',
+                            isAscending: false,
+                            label: 'some label',
+                        },
+                    ],
+                },
+            },
+            [
+                'RelatedListUiController.updateRelatedListPreferences',
+                {
+                    preferencesId: 'Random',
+                    relatedListUserPreferencesInput: {
+                        columnWidths: {
+                            testSetPreferences_agfgq: 17,
+                        },
+                        columnWrap: {
+                            testSetPreferences_agfgq: false,
+                        },
+                        orderedBy: [
+                            {
+                                fieldApiName: 'testSetPreferences_agfgq',
+                                isAscending: false,
+                                label: 'some label',
+                            },
+                        ],
+                    },
+                },
+                undefined,
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'patch',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-preferences/Rnadom`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/Random`,
+                urlParams: {
+                    preferencesId: 'Random',
+                },
+                body: {
+                    columnWidths: {
+                        testSetPreferences_agfgq: 17,
+                    },
+                    columnWrap: {
+                        testSetPreferences_agfgq: false,
+                    },
+                    orderedBy: [
+                        {
+                            fieldApiName: 'testSetPreferences_agfgq',
+                            isAscending: false,
+                            label: 'some label',
+                        },
+                    ],
+                },
+            },
+            null
+        );
+    });
+
+    describe('get /related-list-preferences/batch/{preferencesIds}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/batch/Random,Random2`,
+                urlParams: {
+                    preferencesIds: ['Random', 'Random2'],
+                },
+            },
+            [
+                'RelatedListUiController.getRelatedListPreferencesBatch',
+                {
+                    preferencesIds: ['Random', 'Random2'],
+                },
+                undefined,
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-preferences/batch/Random,Random2`,
+            urlParams: {
+                preferencesIds: ['Random', 'Random2'],
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-preferences/batch/Random,Random2`,
+                urlParams: {
+                    preferencesIds: ['Random', 'Random2'],
+                },
+            },
+            {
+                results: [
+                    {
+                        result: {
+                            columnWidths: {
+                                column1_random: 17,
+                            },
+                            columnWrap: {
+                                column1_random: false,
+                            },
+                            orderedBy: [
+                                {
+                                    fieldApiName: 'column1_random',
+                                    isAscending: false,
+                                    label: 'column1 random',
+                                },
+                            ],
+                            preferencesId: 'Random',
+                        },
+                        statusCode: 200,
+                    },
+                    {
+                        result: {
+                            columnWidths: {
+                                column1_random2: 17,
+                            },
+                            columnWrap: {
+                                column1_random2: false,
+                            },
+                            orderedBy: [
+                                {
+                                    fieldApiName: 'column1_random2',
+                                    isAscending: false,
+                                    label: 'column1 random',
+                                },
+                            ],
+                            preferencesId: 'Random2',
+                        },
+                        statusCode: 200,
+                    },
+                ],
+            }
+        );
+    });
+
     describe('get /list-records/{objectApiName}/{listViewApiName}', () => {
         testControllerInput(
             {
@@ -3755,6 +4628,46 @@ describe('routes', () => {
                     ],
                 },
             }
+        );
+    });
+
+    describe('get /list-info/batch?names={objectApiName}.{listViewApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-info/batch`,
+                queryParams: {
+                    names: ['Account.__SearchResult'],
+                },
+            },
+            [
+                'ListUiController.getListInfosByName',
+                {
+                    names: ['Account.__SearchResult'],
+                },
+                undefined,
+            ]
+        );
+    });
+
+    describe('get /list-info/batch?names={objectApiName}.{listViewApiName},{objectApiName}.{listViewApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-info/batch`,
+                queryParams: {
+                    names: ['Account.AllAccounts', 'Contact.__SearchResult'],
+                },
+            },
+            [
+                'ListUiController.getListInfosByName',
+                {
+                    names: ['Account.AllAccounts', 'Contact.__SearchResult'],
+                },
+                undefined,
+            ]
         );
     });
 
@@ -4330,11 +5243,11 @@ describe('routes', () => {
         );
     });
 
-    describe('get /assistant/{id}', () => {
+    describe('get /{assistantName}', () => {
         testControllerInput(
             {
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
             },
             [
                 'LightningExperienceAssistantPlatformController.getAssistant',
@@ -4346,18 +5259,18 @@ describe('routes', () => {
         testResolveResponse(
             {
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}', () => {
+    describe('patch /{assistantName}', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
                 body: { assistantData: { data: 'data' } },
             },
             [
@@ -4373,21 +5286,21 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE`,
+                basePath: `/1234567890ABCDE`,
             },
             {}
         );
     });
 
-    describe('get /assistant/{id}/questionnaires', () => {
+    describe('get /{assistantName}/questionnaires', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaires`,
+                basePath: `/1234567890ABCDE/questionnaires`,
             },
             [
-                'LightningExperienceAssistantPlatformController.getActiveQuestionnaires',
+                'LightningExperienceAssistantPlatformController.getQuestionnaires',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -4397,18 +5310,18 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaires`,
+                basePath: `/1234567890ABCDE/questionnaires`,
             },
             {}
         );
     });
 
-    describe('get /assistant/{id}/questionnaire/{id}', () => {
+    describe('get /questionnaire/{questionnaireName}', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
             },
             [
                 'LightningExperienceAssistantPlatformController.getQuestionnaire',
@@ -4421,18 +5334,18 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}/questionnaire/{id}', () => {
+    describe('patch /questionnaire/{questionnaireName}', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
                 body: {
                     questionnaireData: {
                         data: 'data',
@@ -4454,7 +5367,7 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                basePath: `/questionnaire/1234567890ABCDE`,
                 body: {
                     questionnaireData: {
                         data: 'data',
@@ -4469,15 +5382,15 @@ describe('routes', () => {
         );
     });
 
-    describe('get /assistant/{id}/scenarios', () => {
+    describe('get /{assistantTarget}/info', () => {
         testControllerInput(
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/info`,
             },
             [
-                'LightningExperienceAssistantPlatformController.getActiveScenarios',
+                'LightningExperienceAssistantPlatformController.getAssistantTarget',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -4487,22 +5400,46 @@ describe('routes', () => {
             {
                 method: 'get',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/info`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}/scenarios', () => {
+    describe('get /{assistantTarget}/list', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/list`,
+            },
+            [
+                'LightningExperienceAssistantPlatformController.getAssistantList',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/list`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /{assistantTarget}/list', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/list`,
                 body: { scenarioData: { data: 'data' } },
             },
             [
-                'LightningExperienceAssistantPlatformController.saveScenarios',
+                'LightningExperienceAssistantPlatformController.saveAssistantList',
                 {
                     scenarioData: { data: 'data' },
                 },
@@ -4514,18 +5451,18 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                basePath: `/1234567890ABCDE/list`,
             },
             {}
         );
     });
 
-    describe('patch /assistant/{id}/step/{id}', () => {
+    describe('patch /step/{stepName}', () => {
         testControllerInput(
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/step/1234567890ABCDE`,
+                basePath: `/step/1234567890ABCDE`,
                 body: {},
             },
             [
@@ -4539,10 +5476,118 @@ describe('routes', () => {
             {
                 method: 'patch',
                 baseUri: GUIDANCE_BASE_URI,
-                basePath: `/assistant/1234567890ABCDE/step/1234567890ABCDE`,
+                basePath: `/step/1234567890ABCDE`,
                 body: {},
             },
             {}
+        );
+    });
+
+    describe('put /{assistantTarget}/initialize', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/initialize`,
+                body: {},
+            },
+            [
+                'LightningExperienceAssistantPlatformController.initialize',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/1234567890ABCDE/initialize`,
+                body: {},
+            },
+            {}
+        );
+    });
+
+    describe('get /featured-item/list', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list',
+                queryParams: {
+                    pageRef: '123456',
+                },
+            },
+            [
+                'LearningContentPlatformController.getFeaturedItems',
+                { pageRef: '123456' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list',
+            },
+            { pageRef: '123456' }
+        );
+    });
+
+    describe('get /featured-item/list/recommended', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/recommended',
+                queryParams: {
+                    appId: '123456',
+                },
+            },
+            [
+                'LearningContentPlatformController.getFeaturedItemsRecommendedList',
+                { appId: '123456' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/recommended',
+            },
+            { appId: '123456' }
+        );
+    });
+
+    describe('get /featured-item/list/related', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/related',
+                queryParams: {
+                    appId: '123456',
+                    pageRef: JSON.stringify({ type: 'standard__objectPage' }),
+                },
+            },
+            [
+                'LearningContentPlatformController.getFeaturedItemsRelatedList',
+                { appId: '123456', pageRef: JSON.stringify({ type: 'standard__objectPage' }) },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: LEARNING_CONTENT_PLATFORM_BASE_URI,
+                basePath: '/featured-item/list/related',
+            },
+            { appId: '123456', pageRef: JSON.stringify({ type: 'standard__objectPage' }) }
         );
     });
 
@@ -4626,6 +5671,36 @@ describe('routes', () => {
                 },
             },
             {}
+        );
+    });
+
+    describe('delete /wave/dataconnectors/{connectorIdOrApiName}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+            },
+            [
+                'WaveController.deleteDataConnector',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'delete',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+            },
+            null
         );
     });
 
@@ -4838,6 +5913,59 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: WAVE_BASE_URI,
                 basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication`,
+            },
+            {}
+        );
+    });
+
+    describe('post /wave/dataconnectors/{connectorIdOrApiName}/sourceObjects/{sourceObjectName}/dataPreview', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/dataPreview`,
+                body: {
+                    sourceObjectParam: {
+                        sourceObjectFields: ['car_make', 'id', 'car_model_year'],
+                        advancedProperties: [
+                            { name: 'StartDate', value: '2018-01-01' },
+                            { name: 'ViewID', value: '174299164' },
+                            { name: 'EndDate', value: 'today' },
+                        ],
+                    },
+                },
+            },
+            [
+                'WaveController.getDataConnectorSourceObjectDataPreviewWithFields',
+                {
+                    sourceObjectParam: {
+                        sourceObjectFields: ['car_make', 'id', 'car_model_year'],
+                        advancedProperties: [
+                            { name: 'StartDate', value: '2018-01-01' },
+                            { name: 'ViewID', value: '174299164' },
+                            { name: 'EndDate', value: 'today' },
+                        ],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/dataPreview`,
+                body: {
+                    sourceObjectParam: {
+                        sourceObjectFields: ['car_make', 'id', 'car_model_year'],
+                        advancedProperties: [
+                            { name: 'StartDate', value: '2018-01-01' },
+                            { name: 'ViewID', value: '174299164' },
+                            { name: 'EndDate', value: 'today' },
+                        ],
+                    },
+                },
             },
             {}
         );
@@ -5274,6 +6402,160 @@ describe('routes', () => {
         );
     });
 
+    describe('patch /wave/datasets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/05vRM00000003rZYAQ`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            [
+                'WaveController.updateDataset',
+                {
+                    id: '05vRM00000003rZYAQ',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'patch',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/datasets/05vRM00000003rZYAQ`,
+            urlParams: {
+                id: '05vRM00000003rZYAQ',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/05vRM00000003rZYAQ`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            null
+        );
+    });
+
+    describe('post /wave/datasets/{datasetIdOrApiName}/versions', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CKKCA2/versions`,
+                body: {
+                    sourceVersion: {
+                        id: '0Fcxx0000004C92CAE',
+                    },
+                },
+            },
+            [
+                'WaveController.createDatasetVersion',
+                {
+                    sourceVersion: {
+                        id: '0Fcxx0000004C92CAE',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CKKCA2/versions`,
+                body: {
+                    sourceVersion: {
+                        id: '0Fcxx0000004C92CAE',
+                    },
+                },
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            [
+                'WaveController.getDatasetVersion',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /wave/datasets/{datasetIdOrApiName}/versions/{versionId}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+                urlParams: {
+                    datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                    versionId: '0Fcxx0000004CsCCAU',
+                },
+            },
+            [
+                'WaveController.updateDatasetVersion',
+                {
+                    datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                    versionId: '0Fcxx0000004CsCCAU',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'patch',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            urlParams: {
+                datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                versionId: '0Fcxx0000004CsCCAU',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+                urlParams: {
+                    datasetIdOrApiName: '0Fbxx0000004CyeCAE',
+                    versionId: '0Fcxx0000004CsCCAU',
+                },
+            },
+            null
+        );
+    });
+
     describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}', () => {
         describe('with dataset id', () => {
             testControllerInput(
@@ -5317,6 +6599,31 @@ describe('routes', () => {
                     method: 'get',
                     baseUri: WAVE_BASE_URI,
                     basePath: `/datasets/ABCWidgetSales2017/versions/0Fcxx0000004CsCCAU/xmds/User`,
+                },
+                {}
+            );
+        });
+    });
+
+    describe('get /wave/dependencies/{assetId}', () => {
+        describe('with asset id', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dependencies/0Fbxx0000004Cx3CAE`,
+                },
+                [
+                    'WaveController.getDependencies',
+                    {},
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dependencies/0Fbxx0000004Cx3CAE`,
                 },
                 {}
             );
@@ -5434,6 +6741,11 @@ describe('routes', () => {
                         pageSize: 10,
                         q: 'rcp 3',
                         sort: 'Name',
+                        lastModifiedAfter: '1606206503',
+                        lastModifiedBefore: '1606724903',
+                        nextScheduledAfter: '1611476903',
+                        nextScheduledBefore: '1643012903',
+                        status: ['New'],
                     },
                 },
                 [
@@ -5445,6 +6757,11 @@ describe('routes', () => {
                         pageSize: 10,
                         q: 'rcp 3',
                         sortParam: 'Name',
+                        lastModifiedAfter: '1606206503',
+                        lastModifiedBefore: '1606724903',
+                        nextScheduledAfter: '1611476903',
+                        nextScheduledBefore: '1643012903',
+                        status: ['New'],
                     },
                     { background: false, hotspot: true, longRunning: false },
                 ]
@@ -5625,6 +6942,47 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ/notification`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            {}
+        );
+    });
+
+    describe('put /wave/recipes/{id}/notification', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ/notification`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            [
+                'WaveController.updateRecipeNotification',
+                {
+                    id: '05vRM00000003rZYAQ',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'put',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/recipes/05vRM00000003rZYAQ/notification`,
+            urlParams: {
+                id: '05vRM00000003rZYAQ',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'put',
                 baseUri: WAVE_BASE_URI,
                 basePath: `/recipes/05vRM00000003rZYAQ/notification`,
                 urlParams: {
@@ -5894,6 +7252,68 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/security/coverage/datasets/{datasetIdOrApiName}/versions/{versionId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/security/coverage/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            [
+                'WaveController.getSecurityCoverageDatasetVersion',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/security/coverage/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/security/coverage/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU`,
+            },
+            {}
+        );
+    });
+
+    describe('post /wave/soql', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: '/soql',
+                body: { query: 'SELECT Id,Name,Type,CreatedById FROM Account LIMIT 100' },
+            },
+            [
+                'WaveController.executeSoqlQueryPost',
+                { query: 'SELECT Id,Name,Type,CreatedById FROM Account LIMIT 100' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: WAVE_BASE_URI,
+            basePath: '/soql',
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: '/soql',
+                body: { query: 'SELECT Id,Name,Type,CreatedById FROM Account LIMIT 100' },
+            },
+            {}
+        );
+    });
+
     describe('get /asset/{assetId}/schedule', () => {
         testControllerInput(
             {
@@ -6027,6 +7447,233 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: WAVE_BASE_URI,
                 basePath: `/folders`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/templates', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/templates`,
+            },
+            [
+                'WaveController.getWaveTemplates',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates`,
+                    queryParams: {
+                        options: 'ViewOnly',
+                        type: 'Data',
+                    },
+                },
+                [
+                    'WaveController.getWaveTemplates',
+                    {
+                        options: 'ViewOnly',
+                        type: 'Data',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/templates`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/templates`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/templates/{templateIdOrApiName}', () => {
+        [
+            ['id', '0Nk6g000000QSJJCA4'],
+            ['name', 'myns_MyTemplateName'],
+        ].forEach(([valType, val]) => {
+            describe(`with template ${valType}`, () => {
+                testControllerInput(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}`,
+                    },
+                    [
+                        'WaveController.getWaveTemplate',
+                        {},
+                        { background: false, hotspot: true, longRunning: false },
+                    ]
+                );
+
+                testResolveResponse(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}`,
+                    },
+                    {}
+                );
+
+                testRejectFetchResponse({
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates/${val}`,
+                });
+            });
+        });
+    });
+
+    describe('get /wave/templates/{templateIdOrApiName}/configuration', () => {
+        [
+            ['id', '0Nk6g000000QSJJCA4'],
+            ['name', 'myns_MyTemplateName'],
+        ].forEach(([valType, val]) => {
+            describe(`with template ${valType}`, () => {
+                testControllerInput(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/configuration`,
+                    },
+                    [
+                        'WaveController.getWaveTemplateConfig',
+                        {},
+                        { background: false, hotspot: true, longRunning: false },
+                    ]
+                );
+
+                testResolveResponse(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/configuration`,
+                    },
+                    {}
+                );
+
+                testRejectFetchResponse({
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates/${val}/configuration`,
+                });
+            });
+        });
+    });
+
+    describe('get /wave/templates/{templateIdOrApiName}/releasenotes', () => {
+        [
+            ['id', '0Nk6g000000QSJJCA4'],
+            ['name', 'myns_MyTemplateName'],
+        ].forEach(([valType, val]) => {
+            describe(`with template ${valType}`, () => {
+                testControllerInput(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/releasenotes`,
+                    },
+                    [
+                        'WaveController.getWaveTemplateReleaseNotes',
+                        {},
+                        { background: false, hotspot: true, longRunning: false },
+                    ]
+                );
+
+                testResolveResponse(
+                    {
+                        method: 'get',
+                        baseUri: WAVE_BASE_URI,
+                        basePath: `/templates/${val}/releasenotes`,
+                    },
+                    {}
+                );
+
+                testRejectFetchResponse({
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/templates/${val}/releasenotes`,
+                });
+            });
+        });
+    });
+
+    describe('get /smartdatadiscovery/stories', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+                basePath: `/stories`,
+            },
+            [
+                'SmartDataDiscoveryController.getStories',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+                    basePath: `/stories`,
+                    queryParams: {
+                        folderId: 'folderId',
+                        inputId: 'inputId',
+                        page: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'query',
+                        scope: 'CreatedByMe',
+                        sourceType: 'AnalyticsDataset',
+                        sourceTypes: 'AnalyticsDataset,Report',
+                    },
+                },
+                [
+                    'SmartDataDiscoveryController.getStories',
+                    {
+                        folderId: 'folderId',
+                        inputId: 'inputId',
+                        pageParam: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'query',
+                        scope: 'CreatedByMe',
+                        sourceType: 'AnalyticsDataset',
+                        sourceTypes: 'AnalyticsDataset,Report',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+            basePath: `/stories`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: SMART_DATA_DISCOVERY_BASE_URI,
+                basePath: `/stories`,
             },
             {}
         );
@@ -6321,6 +7968,30 @@ describe('routes', () => {
         );
     });
 
+    describe('delete /connect/cms/contents/variants/{managedContentVariantId}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004CKKCA2`,
+            },
+            [
+                'ManagedContentController.deleteManagedContentVariant',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004CKKCA2`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/cms/folders/{folderId}/items', () => {
         testControllerInput(
             {
@@ -6392,25 +8063,25 @@ describe('routes', () => {
                 contentKey: 'MCP5UIGCCS3NHDVLFJFTC47QR5OM',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009h',
+                    resourceUrl: '/services/data/v55.0/connect/cms/spaces/0Zuxx000000009h',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fN',
                 },
                 createdDate: '2021-06-04T09:21:31.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSO',
+                    resourceUrl: '/services/data/v55.0/connect/cms/folders/9Puxx0000004CSO',
                 },
                 isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fN',
                 },
                 lastModifiedDate: '2021-06-04T11:55:24.000Z',
                 managedContentId: '20Yxx0000011SooEAE',
@@ -6452,25 +8123,25 @@ describe('routes', () => {
                 contentKey: 'MCP5UIGCCS3NHDVLFJFTC47QR5OM',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009h',
+                    resourceUrl: '/services/data/v55.0/connect/cms/spaces/0Zuxx000000009h',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fN',
                 },
                 createdDate: '2021-06-04T09:21:31.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSO',
+                    resourceUrl: '/services/data/v55.0/connect/cms/folders/9Puxx0000004CSO',
                 },
                 isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fN',
                 },
                 lastModifiedDate: '2021-06-04T11:55:24.000Z',
                 managedContentId: '20Yxx0000011SooEAE',
@@ -6597,6 +8268,65 @@ describe('routes', () => {
             }
         );
     });
+    describe('post /connect/cms/contents/unpublish', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CMS_BASE_URI,
+                basePath: `/contents/unpublish`,
+                body: {
+                    unpublishInput: {
+                        channelIds: ['0apx0000000GmanAAC'],
+                        description: 'Test Description',
+                        contentIds: ['20YRM0000000CPi2AM'],
+                        variantIds: [],
+                    },
+                },
+            },
+            [
+                'ManagedContentController.unpublish',
+                {
+                    unpublishInput: {
+                        channelIds: ['0apx0000000GmanAAC'],
+                        description: 'Test Description',
+                        contentIds: ['20YRM0000000CPi2AM'],
+                        variantIds: [],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                deploymentId: '0jkxx000000003FAAQ',
+                description: 'Test Description',
+                unpublishedDate: '2022-02-01T09:13:35.000Z',
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CMS_BASE_URI,
+            basePath: `/contents/unpublish`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CMS_BASE_URI,
+                basePath: `/contents/unpublish`,
+                body: {
+                    unpublishInput: {
+                        channelIds: ['0apx0000000GmanAAC'],
+                        description: 'Test Description',
+                        contentIds: ['20YRM0000000CPi2AM'],
+                        variantIds: [],
+                    },
+                },
+            },
+            {
+                deploymentId: '0jkxx000000003FAAQ',
+                description: 'Test Description',
+                unpublishedDate: '2022-02-01T09:13:35.000Z',
+            }
+        );
+    });
 
     describe('post /connect/cms/contents', () => {
         testControllerInput(
@@ -6644,25 +8374,25 @@ describe('routes', () => {
                 contentKey: 'MCFXA42Q4MHNCKXER4YOLK4SE5KQ',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v55.0/connect/cms/spaces/0Zuxx000000009hCAA',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fNAAS',
                 },
                 createdDate: '2021-06-04T09:13:35.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v55.0/connect/cms/folders/9Puxx0000004CSOCA2',
                 },
                 isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fNAAS',
                 },
                 lastModifiedDate: '2021-06-04T09:13:35.000Z',
                 managedContentId: '20Yxx0000011SjyEAE',
@@ -6705,25 +8435,25 @@ describe('routes', () => {
                 contentKey: 'MCFXA42Q4MHNCKXER4YOLK4SE5KQ',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v55.0/connect/cms/spaces/0Zuxx000000009hCAA',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fNAAS',
                 },
                 createdDate: '2021-06-04T09:13:35.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v55.0/connect/cms/folders/9Puxx0000004CSOCA2',
                 },
                 isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v55.0/chatter/users/005xx000001X7fNAAS',
                 },
                 lastModifiedDate: '2021-06-04T09:13:35.000Z',
                 managedContentId: '20Yxx0000011SjyEAE',
@@ -6767,14 +8497,16 @@ describe('routes', () => {
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/startFlow`,
+                basePath: `/interaction/runtime/startFlow`,
                 body: {
+                    flowDevName: 'flow1',
                     flowVersionId: '123',
                 },
             },
             [
                 'FlowRuntimeConnectController.startFlow',
                 {
+                    flowDevName: 'flow1',
                     flowVersionId: '123',
                 },
                 { background: false, hotspot: true, longRunning: false },
@@ -6814,13 +8546,16 @@ describe('routes', () => {
         testRejectFetchResponse({
             method: 'post',
             baseUri: CONNECT_BASE_URI,
-            basePath: `/interaction/runtime/flow1/startFlow`,
+            basePath: `/interaction/runtime/startFlow`,
         });
         testResolveResponse(
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/startFlow`,
+                basePath: `/interaction/runtime/startFlow`,
+                body: {
+                    flowDevName: 'flow1',
+                },
             },
             {}
         );
@@ -6831,7 +8566,7 @@ describe('routes', () => {
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/navigateFlow`,
+                basePath: `/interaction/runtime/navigateFlow`,
                 body: {
                     action: 'NEXT',
                 },
@@ -6878,13 +8613,13 @@ describe('routes', () => {
         testRejectFetchResponse({
             method: 'post',
             baseUri: CONNECT_BASE_URI,
-            basePath: `/interaction/runtime/flow1/navigateFlow`,
+            basePath: `/interaction/runtime/navigateFlow`,
         });
         testResolveResponse(
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/navigateFlow`,
+                basePath: `/interaction/runtime/navigateFlow`,
             },
             {}
         );
@@ -6895,7 +8630,7 @@ describe('routes', () => {
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/resumeFlow`,
+                basePath: `/interaction/runtime/resumeFlow`,
                 body: {
                     pausedInterviewId: '123',
                 },
@@ -6942,13 +8677,13 @@ describe('routes', () => {
         testRejectFetchResponse({
             method: 'post',
             baseUri: CONNECT_BASE_URI,
-            basePath: `/interaction/runtime/flow1/resumeFlow`,
+            basePath: `/interaction/runtime/resumeFlow`,
         });
         testResolveResponse(
             {
                 method: 'post',
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/interaction/runtime/flow1/resumeFlow`,
+                basePath: `/interaction/runtime/resumeFlow`,
             },
             {}
         );
@@ -6963,27 +8698,28 @@ describe('routes', () => {
                 body: {
                     PaymentsBatchSchedulerInput: {
                         schedulerName: 'Batch Scheduler',
-                        startDate: '2021-05-11T05:01:06.000Z',
-                        endDate: '2021-05-15T05:01:06.000Z',
+                        startDate: '2021-05-11',
+                        endDate: '2025-05-15',
                         preferredTime: '10:00 AM',
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
-                        criteriaExpression: '1 AND 2',
+                        criteriaMatchType: 'MatchAny',
+                        criteriaExpression: '1 OR 2',
                         status: 'Active',
                         filterCriteria: [
                             {
-                                objectName: 'PaymentSchedule',
-                                fieldName: 'ReferenceEntityAccount',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
-                                value: '001xx000003GiznAAC',
+                                value: 'Batch1',
                                 criteriaSequence: 1,
                             },
                             {
-                                objectName: 'PaymentGateway',
-                                fieldName: 'Id',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
-                                value: '0b0xx000000035xAAA',
-                                criteriaSequence: 2,
+                                value: 'Batch2',
+                                criteriaSequence: 1,
                             },
                         ],
                     },
@@ -6994,27 +8730,28 @@ describe('routes', () => {
                 {
                     PaymentsBatchSchedulerInput: {
                         schedulerName: 'Batch Scheduler',
-                        startDate: '2021-05-11T05:01:06.000Z',
-                        endDate: '2021-05-15T05:01:06.000Z',
+                        startDate: '2021-05-11',
+                        endDate: '2025-05-15',
                         preferredTime: '10:00 AM',
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
-                        criteriaExpression: '1 AND 2',
+                        criteriaMatchType: 'MatchAny',
+                        criteriaExpression: '1 OR 2',
                         status: 'Active',
                         filterCriteria: [
                             {
-                                objectName: 'PaymentSchedule',
-                                fieldName: 'ReferenceEntityAccount',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
-                                value: '001xx000003GiznAAC',
+                                value: 'Batch1',
                                 criteriaSequence: 1,
                             },
                             {
-                                objectName: 'PaymentGateway',
-                                fieldName: 'Id',
+                                objectName: 'PaymentScheduleItem',
+                                fieldName: 'BatchRun',
                                 operation: 'Equals',
-                                value: '0b0xx000000035xAAA',
-                                criteriaSequence: 2,
+                                value: 'Batch2',
+                                criteriaSequence: 1,
                             },
                         ],
                     },
@@ -7022,11 +8759,9 @@ describe('routes', () => {
                 { background: false, hotspot: true, longRunning: false },
             ],
             {
-                schedulerDetails: {
-                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
-                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
                 },
-                paymentBatchRunCriteriaId: '5PCR000000000HvOAI',
             }
         );
 
@@ -7043,11 +8778,101 @@ describe('routes', () => {
                 basePath: `/batch/payments/schedulers`,
             },
             {
-                schedulerDetails: {
-                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
-                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
                 },
-                paymentBatchRunCriteriaId: '5PCR000000000HvOAI',
+            }
+        );
+    });
+
+    describe('post /billing/batch/invoices/schedulers', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: BILLING_BASE_URI,
+                basePath: `/batch/invoices/schedulers`,
+                body: {
+                    InvoicesBatchSchedulerInput: {
+                        schedulerName: 'Invoice Batch Scheduler',
+                        startDate: '2021-05-11',
+                        endDate: '2021-05-15',
+                        preferredTime: '10:00 AM',
+                        frequencyCadence: 'Monthly',
+                        recursEveryMonthOnDay: '28',
+                        status: 'Active',
+                        filterCriteria: [
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'Currency_Iso_code',
+                                operation: 'Equals',
+                                value: 'USD',
+                                criteriaSequence: 1,
+                            },
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'InvoiceRunBatch',
+                                operation: 'Equals',
+                                value: 'IBR1',
+                                criteriaSequence: 2,
+                            },
+                        ],
+                    },
+                },
+            },
+            [
+                'BatchInvoiceApplicationController.createBatchInvoiceScheduler',
+                {
+                    InvoicesBatchSchedulerInput: {
+                        schedulerName: 'Invoice Batch Scheduler',
+                        startDate: '2021-05-11',
+                        endDate: '2021-05-15',
+                        preferredTime: '10:00 AM',
+                        frequencyCadence: 'Monthly',
+                        recursEveryMonthOnDay: '28',
+                        status: 'Active',
+                        filterCriteria: [
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'Currency_Iso_code',
+                                operation: 'Equals',
+                                value: 'USD',
+                                criteriaSequence: 1,
+                            },
+                            {
+                                objectName: 'BillingSchedule',
+                                fieldName: 'InvoiceRunBatch',
+                                operation: 'Equals',
+                                value: 'IBR1',
+                                criteriaSequence: 2,
+                            },
+                        ],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
+                },
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: BILLING_BASE_URI,
+            basePath: `/batch/invoices/schedulers`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: BILLING_BASE_URI,
+                basePath: `/batch/invoices/schedulers`,
+            },
+            {
+                billingBatchScheduler: {
+                    id: '5BSR00000000030OAA',
+                },
             }
         );
     });
@@ -7185,6 +9010,52 @@ describe('routes', () => {
         );
     });
 
+    describe('put /connect/health/video-visits/leave-chime-meeting', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/video-visits/leave-chime-meeting`,
+                body: {
+                    LeaveChimeMeetingInput: {
+                        attendeeId: '1234',
+                        externalMeetingId: '5678',
+                    },
+                },
+            },
+            [
+                'VideoVisitController.leaveChimeMeeting',
+                {
+                    LeaveChimeMeetingInput: {
+                        attendeeId: '1234',
+                        externalMeetingId: '5678',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                isSuccess: true,
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'put',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/health/video-visits/leave-chime-meeting`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/video-visits/leave-chime-meeting`,
+            },
+            {
+                isSuccess: true,
+            }
+        );
+    });
+
     describe('get /interest-tags/assignments/entity/${recordId}', () => {
         testControllerInput(
             {
@@ -7203,6 +9074,75 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: CONNECT_BASE_URI,
                 basePath: `/interest-tags/assignments/entity/Record1`,
+            },
+            {}
+        );
+    });
+
+    describe('get /interest-tags/assignments/tag/${tagId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/assignments/tag/0qOxx0000004C93EAE`,
+            },
+            [
+                'InterestTaggingFamilyController.getInterestTagEntityAssignments',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/assignments/tag/0qOxx0000004C93EAE`,
+            },
+            {}
+        );
+    });
+
+    describe('get /interest-tags/tags', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/tags`,
+            },
+            [
+                'InterestTaggingFamilyController.getTagsByCategoryId',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/tags`,
+            },
+            {}
+        );
+    });
+
+    describe('get /interest-tags/categories', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/categories`,
+            },
+            [
+                'InterestTaggingFamilyController.getTagCategoriesByTagId',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interest-tags/categories`,
             },
             {}
         );
@@ -7358,7 +9298,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors`,
             },
             [
@@ -7371,7 +9311,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors`,
             },
             {}
@@ -7382,7 +9322,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections`,
             },
             [
@@ -7395,8 +9335,39 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors`,
+            },
+            {}
+        );
+    });
+
+    describe('post /analytics/data-service/sync/connections', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: '/connections',
+                body: {
+                    connectorId: 'SALESFORCE_ADS',
+                    name: 'sfdc2',
+                },
+            },
+            [
+                'AdatsController.createConnection',
+                {
+                    connectorId: 'SALESFORCE_ADS',
+                    name: 'sfdc2',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/connections`,
             },
             {}
         );
@@ -7406,7 +9377,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors/SALESFORCE_ADS`,
             },
             [
@@ -7419,7 +9390,7 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connectors/SALESFORCE_ADS`,
             },
             {}
@@ -7430,7 +9401,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812`,
             },
             [
@@ -7443,8 +9414,1549 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                baseUri: ADATS_BASE_URI,
+                baseUri: ADATS_SYNC_BASE_URI,
                 basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connections/{id}/source-objects/{sourceObjectName}/fields', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account/fields`,
+            },
+            [
+                'AdatsController.getFields',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: ADATS_SYNC_BASE_URI,
+                    basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account/fields`,
+                    queryParams: {
+                        page: 1,
+                        pageSize: 3,
+                        q: 'acc',
+                    },
+                },
+                [
+                    'AdatsController.getFields',
+                    {
+                        pageParam: 1,
+                        pageSize: 3,
+                        q: 'acc',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account/fields`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connections/{id}/source-objects', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects`,
+            },
+            [
+                'AdatsController.getConnectionSourceObjects',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/connections/{id}/sourceO-objects/{source-objectName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account`,
+            },
+            [
+                'AdatsController.getConnectionSourceObject',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/connections/2d54cafe-1164-4b2f-a2af-d4d0bb50f812/source-objects/Account`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/targets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            [
+                'AdatsController.getTarget',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            {}
+        );
+    });
+
+    describe('delete /analytics/data-service/sync/targets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            [
+                'AdatsController.deleteTarget',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /analytics/data-service/sync/targets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets/c11fdb87-a196-46aa-8b44-5ad6e9e253c5`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            [
+                'AdatsController.updateTarget',
+                {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/sync/targets', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+            },
+            [
+                'AdatsController.getTargets',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('get /analytics/data-service/sync/targets', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: ADATS_SYNC_BASE_URI,
+                    basePath: `/targets`,
+                    queryParams: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                    },
+                },
+                [
+                    'AdatsController.getTargets',
+                    {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+            },
+            {}
+        );
+    });
+
+    describe('post /analytics/data-service/sync/targets', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            [
+                'AdatsController.createTarget',
+                {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_SYNC_BASE_URI,
+                basePath: `/targets`,
+                body: {
+                    targetInput: {
+                        connectionId: 'c08fdb87-a196-46aa-8b44-5ad6e9e253c4',
+                        sourceObject: { name: 'Account' },
+                        fields: [{ name: 'Id' }, { name: 'SystemModstamp' }, { name: 'IsDeleted' }],
+                    },
+                },
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/catalog/databases', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/databases`,
+            },
+            [
+                'AdatsController.getCatalogDatabases',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/databases`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/catalog/databases/{database}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/databases/testDatabase01`,
+            },
+            [
+                'AdatsController.getCatalogDatabase',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/databases/testDatabase01`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/catalog/schemas', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas`,
+            },
+            [
+                'AdatsController.getCatalogSchemas',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/catalog/schemas/{qualifiedName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas/testDatabase01.testSchema01`,
+            },
+            [
+                'AdatsController.getCatalogSchema',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/schemas/testDatabase01.testSchema01`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/catalog/tables', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables`,
+            },
+            [
+                'AdatsController.getCatalogTables',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/catalog/tables/{qualifiedName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
+            },
+            [
+                'AdatsController.getCatalogTable',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
+            },
+            {}
+        );
+    });
+
+    describe('delete /analytics/data-service/catalog/tables/{qualifiedName}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
+            },
+            [
+                'AdatsController.deleteCatalogTable',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/tables/testDatabase01.testSchema01.testTable01`,
+            },
+            {}
+        );
+    });
+
+    describe('get /analytics/data-service/catalog/grants', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+                queryParams: {
+                    qualifiedName: 'testdb01.testSchema01.testTable',
+                },
+            },
+            [
+                'AdatsController.getCatalogGrants',
+                {
+                    qualifiedName: 'testdb01.testSchema01.testTable',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+            },
+            {}
+        );
+    });
+
+    describe('post /analytics/data-service/catalog/grants', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+                body: {
+                    grants: [
+                        {
+                            qualifiedName: 'testdb01.testSchema01.testTable',
+                            grantee: '0ZGRM0000004Dn04AE',
+                            operation: 'Grant',
+                            permission: 'Ownership',
+                        },
+                    ],
+                },
+            },
+            [
+                'AdatsController.createCatalogGrants',
+                {
+                    grants: [
+                        {
+                            qualifiedName: 'testdb01.testSchema01.testTable',
+                            grantee: '0ZGRM0000004Dn04AE',
+                            operation: 'Grant',
+                            permission: 'Ownership',
+                        },
+                    ],
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ADATS_CATALOG_BASE_URI,
+                basePath: `/grants`,
+            },
+            {}
+        );
+    });
+
+    describe('post /connect/identity-verification/build-context/{processDefinitionName}', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/build-context/SampleVerificationFlow`,
+                urlParams: {
+                    processDefinitionName: 'SampleVerificationFlow',
+                },
+                body: {
+                    BuildContextData: {
+                        selectedRecordId: 'sample-record-id',
+                        objectName: 'Account',
+                    },
+                },
+            },
+            [
+                'IdentityVerificationController.buildVerificationContext',
+                {
+                    processDefinitionName: 'SampleVerificationFlow',
+                    BuildContextData: {
+                        selectedRecordId: 'sample-record-id',
+                        objectName: 'Account',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: IDENTITY_VERIFICATION_BASE_URI,
+            basePath: `/build-context/SampleVerificationFlow`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/build-context/SampleVerificationFlow`,
+            },
+            {
+                isSuccess: true,
+                message:
+                    'Build Context for Identity Verification API called successfully for Process Definition: SampleVerificationFlow',
+                processDefinition: {
+                    layoutType: 'Tab',
+                    processDetail: [
+                        {
+                            dataSourceType: 'Salesforce',
+                            optionalVerifierCount: 1,
+                            searchObjectName: 'Account',
+                            searchResultSortOrder: 'Name',
+                            searchResultUniqueIdField: 'Id',
+                            searchSequenceNo: 1,
+                            searchType: 'Text-Based',
+                            searchResultFilter: '',
+                            apexClassName: '',
+                            verificationProcessFieldList: {
+                                verificationProcessFields: [
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Name',
+                                        developerName: 'SampleAccountName',
+                                        fieldName: 'Name',
+                                        fieldType: 'requiredVerifier',
+                                        label: 'Account Name',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Phone',
+                                        developerName: 'SamplePhone',
+                                        fieldName: 'Phone',
+                                        fieldType: 'optionalVerifier',
+                                        label: 'Phone',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Text',
+                                        developerName: 'SamplePostalCode',
+                                        fieldName: 'BillingPostalCode',
+                                        fieldType: 'optionalVerifier',
+                                        label: 'Billing Zip/Postal Code',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Name',
+                                        developerName: 'SampleAccount',
+                                        fieldName: 'Name',
+                                        fieldType: 'resultField',
+                                        label: 'Account Name',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: 'Phone',
+                                        developerName: 'SamplePhoneNumber',
+                                        fieldName: 'Phone',
+                                        fieldType: 'resultField',
+                                        label: 'Phone',
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
+                selectedSearchResult: {
+                    objectName: 'Account',
+                    selectedRecordId: 'sample-record-id',
+                    selectedRecordObject: [],
+                },
+                verifiedResult: {
+                    optionalVerifiers: [],
+                    requiredVerifiers: [],
+                },
+            }
+        );
+    });
+
+    describe('post /connect/identity-verification/search', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/search`,
+                body: {
+                    SearchRecordsContextData: {
+                        searchTerm: 'Test',
+                        verificationContext: {
+                            processDefinition: {
+                                processDetail: {
+                                    processDetailList: [
+                                        {
+                                            verificationProcessFieldList: {
+                                                verificationProcessFields: [
+                                                    {
+                                                        label: 'Sample_Postal_Code',
+                                                        fieldType: 'requiredVerifier',
+                                                        fieldName: 'BillingPostalCode',
+                                                        developerName: 'Sample_Postal_Code',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Phone',
+                                                        fieldType: 'optionalVerifier',
+                                                        fieldName: 'Phone',
+                                                        developerName: 'Sample_Phone_Number',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Account Name',
+                                                        fieldType: 'resultField',
+                                                        fieldName: 'Name',
+                                                        developerName: 'Sample_Account_Name',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                ],
+                                            },
+                                            searchType: 'Text-Based',
+                                            searchSequenceNo: 1,
+                                            searchResultUniqueIdField: 'Id',
+                                            searchResultSortOrder: '',
+                                            searchResultFilter: '',
+                                            searchObjectName: 'Account',
+                                            optionalVerifierCount: 1,
+                                            dataSourceType: 'Salesforce',
+                                            apexClassName: '',
+                                        },
+                                    ],
+                                },
+                                layoutType: 'Tab',
+                            },
+                            selectedSearchResult: {
+                                selectedRecordId: '',
+                                objectName: '',
+                                selectedRecordObject: {
+                                    selectedRecordObjectList: [
+                                        {
+                                            developerName: '',
+                                            value: '',
+                                        },
+                                    ],
+                                },
+                            },
+                            verifiedResult: {
+                                requiredVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
+                                optionalVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            [
+                'IdentityVerificationController.searchRecords',
+                {
+                    SearchRecordsContextData: {
+                        searchTerm: 'Test',
+                        verificationContext: {
+                            processDefinition: {
+                                processDetail: {
+                                    processDetailList: [
+                                        {
+                                            verificationProcessFieldList: {
+                                                verificationProcessFields: [
+                                                    {
+                                                        label: 'Sample_Postal_Code',
+                                                        fieldType: 'requiredVerifier',
+                                                        fieldName: 'BillingPostalCode',
+                                                        developerName: 'Sample_Postal_Code',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Phone',
+                                                        fieldType: 'optionalVerifier',
+                                                        fieldName: 'Phone',
+                                                        developerName: 'Sample_Phone_Number',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                    {
+                                                        label: 'Account Name',
+                                                        fieldType: 'resultField',
+                                                        fieldName: 'Name',
+                                                        developerName: 'Sample_Account_Name',
+                                                        dataSourceType: 'Salesforce',
+                                                        dataType: '',
+                                                    },
+                                                ],
+                                            },
+                                            searchType: 'Text-Based',
+                                            searchSequenceNo: 1,
+                                            searchResultUniqueIdField: 'Id',
+                                            searchResultSortOrder: '',
+                                            searchResultFilter: '',
+                                            searchObjectName: 'Account',
+                                            optionalVerifierCount: 1,
+                                            dataSourceType: 'Salesforce',
+                                            apexClassName: '',
+                                        },
+                                    ],
+                                },
+                                layoutType: 'Tab',
+                            },
+                            selectedSearchResult: {
+                                selectedRecordId: '',
+                                objectName: '',
+                                selectedRecordObject: {
+                                    selectedRecordObjectList: [
+                                        {
+                                            developerName: '',
+                                            value: '',
+                                        },
+                                    ],
+                                },
+                            },
+                            verifiedResult: {
+                                requiredVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
+                                optionalVerifiers: {
+                                    verifiersList: [
+                                        {
+                                            developerName: '',
+                                            verificationState: '',
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: IDENTITY_VERIFICATION_BASE_URI,
+            basePath: `/search`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/search`,
+            },
+            {
+                isSuccess: true,
+                message: 'Search is a success',
+                searchResult: [
+                    {
+                        searchFields: [
+                            {
+                                developerName: 'Sample_Account_Name',
+                                value: 'Test Value',
+                            },
+                            {
+                                developerName: 'Sample_Phone_Number',
+                                value: '09154892836',
+                            },
+                            {
+                                developerName: 'Sample_Postal_Code',
+                                value: '786125',
+                            },
+                            {
+                                developerName: 'Id',
+                                value: '001xx000003GYcFAAW',
+                            },
+                        ],
+                    },
+                ],
+                searchResultHeader: [
+                    {
+                        dataType: 'Name',
+                        developerName: 'Sample_Account_Name',
+                        displayLabel: 'Account Name',
+                    },
+                    {
+                        dataType: 'Phone',
+                        developerName: 'Sample_Phone_Number',
+                        displayLabel: 'Phone',
+                    },
+                    {
+                        dataType: 'Text',
+                        developerName: 'Sample_Postal_Code',
+                        displayLabel: 'Sample_Postal_Code',
+                    },
+                    {
+                        dataType: 'Lookup',
+                        developerName: 'Id',
+                        displayLabel: 'Account ID',
+                    },
+                ],
+            }
+        );
+    });
+
+    describe('post /connect/identity-verification/verification', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/verification`,
+                body: {
+                    IdentityVerificationContextData: {
+                        processDefinition: {
+                            processDetail: {
+                                processDetailList: [
+                                    {
+                                        verificationProcessFieldList: {
+                                            verificationProcessFields: [
+                                                {
+                                                    label: 'Sample_Postal_Code',
+                                                    fieldType: 'requiredVerifier',
+                                                    fieldName: 'BillingPostalCode',
+                                                    developerName: 'Sample_Postal_Code',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Phone',
+                                                    fieldType: 'optionalVerifier',
+                                                    fieldName: 'Phone',
+                                                    developerName: 'Sample_Phone_Number',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Account Name',
+                                                    fieldType: 'resultField',
+                                                    fieldName: 'Name',
+                                                    developerName: 'Sample_Account_Name',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                            ],
+                                        },
+                                        searchType: 'Text-Based',
+                                        searchSequenceNo: 1,
+                                        searchResultUniqueIdField: 'Id',
+                                        searchResultSortOrder: '',
+                                        searchResultFilter: '',
+                                        searchObjectName: 'Account',
+                                        optionalVerifierCount: 1,
+                                        dataSourceType: 'Salesforce',
+                                        apexClassName: '',
+                                    },
+                                ],
+                            },
+                            layoutType: 'Tab',
+                        },
+                        selectedSearchResult: {
+                            selectedRecordId: '001xx000003GYcFAAW',
+                            objectName: 'Account',
+                            selectedRecordObject: {
+                                selectedRecordObjectList: [
+                                    {
+                                        developerName: '',
+                                        value: '',
+                                    },
+                                ],
+                            },
+                        },
+                        verifiedResult: {
+                            requiredVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                            optionalVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+            [
+                'IdentityVerificationController.identityVerification',
+                {
+                    IdentityVerificationContextData: {
+                        processDefinition: {
+                            processDetail: {
+                                processDetailList: [
+                                    {
+                                        verificationProcessFieldList: {
+                                            verificationProcessFields: [
+                                                {
+                                                    label: 'Sample_Postal_Code',
+                                                    fieldType: 'requiredVerifier',
+                                                    fieldName: 'BillingPostalCode',
+                                                    developerName: 'Sample_Postal_Code',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Phone',
+                                                    fieldType: 'optionalVerifier',
+                                                    fieldName: 'Phone',
+                                                    developerName: 'Sample_Phone_Number',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                                {
+                                                    label: 'Account Name',
+                                                    fieldType: 'resultField',
+                                                    fieldName: 'Name',
+                                                    developerName: 'Sample_Account_Name',
+                                                    dataSourceType: 'Salesforce',
+                                                    dataType: '',
+                                                },
+                                            ],
+                                        },
+                                        searchType: 'Text-Based',
+                                        searchSequenceNo: 1,
+                                        searchResultUniqueIdField: 'Id',
+                                        searchResultSortOrder: '',
+                                        searchResultFilter: '',
+                                        searchObjectName: 'Account',
+                                        optionalVerifierCount: 1,
+                                        dataSourceType: 'Salesforce',
+                                        apexClassName: '',
+                                    },
+                                ],
+                            },
+                            layoutType: 'Tab',
+                        },
+                        selectedSearchResult: {
+                            selectedRecordId: '001xx000003GYcFAAW',
+                            objectName: 'Account',
+                            selectedRecordObject: {
+                                selectedRecordObjectList: [
+                                    {
+                                        developerName: '',
+                                        value: '',
+                                    },
+                                ],
+                            },
+                        },
+                        verifiedResult: {
+                            requiredVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                            optionalVerifiers: {
+                                verifiersList: [
+                                    {
+                                        developerName: '',
+                                        verificationState: '',
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: IDENTITY_VERIFICATION_BASE_URI,
+            basePath: `/verification`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: IDENTITY_VERIFICATION_BASE_URI,
+                basePath: `/verification`,
+            },
+            {
+                isSuccess: true,
+                message:
+                    'Fetched verification information successfully for User Id : 001xx000003GYcFAAW.',
+                processDefinition: {
+                    layoutType: 'Tab',
+                    processDetail: [
+                        {
+                            apexClassName: '',
+                            dataSourceType: 'Salesforce',
+                            optionalVerifierCount: 1,
+                            searchObjectName: 'Account',
+                            searchResultFilter: '',
+                            searchResultSortOrder: '',
+                            searchResultUniqueIdField: 'Id',
+                            searchSequenceNo: 1,
+                            searchType: 'Text-Based',
+                            verificationProcessFieldList: {
+                                verificationProcessFields: [
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: '',
+                                        developerName: 'Sample_Postal_Code',
+                                        fieldName: 'BillingPostalCode',
+                                        fieldType: 'requiredVerifier',
+                                        label: 'Sample_Postal_Code',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: '',
+                                        developerName: 'Sample_Phone_Number',
+                                        fieldName: 'Phone',
+                                        fieldType: 'optionalVerifier',
+                                        label: 'Phone',
+                                    },
+                                    {
+                                        dataSourceType: 'Salesforce',
+                                        dataType: '',
+                                        developerName: 'Sample_Account_Name',
+                                        fieldName: 'Name',
+                                        fieldType: 'resultField',
+                                        label: 'Account Name',
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
+                selectedSearchResult: {
+                    objectName: 'Account',
+                    selectedRecordId: '001xx000003GYcFAAW',
+                    selectedRecordObject: [
+                        {
+                            developerName: 'Sample_Postal_Code',
+                            value: '786125',
+                        },
+                        {
+                            developerName: 'Sample_Phone_Number',
+                            value: '09154892836',
+                        },
+                        {
+                            developerName: 'Sample_Account_Name',
+                            value: 'Abhijeet Jha',
+                        },
+                    ],
+                },
+                verifiedResult: {
+                    optionalVerifiers: [
+                        {
+                            developerName: 'Sample_Phone_Number',
+                            verificationState: '',
+                        },
+                    ],
+                    requiredVerifiers: [
+                        {
+                            developerName: 'Sample_Postal_Code',
+                            verificationState: '',
+                        },
+                    ],
+                },
+            }
+        );
+    });
+
+    describe('get /connect/health/uhs/actions', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhs/actions`,
+            },
+            [
+                'HolisticPatientIndexController.getActionsDetails',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhs/actions`,
+            },
+            {}
+        );
+    });
+    describe('get /connect/clm/contract/{contractId}/contract-document-version', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract/800xx000000bnkHAAQ/contract-document-version`,
+                queryParams: {},
+            },
+            [
+                'ClmController.getContractDocumentVersion',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CLM_BASE_URI,
+            basePath: `/contract/800xx000000bnkHAAQ/contract-document-version`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract/800xx000000bnkHAAQ/contract-document-version`,
+            },
+            {}
+        );
+    });
+    describe('get /connect/clm/document-templates', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/document-templates`,
+                queryParams: {},
+            },
+            [
+                'ClmController.getTemplates',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CLM_BASE_URI,
+            basePath: `/document-templates`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CLM_BASE_URI,
+                basePath: `/document-templates`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /contract-document-version/{contractdocumentversionid}/checkIn', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract-document-version/1234AA123E4567XD/checkIn`,
+                urlParams: {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                body: {},
+                headers: {
+                    'If-Modified-Since': '1234',
+                },
+            },
+            [
+                'ClmController.checkIn',
+                {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+    });
+    describe('patch /contract-document-version/{contractdocumentversionid}/unlock', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: CLM_BASE_URI,
+                basePath: `/contract-document-version/1234AA123E4567XD/unlock`,
+                urlParams: {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                body: {},
+                headers: {
+                    'If-Modified-Since': '1234',
+                },
+            },
+            [
+                'ClmController.unlock',
+                {
+                    contractdocumentversionid: '1234AA123E4567XD',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+    });
+
+    describe('get /connect/health/uhslist/{scoreId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhslist/scoreId`,
+            },
+            [
+                'HolisticPatientIndexController.getMorePatientScores',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhslist/scoreId`,
+            },
+            {}
+        );
+    });
+    describe('get /connect/health/uhsscore/apexinterface', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhsscore/apexinterface`,
+            },
+            [
+                'HolisticPatientIndexController.getApexInterfaceStatus',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/uhsscore/apexinterface`,
+            },
+            {}
+        );
+    });
+    describe('get /asset-creation/starter-templates', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates`,
+            },
+            [
+                'AssetCreationController.getStarterTemplates',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates`,
+            },
+            {}
+        );
+    });
+
+    describe('get /asset-creation/starter-templates/{starterTemplateId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates/123`,
+                urlParams: {
+                    starterTemplateId: '123',
+                },
+                queryParams: {
+                    type: 'emailtemplate',
+                },
+            },
+            [
+                'AssetCreationController.getStarterTemplateById',
+                {
+                    starterTemplateId: '123',
+                    type: 'emailtemplate',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/starter-templates/123`,
+            },
+            {}
+        );
+    });
+
+    describe('post /asset-creation/objects', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/objects`,
+                body: {
+                    assetInput: {
+                        starterTemplateId: '100',
+                        type: 'emailtemplate',
+                        fields: {
+                            name: 'New email template',
+                            description: 'Marketing campaign 123',
+                            folder: 'Private',
+                        },
+                    },
+                },
+            },
+            [
+                'AssetCreationController.createAsset',
+                {
+                    assetInput: {
+                        starterTemplateId: '100',
+                        type: 'emailtemplate',
+                        fields: {
+                            name: 'New email template',
+                            description: 'Marketing campaign 123',
+                            folder: 'Private',
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: ASSETCREATION_BASE_URI,
+                basePath: `/objects`,
+            },
+            {}
+        );
+    });
+    describe('post /connect/aiaccelerator/predictions', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/aiaccelerator/predictions`,
+                body: {
+                    predictionInput: {
+                        usecaseDefiniton: '0sIx00000000006EAA',
+                        predictionDefinition: '1ORx00000004C98GAE',
+                        inputType: 'ExtractedRecordOverrides',
+                        records: ['a00x0000000CHGYAA4'],
+                        enableScoreInsightsPersistence: false,
+                        enableSuggestionPersistence: false,
+                        enableFeaturePersistence: false,
+                        async: false,
+                    },
+                },
+            },
+            [
+                'AIAcceleratorConnectFamilyController.predictions',
+                {
+                    predictionInput: {
+                        usecaseDefiniton: '0sIx00000000006EAA',
+                        predictionDefinition: '1ORx00000004C98GAE',
+                        inputType: 'ExtractedRecordOverrides',
+                        records: ['a00x0000000CHGYAA4'],
+                        enableScoreInsightsPersistence: false,
+                        enableSuggestionPersistence: false,
+                        enableFeaturePersistence: false,
+                        async: false,
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/aiaccelerator/predictions`,
+            },
+
+            {
+                inputType: 'ExtractedRecordOverrides',
+                insightsSettings: {
+                    prescriptionImpactPercentage: 0,
+                    maxPrescriptions: 1,
+                    maxInsights: 1,
+                },
+                predictionDefinition: '1ORx0000000CaR7GAK',
+                predictionPlatform: 'Einstein Discovery',
+                predictionPurpose: 'FTestSampleMLUsecase',
+                predictions: [
+                    {
+                        model: {
+                            id: '1Otx0000000CaR7CAK',
+                        },
+                        prediction: {
+                            insights: [
+                                {
+                                    columns: [
+                                        {
+                                            columnName: 'DemoModel__c.Sales_Units__c',
+                                            columnValue: '376',
+                                        },
+                                    ],
+                                    value: 682.7992309704471,
+                                },
+                            ],
+                            score: 1368.8337623808916,
+                        },
+                        prescriptions: [
+                            {
+                                columns: [
+                                    {
+                                        columnName: 'DemoModel__c.Sales_PPG__c',
+                                        columnValue: '01tx00000006j2FAAQ',
+                                    },
+                                ],
+                                value: 1243.3972104607365,
+                            },
+                        ],
+                        status: 'Success',
+                    },
+                ],
+                primaryResponseObjRecordIds: [null],
+                secondaryResponseObjRecordIds: ['a01x00000009qltAAA'],
+            }
+        );
+    });
+
+    describe('/timeline/{timelineObjRecordId}/timeline-definitions/{timelineConfigFullName}/events', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/timeline/1234567890ABCDE/timeline-definitions/HealthTimeline/events`,
+            },
+            [
+                'TimelineController.getTimelineData',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/timeline/1234567890ABCDE/timeline-definitions/HealthTimeline/events`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/timeline/1234567890ABCDE/timeline-definitions/HealthTimeline/events`,
             },
             {}
         );

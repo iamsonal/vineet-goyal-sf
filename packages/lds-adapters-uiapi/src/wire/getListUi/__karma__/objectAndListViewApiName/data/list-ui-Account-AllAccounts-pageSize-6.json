@@ -78,7 +78,7 @@
     "records": {
         "count": 6,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v54.0/ui-api/list-records/Account/AllAccounts?pageSize=6&pageToken=0",
+        "currentPageUrl": "/services/data/v55.0/ui-api/list-records/Account/AllAccounts?pageSize=6&pageToken=0",
         "fields": [],
         "listInfoETag": "557b2f31a795090582cc2b7c27795044",
         "listReference": {
@@ -88,7 +88,7 @@
             "type": "listView"
         },
         "nextPageToken": "6",
-        "nextPageUrl": "/services/data/v54.0/ui-api/list-records/Account/AllAccounts?pageSize=6&pageToken=6",
+        "nextPageUrl": "/services/data/v55.0/ui-api/list-records/Account/AllAccounts?pageSize=6&pageToken=6",
         "optionalFields": [],
         "pageSize": 6,
         "previousPageToken": null,

@@ -407,4 +407,64 @@ describe('invokeAdapter', () => {
         expect(onResponseCount).toEqual(0);
         invokeAdapter('updateRecord', JSON.stringify(config), onResponse);
     });
+
+    describe('config errors', () => {
+        it('calls onResponse with error on invalid config for GET adapter', (done) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({}), (result) => {
+                expect(result.error).toBeDefined();
+                expect(result.error.status).toBe(400);
+                expect(result.error.statusText).toBe('INVALID_CONFIG');
+                expect(result.error.body.message).toBe(
+                    'adapter getObjectInfo configuration must specify objectApiName'
+                );
+                done();
+            });
+        });
+
+        it('calls onResponse with error on incomplete config for GET adapter', (done) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({ objectApiName: null }), (result) => {
+                expect(result.error).toBeDefined();
+                expect(result.error.status).toBe(400);
+                expect(result.error.statusText).toBe('INVALID_CONFIG');
+                expect(result.error.body).toBeUndefined();
+                done();
+            });
+        });
+
+        it('calls onResponse with error on invalid config for GET adapter with adapterContext', (done) => {
+            // getListUi uses adapter context so config check is async
+            invokeAdapter('getListUi', JSON.stringify({}), (result) => {
+                expect(result.error).toBeDefined();
+                expect(result.error.status).toBe(400);
+                expect(result.error.statusText).toBe('INVALID_CONFIG');
+                expect(result.error.body).toBeUndefined();
+                done();
+            });
+        });
+
+        it('calls onResponse with error on incomplete config for GET adapter with adapterContext', (done) => {
+            // getListUi uses adapter context so config check is async
+            invokeAdapter(
+                'getListUi',
+                JSON.stringify({ objectApiName: null, listViewApiName: null }),
+                (result) => {
+                    expect(result.error).toBeDefined();
+                    expect(result.error.status).toBe(400);
+                    expect(result.error.statusText).toBe('INVALID_CONFIG');
+                    expect(result.error.body).toBeUndefined();
+                    done();
+                }
+            );
+        });
+
+        it('calls onResponse with error on invalid config for DML adapter', (done) => {
+            invokeAdapter('updateRecord', JSON.stringify({}), (result) => {
+                expect(result.error).toBeDefined();
+                expect(result.error.status).toBe(400);
+                expect(result.error.statusText).toBe('INVALID_CONFIG');
+                expect(result.error.body).toEqual(Error('Invalid recordInput'));
+                done();
+            });
+        });
+    });
 });

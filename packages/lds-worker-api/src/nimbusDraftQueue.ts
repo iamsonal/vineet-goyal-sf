@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 // TODO [W-9523236]: add test coverage for this file and remove above comment
 
-import { DraftQueue as NimbusDraftQueue } from '@mobileplatform/nimbus-plugin-lds';
+import type { DraftQueue as NimbusDraftQueue } from '@mobileplatform/nimbus-plugin-lds';
 
 import { IsArray, JSONParse, JSONStringify, ObjectCreate } from './language';
 import { draftQueue } from './draftQueueImplementation';

@@ -44,7 +44,7 @@ export const UIAPI_ERROR_INVALID_FIELD_NAME2: UiApiError = {
     message: `no such column ${ACCOUNT_INVALID_NAME2}`,
 };
 
-export const BASE_URI = '/services/data/v54.0';
+export const BASE_URI = '/services/data/v55.0';
 
 export function generateMockedRecordFields(
     numberOfFields: number,

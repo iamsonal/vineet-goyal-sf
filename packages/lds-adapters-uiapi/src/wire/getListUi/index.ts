@@ -1,4 +1,4 @@
-import {
+import type {
     Adapter,
     AdapterFactory,
     FetchResponse,
@@ -9,42 +9,63 @@ import {
     SnapshotRefresh,
     ResourceResponse,
     AdapterContext,
-    UnAvailableSnapshot,
-    CacheKeySet,
-    FulfilledSnapshot,
+    AdapterRequestContext,
+    StoreLookup,
 } from '@luvio/engine';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
+import type { GetListUiByApiNameConfig } from '../../generated/adapters/getListUiByApiName';
 import {
-    GetListUiByApiNameConfig,
     getListUiByApiName_ConfigPropertyNames,
     validateAdapterConfig as getListUiByApiName_validateAdapterConfig,
+    createResourceParams as getListUiByApiName_createResourceParams,
 } from '../../generated/adapters/getListUiByApiName';
+import type { GetListUiByListViewIdConfig } from '../../generated/adapters/getListUiByListViewId';
 import {
-    GetListUiByListViewIdConfig,
     getListUiByListViewId_ConfigPropertyNames,
     validateAdapterConfig as getListUiByListViewId_validateAdapterConfig,
+    createResourceParams as getListUiByListViewId_createResourceParams,
 } from '../../generated/adapters/getListUiByListViewId';
-import { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
-import { GetMruListUiConfig } from '../../generated/adapters/getMruListUi';
+import type { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
+import type { GetMruListUiConfig } from '../../generated/adapters/getMruListUi';
 import getUiApiListRecordsByListViewId from '../../generated/resources/getUiApiListRecordsByListViewId';
 import getUiApiListRecordsByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListRecordsByListViewApiNameAndObjectApiName';
-import getUiApiListUiByListViewId from '../../generated/resources/getUiApiListUiByListViewId';
-import getUiApiListUiByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListUiByListViewApiNameAndObjectApiName';
-import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
+
+import {
+    createResourceRequest as getUiApiListUiByObjectApiNameAndListViewApiName_createResourceRequest,
+    createPaginationParams as getUiApiListUiByObjectApiNameAndListViewApiName_createPaginationParams,
+} from '../../generated/resources/getUiApiListUiByListViewApiNameAndObjectApiName';
+import {
+    createResourceRequest as getUiApiListUiByListViewId_createResourceRequest,
+    createPaginationParams as getUiApiListUiByListViewId_createPaginationParams,
+} from '../../generated/resources/getUiApiListUiByListViewId';
+
+import type { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
+import type {
+    DynamicSelectParams as types_ListRecordCollectionRepresentation_DynamicSelectParams,
+    ListRecordCollectionRepresentation,
+} from '../../generated/types/ListRecordCollectionRepresentation';
 import {
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
-    ListRecordCollectionRepresentation,
+    keyBuilderFromType as ListRecordCollectionRepresentation_keyBuilderFromType,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
     ingest as types_ListRecordCollectionRepresentation_ingest,
+    dynamicSelect as types_ListRecordCollectionRepresentation_dynamicSelect,
+    getTypeCacheKeys as types_ListRecordCollectionRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListRecordCollectionRepresentation';
-import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
+import type {
+    DynamicSelectParams as types_ListUiRepresentation_DynamicSelectParams,
+    ListUiRepresentation,
+} from '../../generated/types/ListUiRepresentation';
 import {
     keyBuilder as listUiRepresentation_keyBuilder,
-    ListUiRepresentation,
+    keyBuilderFromType as listUiRepresentation_keyBuilderFromType,
     ingest as types_ListUiRepresentation_ingest,
+    dynamicSelect as types_ListUiRepresentation_dynamicSelect,
+    getTypeCacheKeys as types_ListUiRepresentation_getTypeCacheKeys,
 } from '../../generated/types/ListUiRepresentation';
-import { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
+import type { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
+import type { ListFields } from '../../util/lists';
 import {
     addListReference,
     addServerDefaults,
@@ -52,22 +73,14 @@ import {
     getListReference,
     getServerDefaults,
     listFields,
-    ListFields,
-    LIST_INFO_SELECTIONS,
-    LIST_INFO_PRIVATES,
-    isListInfoSnapshotWithData,
 } from '../../util/lists';
-import {
-    minimizeRequest,
-    pathSelectionsFor,
-    staticValuePathSelection,
-} from '../../util/pagination';
+import { minimizeRequest } from '../../util/pagination';
+import { isFulfilledSnapshot, isStaleSnapshot } from '../../util/snapshot';
+
 import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
-import { isFulfilledSnapshot } from '../../util/snapshot';
-import { ObjectKeys } from '../../util/language';
-
-const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
+import { buildNotFetchableNetworkSnapshot } from '../../util/cache-policy';
+import { isPromise } from '../../util/promise';
 
 // eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
@@ -114,87 +127,52 @@ function getSortBy(config: GetListUiConfig, context: AdapterContext): string[] |
 function buildListUiFragment(
     config: GetListUiConfig,
     context: AdapterContext,
-    listInfo: ListInfoRepresentation,
     fields: ListFields
 ): Fragment {
     const defaultedConfig = { ...getServerDefaults(config, context), ...config };
 
-    return {
-        kind: 'Fragment',
-        private: ['eTag'],
-        selections: [
-            {
-                kind: 'Link',
-                name: 'info',
-                fragment: {
-                    kind: 'Fragment',
-                    private: LIST_INFO_PRIVATES,
-                    selections: LIST_INFO_SELECTIONS,
-                },
+    let paginationParams;
+    if (isGetListUiByListViewIdConfig(defaultedConfig)) {
+        const resourceParams = getListUiByListViewId_createResourceParams(defaultedConfig);
+        paginationParams = getUiApiListUiByListViewId_createPaginationParams(resourceParams);
+    } else if (isGetListUiByApiNameConfig(defaultedConfig)) {
+        const resourceParams = getListUiByApiName_createResourceParams(defaultedConfig);
+        paginationParams =
+            getUiApiListUiByObjectApiNameAndListViewApiName_createPaginationParams(resourceParams);
+    }
+
+    const recordSelectParams: types_ListRecordCollectionRepresentation_DynamicSelectParams = {
+        records: {
+            name: 'records',
+            kind: 'Link',
+            fragment: {
+                kind: 'Fragment',
+                private: ['eTag', 'weakEtag'],
+                selections: buildSelectionFromFields(...fields.getRecordSelectionFieldSets()),
             },
-            {
-                kind: 'Link',
-                name: 'records',
-                fragment: {
-                    kind: 'Fragment',
-                    private: [],
-                    selections: [
-                        ...pathSelectionsFor({
-                            name: 'records',
-                            pageSize: defaultedConfig.pageSize || DEFAULT_PAGE_SIZE,
-                            pageToken: defaultedConfig.pageToken,
-                            private: ['eTag', 'weakEtag'],
-                            selections: buildSelectionFromFields(
-                                ...fields.getRecordSelectionFieldSets()
-                            ),
-                            tokenDataKey: ListRecordCollection_paginationKeyBuilder({
-                                listViewId: listInfo.eTag,
-                                sortBy:
-                                    defaultedConfig.sortBy === undefined
-                                        ? null
-                                        : defaultedConfig.sortBy,
-                            }),
-                        }),
-                        {
-                            kind: 'Scalar',
-                            name: 'fields',
-                            plural: true,
-                        },
-                        {
-                            kind: 'Scalar',
-                            name: 'listInfoETag',
-                        },
-                        {
-                            kind: 'Link',
-                            name: 'listReference',
-                            fragment: LIST_REFERENCE_SELECTIONS,
-                        },
-                        {
-                            kind: 'Scalar',
-                            name: 'optionalFields',
-                            plural: true,
-                        },
-                        staticValuePathSelection({
-                            name: 'pageSize',
-                            value:
-                                defaultedConfig.pageSize === undefined
-                                    ? DEFAULT_PAGE_SIZE
-                                    : defaultedConfig.pageSize,
-                        }),
-                        {
-                            kind: 'Scalar',
-                            name: 'sortBy',
-                            plural: true,
-                        },
-                    ],
-                },
-            },
-        ],
+        },
     };
+    const listRecordCollectionSelect = types_ListRecordCollectionRepresentation_dynamicSelect(
+        recordSelectParams,
+        paginationParams
+    );
+
+    const listRecordCollectionSelectParams: types_ListUiRepresentation_DynamicSelectParams = {
+        records: {
+            name: 'records',
+            kind: 'Link',
+            fragment: listRecordCollectionSelect,
+        },
+    };
+    return types_ListUiRepresentation_dynamicSelect(
+        listRecordCollectionSelectParams,
+        paginationParams
+    );
 }
 
-function buildInMemorySnapshot(
+function buildCachedSnapshot(
     luvio: Luvio,
+    storeLookup: StoreLookup<ListUiRepresentation>,
     context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
@@ -204,18 +182,16 @@ function buildInMemorySnapshot(
         ...listInfo.listReference,
         sortBy: getSortBy(config, context),
     });
+    // ok to pass luvio here since listFields() ignores TTL when getting cached field information
     const listFields_ = fields || listFields(luvio, config, listInfo);
 
     const selector = {
         recordId: listUiKey,
-        node: buildListUiFragment(config, context, listInfo, listFields_),
+        node: buildListUiFragment(config, context, listFields_),
         variables: {},
     };
 
-    return luvio.storeLookup<ListUiRepresentation>(
-        selector,
-        buildSnapshotRefresh_getListUi(luvio, context, config)
-    );
+    return storeLookup(selector, buildSnapshotRefresh_getListUi(luvio, context, config));
 }
 
 function buildSnapshotRefresh_getListUi(
@@ -241,7 +217,7 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
 
     let request: ResourceRequest;
     if (isGetListUiByApiNameConfig(config)) {
-        request = getUiApiListUiByObjectApiNameAndListViewApiName({
+        request = getUiApiListUiByObjectApiNameAndListViewApiName_createResourceRequest({
             urlParams: {
                 listViewApiName: config.listViewApiName,
                 objectApiName: config.objectApiName,
@@ -249,7 +225,7 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
             queryParams,
         });
     } else if (isGetListUiByListViewIdConfig(config)) {
-        request = getUiApiListUiByListViewId({
+        request = getUiApiListUiByListViewId_createResourceRequest({
             urlParams: { listViewId: config.listViewId },
             queryParams,
         });
@@ -261,101 +237,6 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
     return request;
 }
 
-function getResponseCacheKeys_getListUi(
-    luvio: Luvio,
-    response: FetchResponse<ListUiRepresentation>
-): CacheKeySet {
-    // TODO [W-10055997]: make this more efficient
-
-    // for now we will get the cache keys by actually ingesting then looking at
-    // the store records
-
-    // ingest mutates the response so we have to make a copy
-    const responseCopy = JSON.parse(JSON.stringify(response));
-    const { body } = responseCopy,
-        listInfo = body.info,
-        { listReference } = listInfo;
-
-    // response might have records.sortBy in csv format
-    const sortBy = body.records.sortBy;
-    if (sortBy && typeof sortBy === 'string') {
-        body.records.sortBy = (sortBy as unknown as string).split(',');
-    }
-
-    const listUiKey = listUiRepresentation_keyBuilder({
-        ...listReference,
-        sortBy: body.records.sortBy,
-    });
-
-    luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
-
-    const visited = ObjectKeys((luvio as any).environment.store.visitedIds);
-
-    const keys: CacheKeySet = {};
-    for (let i = 0, len = visited.length; i < len; i++) {
-        const key = visited[i];
-        const namespace = key.split('::')[0];
-        const representationName = key.split('::')[1].split(':')[0];
-        keys[key] = {
-            namespace,
-            representationName,
-        };
-    }
-
-    return keys;
-}
-
-function getResponseCacheKeys_getListRecords(
-    luvio: Luvio,
-    listInfo: ListInfoRepresentation,
-    response: ResourceResponse<ListRecordCollectionRepresentation>
-) {
-    // TODO [W-10055997]: make this more efficient
-
-    // for now we will get the cache keys by actually ingesting then looking at
-    // the store records
-
-    // ingest mutates the response so we have to make a copy
-    const responseCopy = JSON.parse(JSON.stringify(response));
-    const { body } = responseCopy;
-    const { listInfoETag } = body;
-
-    // bail early if list view has changed
-    if (listInfoETag !== listInfo.eTag) {
-        return {};
-    }
-
-    // response might have records.sortBy in csv format
-    const { sortBy } = body;
-    if (sortBy && typeof sortBy === 'string') {
-        body.sortBy = (sortBy as unknown as string).split(',');
-    }
-
-    luvio.storeIngest(
-        ListRecordCollectionRepresentation_keyBuilder({
-            listViewId: listInfoETag,
-            sortBy: body.sortBy,
-        }),
-        types_ListRecordCollectionRepresentation_ingest,
-        body
-    );
-
-    const visited = ObjectKeys((luvio as any).environment.store.visitedIds);
-
-    const keys: CacheKeySet = {};
-    for (let i = 0, len = visited.length; i < len; i++) {
-        const key = visited[i];
-        const namespace = key.split('::')[0];
-        const representationName = key.split('::')[1].split(':')[0];
-        keys[key] = {
-            namespace,
-            representationName,
-        };
-    }
-
-    return keys;
-}
-
 function onResourceSuccess_getListUi(
     luvio: Luvio,
     context: AdapterContext,
@@ -365,12 +246,6 @@ function onResourceSuccess_getListUi(
     const { body } = response,
         listInfo = body.info,
         { listReference } = listInfo;
-
-    // response might have records.sortBy in csv format
-    const sortBy = body.records.sortBy;
-    if (sortBy && typeof sortBy === 'string') {
-        body.records.sortBy = (sortBy as unknown as string).split(',');
-    }
 
     const listUiKey = listUiRepresentation_keyBuilder({
         ...listReference,
@@ -388,7 +263,7 @@ function onResourceSuccess_getListUi(
     addServerDefaults(config, body, context);
 
     // build the selector while the list info is still easily accessible
-    const fragment = buildListUiFragment(config, context, listInfo, fields);
+    const fragment = buildListUiFragment(config, context, fields);
 
     luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
 
@@ -431,13 +306,27 @@ function buildNetworkSnapshot_getListUi(
 
     return luvio.dispatchResourceRequest<ListUiRepresentation>(request).then(
         (response) => {
+            const { body } = response;
+
+            // response might have records.sortBy in csv format but keyBuilder/ingestion
+            // functions expect it to be an array so coerce it here if needed
+            const sortBy = body.records.sortBy;
+            if (sortBy && typeof sortBy === 'string') {
+                body.records.sortBy = (sortBy as unknown as string).split(',');
+            }
+
             return luvio.handleSuccessResponse(
                 () => onResourceSuccess_getListUi(luvio, context, config, response),
-                () => getResponseCacheKeys_getListUi(luvio, response)
+                () =>
+                    types_ListUiRepresentation_getTypeCacheKeys(body, () =>
+                        listUiRepresentation_keyBuilderFromType(body)
+                    )
             );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getListUi(luvio, context, config, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceError_getListUi(luvio, context, config, err);
+            });
         }
     );
 }
@@ -504,26 +393,17 @@ function prepareRequest_getListRecords(
     return request;
 }
 
+// Only call this function if you are certain the list view hasn't changed (ie:
+// the listInfoEtag in the body is the same as the cached listInfo.eTag)
 function onResourceSuccess_getListRecords(
     luvio: Luvio,
     context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     response: ResourceResponse<ListRecordCollectionRepresentation>
-) {
+): Snapshot<ListUiRepresentation> {
     const { body } = response;
     const { listInfoETag } = body;
-
-    // fall back to list-ui if list view has changed
-    if (listInfoETag !== listInfo.eTag) {
-        return buildNetworkSnapshot_getListUi(luvio, context, config);
-    }
-
-    // response might have records.sortBy in csv format
-    const { sortBy } = body;
-    if (sortBy && typeof sortBy === 'string') {
-        body.sortBy = (sortBy as unknown as string).split(',');
-    }
 
     const fields = listFields(luvio, config, listInfo).processRecords(body.records);
 
@@ -536,7 +416,14 @@ function onResourceSuccess_getListRecords(
         body
     );
 
-    const snapshot = buildInMemorySnapshot(luvio, context, config, listInfo, fields);
+    const snapshot = buildCachedSnapshot(
+        luvio,
+        luvio.storeLookup.bind(luvio),
+        context,
+        config,
+        listInfo,
+        fields
+    );
     luvio.storeBroadcast();
     return snapshot;
 }
@@ -571,22 +458,110 @@ function buildNetworkSnapshot_getListRecords(
 
     return luvio.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         (response) => {
+            const { body } = response;
+
+            // fall back to list-ui if list view has changed
+            if (body.listInfoETag !== listInfo.eTag) {
+                return buildNetworkSnapshot_getListUi(luvio, context, config);
+            }
+
+            // response might have records.sortBy in csv format but keyBuilder/ingestion
+            // functions expect it to be an array so coerce it here if needed
+            const { sortBy } = body;
+            if (sortBy && typeof sortBy === 'string') {
+                body.sortBy = (sortBy as unknown as string).split(',');
+            }
+
+            // else ingest
             return luvio.handleSuccessResponse(
+                () => onResourceSuccess_getListRecords(luvio, context, config, listInfo, response),
                 () =>
-                    onResourceSuccess_getListRecords(
-                        luvio,
-                        context,
-                        config,
-                        listInfo,
-                        response
-                    ) as FulfilledSnapshot<ListUiRepresentation, unknown>,
-                () => getResponseCacheKeys_getListRecords(luvio, listInfo, response)
+                    types_ListRecordCollectionRepresentation_getTypeCacheKeys(body, () =>
+                        ListRecordCollectionRepresentation_keyBuilderFromType(body)
+                    )
             );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getListRecords(luvio, context, config, listInfo, err);
+            return luvio.handleErrorResponse(() => {
+                return onResourceError_getListRecords(luvio, context, config, listInfo, err);
+            });
         }
     );
+}
+
+// functions to retrieve a ListInfoRepresentation
+
+type BuildListInfoSnapshotContext = {
+    adapterContext: AdapterContext;
+    config: GetListUiConfig;
+    luvio: Luvio;
+};
+
+function buildCachedListInfoSnapshot(
+    context: BuildListInfoSnapshotContext,
+    storeLookup: StoreLookup<ListInfoRepresentation>
+): Snapshot<ListInfoRepresentation> | undefined {
+    const { adapterContext, config } = context;
+
+    // try to get a list reference and a list info for the list; this should come back
+    // non-null if we have the list info cached
+    const listRef = getListReference(config, adapterContext);
+
+    // no listRef means we can't even attempt to build a cached snapshot
+    // so make a full list-ui request
+    if (listRef === undefined) {
+        return;
+    }
+
+    return getListInfo(listRef, storeLookup);
+}
+
+// functions to retrieve a ListUiRepresentation
+
+type BuildListUiSnapshotContext = {
+    adapterContext: AdapterContext;
+    config: GetListUiConfig;
+    listInfo: ListInfoRepresentation | undefined;
+    listUi?: Snapshot<ListUiRepresentation>;
+    luvio: Luvio;
+};
+
+function buildCachedListUiSnapshot(
+    context: BuildListUiSnapshotContext,
+    storeLookup: StoreLookup<ListUiRepresentation>
+): Snapshot<ListUiRepresentation> | undefined {
+    const { adapterContext, config, listInfo, luvio } = context;
+
+    if (listInfo !== undefined) {
+        context.listUi = buildCachedSnapshot(luvio, storeLookup, adapterContext, config, listInfo);
+        return context.listUi;
+    }
+}
+
+function buildNetworkListUiSnapshot(
+    context: BuildListUiSnapshotContext
+): Promise<Snapshot<ListUiRepresentation>> {
+    const { adapterContext, config, listInfo, listUi, luvio } = context;
+
+    // make the full list ui request if any of the following is true:
+    //
+    // - the list info was not found
+    // - we couldn't build enough of the list ui to locate any record data
+    // - we found the complete cached list ui; this is somewhat counterintuitive,
+    //   but it happens when the cache policy has decided to refetch cached data
+    if (
+        !listInfo ||
+        !listUi ||
+        !listUi.data ||
+        isFulfilledSnapshot(listUi) ||
+        isStaleSnapshot(listUi)
+    ) {
+        return buildNetworkSnapshot_getListUi(luvio, adapterContext, config);
+    }
+
+    // we *should* only be missing records and/or tokens at this point; send a list-records
+    // request to fill them in
+    return buildNetworkSnapshot_getListRecords(luvio, adapterContext, config, listInfo, listUi);
 }
 
 // functions to discern config variations
@@ -650,39 +625,6 @@ export function validateGetListUiConfig(untrustedConfig: unknown): GetListUiConf
 // the listViewApiName value to pass to getListUi() to request the MRU list
 export const MRU = Symbol.for('MRU');
 
-function getListUiSnapshotFromListInfo(
-    luvio: Luvio,
-    context: AdapterContext,
-    config: GetListUiConfig,
-    listInfo: ListInfoRepresentation
-) {
-    // with the list info we can construct the full selector and try to get the
-    // list ui from the store
-    const snapshot = buildInMemorySnapshot(luvio, context, config, listInfo);
-
-    if (luvio.snapshotAvailable(snapshot)) {
-        // cache hit :partyparrot:
-        return snapshot;
-    }
-
-    // if the list ui was not found in the store then
-    // make a full list-ui request
-    if (!snapshot.data) {
-        return luvio.resolveSnapshot(
-            snapshot,
-            buildSnapshotRefresh_getListUi(luvio, context, config)
-        );
-    }
-
-    // we *should* only be missing records and/or tokens at this point; send a list-records
-    // request to fill them in
-    return luvio.resolveSnapshot(snapshot, {
-        config,
-        resolve: () =>
-            buildNetworkSnapshot_getListRecords(luvio, context, config, listInfo, snapshot),
-    });
-}
-
 export const factory: AdapterFactory<
     | GetListViewSummaryCollectionConfig
     | GetListUiByApiNameConfig
@@ -691,74 +633,45 @@ export const factory: AdapterFactory<
     ListUiRepresentation | ListViewSummaryCollectionRepresentation
 > = (luvio: Luvio) => {
     // adapter implementation for getListUiBy*
-    const listUiAdapter = (untrustedConfig: unknown, context: AdapterContext) => {
+    const listUiAdapter = (
+        untrustedConfig: unknown,
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
+    ) => {
         const config = validateGetListUiConfig(untrustedConfig);
 
         if (config === null) {
             return null;
         }
 
-        // try to get a list reference and a list info for the list; this should come back
-        // non-null if we have the list info cached
-        const listRef = getListReference(config, context);
+        const definedRequestContext = requestContext || {};
 
-        // no listRef means we can't even attempt to build an in-memory snapshot
-        // so make a full list-ui request
-        if (listRef === undefined) {
-            // TODO [W-9712566]: this is returning network response directly to caller,
-            // this means LDS on Mobile environment does not have a chance to overlay
-            // draft edits on top of results
-            return buildNetworkSnapshot_getListUi(luvio, context, config);
-        }
-
-        const listInfoSnapshot = getListInfo(
-            listRef,
-            luvio,
-            buildSnapshotRefresh_getListUi(
-                luvio,
-                context,
-                config
-            ) as unknown as SnapshotRefresh<ListInfoRepresentation>
+        // try to find a cached ListInfoRepresentation
+        const listInfoPromiseOrSnapshot = luvio.applyCachePolicy(
+            definedRequestContext,
+            { adapterContext, config, luvio },
+            buildCachedListInfoSnapshot,
+            buildNotFetchableNetworkSnapshot(luvio)
         );
 
-        // if we have list info then build a snapshot from that
-        if (isFulfilledSnapshot(listInfoSnapshot)) {
-            return getListUiSnapshotFromListInfo(luvio, context, config, listInfoSnapshot.data);
-        }
+        // build the ListUiRepresentation from the cached ListInfoRepresentation (if any)
+        const processListInfo = (listInfoSnapshot: Snapshot<ListInfoRepresentation>) => {
+            const listInfo =
+                isFulfilledSnapshot(listInfoSnapshot) || isStaleSnapshot(listInfoSnapshot)
+                    ? listInfoSnapshot.data
+                    : undefined;
 
-        // In default environment resolving a snapshot is just hitting the network
-        // using the given SnapshotRefresh (so list-ui in this case).  In durable environment
-        // resolving a snapshot will first attempt to read the missing cache keys
-        // from the given UnAvailable snapshot (a list-info snapshot in this case) and build a
-        // fulfilled snapshot from that if those cache keys are present, otherwise it refreshes
-        // with the given SnapshotRefresh.  Usually the SnapshotRefresh response and the UnAvailable
-        // snapshot are for the same response Type, but this lists adapter is special (it mixes
-        // calls with list-info, list-records, and list-ui), and so our use of resolveSnapshot
-        // is special (polymorphic response, could either be a list-info representation or a
-        // list-ui representation).
-        return luvio
-            .resolveSnapshot(
-                listInfoSnapshot as UnAvailableSnapshot<ListInfoRepresentation>,
-                buildSnapshotRefresh_getListUi(
-                    luvio,
-                    context,
-                    config
-                ) as unknown as SnapshotRefresh<ListInfoRepresentation>
-            )
-            .then((resolvedSnapshot) => {
-                // if result came from cache we know it's a listinfo, otherwise
-                // it's a full list-ui response
-                if (isListInfoSnapshotWithData(resolvedSnapshot)) {
-                    return getListUiSnapshotFromListInfo(
-                        luvio,
-                        context,
-                        config,
-                        resolvedSnapshot.data
-                    );
-                }
+            return luvio.applyCachePolicy(
+                definedRequestContext,
+                { adapterContext, config, listInfo, luvio },
+                buildCachedListUiSnapshot,
+                buildNetworkListUiSnapshot
+            );
+        };
 
-                return resolvedSnapshot as Snapshot<ListUiRepresentation>;
-            });
+        return isPromise(listInfoPromiseOrSnapshot)
+            ? listInfoPromiseOrSnapshot.then(processListInfo)
+            : processListInfo(listInfoPromiseOrSnapshot);
     };
 
     let listViewSummaryCollectionAdapter: Adapter<any, any> | null = null;
@@ -768,7 +681,8 @@ export const factory: AdapterFactory<
     // we delegate to are responsible for returning refreshable results
     return luvio.withContext(function UiApi__custom_getListUi(
         untrustedConfig: unknown,
-        context: AdapterContext
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
     ) {
         // if the MRU symbol is there then just return the getMruListUi adapter
         if (looksLikeGetMruListUiConfig(untrustedConfig)) {
@@ -780,7 +694,7 @@ export const factory: AdapterFactory<
             const mruConfig: any = { ...untrustedConfig };
             delete mruConfig.listViewApiName;
 
-            return mruAdapter(mruConfig);
+            return mruAdapter(mruConfig, requestContext);
         }
 
         // if config has objectApiName but no listViewId or listViewApiName then hand off
@@ -791,7 +705,7 @@ export const factory: AdapterFactory<
                     getListViewSummaryCollectionAdapterFactory(luvio);
             }
 
-            return listViewSummaryCollectionAdapter(untrustedConfig);
+            return listViewSummaryCollectionAdapter(untrustedConfig, requestContext);
         }
 
         // see if config looks like a listViewId or listViewApiName request
@@ -799,7 +713,7 @@ export const factory: AdapterFactory<
             looksLikeGetListUiByApiNameConfig(untrustedConfig) ||
             looksLikeGetListUiByListViewIdConfig(untrustedConfig)
         ) {
-            return listUiAdapter(untrustedConfig, context);
+            return listUiAdapter(untrustedConfig, adapterContext, requestContext);
         }
 
         return null;

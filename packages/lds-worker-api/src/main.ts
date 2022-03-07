@@ -9,17 +9,20 @@ import {
 import { nimbusDraftQueue } from './nimbusDraftQueue';
 import { draftQueue, draftManager } from './draftQueueImplementation';
 import { setUiApiRecordTTL, setMetadataTTL } from './ttl';
-import { withDefaultLuvio } from 'native/ldsEngineMobile';
-import { Luvio } from '@luvio/engine';
+import { withDefaultLuvio } from '@salesforce/lds-runtime-mobile';
+import type { Luvio } from '@luvio/engine';
+import { initializeStoreEval } from './storeEval';
 
 if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-undef
     withDefaultLuvio((luvio: Luvio) => {
         // eslint-disable-next-line no-undef
-        const global = globalThis as any;
+        const global = typeof globalThis === 'undefined' ? {} : (globalThis as any);
         global.luvio = luvio;
     });
 }
+
+initializeStoreEval();
 
 export {
     subscribeToAdapter,

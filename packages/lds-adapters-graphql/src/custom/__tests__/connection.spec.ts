@@ -1,6 +1,6 @@
 import { Environment, Luvio, Store, UnfulfilledSnapshot } from '@luvio/engine';
-import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
-import { createIngest, createRead, keyBuilder } from '../connection';
+import { LuvioSelectionCustomFieldNode } from '@luvio/graphql-parser';
+import { createIngest, createRead, keyBuilder, serialize } from '../connection';
 
 describe('GQL Connection', () => {
     describe('read', () => {
@@ -412,7 +412,6 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -539,7 +538,6 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -659,7 +657,6 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -814,7 +811,6 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -977,7 +973,6 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -1113,7 +1108,6 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -1129,7 +1123,6 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -1137,6 +1130,174 @@ describe('GQL Connection', () => {
             );
 
             expect(luvio.storePublish).not.toHaveBeenCalled();
+        });
+    });
+    describe('serialize', () => {
+        // Fields = {edges.cursor, totalCount, pageInfo.hasNextPage, pageInfo.hasPreviousPage}
+        it('should insert the fields when not specified in the input query', () => {
+            const ast: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'Account',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'CustomFieldSelection',
+                                name: 'node',
+                                type: 'Record',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const state = {
+                fragments: {},
+            };
+
+            const result = serialize(ast, state);
+            expect(result).toEqual(
+                'Account { __typename edges { __typename node { Name { __typename value, displayValue,  } ...defaultRecordFields } cursor } pageInfo { hasNextPage hasPreviousPage } totalCount }'
+            );
+        });
+
+        it('should not insert the fields when specified in the input query', () => {
+            const ast: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'Account',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'CustomFieldSelection',
+                                name: 'node',
+                                type: 'Record',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'cursor',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'totalCount',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'pageInfo',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'hasNextPage',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'hasPreviousPage',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const state = {
+                fragments: {},
+            };
+
+            const result = serialize(ast, state);
+            expect(result).toEqual(
+                'Account { __typename edges { __typename node { Name { __typename value, displayValue,  } ...defaultRecordFields } cursor,  } totalCount,  pageInfo { hasNextPage,  hasPreviousPage,  } }'
+            );
+        });
+
+        it('should add hasNextPage and hasPreviousPage in pageInfo when not specified', () => {
+            const ast: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'Account',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'CustomFieldSelection',
+                                name: 'node',
+                                type: 'Record',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'cursor',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'totalCount',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'pageInfo',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'startCursor',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const state = {
+                fragments: {},
+            };
+
+            const result = serialize(ast, state);
+            expect(result).toEqual(
+                'Account { __typename edges { __typename node { Name { __typename value, displayValue,  } ...defaultRecordFields } cursor,  } totalCount,  pageInfo { startCursor,  hasNextPage hasPreviousPage } }'
+            );
         });
     });
 });

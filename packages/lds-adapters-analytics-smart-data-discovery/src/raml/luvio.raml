@@ -1,0 +1,19 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'smart-data-discovery'
+
+types:
+  StoryCollectionRepresentation:
+    (luvio.ttl): 300
+  StoryRepresentation:
+    (luvio.opaque): true
+
+/smartdatadiscovery:
+  /stories:
+    get:
+      (luvio.adapter):
+        name: getStories

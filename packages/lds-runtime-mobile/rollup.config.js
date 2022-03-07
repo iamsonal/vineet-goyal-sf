@@ -1,4 +1,4 @@
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 
 import * as packageJson from './package.json';
@@ -10,7 +10,12 @@ const footer = buildFooter(packageJson.version);
 const mobile = {
     input: './src/main.ts',
 
-    external: ['@salesforce/lds-instrumentation', '@salesforce/user/Id', 'o11y/client'],
+    external: [
+        '@salesforce/lds-instrumentation',
+        '@salesforce/user/Id',
+        'o11y/client',
+        'force/ldsAdaptersGraphql',
+    ],
 
     output: {
         file: 'dist/ldsEngineRuntimeMobile.js',

@@ -1,7 +1,7 @@
 /* eslint no-console: ["error", { allow: ["log", "error"] }] */
 
 import { sql, transform } from '../dist/graphql-eval.js';
-import parseAndVisit from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 
 import { readFileSync, existsSync } from 'fs';
 import { resolve as resolvePath } from 'path';

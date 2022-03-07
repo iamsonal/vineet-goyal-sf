@@ -1,4 +1,4 @@
-import {
+import type {
     AdapterFactory,
     Luvio,
     PathSelection,
@@ -7,26 +7,27 @@ import {
     SnapshotRefresh,
     Snapshot,
     AdapterContext,
+    AdapterRequestContext,
+    StoreLookup,
+    CoercedAdapterRequestContext,
+    DispatchResourceRequestContext,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
+import type { ResourceRequestConfig } from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
-    ResourceRequestConfig,
     keyBuilder,
+    getResponseCacheKeys,
 } from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
 import { createResourceParams } from '../../generated/adapters/getRecordCreateDefaults';
-import {
-    RecordDefaultsRepresentation,
-    ingest,
-} from '../../generated/types/RecordDefaultsRepresentation';
+import type { RecordDefaultsRepresentation } from '../../generated/types/RecordDefaultsRepresentation';
+import { ingest } from '../../generated/types/RecordDefaultsRepresentation';
 import { select as recordLayoutRepresentationSelect } from '../../generated/types/RecordLayoutRepresentation';
 import { select as objectInfoRepresentationSelect } from '../../generated/types/ObjectInfoRepresentation';
 import { FormFactor } from '../../primitives/FormFactor';
 import { buildSelectionFromRecord } from '../../selectors/record';
 import { MASTER_RECORD_TYPE_ID } from '../../util/layout';
-import {
-    GetRecordCreateDefaultsConfig,
-    getRecordCreateDefaults_ConfigPropertyNames,
-} from '../../generated/adapters/getRecordCreateDefaults';
+import type { GetRecordCreateDefaultsConfig } from '../../generated/adapters/getRecordCreateDefaults';
+import { getRecordCreateDefaults_ConfigPropertyNames } from '../../generated/adapters/getRecordCreateDefaults';
 
 const layoutSelections = recordLayoutRepresentationSelect();
 const objectInfoSelections = objectInfoRepresentationSelect();
@@ -75,7 +76,8 @@ function buildSnapshotRefresh(
 export function buildNetworkSnapshot(
     luvio: Luvio,
     context: AdapterContext,
-    config: GetRecordCreateDefaultsConfigWithDefaults
+    config: GetRecordCreateDefaultsConfigWithDefaults,
+    options?: DispatchResourceRequestContext
 ) {
     const params: ResourceRequestConfig = createResourceParams(config);
     const request = getUiApiRecordDefaultsCreateByObjectApiName(params);
@@ -83,36 +85,45 @@ export function buildNetworkSnapshot(
     const key = keyBuilder(params);
     const selectorKey = buildSelectorKey(config);
 
-    return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request, options).then(
         (response) => {
-            const { body } = response;
-            const cacheSelector: Selector = {
-                recordId: key,
-                node: {
-                    kind: 'Fragment',
-                    private: [],
-                    selections: buildSelector(body),
-                },
-                variables: {},
-            };
+            return luvio.handleSuccessResponse(
+                () => {
+                    const { body } = response;
+                    const cacheSelector: Selector = {
+                        recordId: key,
+                        node: {
+                            kind: 'Fragment',
+                            private: [],
+                            selections: buildSelector(body),
+                        },
+                        variables: {},
+                    };
 
-            context.set(selectorKey, cacheSelector);
-            luvio.storeIngest(key, ingest, body);
-            const snapshot = luvio.storeLookup<RecordDefaultsRepresentation>(
-                cacheSelector,
-                buildSnapshotRefresh(luvio, context, config)
+                    context.set(selectorKey, cacheSelector);
+                    luvio.storeIngest(key, ingest, body);
+                    const snapshot = luvio.storeLookup<RecordDefaultsRepresentation>(
+                        cacheSelector,
+                        buildSnapshotRefresh(luvio, context, config)
+                    );
+                    luvio.storeBroadcast();
+                    return snapshot;
+                },
+                () => {
+                    return getResponseCacheKeys(params, response.body);
+                }
             );
-            luvio.storeBroadcast();
-            return snapshot;
         },
         (err: FetchResponse<unknown>) => {
-            const errorSnapshot = luvio.errorSnapshot(
-                err,
-                buildSnapshotRefresh(luvio, context, config)
-            );
-            luvio.storeIngestError(key, errorSnapshot);
-            luvio.storeBroadcast();
-            return errorSnapshot;
+            return luvio.handleErrorResponse(() => {
+                const errorSnapshot = luvio.errorSnapshot(
+                    err,
+                    buildSnapshotRefresh(luvio, context, config)
+                );
+                luvio.storeIngestError(key, errorSnapshot);
+                luvio.storeBroadcast();
+                return errorSnapshot;
+            });
         }
     );
 }
@@ -152,7 +163,7 @@ function buildSelectorKey(config: GetRecordCreateDefaultsConfigWithDefaults) {
     return `${key}__selector`;
 }
 
-export function buildInMemorySnapshot(
+export function buildCachedSnapshot(
     sel: Selector,
     luvio: Luvio,
     context: AdapterContext,
@@ -164,40 +175,84 @@ export function buildInMemorySnapshot(
     );
 }
 
-export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaultsRepresentation> =
-    (luvio: Luvio) => {
-        return luvio.withContext(function UiApi__getRecordCreateDefaults(
-            untrusted: unknown,
-            context: AdapterContext
-        ):
-            | Promise<Snapshot<RecordDefaultsRepresentation, any>>
-            | Snapshot<RecordDefaultsRepresentation, any>
-            | null {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                return null;
-            }
+type BuildSnapshotContext = {
+    adapterContext: AdapterContext;
+    config: GetRecordCreateDefaultsConfigWithDefaults;
+    luvio: Luvio;
+    cachedSelector?: Selector;
+};
 
-            const selectorKey = buildSelectorKey(config);
-            /**
-             * getRecordCreateDefaults returns a value that includes a map of ObjectInfos,
-             * a layout and a record. The returned record includes fields that are not
-             * known to the client. Because we don't know what the return shape will be,
-             * we have to store a selector from a previous response and see if we can
-             * extract those values back out.
-             *
-             * store cached selector in the adapter context and if it does not exist
-             * we need to fetch it from the network and set it.
-             */
-            const cachedSelector = context.get<Selector>(selectorKey);
-            if (cachedSelector === undefined) {
-                return buildNetworkSnapshot(luvio, context, config);
-            }
+function buildCachedSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    storeLookup: StoreLookup<RecordDefaultsRepresentation>
+): Snapshot<RecordDefaultsRepresentation, any> | undefined {
+    const { luvio, config, cachedSelector, adapterContext } = context;
+    return cachedSelector === undefined
+        ? undefined
+        : storeLookup(cachedSelector, buildSnapshotRefresh(luvio, adapterContext, config));
+}
 
-            const snapshot = buildInMemorySnapshot(cachedSelector, luvio, context, config);
-            if (luvio.snapshotAvailable(snapshot)) {
-                return snapshot;
-            }
-            return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, context, config));
-        });
+function buildNetworkSnapshotCachePolicy(
+    context: BuildSnapshotContext,
+    coercedAdapterRequestContext: CoercedAdapterRequestContext
+): Promise<Snapshot<RecordDefaultsRepresentation, any>> {
+    const { config, adapterContext, luvio } = context;
+    const { networkPriority, requestCorrelator } = coercedAdapterRequestContext;
+
+    const dispatchOptions: DispatchResourceRequestContext = {
+        resourceRequestContext: {
+            requestCorrelator,
+        },
     };
+
+    if (networkPriority !== 'normal') {
+        dispatchOptions.overrides = {
+            priority: networkPriority,
+        };
+    }
+    return buildNetworkSnapshot(luvio, adapterContext, config, dispatchOptions);
+}
+
+export const factory: AdapterFactory<
+    GetRecordCreateDefaultsConfig,
+    RecordDefaultsRepresentation
+> = (luvio: Luvio) => {
+    return luvio.withContext(function UiApi__getRecordCreateDefaults(
+        untrusted: unknown,
+        adapterContext: AdapterContext,
+        requestContext?: AdapterRequestContext
+    ):
+        | Promise<Snapshot<RecordDefaultsRepresentation, any>>
+        | Snapshot<RecordDefaultsRepresentation, any>
+        | null {
+        const config = coerceConfigWithDefaults(untrusted);
+        if (config === null) {
+            return null;
+        }
+
+        const selectorKey = buildSelectorKey(config);
+        /**
+         * getRecordCreateDefaults returns a value that includes a map of ObjectInfos,
+         * a layout and a record. The returned record includes fields that are not
+         * known to the client. Because we don't know what the return shape will be,
+         * we have to store a selector from a previous response and see if we can
+         * extract those values back out.
+         *
+         * store cached selector in the adapter context and if it does not exist
+         * we need to fetch it from the network and set it.
+         */
+        const cachedSelector = adapterContext.get<Selector>(selectorKey);
+
+        return luvio.applyCachePolicy(
+            requestContext || {},
+            {
+                luvio,
+                config,
+                adapterContext,
+                cachedSelector,
+            },
+            buildCachedSnapshotCachePolicy,
+            buildNetworkSnapshotCachePolicy
+        );
+    });
+};

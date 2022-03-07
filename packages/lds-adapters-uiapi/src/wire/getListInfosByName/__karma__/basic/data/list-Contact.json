@@ -1,0 +1,69 @@
+{
+    "cloneable": false,
+    "createable": false,
+    "deletable": false,
+    "displayColumns": [
+        {
+            "fieldApiName": "Name",
+            "label": "Name",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Account.Name",
+            "label": "Account Name",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Phone",
+            "label": "Phone",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Email",
+            "label": "Email",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Owner.Alias",
+            "label": "Contact Owner Alias",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "User__r.Name",
+            "label": "User",
+            "sortable": true
+        }
+    ],
+    "eTag": "5ec865870896d92ceca5a81f6f9f90e3",
+    "filterLogicString": null,
+    "filteredByInfo": [],
+    "label": null,
+    "listReference": {
+        "id": null,
+        "listViewApiName": "__SearchResult",
+        "objectApiName": "Contact",
+        "type": "listView"
+    },
+    "orderedByInfo": [],
+    "updateable": false,
+    "userPreferences": {
+        "columnWidths": {
+            "User__r.Name": -1,
+            "Email": -1,
+            "Owner.Alias": -1,
+            "Phone": -1,
+            "Account.Name": -1,
+            "Name": -1
+        },
+        "columnWrap": {
+            "User__r.Name": false,
+            "Email": false,
+            "Owner.Alias": false,
+            "Phone": false,
+            "Account.Name": false,
+            "Name": false
+        }
+    },
+    "visibility": "Public",
+    "visibilityEditable": false
+}

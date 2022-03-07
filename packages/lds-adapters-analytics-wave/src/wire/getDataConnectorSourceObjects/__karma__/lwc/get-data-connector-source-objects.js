@@ -5,11 +5,13 @@ export default class GetDataConnectorSourceObjects extends LightningElement {
     wirePushCount = -1;
 
     @api connectorIdOrApiName;
+    @api q;
     @api page;
     @api pageSize;
 
     @wire(getDataConnectorSourceObjects, {
         connectorIdOrApiName: '$connectorIdOrApiName',
+        q: '$q',
         page: '$page',
         pageSize: '$pageSize',
     })

@@ -26,7 +26,7 @@ describe('postApex adapter offline', () => {
         const getApexRequestArgs: MockPayload['networkArgs'] = {
             method: 'get',
             basePath: `/${invokerParams.classname}/${invokerParams.method}`,
-            baseUri: '/lwr/apex/v54.0',
+            baseUri: '/lwr/apex/v55.0',
         };
         const getApexRecordPayload: MockPayload = buildSuccessMockPayload(
             getApexRequestArgs,
@@ -46,7 +46,7 @@ describe('postApex adapter offline', () => {
         const postRequestArgs: MockPayload['networkArgs'] = {
             method: 'post',
             basePath: `/${invokerParams.classname}/${invokerParams.method}`,
-            baseUri: '/lwr/apex/v54.0',
+            baseUri: '/lwr/apex/v55.0',
         };
         const postApexRecordPayload: MockPayload = buildSuccessMockPayload(
             postRequestArgs,
@@ -60,10 +60,18 @@ describe('postApex adapter offline', () => {
             durableStore,
             buildMockNetworkAdapter([postApexRecordPayload])
         );
+        const dsReadSpy = jest.spyOn(durableStore, 'getEntries');
         const adapter = postApex(luvio, invokerParams);
 
         // call postApex with same config
         await (adapter(emptyConfig) as Promise<any>);
+
+        // adapter will have read from DS only once for the adapter context,
+        // but not for any data (since Cache-Control header was set to no-cache)
+        expect(dsReadSpy).toHaveBeenCalledTimes(1);
+        expect(dsReadSpy).toHaveBeenCalledWith(['apex__shared__NAMED_CONTEXT'], 'ADAPTER-CONTEXT');
+
+        // should have read from network
         const callCount = getMockNetworkAdapterCallCount(network);
         expect(callCount).toBe(1);
     });

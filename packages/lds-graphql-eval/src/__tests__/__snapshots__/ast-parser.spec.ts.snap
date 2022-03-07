@@ -1,0 +1,1252 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ast-parser ASSIGNEDTOME scope results in correct predicate 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "ServiceAppointment",
+      "apiName": "ServiceAppointment",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "ServiceAppointment",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "ServiceAppointment",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "ServiceAppointment",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "children": Array [
+          Object {
+            "alias": "AssignedResource",
+            "joinNames": Array [
+              "ServiceResource",
+            ],
+            "predicate": Object {
+              "children": Array [
+                Object {
+                  "left": Object {
+                    "jsonAlias": "AssignedResource",
+                    "path": "data.fields.ServiceResourceId.value",
+                    "type": "JsonExtract",
+                  },
+                  "operator": "eq",
+                  "right": Object {
+                    "jsonAlias": "ServiceResource",
+                    "path": "data.id",
+                    "type": "JsonExtract",
+                  },
+                  "type": "comparison",
+                },
+                Object {
+                  "left": Object {
+                    "jsonAlias": "AssignedResource",
+                    "path": "data.fields.ServiceAppointmentId.value",
+                    "type": "JsonExtract",
+                  },
+                  "operator": "eq",
+                  "right": Object {
+                    "jsonAlias": "ServiceAppointment",
+                    "path": "data.id",
+                    "type": "JsonExtract",
+                  },
+                  "type": "comparison",
+                },
+                Object {
+                  "left": Object {
+                    "jsonAlias": "ServiceResource",
+                    "path": "data.fields.RelatedRecordId.value",
+                    "type": "JsonExtract",
+                  },
+                  "operator": "eq",
+                  "right": Object {
+                    "isCaseSensitive": false,
+                    "safe": false,
+                    "type": "StringLiteral",
+                    "value": "MyId",
+                  },
+                  "type": "comparison",
+                },
+                Object {
+                  "left": Object {
+                    "jsonAlias": "AssignedResource",
+                    "path": "data.apiName",
+                    "type": "JsonExtract",
+                  },
+                  "operator": "eq",
+                  "right": Object {
+                    "isCaseSensitive": true,
+                    "safe": true,
+                    "type": "StringLiteral",
+                    "value": "AssignedResource",
+                  },
+                  "type": "comparison",
+                },
+                Object {
+                  "left": Object {
+                    "jsonAlias": "ServiceResource",
+                    "path": "data.apiName",
+                    "type": "JsonExtract",
+                  },
+                  "operator": "eq",
+                  "right": Object {
+                    "isCaseSensitive": true,
+                    "safe": true,
+                    "type": "StringLiteral",
+                    "value": "ServiceResource",
+                  },
+                  "type": "comparison",
+                },
+              ],
+              "operator": "and",
+              "type": "compound",
+            },
+            "type": "exists",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "ServiceAppointment",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "ServiceAppointment",
+            },
+            "type": "comparison",
+          },
+        ],
+        "operator": "and",
+        "type": "compound",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser Id tests uses id field for edge values 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "left": Object {
+          "jsonAlias": "TimeSheet",
+          "path": "data.apiName",
+          "type": "JsonExtract",
+        },
+        "operator": "eq",
+        "right": Object {
+          "isCaseSensitive": true,
+          "safe": true,
+          "type": "StringLiteral",
+          "value": "TimeSheet",
+        },
+        "type": "comparison",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser MINE scope results in correct predicate 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "children": Array [
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.fields.OwnerId.value",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": false,
+              "safe": false,
+              "type": "StringLiteral",
+              "value": "MyId",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "TimeSheet",
+            },
+            "type": "comparison",
+          },
+        ],
+        "operator": "and",
+        "type": "compound",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser first arg includes first arg in connection 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": 43,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "left": Object {
+          "jsonAlias": "TimeSheet",
+          "path": "data.apiName",
+          "type": "JsonExtract",
+        },
+        "operator": "eq",
+        "right": Object {
+          "isCaseSensitive": true,
+          "safe": true,
+          "type": "StringLiteral",
+          "value": "TimeSheet",
+        },
+        "type": "comparison",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser transforms GraphQL operation into a custom AST 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.displayValue",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.displayValue",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "left": Object {
+          "jsonAlias": "TimeSheet",
+          "path": "data.apiName",
+          "type": "JsonExtract",
+        },
+        "operator": "eq",
+        "right": Object {
+          "isCaseSensitive": true,
+          "safe": true,
+          "type": "StringLiteral",
+          "value": "TimeSheet",
+        },
+        "type": "comparison",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser transforms GraphQL operation with draft 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.displayValue",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.displayValue",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "left": Object {
+          "jsonAlias": "TimeSheet",
+          "path": "data.apiName",
+          "type": "JsonExtract",
+        },
+        "operator": "eq",
+        "right": Object {
+          "isCaseSensitive": true,
+          "safe": true,
+          "type": "StringLiteral",
+          "value": "TimeSheet",
+        },
+        "type": "comparison",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser transforms GraphQL query with multiple fields 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.displayValue",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.displayValue",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.OwnerId.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.OwnerId.value",
+          "targetDataType": "Reference",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.OwnerId.displayValue",
+            "type": "JsonExtract",
+          },
+          "path": "node.OwnerId.displayValue",
+          "targetDataType": "Reference",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.IsDeleted.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.IsDeleted.value",
+          "targetDataType": "Boolean",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "left": Object {
+          "jsonAlias": "TimeSheet",
+          "path": "data.apiName",
+          "type": "JsonExtract",
+        },
+        "operator": "eq",
+        "right": Object {
+          "isCaseSensitive": true,
+          "safe": true,
+          "type": "StringLiteral",
+          "value": "TimeSheet",
+        },
+        "type": "comparison",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser transforms GraphQL query with multiple root record types each having spanning fields 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet.CreatedBy",
+            "path": "data.fields.Email.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.CreatedBy.Email.value",
+          "targetDataType": "Email",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet.CreatedBy",
+            "path": "data.fields.Email.displayValue",
+            "type": "JsonExtract",
+          },
+          "path": "node.CreatedBy.Email.displayValue",
+          "targetDataType": "Email",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [
+        "TimeSheet.CreatedBy",
+      ],
+      "orderBy": Array [],
+      "predicate": Object {
+        "children": Array [
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet.CreatedBy",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "User",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.fields.CreatedById.value",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "jsonAlias": "TimeSheet.CreatedBy",
+              "path": "data.id",
+              "type": "JsonExtract",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "TimeSheet",
+            },
+            "type": "comparison",
+          },
+        ],
+        "operator": "and",
+        "type": "compound",
+      },
+    },
+    Object {
+      "alias": "User",
+      "apiName": "User",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "User.CreatedBy",
+            "path": "data.fields.Email.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.CreatedBy.Email.value",
+          "targetDataType": "Email",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "User.CreatedBy",
+            "path": "data.fields.Email.displayValue",
+            "type": "JsonExtract",
+          },
+          "path": "node.CreatedBy.Email.displayValue",
+          "targetDataType": "Email",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "User",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "User",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "User",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [
+        "User.CreatedBy",
+      ],
+      "orderBy": Array [],
+      "predicate": Object {
+        "children": Array [
+          Object {
+            "left": Object {
+              "jsonAlias": "User.CreatedBy",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "User",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "User",
+              "path": "data.fields.CreatedById.value",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "jsonAlias": "User.CreatedBy",
+              "path": "data.id",
+              "type": "JsonExtract",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "User",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "User",
+            },
+            "type": "comparison",
+          },
+        ],
+        "operator": "and",
+        "type": "compound",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser transforms child record GraphQL operation 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "connection": Object {
+            "alias": "TimeSheet.TimeSheetEntries",
+            "apiName": "TimeSheetEntry",
+            "fields": Array [
+              Object {
+                "extract": Object {
+                  "jsonAlias": "TimeSheet.TimeSheetEntries",
+                  "path": "data.id",
+                  "type": "JsonExtract",
+                },
+                "path": "node.Id",
+                "type": "ScalarField",
+              },
+              Object {
+                "extract": Object {
+                  "jsonAlias": "TimeSheet.TimeSheetEntries",
+                  "path": "data.drafts",
+                  "type": "JsonExtract",
+                },
+                "path": "node._drafts",
+                "type": "ScalarField",
+              },
+              Object {
+                "extract": Object {
+                  "jsonAlias": "TimeSheet.TimeSheetEntries",
+                  "path": "metadata",
+                  "type": "JsonExtract",
+                },
+                "path": "node._metadata",
+                "type": "ScalarField",
+              },
+            ],
+            "first": undefined,
+            "joinNames": Array [],
+            "orderBy": Array [],
+            "predicate": Object {
+              "children": Array [
+                Object {
+                  "left": Object {
+                    "jsonAlias": "TimeSheet.TimeSheetEntries",
+                    "path": "data.apiName",
+                    "type": "JsonExtract",
+                  },
+                  "operator": "eq",
+                  "right": Object {
+                    "isCaseSensitive": true,
+                    "safe": true,
+                    "type": "StringLiteral",
+                    "value": "TimeSheetEntry",
+                  },
+                  "type": "comparison",
+                },
+                Object {
+                  "left": Object {
+                    "jsonAlias": "TimeSheet.TimeSheetEntries",
+                    "path": "data.fields.TimeSheetId.value",
+                    "type": "JsonExtract",
+                  },
+                  "operator": "eq",
+                  "right": Object {
+                    "jsonAlias": "TimeSheet",
+                    "path": "data.id",
+                    "type": "JsonExtract",
+                  },
+                  "type": "comparison",
+                },
+              ],
+              "operator": "and",
+              "type": "compound",
+            },
+          },
+          "path": "node.TimeSheetEntries.edges",
+          "type": "ChildField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [],
+      "orderBy": Array [],
+      "predicate": Object {
+        "left": Object {
+          "jsonAlias": "TimeSheet",
+          "path": "data.apiName",
+          "type": "JsonExtract",
+        },
+        "operator": "eq",
+        "right": Object {
+          "isCaseSensitive": true,
+          "safe": true,
+          "type": "StringLiteral",
+          "value": "TimeSheet",
+        },
+        "type": "comparison",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser transforms spanning record GraphQL operation 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet.CreatedBy",
+            "path": "data.fields.Email.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.CreatedBy.Email.value",
+          "targetDataType": "Email",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet.CreatedBy",
+            "path": "data.fields.Email.displayValue",
+            "type": "JsonExtract",
+          },
+          "path": "node.CreatedBy.Email.displayValue",
+          "targetDataType": "Email",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [
+        "TimeSheet.CreatedBy",
+      ],
+      "orderBy": Array [],
+      "predicate": Object {
+        "children": Array [
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet.CreatedBy",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "User",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.fields.CreatedById.value",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "jsonAlias": "TimeSheet.CreatedBy",
+              "path": "data.id",
+              "type": "JsonExtract",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "TimeSheet",
+            },
+            "type": "comparison",
+          },
+        ],
+        "operator": "and",
+        "type": "compound",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;
+
+exports[`ast-parser where argument join information is reflected in connection 1`] = `
+Object {
+  "connections": Array [
+    Object {
+      "alias": "TimeSheet",
+      "apiName": "TimeSheet",
+      "fields": Array [
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.fields.TimeSheetNumber.value",
+            "type": "JsonExtract",
+          },
+          "path": "node.TimeSheetNumber.value",
+          "targetDataType": "String",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.drafts",
+            "type": "JsonExtract",
+          },
+          "path": "node._drafts",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "data.id",
+            "type": "JsonExtract",
+          },
+          "path": "node.Id",
+          "type": "ScalarField",
+        },
+        Object {
+          "extract": Object {
+            "jsonAlias": "TimeSheet",
+            "path": "metadata",
+            "type": "JsonExtract",
+          },
+          "path": "node._metadata",
+          "type": "ScalarField",
+        },
+      ],
+      "first": undefined,
+      "joinNames": Array [
+        "TimeSheet.CreatedBy.CreatedBy",
+        "TimeSheet.CreatedBy",
+      ],
+      "orderBy": Array [],
+      "predicate": Object {
+        "children": Array [
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet.CreatedBy.CreatedBy",
+              "path": "data.fields.Email.value",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": false,
+              "safe": false,
+              "type": "StringLiteral",
+              "value": "xyz",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet.CreatedBy",
+              "path": "data.fields.CreatedById.value",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "jsonAlias": "TimeSheet.CreatedBy.CreatedBy",
+              "path": "data.id",
+              "type": "JsonExtract",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet.CreatedBy.CreatedBy",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "User",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.fields.CreatedById.value",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "jsonAlias": "TimeSheet.CreatedBy",
+              "path": "data.id",
+              "type": "JsonExtract",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet.CreatedBy",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "User",
+            },
+            "type": "comparison",
+          },
+          Object {
+            "left": Object {
+              "jsonAlias": "TimeSheet",
+              "path": "data.apiName",
+              "type": "JsonExtract",
+            },
+            "operator": "eq",
+            "right": Object {
+              "isCaseSensitive": true,
+              "safe": true,
+              "type": "StringLiteral",
+              "value": "TimeSheet",
+            },
+            "type": "comparison",
+          },
+        ],
+        "operator": "and",
+        "type": "compound",
+      },
+    },
+  ],
+  "type": "root",
+}
+`;

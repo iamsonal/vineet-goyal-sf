@@ -75,7 +75,7 @@ export function buildDurableRecordRepresentation(
         recordTypeId: null,
         recordTypeInfo: null,
         systemModstamp: '',
-        fields: recordFields,
+        fields: recordFields as DurableRecordRepresentation['fields'],
         links,
     };
 
@@ -84,7 +84,7 @@ export function buildDurableRecordRepresentation(
 
 export function createGetRequest() {
     return {
-        baseUri: '/services/data/v54.0',
+        baseUri: '/services/data/v55.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'get',
         body: {},
@@ -96,7 +96,7 @@ export function createGetRequest() {
 
 export function createPatchRequest() {
     return {
-        baseUri: '/services/data/v54.0',
+        baseUri: '/services/data/v55.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'patch',
         body: {
@@ -113,9 +113,9 @@ export function createPatchRequest() {
     };
 }
 
-export function createPostRequest() {
+export function createPostRequest(): ResourceRequest {
     return {
-        baseUri: '/services/data/v54.0',
+        baseUri: '/services/data/v55.0',
         basePath: `/ui-api/records/`,
         method: 'post',
         body: {
@@ -127,12 +127,13 @@ export function createPostRequest() {
         urlParams: {},
         queryParams: {},
         headers: {},
+        priority: 'normal',
     };
 }
 
 export function createDeleteRequest() {
     return {
-        baseUri: '/services/data/v54.0',
+        baseUri: '/services/data/v55.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'delete',
         body: {},
@@ -159,13 +160,14 @@ export function createEditDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v54.0',
+            baseUri: '/services/data/v55.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'patch',
             body: { fields: { Name: nameValue } },
             urlParams: { recordId: recordId },
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -188,13 +190,14 @@ export function createPostDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v54.0',
+            baseUri: '/services/data/v55.0',
             basePath: `/ui-api/records`,
             method: 'post',
             body: { fields: { Name: nameValue }, apiName },
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -215,13 +218,14 @@ export function createDeleteDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v54.0',
+            baseUri: '/services/data/v55.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
             body: {},
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -249,13 +253,14 @@ export function createErrorDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v54.0',
+            baseUri: '/services/data/v55.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
             body: {},
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -283,13 +288,14 @@ export function createCompletedDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v54.0',
+            baseUri: '/services/data/v55.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
             body: {},
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };
@@ -337,13 +343,14 @@ export function createUnsupportedRequestDraftAction(
         targetId: recordId,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v54.0',
+            baseUri: '/services/data/v55.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'get',
             body: {},
             urlParams: {},
             queryParams: {},
             headers: {},
+            priority: 'normal',
         },
         metadata: {},
     };

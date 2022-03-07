@@ -1,0 +1,18 @@
+{
+    "folder": {
+        "id": "00lS7000000GxGlIAK",
+        "label": "Shared App",
+        "url": "/services/data/v55.0/wave/folders/00lS7000000GxGlIAK"
+    },
+    "id": "0FbS700000047MtKAI",
+    "lastAccessedDate": "2022-01-17T23:27:12.000Z",
+    "lastModifiedBy": {
+        "id": "005S7000000VQ6fIAG",
+        "name": "Admin User",
+        "profilePhotoUrl": "https://test1com5--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+    },
+    "lastModifiedDate": "2022-01-17T23:27:12.000Z",
+    "name": "AccountOutput",
+    "type": "dataset",
+    "url": "/services/data/v55.0/wave/datasets/0FbS700000047MtKAI"
+}

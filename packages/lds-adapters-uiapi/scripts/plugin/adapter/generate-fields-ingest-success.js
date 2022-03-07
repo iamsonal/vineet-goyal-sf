@@ -8,7 +8,7 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
     const adapterKeyImport = importRamlArtifact(adapter.id, 'keyBuilder');
 
     const {
-        RESOURCE_REQUEST_OVERRIDE,
+        DISPATCH_RESOURCE_REQUEST_CONTEXT,
         FETCH_RESPONSE,
         FULFILLED_SNAPSHOT,
         BLANK_RECORD_FIELDS_TRIE,
@@ -60,41 +60,46 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
         resource.id,
         'createResourceRequest'
     );
+    const buildCacheKeysIdentifier = importRamlArtifact(resource.id, 'getResponseCacheKeys');
     const onResourceResponseError = importRamlArtifact(adapter.id, 'onResourceResponseError');
-    const buildInMemorySnapshot = importRamlArtifact(adapter.id, 'buildInMemorySnapshot');
+    const buildCachedSnapshot = importRamlArtifact(adapter.id, 'buildCachedSnapshot');
 
     return deindent`
-      export function buildNetworkSnapshot(luvio: ${LUVIO_IMPORT}, config: ${adapterConfigImport}, override?: ${RESOURCE_REQUEST_OVERRIDE}) {
+      export function buildNetworkSnapshot(luvio: ${LUVIO_IMPORT}, config: ${adapterConfigImport}, options?: ${DISPATCH_RESOURCE_REQUEST_CONTEXT}) {
           const resourceParams = ${createResourceParamsIdentifier}(config);
           const request = ${createResourceRequestIdentifier}(resourceParams);
           const key = ${adapterKeyImport}(luvio, config);
           const trackedFieldsConfig = ${trackedFieldsConfiguration};
           const optionalFieldsTrie = ${optionalFieldsTrieStatement};
           const fieldsTrie = ${fieldsTrieStatement};
-          return luvio.dispatchResourceRequest<${returnTypeInterface}>(request, override)
+          return luvio.dispatchResourceRequest<${returnTypeInterface}>(request, options)
               .then((response) => {
-                  const ingest = ${createFieldsIngestSuccessImport}({
-                      fields: fieldsTrie,
-                      optionalFields: optionalFieldsTrie,
-                      trackedFields: optionalFieldsTrie,
-                  });
-                  luvio.storeIngest<${returnTypeInterface}>(
-                      key,
-                      ingest,
-                      response.body
-                  );
-                  const snapshot = ${buildInMemorySnapshot}(luvio, config);
-                  if (process.env.NODE_ENV !== 'production') {
-                      if (snapshot.state !== 'Fulfilled') {
-                          throw new Error(
-                              'Invalid network response. Expected network response to result in Fulfilled snapshot'
-                          );
-                      }
-                  }
-                  luvio.storeBroadcast();
-                  return snapshot as ${FULFILLED_SNAPSHOT}<${returnTypeInterface}, {}>;
+                  return luvio.handleSuccessResponse(() => {
+                      const ingest = ${createFieldsIngestSuccessImport}({
+                          fields: fieldsTrie,
+                          optionalFields: optionalFieldsTrie,
+                          trackedFields: optionalFieldsTrie,
+                        });
+                        luvio.storeIngest<${returnTypeInterface}>(
+                            key,
+                            ingest,
+                            response.body
+                            );
+                            const snapshot = ${buildCachedSnapshot}(luvio, config);
+                            if (process.env.NODE_ENV !== 'production') {
+                                if (snapshot.state !== 'Fulfilled') {
+                                    throw new Error(
+                                        'Invalid network response. Expected network response to result in Fulfilled snapshot'
+                                        );
+                                    }
+                                }
+                                luvio.storeBroadcast();
+                                return snapshot as ${FULFILLED_SNAPSHOT}<${returnTypeInterface}, {}>;
+                  }, () => ${buildCacheKeysIdentifier}(resourceParams, response.body));
               }, (response: ${FETCH_RESPONSE}<unknown>) => {
-                  return ${onResourceResponseError}(luvio, config, resourceParams, response);
+                  return luvio.handleErrorResponse(() => {
+                      return ${onResourceResponseError}(luvio, config, resourceParams, response);
+                  });
               });
       }
   `;

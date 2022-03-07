@@ -1,0 +1,41 @@
+{
+    "contentBody": {
+        "title": "Sample Managed Content Title In Spanish",
+        "body": "&lt;html&gt;&lt;body&gt;test body in spanish&lt;/body&gt;&lt;/html&gt;",
+        "excerpt": "Test excerpt in spanish",
+        "bannerImage": {
+            "src": "/file-asset/Expresso1",
+            "sprite": "Expresso1.jpeg",
+            "type": "image/jpeg"
+        }
+    },
+    "contentKey": "MCMOEXXY57SNBAJID2SYYWJO45LM",
+    "contentSpace": {
+        "id": "0Zuxx0000000001CAA",
+        "resourceUrl": "/services/data/v55.0/connect/cms/spaces/0Zuxx0000000001CAA"
+    },
+    "contentType": {
+        "fullyQualifiedName": "news"
+    },
+    "createdBy": {
+        "id": "005xx000001X7fNAAS",
+        "resourceUrl": "/services/data/v55.0/chatter/users/005xx000001X7fNAAS"
+    },
+    "createdDate": "2021-05-31T10:08:26.000Z",
+    "folder": {
+        "id": "9Puxx0000004C92CAE",
+        "resourceUrl": "/services/data/v55.0/connect/cms/folders/9Puxx0000004C92CAE"
+    },
+    "isPublished": false,
+    "language": "es_ES",
+    "lastModifiedBy": {
+        "id": "005xx000001X7fNAAS",
+        "resourceUrl": "/services/data/v55.0/chatter/users/005xx000001X7fNAAS"
+    },
+    "lastModifiedDate": "2021-05-31T10:08:26.000Z",
+    "managedContentId": "20Yxx0000011Ux4EAE",
+    "managedContentVariantId": "9Psxx0000005CKKCA2",
+    "managedContentVersionId": "5OUxx0000004DMqGAM",
+    "title": "Sample Managed Content Variant Title In Spanish",
+    "urlName": "sample-managed-content-variant-title-in-spanish"
+}

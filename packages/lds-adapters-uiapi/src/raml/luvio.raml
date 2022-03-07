@@ -43,7 +43,7 @@ types:
       - id # This id is transient and changes on each request; let's not surface it to consumers since it is not consistent
     (luvio.key):
       # The externalId contains: the orgId, the sourceObject, the actionListContext, the formFactor (which is
-      # not otherwise in the response), the type, and the apiName. This makes up the bulk of what is needed
+      # not otherwise in the response), the type, the retrieval mode, and the apiName. This makes up the bulk of what is needed
       # to uniquely identify this action.
       externalId: externalId
       relatedSourceObject: relatedSourceObject # Used in Related List, Related List Record Actions
@@ -68,9 +68,9 @@ types:
     (luvio.ttl): 900000
     (luvio.private):
       - eTag
-  ListReferenceRepresentation:
-    (luvio.key):
-      id: id
+  ListInfoBatchRepresentation:
+    examples:
+      mockListInfosResponse: !include ../mocks/types/ListInfoBatchRepresentation/list-infos.json
   ListRecordCollectionRepresentation:
     (luvio.private):
       - currentPageUrl
@@ -108,6 +108,9 @@ types:
       previousToken: previousPageToken
       pageSize: pageSize
       count: count
+  ListViewSummaryRepresentation:
+    (luvio.key):
+      id: id
   NavItemsRepresentation:
     examples:
       getNavItemsResponse1: !include ../mocks/types/NavItemsRepresentation/response1.json
@@ -135,6 +138,8 @@ types:
       relatedListId: listReference.relatedListId
     (luvio.paginated):
       items: records
+      strategy: Cursor
+      synthetic: true
       token: currentPageToken
       nextToken: nextPageToken
       previousToken: previousPageToken
@@ -269,6 +274,11 @@ types:
   BatchRelatedListCountRepresentation:
     examples:
       mockGetRelatedListsCountResponse: !include ../mocks/types/BatchRelatedListCountRepresentation/related-lists-count-Cases-Contacts.json
+  RelatedListUserPreferencesRepresentation:
+    (luvio.key):
+      preferencesId: preferencesId
+    (luvio.ttl): 900000
+    (luvio.opaque): true
   PicklistValuesRepresentation:
     examples:
       mockGetPicklistValuesResponse: !include ../mocks/types/PicklistValuesRepresentation/picklist-Account-MasterRecordTypeId-fieldApiName-Type.json
@@ -549,6 +559,7 @@ types:
             name: getRelatedListActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
+              apiNames: SortedStringArrayAllowEmpty
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
             tests:
@@ -642,10 +653,19 @@ types:
       (luvio.adapter):
         name: updateLayoutUserState
   /list-info:
-    '/{listViewId}':
+    '/batch':
       get:
-        (luvio.key):
-          listViewId: urlParams.listViewId
+        (luvio.adapter):
+          name: getListInfosByName
+        (luvio.composite):
+          resource: /ui-api/list-info/{objectApiName}/{listViewApiName}
+          uriParameters:
+            objectApiName: names
+            listViewApiName: names
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
     '/{objectApiName}/{listViewApiName}':
       uriParameters:
         objectApiName:
@@ -697,6 +717,10 @@ types:
           objectApiName: urlParams.objectApiName
           queryString: queryParams.q || null
           recentListsOnly: queryParams.recentListsOnly || false
+        (luvio.paginationParams):
+          queryParameters:
+            token: pageToken
+            pageSize: pageSize
     '/{objectApiName}/{listViewApiName}':
       get:
         (luvio.adapter):
@@ -711,6 +735,10 @@ types:
           objectApiName: urlParams.objectApiName
           type: '"listView"'
           sortBy: queryParams.sortBy || null
+        (luvio.paginationParams):
+          queryParameters:
+            token: pageToken
+            pageSize: pageSize
     '/{listViewId}':
       # NOTE: we aren't setting key for the '/{listViewId}' Resource because
       # we have to use custom code to construct that key from the cached
@@ -722,6 +750,10 @@ types:
             fields: SalesforceFieldIdArray
             optionalFields: SalesforceFieldIdArray
             sortBy: SalesforceFieldIdArray
+        (luvio.paginationParams):
+          queryParameters:
+            token: pageToken
+            pageSize: pageSize
   '/lookups/{objectApiName}/{fieldApiName}/{targetApiName}':
     uriParameters:
       objectApiName:
@@ -1023,6 +1055,10 @@ types:
         objectApiName: urlParams.objectApiName
         type: '"mru"'
         sortBy: queryParams.sortBy || null
+      (luvio.paginationParams):
+        queryParameters:
+          token: pageToken
+          pageSize: pageSize
   '/record-defaults':
     '/create/{objectApiName}':
       uriParameters:
@@ -1296,6 +1332,28 @@ types:
       patch:
         (luvio.adapter):
           name: updateRelatedListInfo
+  '/related-list-preferences':
+    '/batch/{preferencesIds}':
+      get:
+        (luvio.adapter):
+          name: getRelatedListPreferencesBatch
+        (luvio.composite):
+          resource: /ui-api/related-list-preferences/{preferencesId}
+          uriParameters:
+            preferencesId: preferencesIds
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
+    '/{preferencesId}':
+      get:
+        (luvio.adapter):
+          name: getRelatedListPreferences
+        (luvio.key):
+          preferencesId: urlParams.preferencesId
+      patch:
+        (luvio.adapter):
+          name: updateRelatedListPreferences
   '/related-list-records/{parentRecordId}/{relatedListId}':
     uriParameters:
       parentRecordId:
@@ -1327,15 +1385,24 @@ types:
         sortBy: body.sortBy || []
         parentRecordId: urlParams.parentRecordId
         relatedListId: urlParams.relatedListId
-  '/related-list-records/batch/{parentRecordId}/{relatedListIds}':
+      (luvio.paginationParams):
+        defaultSize: 50
+        strategy: Cursor
+        synthetic: true
+        body:
+          token: pageToken
+          pageSize: pageSize
+  '/related-list-records/batch/{parentRecordId}':
     uriParameters:
       parentRecordId:
         examples:
           mockGetRelatedListRecordsBatchResponse: a00RM0000004aVwYAI
-      relatedListIds:
-        examples:
-          mockGetRelatedListRecordsBatchResponse: ['CwcCustom02s__r', 'CwcCustom01s__r']
-    get:
+    post:
+      body:
+        application/json:
+          examples:
+            mockGetRelatedListRecordsBatchResponse: !include ../mocks/types/RelatedListRecordCollectionBatchRepresentation/related-list-records-standard-defaults-Custom.json
+      (luvio.method): get
       (luvio.adapter):
         name: getRelatedListRecordsBatch
         # TODO: W-9927409 uncomment when getRelatedListRecordsBatch supports offline
@@ -1362,12 +1429,7 @@ types:
           body: result
         uriParameters:
           parentRecordId: parentRecordId
-          relatedListId: relatedListIds
-        queryParameters:
-          fields: fields
-          optionalFields: optionalFields
-          sortBy: sortBy
-          pageSize: pageSize
+          relatedListId: relatedListParameters # this mapping is handrolled in the resource override
   /predupe:
     post:
       (luvio.method): get

@@ -1,5 +1,5 @@
 import { Environment, Luvio, Selector, Store } from '@luvio/engine';
-import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
+import { LuvioSelectionObjectFieldNode } from '@luvio/graphql-parser';
 import { createIngest, createRead } from '../ObjectField';
 
 describe('ObjectField', () => {
@@ -283,7 +283,6 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: { result: { type: 'success' } },
                 },
                 luvio,
                 store,
@@ -370,7 +369,6 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: { result: { type: 'success' } },
                 },
                 luvio,
                 store,
@@ -421,7 +419,6 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: { result: { type: 'success' } },
                 },
                 luvio,
                 store,
@@ -437,7 +434,6 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: { result: { type: 'success' } },
                 },
                 luvio,
                 store,
@@ -519,7 +515,6 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -532,7 +527,6 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: undefined,
                 },
                 luvio,
                 store,
@@ -744,7 +738,6 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
-                    state: undefined,
                 },
                 luvio,
                 store,

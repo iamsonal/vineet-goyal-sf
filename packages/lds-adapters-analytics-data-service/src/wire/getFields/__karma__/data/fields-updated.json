@@ -1,0 +1,43 @@
+{
+    "fields": [
+        {
+            "name": "Id",
+            "type": {
+                "type": "String"
+            },
+            "state": "Required",
+            "info": [
+                {
+                    "message": "You need this"
+                }
+            ]
+        },
+        {
+            "name": "Name",
+            "type": {
+                "type": "String"
+            },
+            "state": "NotConnected",
+            "info": [
+                {
+                    "message": "You need this."
+                }
+            ]
+        },
+        {
+            "name": "Address",
+            "type": {
+                "type": "String"
+            },
+            "state": "NotConnected",
+            "info": [
+                {
+                    "message": "You need this"
+                }
+            ]
+        }
+    ],
+    "totalSize": 3,
+    "url": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account/fields",
+    "nextPageUrl": "/services/data/v55.0/analytics/data-service/sync/connections/c08fdb87-a196-46aa-8b44-5ad6e9e253c4/sourceObjects/Account/fields"
+}

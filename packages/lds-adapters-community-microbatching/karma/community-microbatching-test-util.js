@@ -3,7 +3,7 @@ import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkErrorOnce } from 'test-util';
 
 import sinon from 'sinon';
-const API_VERSION = 'v54.0';
+const API_VERSION = 'v55.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = '/connect/communities';
 
@@ -18,14 +18,11 @@ export function mockIngestRecordInvalidCommunityIdNetworkErrorOnce(config, mockR
 }
 
 function ingestRecordMatcher(config) {
-    const { communityId, groupBy, keyPrefix, processType /* requestBody */ } = config;
+    const { communityId /*groupBy, keyPrefix, processType, requestBody*/ } = config;
 
     let req = {
         body: {
-            groupBy,
-            keyPrefix,
-            processType,
-            requestBody: {}, // Possible framework limitation on enumerating attributes on generic objects, so this is always an empty object
+            requestIngestionInput: {}, // Possible framework limitation on enumerating attributes on generic objects, so this is always an empty object
         },
         urlParams: {
             communityId: communityId,

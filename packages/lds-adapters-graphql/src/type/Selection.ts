@@ -1,9 +1,9 @@
-import { Reader, StoreLink, StoreResolveResultFound } from '@luvio/engine';
-import { LuvioSelectionNode } from '@salesforce/lds-graphql-parser';
-import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
+import type { Reader, StoreLink, StoreResolveResultFound } from '@luvio/engine';
+import type { LuvioSelectionNode } from '@luvio/graphql-parser';
+import type { LuvioFieldNode } from '@luvio/graphql-parser';
 import { createRead } from '../util/read';
-import { StoreResolveResult, StoreResolveResultStale } from '@luvio/engine';
-import { GraphQLVariables } from './Variable';
+import type { StoreResolveResult, StoreResolveResultStale } from '@luvio/engine';
+import type { GraphQLVariables } from './Variable';
 
 export enum PropertyLookupResultState {
     Missing,
@@ -66,9 +66,6 @@ export function resolveKey<D>(builder: Reader<any>, key: string) {
         case StoreResolveResultState.Stale:
             builder.markStale();
             return lookup;
-        case StoreResolveResultState.Locked:
-            builder.markLocked();
-            return;
         case StoreResolveResultState.Error:
             if (process.env.NODE_ENV !== 'production') {
                 throw new Error('TODO: Implement error links');

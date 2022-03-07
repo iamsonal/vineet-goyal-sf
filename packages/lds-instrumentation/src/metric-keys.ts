@@ -1,5 +1,7 @@
 export const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
 export const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
+export const ADAPTER_CACHE_HIT_L2_COUNT_METRIC_NAME = 'cache-hit-l2-count';
+export const ADAPTER_CACHE_HIT_L2_DURATION_METRIC_NAME = 'cache-hit-l2-duration';
 export const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
 export const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
 export const ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME = 'cache-miss-out-of-ttl-count';
@@ -46,18 +48,6 @@ export const GET_RECORD_NORMAL_INVOKE_COUNT = 'get-record-normal-invoke-count';
  * that executeAggregateUi was used.
  */
 export const GET_RECORD_AGGREGATE_INVOKE_COUNT = 'get-record-aggregate-invoke-count';
-
-/**
- * W-9105403
- * Counter increments when a getRecord fails and we retry with aggregateUi
- */
-export const GET_RECORD_AGGREGATE_RETRY_COUNT = 'get-record-aggregate-retry-count';
-
-/**
- * W-9105403
- * Counter increments when aggregateUi fails with a Connect exception
- */
-export const AGGREGATE_CONNECT_ERROR_COUNT = 'aggregate-connect-error-count';
 
 /**
  * W-7301684
@@ -145,3 +135,34 @@ export const STORE_TRIM_TASK_COUNT = 'store-trim-task-count';
  * Timer to measure performance for Luvio store trim task
  */
 export const STORE_TRIM_TASK_DURATION = 'store-trim-task-duration';
+
+/**
+ * W-9804037
+ * Counters for Luvio cache policy usage
+ * Note: Undefined cache policy defaults to different cache policies based on runtime
+ */
+export const CACHE_POLICY_COUNTERS = {
+    'cache-and-network': 'cache-policy-cache-and-network',
+    'cache-then-network': 'cache-policy-cache-then-network',
+    'no-cache': 'cache-policy-no-cache',
+    'only-if-cached': 'cache-policy-only-if-cached',
+    'stale-while-revalidate': 'cache-policy-stale-while-revalidate',
+    'valid-at': 'cache-policy-valid-at',
+};
+export const CACHE_POLICY_UNDEFINED_COUNTER = 'cache-policy-undefined';
+
+export const STALE_TAG = 'stale';
+
+/**
+ * W-9804037
+ * Durable Store health metric
+ * Counter to track durable Store read, write and error rates
+ */
+export const DURABLE_STORE_COUNT = 'durable-store-count';
+
+/**
+ * W-10490363
+ * GraphQL Eval health metric
+ * Counter to track Success and Error Rate on Eval
+ */
+export const GRAPHQL_ADAPTER_COUNT = 'graphql-adapter-count';

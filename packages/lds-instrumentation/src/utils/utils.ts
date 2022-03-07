@@ -68,3 +68,14 @@ export function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> 
     // check for Thenable due to test frameworks using custom Promise impls
     return value !== null && value !== undefined && typeof (value as any).then === 'function';
 }
+
+export function throttle(callback: () => void, ms: number) {
+    let waiting = false;
+    return () => {
+        if (!waiting) {
+            callback();
+            waiting = true;
+            setTimeout(() => (waiting = false), ms);
+        }
+    };
+}

@@ -1097,7 +1097,9 @@ describe('DurableDraftQueue', () => {
                 const result = await draftQueue.processNextAction();
                 expect(result).toEqual(ProcessActionResult.ACTION_SUCCEEDED);
                 expect(
-                    durableStore.segments[DRAFT_ID_MAPPINGS_SEGMENT]['DraftIdMapping::foo::bar']
+                    (await durableStore.persistence.get(DRAFT_ID_MAPPINGS_SEGMENT))[
+                        'DraftIdMapping::foo::bar'
+                    ]
                 ).toBeDefined();
             });
 
@@ -1108,9 +1110,13 @@ describe('DurableDraftQueue', () => {
                 let foundId = '';
                 const durableStore = new MockDurableStore();
                 const draftStore = new DurableDraftStore(durableStore);
-                const network = jest.fn().mockImplementation(() => {
-                    const draftKey = ObjectKeys(durableStore.segments[DRAFT_SEGMENT])[0];
-                    const draftEntry = durableStore.segments[DRAFT_SEGMENT][draftKey] as any;
+                const network = jest.fn().mockImplementation(async () => {
+                    const draftKey = ObjectKeys(
+                        await durableStore.persistence.get(DRAFT_SEGMENT)
+                    )[0];
+                    const draftEntry = (await durableStore.persistence.get(DRAFT_SEGMENT))[
+                        draftKey
+                    ] as any;
                     expect(draftEntry).toBeDefined();
                     foundId = draftEntry.data.targetId;
                     foundStatus = draftEntry.data.status;
@@ -1229,7 +1235,7 @@ describe('DurableDraftQueue', () => {
         });
 
         it('is called when item errors', async () => {
-            const completedSpy = jest.fn();
+            const listenerSpy = jest.fn();
             const args: MockPayload['networkArgs'] = {
                 method: 'patch',
                 basePath: '/z',
@@ -1239,7 +1245,7 @@ describe('DurableDraftQueue', () => {
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
             const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
-            draftQueue.registerOnChangedListener(completedSpy);
+            draftQueue.registerOnChangedListener(listenerSpy);
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
             await draftQueue.enqueue({
                 data: firstRequest,
@@ -1249,12 +1255,19 @@ describe('DurableDraftQueue', () => {
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.startQueue();
-            expect(completedSpy).toBeCalledTimes(4);
-            expect(completedSpy.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
-            expect(completedSpy.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
-            expect(completedSpy.mock.calls[2][0].type).toBe(DraftQueueEventType.ActionRunning);
-            expect(completedSpy.mock.calls[3][0].type).toBe(DraftQueueEventType.ActionRetrying);
             await draftQueue.stopQueue();
+            expect(listenerSpy).toBeCalledTimes(6);
+            expect(listenerSpy.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
+            expect(listenerSpy.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
+            // Queue state changes
+            expect(listenerSpy.mock.calls[2][0].type).toBe(DraftQueueEventType.QueueStateChanged);
+            expect(listenerSpy.mock.calls[2][0].state).toBe(DraftQueueState.Started);
+            expect(listenerSpy.mock.calls[3][0].type).toBe(DraftQueueEventType.ActionRunning);
+            expect(listenerSpy.mock.calls[4][0].type).toBe(DraftQueueEventType.ActionRetrying);
+            // Queue state changes
+            expect(listenerSpy.mock.calls[5][0].type).toBe(DraftQueueEventType.QueueStateChanged);
+            expect(listenerSpy.mock.calls[5][0].state).toBe(DraftQueueState.Stopped);
+
             //set a response so it isnt in a loop
             setMockNetworkPayloads(network, [successPayload]);
         });
@@ -1273,7 +1286,7 @@ describe('DurableDraftQueue', () => {
             handler: LDS_ACTION_HANDLER_ID,
         };
 
-        const setup = (testActions: DraftAction<unknown, unknown>[] = []) => {
+        const setup = async (testActions: DraftAction<unknown, unknown>[] = []) => {
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
             const evictSpy = jest.spyOn(durableStore, 'evictEntries');
@@ -1285,7 +1298,7 @@ describe('DurableDraftQueue', () => {
             );
 
             // reset the durable store's draft segment before each test
-            durableStore.segments[DRAFT_SEGMENT] = {};
+            await durableStore.persistence.set(DRAFT_SEGMENT, {});
             testActions.forEach((testAction) => {
                 draftStore.writeAction(testAction);
             });
@@ -1294,7 +1307,7 @@ describe('DurableDraftQueue', () => {
         };
 
         it('throws an error if no draft action with the ID exists', async () => {
-            const { draftQueue } = setup();
+            const { draftQueue } = await setup();
             await expect(draftQueue.removeDraftAction('noSuchId')).rejects.toThrowError(
                 'No removable action with id noSuchId'
             );
@@ -1307,7 +1320,7 @@ describe('DurableDraftQueue', () => {
                 data: undefined,
             };
 
-            const { draftQueue } = setup([testAction]);
+            const { draftQueue } = await setup([testAction]);
             // uploadingActionId is private, but we need to set it to
             // mock the uploading action
             (draftQueue as any).uploadingActionId = testAction.id;
@@ -1323,12 +1336,12 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
             };
 
-            const { draftQueue, evictSpy, durableStore } = setup([testAction]);
-            evictSpy.mockImplementation((ids, segment) => {
+            const { draftQueue, evictSpy, durableStore } = await setup([testAction]);
+            evictSpy.mockImplementation(async (ids, segment) => {
                 const expectedId = `${baseTag}__DraftAction__123456`;
                 expect(ids).toEqual([expectedId]);
                 expect(segment).toEqual('DRAFT');
-                durableStore.segments[DRAFT_SEGMENT] = undefined;
+                await durableStore.persistence.set(DRAFT_SEGMENT, undefined);
                 return Promise.resolve();
             });
 
@@ -1377,7 +1390,7 @@ describe('DurableDraftQueue', () => {
                 data: undefined,
             };
 
-            const { draftQueue, evictSpy } = setup([
+            const { draftQueue, evictSpy } = await setup([
                 testAction1,
                 testAction2,
                 testAction3,
@@ -1435,7 +1448,7 @@ describe('DurableDraftQueue', () => {
                 data: undefined,
             };
 
-            const { draftQueue, evictSpy } = setup([
+            const { draftQueue, evictSpy } = await setup([
                 testAction1,
                 testAction2,
                 testAction3,
@@ -1457,10 +1470,9 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
             };
 
-            const { draftQueue, evictSpy, durableStore } = setup([errorAction]);
+            const { draftQueue, evictSpy, durableStore } = await setup([errorAction]);
             evictSpy.mockImplementation((_ids, _segment) => {
-                durableStore.segments[DRAFT_SEGMENT] = undefined;
-                return Promise.resolve();
+                return durableStore.persistence.set(DRAFT_SEGMENT, undefined);
             });
             await expect(draftQueue.startQueue()).rejects.toBe(undefined);
             expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Error);

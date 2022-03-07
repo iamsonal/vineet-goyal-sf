@@ -1,4 +1,5 @@
-import { FetchResponse, HttpStatusCode, Headers } from '@luvio/engine';
+import type { FetchResponse, Headers } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
 
 export const DRAFT_ERROR_CODE = 'DRAFT_ERROR';
 

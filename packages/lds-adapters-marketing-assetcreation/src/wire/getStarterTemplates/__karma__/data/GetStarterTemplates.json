@@ -1,0 +1,22 @@
+{
+    "starterTemplateList": [
+        {
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            "id": "100",
+            "name": "Blank template",
+            "thumbnailUrl": "https://i.ibb.co/HqCkmsH/blank-preview.png"
+        },
+        {
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            "id": "101",
+            "name": "Newsletter",
+            "thumbnailUrl": "https://i.ibb.co/HqCkmsH/blank-preview.png"
+        },
+        {
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            "id": "102",
+            "name": "Welcome Email",
+            "thumbnailUrl": "https://i.ibb.co/fHTdrC9/welcome-preview.png"
+        }
+    ]
+}

@@ -2,7 +2,7 @@ import networkAdapter from '@salesforce/lds-network-aura';
 
 function createResourceRequest() {
     return {
-        baseUri: '/services/data/v54.0',
+        baseUri: '/services/data/v55.0',
         basePath: '/ui-api/object-info/Account',
         method: 'get',
         body: null,

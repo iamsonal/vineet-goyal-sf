@@ -1,17 +1,15 @@
 import { api, LightningElement, wire, track } from 'lwc';
 import { getQuestionnaire } from 'lds-adapters-platform-admin-success-guidance';
 
-export default class GetActiveQuestionnaires extends LightningElement {
+export default class GetQuestionnaires extends LightningElement {
     wirePushCount = -1;
 
-    @api assistantGroup;
-    @api questionnaireId;
+    @api questionnaireName;
 
     @track questionnaire;
 
     @wire(getQuestionnaire, {
-        assistantGroup: '$assistantGroup',
-        questionnaireId: '$questionnaireId',
+        questionnaireName: '$questionnaireName',
     })
     onGetQuestionnaires({ data, error }) {
         this.questionnaire = data;

@@ -1,4 +1,5 @@
-import { FetchResponse, Headers, HttpStatusCode } from '@luvio/engine';
+import type { FetchResponse, Headers } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
 
 export class AuraFetchResponse<T> implements FetchResponse<T> {
     status: HttpStatusCode;

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-drafts",
-    "version": "1.32.0",
+    "version": "1.41.0",
     "description": "LDS Drafts",
     "license": "MIT",
     "main": "dist/ldsDrafts.js",
@@ -17,11 +17,11 @@
         "release:corejar": "yarn build && ../core-build/scripts/core.js --adapter=lds-drafts"
     },
     "dependencies": {
-        "@luvio/engine": "0.55.3",
-        "@luvio/environments": "0.55.3"
+        "@luvio/engine": "0.76.1",
+        "@luvio/environments": "0.76.1"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.32.0",
-        "@salesforce/lds-uiapi-record-utils": "1.32.0"
+        "@salesforce/lds-adapters-uiapi": "1.41.0",
+        "@salesforce/lds-uiapi-record-utils": "1.41.0"
     }
 }

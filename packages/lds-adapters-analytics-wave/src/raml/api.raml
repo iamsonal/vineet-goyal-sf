@@ -7,7 +7,7 @@ version: '52.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v54.0
+baseUri: /services/data/v55.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -98,6 +98,37 @@ types:
           false). There can be only one unique ID for any dataset.
         type: boolean
         required: false # TODO Hand-rolled W-8253396
+  ActionCollectionRepresentation:
+    description: Wave action collection representation.
+    type: object
+    properties:
+      actions:
+        description: Get all Actions
+        type: array
+        items:
+          type: ActionRepresentation
+  ActionRepresentation:
+    description: Wave action representation.
+    type: object
+    properties:
+      apiName:
+        description: api name
+        type: string
+      iconUrl:
+        description: icon Url
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: label
+        type: string
+      primaryColor:
+        description: primary color
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      subType:
+        description: sub type
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   AdvancedPropertyRepresentation:
     description: An advanced property is an object-level replication property for
       a data source.
@@ -135,6 +166,16 @@ types:
       value:
         description: The value of the advanced property
         type: string # TODO: hand rolled
+  AdvancedPropertyValueInputRepresentation:
+    description: Wave Data Connector Advanced Property input representation
+    type: object
+    properties:
+      name:
+        description: The name of the advanced property.
+        type: string
+      value:
+        description: The value of the advanced property
+        type: string # TODO: hand rolled
   AppLogRepresentation:
     description: Wave action representation.
     type: object
@@ -142,6 +183,23 @@ types:
       message:
         description: message
         type: string
+  ArrayTypeRepresentation:
+    description: Representation for array variable types.
+    discriminatorValue: ArrayType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          the inner variable types.
+        type: array # TODO Hand-rolled W-8252808
+        items:
+          type: any
+      itemsType:
+        description: The variable type contents of the array variable type.
+        type: VariableTypeRepresentation | nil
+      sizeLimit:
+        description: The size limit of the array variable type.
+        type: SizeLimitRepresentation | nil
   AssetReferenceInputRepresentation:
     description: Simple, reference input representation for wave assets.
     type: BaseAssetReferenceInputRepresentation
@@ -151,9 +209,20 @@ types:
     discriminatorValue: asset # TODO Hand rolled
     type: BaseAssetReferenceRepresentation
     properties: {}
+  DatasetVersionSharingSourceRepresentation:
+    description: Asset reference representation.
+    type: object
+    properties:
+      name:
+        description: The asset developer name.
+        type: string
+      namespace:
+        description: The namespace that qualifies the asset name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   BaseAssetInputRepresentation:
     description: Base Wave Asset input Representation
-    discriminator: name # TODO Hand rolled  W-8988532
+    discriminator: name # TODO Hand rolled W-8988532
     type: object
     properties:
       description:
@@ -287,6 +356,44 @@ types:
       url:
         description: URL to get the definition of the asset.
         type: string
+  BooleanTypeRepresentation:
+    description: Representation for boolean variable types.
+    discriminatorValue: BooleanType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          boolean variable types.
+        type: array
+        items:
+          type: boolean
+  ConditionalFormattingPropertyInputRepresentation:
+    description: Extended metadata for property in conditional formatting linked to
+      a Dimension / Measure.
+    type: object
+    properties:
+      parameters:
+        description: Valid conditional formatting parameters based on its type
+        type: object
+        properties: # TODO Hand-rolled W-8252808
+          //:
+            type: any
+        required: false # TODO Hand-rolled W-8253396
+      referenceField:
+        description: Conditional Formatting based on Reference field if any.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: The type of the conditional formatting
+        type: string
+        enum:
+          - Categories
+          - Gradient
+          - Multiple
+          - Raw
+          - Single
+          - Static
+        required: false # TODO Hand-rolled W-8253396
   ConditionalFormattingPropertyRepresentation:
     description: Extended metadata for property in conditional formatting linked to
       a Dimension / Measure.
@@ -352,6 +459,17 @@ types:
       value:
         description: The value of the connection property
         type: string | integer | boolean #TODO handrolled W-9203372
+  ConnectorTypeRepresentation:
+    description: Representation for connector variable types.
+    discriminatorValue: ConnectorType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          string variable types.
+        type: array
+        items:
+          type: string
   DailyScheduleRepresentation:
     description: Daily schedule on which to execute some type of job
     discriminatorValue: daily
@@ -987,6 +1105,10 @@ types:
       syncDataflows:
         description: The dataflows to sync when the job is triggered.
         type: DataflowCollectionRepresentation
+      waitTime:
+        description: The wait time in seconds before start of a dataflow job's execution
+        type: integer | nil
+        required: false # TODO Hand-rolled W-8253396
   DataflowRepresentation:
     description: Wave dataflow asset representation.
     discriminatorValue: Dataflow
@@ -1037,9 +1159,30 @@ types:
       definition:
         description: Dataflow definition
         type: DataflowDefinitionRepresentation
+        required: false # TODO Hand-rolled W-8253396
       id:
         description: The 18 character asset ID.
         type: string
+  DatasetAnyFieldTypeRepresentaton:
+    description: Representation for any generic dataset field variable type.
+    discriminatorValue: DatasetAnyFieldType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   DatasetCollectionRepresentation:
     description: A collection of Wave Datasets.
     type: object
@@ -1059,6 +1202,120 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  DatasetCoverageRepresentation:
+    description: Security coverage for a dataset version.
+    type: object
+    properties:
+      datasetVersion:
+        description: Dataset version for which the coverage information applies.
+        type: DatasetVersionReferenceRepresentation
+      sources:
+        description: Source objects for the dataset version
+        type: array
+        items:
+          type: DatasetSourceRepresentation
+      url:
+        description: URL for retrieving this information.
+        type: string
+  DatasetDateTypeRepresentation:
+    description: Representation for date (in dataset) variable types.
+    discriminatorValue: DatasetDateType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+  DatasetDimensionTypeRepresentation:
+    description: Representation for dimension variable types.
+    discriminatorValue: DatasetDimensionType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+  DatasetInputRepresentation:
+    description: Wave Dataset input representation
+    type: BaseAssetInputRepresentation
+    properties:
+      datasetType:
+        description: Type of the dataset
+        type: string
+        enum:
+          - Default
+          - Live
+          - StagedData
+          - Trended
+        required: false # TODO Hand-rolled W-8253396
+      folder:
+        description: Folder in which this dataset is stored
+        type: AssetReferenceInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      liveConnection:
+        description: Connection details for a live dataset
+        type: LiveConnectionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      userXmd:
+        description: User XMD associated with this dataset
+        type: XmdInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      visibility:
+        description: If dataset should be hidden from users with view access
+        type: string
+        enum:
+          - All
+          - Limited
+        required: false # TODO Hand-rolled W-8253396
+  DatasetInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for dataset input representation
+    type: object
+    properties:
+      dataset:
+        type: DatasetInputRepresentation
+        description: Dataset input representation
+  DatasetMeasureTypeRepresentation:
+    description: Representation for measure variable types.
+    discriminatorValue: DatasetMeasureType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   DatasetRepresentation:
     description: A Wave dataset.
     discriminatorValue: Dataset
@@ -1088,9 +1345,15 @@ types:
         description: Date on which the current version was last modified.
         type: string
         required: false # TODO Hand-rolled W-8253396
-      currentVersionTotalRows:
-        description: Total row count of this dataset.
-        type: integer
+      currentVersionSupportsNewDates:
+        description: Current dataset version supports new date format
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionTotalRowCount:
+        description: The total number of rows in the dataset.
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
         required: false # TODO Hand-rolled W-8253396
       currentVersionUrl:
         description: The URL for the current DatasetVersion.
@@ -1106,6 +1369,7 @@ types:
         enum:
           - Default
           - Live
+          - StagedData
           - Trended
       folder:
         description: A reference to the folder in which this dataset is stored.
@@ -1140,6 +1404,262 @@ types:
         enum:
           - All
           - Limited
+  DatasetVersionCollectionRepresentation:
+    description: A collection of Dataset Versions.
+    type: object
+    properties:
+      url:
+        description: URL to get this collection.
+        type: string
+      versions:
+        description: Collection of dataset versions for a particular dataset.
+        type: array
+        items:
+          type: DatasetVersionRepresentation
+  DatasetSourceRepresentation:
+    description: Source from which a dataset is constructed.
+    type: object
+    properties:
+      object:
+        description: Source object for a dataset
+        type: ObjectCoverageRepresentation
+      securityFields:
+        description: Dataset fields relevant to security for the object
+        type: array
+        items:
+          type: string
+  DatasetTypeRepresentation:
+    description: Representation for dataset variable types.
+    discriminatorValue: DatasetType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+  DependencyCollectionRepresentation:
+    description: A collection of Wave dependencies.
+    type: object
+    properties:
+      dependencies:
+        description: List of dependencies of a a particular asset type.
+        type: array
+        items:
+          type: any # TODO Hand-rolled W-10034467, recursive representation is not supported. Original Representation: DependencyRepresentation
+      totalSize:
+        description: Gets the total count of the dependencies irrespective of the
+          size of dependencies list.
+        type: integer
+  DependencyRepresentation:
+    description: Wave asset dependencies representation.
+    type: object
+    properties:
+      assetSharingUrl:
+        description: Sharing url of asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      components:
+        description: Components that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      dashboards:
+        description: Dashboards that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      datasets:
+        description: Datasets that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      folder:
+        description: The containing folder of the asset.
+        type: AssetReferenceRepresentation
+      id:
+        description: The 18 character asset ID.
+        type: string
+      lastAccessedDate:
+        description: The time at which the asset was last accessed.
+        type: string
+      lastModifiedBy:
+        description: The user who last modified the asset.
+        type: WaveUserRepresentation
+      lastModifiedDate:
+        description: The time at which the asset was last modified.
+        type: string
+      lenses:
+        description: Lenses that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The name of the asset.
+        type: string
+      recipes:
+        description: Recipes that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: The asset type.
+        type: string
+        enum:
+          - Collection
+          - Component
+          - Dashboard
+          - DashboardSavedView
+          - DashboardSnapshot
+          - DataConnector
+          - Dataflow
+          - DataflowJob
+          - DataflowJobNode
+          - Dataset
+          - DatasetShard
+          - DatasetVersion
+          - ExternalData
+          - Folder
+          - Lens
+          - LightningComponent
+          - LightningDashboard
+          - LightningDashboardFolder
+          - Recipe
+          - RecipeConfiguration
+          - RecipeModel
+          - ReplicatedDataset
+          - Report
+          - ReportFolder
+          - Story
+          - Widget
+          - Workflow
+      url:
+        description: Url to get the definition of the asset.
+        type: string
+      workflows:
+        description: Workflows that depend on the asset.
+        type: DependencyCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+  DatasetVersionInputRepresentation:
+    description: Input representation for wave Dataset Version.
+    type: object
+    properties:
+      isComplete:
+        description: Indicates whether the Dataset Version is complete
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      predicate:
+        description: The row level security predicate to be applied to this Dataset
+          Version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      sharingSource:
+        description: Entity from which sharing rules should be inherited
+        type: AssetReferenceInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      totalRowCount:
+        description: The total number of rows for the dataset version
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+  DatasetVersionInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for recipe input representation
+    type: object
+    properties:
+      datasetVersion:
+        type: DatasetVersionInputRepresentation
+        description: Dataset version input representation
+  DatasetVersionReferenceRepresentation:
+    description: Reference to a dataset version.
+    type: object
+    properties:
+      dataset:
+        description: A reference to the dataset.
+        type: AssetReferenceRepresentation
+      id:
+        description: The 18 character ID of the dataset version.
+        type: string
+      url:
+        description: The asset URL.
+        type: string
+  DatasetVersionRepresentation:
+    description: An instantiated version of a Wave dataset.
+    discriminatorValue: DatasetVersion
+    type: BaseWaveAssetRepresentation
+    properties:
+      dataset:
+        description: A reference to the dataset.
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      files:
+        description: Information about the data files that make up the dataset version.
+        type: array
+        items:
+          type: WaveFileMetadataRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      filesUrl:
+        description: The URL of the files resource for this dataset version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      predicate:
+        description: The row level security predicate.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      predicateVersion:
+        description: The version of the row level security predicate.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+      securityCoverageUrl:
+        description: Dataset sharing inheritance coverage information resource.
+        type: string
+      sharingSource:
+        description: Entity from which sharing rules will be inherited for this dataset
+          version
+        type: DatasetVersionSharingSourceRepresentation # Hand-rolled: Supposed to be AssetReferenceRepresentation but may not contain ID
+        required: false # TODO Hand-rolled W-8253396
+      source:
+        description: The parent dataflow or file for this dataset version.
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      supportsNewDates:
+        description: Dataset version supports new date format
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      totalRowCount:
+        description: Total number of rows for this dataset version
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+      xmdMain:
+        description: The Extended Metadata (Xmd) for this dataset version.
+        type: XmdRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      xmdsUrl:
+        description: The URL of the Xmd Collection resource for this dataset version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  DateTimeTypeRepresentation:
+    description: Representation for date/time variable types.
+    discriminatorValue: DateTimeType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties: {}
+  DisplayMessageRepresentation:
+    description: Representation for a display message in the ui configuration of
+      a wave template.
+    type: object
+    properties:
+      location:
+        description: The name of a page where the text content to display
+        type: string | nil
+      text:
+        description: Text content to display
+        type: string | nil
   EmptyScheduleRepresentation:
     description: Represents an empty schedule on an asset
     discriminatorValue: none
@@ -1187,6 +1707,14 @@ types:
         description: Hour at which schedule stops queueing.
         type: integer
         required: false # TODO Hand-rolled W-8253396
+  ImageAssetReferenceRepresentation:
+    description: Image reference representation.
+    type: TemplateAssetReferenceRepresentation # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+    properties:
+      description:
+        description: The image description.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   LicenseAttributesInputRepresentation:
     description: Input representation for analytics license attributes.
     type: object
@@ -1196,6 +1724,7 @@ types:
         type: string
         enum:
           - EinsteinAnalytics
+          - MulesoftDataPath
           - Sonic
   LicenseAttributesRepresentation:
     description: The analytics license type and other properties
@@ -1206,7 +1735,18 @@ types:
         type: string
         enum:
           - EinsteinAnalytics
+          - MulesoftDataPath
           - Sonic
+  LiveConnectionInputRepresentation:
+    description: Connection details for a live dataset
+    type: object
+    properties:
+      connectionName:
+        description: The developer name of the connection
+        type: string
+      sourceObjectName:
+        description: The source object name from the connection
+        type: string
   LiveConnectionRepresentation:
     description: Connection details of a live dataset
     type: object
@@ -1217,6 +1757,96 @@ types:
       connectionName:
         description: The developer name of the connection
         type: string
+      connectionType:
+        description: The type of the connection
+        type: string
+        enum:
+          - ActCRM
+          - ActOn
+          - AdobeAnalytics
+          - AmazonAthena
+          - AmazonDynamoDB
+          - AmazonS3
+          - AmazonS3Output
+          - AwsMarketplace
+          - AwsRdsAuroraMySQL
+          - AwsRdsAuroraPostgres
+          - AwsRdsMariaDB
+          - AwsRdsMySQL
+          - AwsRdsOracle
+          - AwsRdsPostgres
+          - AwsRdsSqlServer
+          - AzureCosmosDB
+          - AzureDataLakeGen2Output
+          - AzureSqlDatabase
+          - AzureSqlDatawarehouse
+          - AzureTable
+          - Box
+          - Cassandra
+          - CdpDirect
+          - Dropbox
+          - GoogleAds
+          - GoogleAnalytics
+          - GoogleAnalyticsCoreReporting
+          - GoogleBigQuery
+          - GoogleBigQueryDirect
+          - GoogleBigQueryStandardSQL
+          - GoogleCloudStorage
+          - GoogleSheets
+          - GoogleSpanner
+          - HerokuPostgres
+          - HubSpot
+          - IbmCloudSqlQuery
+          - LinkedIn
+          - MarkLogic
+          - Marketo
+          - MarketoV2
+          - MicrosoftAdvertising
+          - MicrosoftDynamics
+          - MongoDB
+          - MulesoftAnaplan
+          - MulesoftConcur
+          - MulesoftHubSpot
+          - MulesoftMarkLogic
+          - MulesoftMongoDB
+          - MulesoftMySQL
+          - MulesoftOracle
+          - MulesoftServiceNow
+          - MulesoftSqlServer
+          - MulesoftWorkday
+          - MulesoftZuora
+          - NetSuite
+          - OracleEloqua
+          - Redshift
+          - SalesforceCPQ
+          - SalesforceCommunityCloud
+          - SalesforceEinsteinAnalytics
+          - SalesforceExternal
+          - SalesforceForceCom
+          - SalesforceMarketingCloud
+          - SalesforceMarketingCloudFull
+          - SalesforceMarketingCloudOAuth2
+          - SalesforceOutput
+          - SalesforceReport
+          - SalesforceSalesCloud
+          - SalesforceServiceCloud
+          - SapConcur
+          - SapHana
+          - SapHanaCloud
+          - SapSuccessFactors
+          - ServiceNow
+          - SfdcLocal
+          - SnowflakeComputing
+          - SnowflakeDirect
+          - SnowflakeOutput
+          - SugarCRM
+          - TableauHyperOutput
+          - Teradata
+          - VeevaVault
+          - Xactly
+          - Zendesk
+          - ZohoCRM
+          - ZuoraAQuA
       sourceObjectName:
         description: The source object name from the connection
         type: string
@@ -1300,6 +1930,19 @@ types:
         format: double
         type: number
         required: false # TODO Hand-rolled W-8253396
+  NumericSeparatorsInputRepresentation:
+    description: 'Wave XMD measure format number input representation with numeric
+      separators '
+    type: object
+    properties:
+      decimal:
+        description: Decimal separator
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      thousands:
+        description: Thousands separator
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   NumericSeparatorsRepresentation:
     description: Thousands and decimal numeric separators
     type: object
@@ -1312,6 +1955,55 @@ types:
         description: Thousand separator
         type: string
         required: false # TODO Hand-rolled W-8253396
+  NumberTypeRepresentation:
+    description: Representation for numeric variable types.
+    discriminatorValue: NumberType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          numeric variable types.
+        type: array
+        items:
+          format: double
+          type: number
+      max:
+        description: The maximum allowed value of the number.
+        #format: double # Hand-rolled format not allowed with union type
+        type: number | nil
+      min:
+        description: The minimum allowed value of the number.
+        #format: double # Hand-rolled format not allowed with union type
+        type: number | nil
+  ObjectCoverageRepresentation:
+    description: Security coverage for an object
+    type: object
+    properties:
+      eligibleSharingSource:
+        description: Whether or not the object is an eligible sharing source
+        type: boolean
+      label:
+        description: Label for the object
+        type: string
+      name:
+        description: Name of the object
+        type: string
+      namespace:
+        description: Namespace of the object
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      securityFields:
+        description: Fields relevant to security for the object
+        type: array
+        items:
+          type: string
+      unsupportedRecords:
+        description: Specific records that are unsupported for sharing inheritance
+        type: UnsupportedRecordCollectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: URL for retrieving this information.
+        type: string
   OutputSourceRepresentation:
     description: output source for output objects
     discriminatorValue: outputSource
@@ -1336,6 +2028,60 @@ types:
         description: The number of rows in the output of the sync out operation.
         type: integer
         required: false # TODO Hand-rolled W-8253396
+  ObjectTypeRepresentation:
+    description: Representation for object variable types.
+    discriminatorValue: ObjectType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+  PageRepresentation:
+    description: Representation for a single page layout definition for Wave templates.
+    type: object
+    properties:
+      condition:
+        description: The optional condition in which the page should be shown. Values
+          should be client-side EL notation (e.g. {{Variables.selectedOption}})
+        type: string | nil
+      helpUrl:
+        description: An URL to this page's help webpage.
+        type: string | nil
+      title:
+        description: The title for the page.
+        type: string
+      variables:
+        description: The collection of variables for this template configuration.
+        type: array
+        items:
+          type: PageVariableRepresentation
+      vfPage:
+        description: The visualforce page to be used as the user interface instead
+          of the standard wizard interface.
+        type: TemplateAssetReferenceRepresentation | nil # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+  PageVariableRepresentation:
+    description: Representation for a page variable in the page definition which
+      is part of a wave template.
+    type: object
+    properties:
+      name:
+        description: The name of a variable.
+        type: string
+      visibility:
+        description: The visibility expression for this variable
+        type: string | nil
   PermissionsRepresentation:
     description: Permissions of the user on an asset.
     type: object
@@ -1626,6 +2372,30 @@ types:
         type: array
         items:
           type: string
+  RecipeNotificationInputRepresentation:
+    description: Input required to create recipe notifications that are sent to the
+      current user.
+    type: object
+    properties:
+      longRunningAlertInMins:
+        description: Number of minutes that a recipe can run before sending an alert.
+        type: integer | nil
+        required: false # TODO Hand-rolled W-8253396
+      notificationLevel:
+        description: Notification level for emails.
+        type: string
+        enum:
+          - Always
+          - Failures
+          - Never
+          - Warnings
+  RecipeNotificationInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for recipe notification input representation
+    type: object
+    properties:
+      recipeNotification:
+        type: RecipeNotificationInputRepresentation
+        description: recipe notification input representation
   RecipeNotificationRepresentation:
     description: Notification conditions on a recipe for the current user.
     type: object
@@ -1727,6 +2497,17 @@ types:
           reverted from.
         type: string
         required: false # TODO Hand-rolled W-8253396
+      status:
+        description: The status of recipe.
+        type: string
+        enum:
+          - Failure
+          - New
+          - Queued
+          - Running
+          - Success
+          - Warning
+        required: false # TODO Hand-rolled W-8253396
       targetDataflowId:
         description: Target Dataflow ID.
         type: string
@@ -1768,6 +2549,197 @@ types:
         description: Validation code
         type: integer
         required: false # TODO Hand-rolled W-8253396
+  ReplicatedDatasetConnectorRepresentation:
+    # This representation is hand-rolled from DataConnectorRepresentation as it is meant to be the same,
+    # but due to API response inconsistencies between data connectors and replicated dataset, the two
+    # representations have to remain separate. In the data connectors endpoint, connectionProperties is
+    # always returned properly, but in replicated datasets response's connector field, connectionProperties
+    # is always set to empty array intentionally. Without a separate representation, the incorrect connector
+    # data will overwrite the correct one.
+    description: A Data Connector that represents a connection.
+    type: object
+    properties:
+      assetSharingUrl:
+        description: Sharing URL for the asset.
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
+      createdBy:
+        description: Represents asset creator.
+        type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      createdDate:
+        description: Time the asset was created.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Short description of the asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      id:
+        description: The 18 character asset ID.
+        type: string
+      label:
+        description: The label of the asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastAccessedDate:
+        description: Last time the asset was accessed.
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedBy:
+        description: The user that last updated the asset.
+        type: WaveUserRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedDate:
+        description: Last time the asset was modified.
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The name of the asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      namespace:
+        description: The namespace of the Asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      permissions:
+        description: Represents permissions for the present user.
+        type: PermissionsRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: The asset type.
+        type: string
+        enum:
+          - Component
+          - Dashboard
+          - DashboardSnapshot
+          - DataConnector
+          - DataPoolEntity
+          - DataPoolEntityVersion
+          - Dataflow
+          - DataflowJob
+          - DataflowJobNode
+          - Dataset
+          - DatasetShard
+          - DatasetVersion
+          - ExternalData
+          - Folder
+          - Lens
+          - Recipe
+          - ReplicatedDataset
+          - Story
+          - Workflow
+      url:
+        description: URL to get the definition of the asset.
+        type: string
+      connectionProperties:
+        description: The connection properties.
+        type: array
+        items:
+          type: ConnectionPropertyValueRepresentation
+      connectorHandler:
+        description: Connector Handler associated with the current source connector.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+        enum:
+          - Base
+          - Legacy
+      connectorType:
+        description: The type of data connector.
+        type: string
+        enum:
+          - ActCRM
+          - ActOn
+          - AdobeAnalytics
+          - AmazonAthena
+          - AmazonDynamoDB
+          - AmazonS3
+          - AmazonS3Output
+          - AwsMarketplace
+          - AwsRdsAuroraMySQL
+          - AwsRdsAuroraPostgres
+          - AwsRdsMariaDB
+          - AwsRdsMySQL
+          - AwsRdsOracle
+          - AwsRdsPostgres
+          - AwsRdsSqlServer
+          - AzureCosmosDB
+          - AzureSqlDatabase
+          - AzureSqlDatawarehouse
+          - AzureTable
+          - Box
+          - Cassandra
+          - CdpDirect
+          - Dropbox
+          - GoogleAds
+          - GoogleAnalytics
+          - GoogleBigQuery
+          - GoogleBigQueryStandardSQL
+          - GoogleCloudStorage
+          - GoogleSheets
+          - GoogleSpanner
+          - HerokuPostgres
+          - IbmCloudSqlQuery
+          - LinkedIn
+          - MarkLogic
+          - Marketo
+          - MicrosoftAdvertising
+          - MicrosoftDynamics
+          - MongoDB
+          - MulesoftAnaplan
+          - MulesoftConcur
+          - MulesoftHubSpot
+          - MulesoftMarkLogic
+          - MulesoftMongoDB
+          - MulesoftMySQL
+          - MulesoftOracle
+          - MulesoftServiceNow
+          - MulesoftSqlServer
+          - MulesoftSuccessFactors
+          - MulesoftWorkday
+          - MulesoftZuora
+          - NetSuite
+          - OracleEloqua
+          - Redshift
+          - SalesforceCPQ
+          - SalesforceCommunityCloud
+          - SalesforceEinsteinAnalytics
+          - SalesforceExternal
+          - SalesforceForceCom
+          - SalesforceMarketingCloud
+          - SalesforceMarketingCloudFull
+          - SalesforceMarketingCloudOAuth2
+          - SalesforceOutput
+          - SalesforceReport
+          - SalesforceSalesCloud
+          - SalesforceServiceCloud
+          - SapConcur
+          - SapHana
+          - SapSuccessFactors
+          - ServiceNow
+          - SfdcLocal
+          - SnowflakeComputing
+          - SnowflakeDirect
+          - SnowflakeOutput
+          - SugarCRM
+          - TableauHyperOutput
+          - Teradata
+          - VeevaVault
+          - Xactly
+          - Zendesk
+          - ZohoCRM
+          - ZuoraAQuA
+      folder:
+        description: Folder for the Live connection.
+        required: false # TODO Hand-rolled W-8253396
+        type: AssetReferenceRepresentation
+      ingestionSchedule:
+        description: Schedule of replication flows for the connection.
+        type: ScheduleRepresentation
+      targetConnector:
+        description: Target connector associated with the current source connector.
+        required: false # TODO Hand-rolled W-8253396
+        type: AssetReferenceRepresentation
   ReplicatedDatasetCollectionRepresentation:
     description: A list of Replicated Datasets.
     type: object
@@ -1927,7 +2899,7 @@ types:
           - PeriodicFull
       connector:
         description: Connector information associated with this replication object
-        type: DataConnectorRepresentation
+        type: ReplicatedDatasetConnectorRepresentation
       datasetId:
         description: Dataset ID that is associated with the source object being replicated
         type: string
@@ -2038,6 +3010,13 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  RestoreDatasetVersionInputRepresentation:
+    description: Input representation for Restore Dataset Version.
+    type: object
+    properties:
+      sourceVersion:
+        description: Source Version to which restore should happen
+        type: AssetReferenceInputRepresentation # TODO Hand-rolled W-8988482
   RestoreDatasetVersionRepresentation:
     description: Representation of a dataset version restore.
     type: object
@@ -2433,6 +3412,61 @@ types:
         description: Select or drop fields
         type: string
         required: false # TODO Hand-rolled W-8253396
+  SizeLimitRepresentation:
+    description: Representation for the size limit of an array type variable.
+    type: object
+    properties:
+      max:
+        description: Maximum number of elements in an array
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      min:
+        description: Minimum number of elements in an array
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+  SObjectFieldTypeRepresentation:
+    description: Representation for sObject field variable types.
+    discriminatorValue: SobjectFieldType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
+      dataType:
+        description: The SObjectField datatype when a default field is not supplied.
+        type: string | nil
+  SObjectTypeRepresentation:
+    description: Representation for sObject variable types.
+    discriminatorValue: SobjectType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation # TODO Hand-rolled: mulitple inheritance fix
+    properties:
+      properties:
+        description: The defined properties and types of the object variable type.
+        type: object
+        properties:
+          //:
+            type: VariableTypeRepresentation
+      required:
+        description: The required properties of the object variable type.
+        type: array
+        items:
+          type: string
+      strictValidation:
+        description: Use strict validation when unexpected properties exist in the
+          object's payload.
+        type: boolean
   SourceFieldCollectionRepresentation:
     description: A list of Source Fields.
     type: object
@@ -2488,6 +3522,35 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  SourceObjectDataInputRepresentation:
+    description: Input representation for getting source object data given a list
+      of fields and advanced properties
+    type: object
+    properties:
+      advancedProperties:
+        description: List of user-specified advanced properties associated with this
+          object.
+        type: array
+        items:
+          type: AdvancedPropertyValueInputRepresentation # TODO hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      sourceObjectFields:
+        description: List of fields as a way to filter the fields returned in the
+          response.
+        type: array
+        items:
+          type: string
+  SourceObjectDataRepresentation:
+    description: A Source Object Data represents the data to be previewed that the
+      selected Data Connector knows about.
+    type: object
+    properties:
+      dataListJson:
+        description: The json representation, as a string, for data preview to show.
+        type: string
+      url:
+        description: The URL to get this Source Object Data.
+        type: string
   SourceObjectRepresentation:
     description: A Source Object represents a specific category or type of data that
       the Data Connector knows about. When a Source Object is replicated into Wave,
@@ -2527,6 +3590,111 @@ types:
       url:
         description: The URL to get this Source Object.
         type: string
+  StringTypeRepresentation:
+    description: Representation for string variable types.
+    discriminatorValue: StringType # TODO Hand-rolled W-8988532
+    type: VariableTypeRepresentation
+    properties:
+      enums:
+        description: The restricted list of enumerated values, where applicable for
+          string variable types.
+        type: array
+        items:
+          type: string | nil # TODO Hand-rolled Item 19 on raml generation gaps
+  TemplateAssetReferenceRepresentation: # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+    # In the generated raml, TemplateIconsRepresentation and PageRepresentation use AssetReferenceRepresentation.
+    # However, there won't be ids on some responses, but BaseAssetReferenceRepresentation has id as
+    # required and is then used in some luvio.keys (which won't compile if id is marked as not required). And, I can't
+    # just extend BaseAssetReferenceRepresentation here and mark id as required since that fails to build:raml saying
+    # that you can't loosen the required-ness in a subtype.
+    discriminator: name
+    type: object
+    properties:
+      id:
+        description: The 18 character ID of the asset.
+        type: string
+        required: false
+      label:
+        description: The asset label.
+        type: string
+        required: false
+      name:
+        description: The asset developer name.
+        type: string
+        required: false
+      namespace:
+        description: The namespace that qualifies the asset name
+        type: string
+        required: false
+      url:
+        description: The asset URL.
+        type: string
+        required: false
+  TemplateCollectionRepresentation:
+    description: Representation for Wave analytics application templates.
+    type: object
+    properties:
+      templates:
+        description: The collection of application templates available within this
+          organization.
+        type: array
+        items:
+          type: TemplateRepresentation
+  TemplateConfigurationRepresentation:
+    description: Representation for Wave analytics template configuration.
+    type: object
+    properties:
+      id:
+        description: The ID or fully qualified API name of this template.
+        type: string
+      name:
+        description: The local API name of the template.
+        type: string
+      namespace:
+        description: The namespace of the template provider.
+        type: string | nil
+      ui:
+        description: The user interface definition for this Wave template.
+        type: UiDefinitionRepresentation
+      variables:
+        description: The defined set of variables for this Wave template.
+        type: object
+        properties:
+          //:
+            # Setting this to the real type causes the snapshot to reject with:
+            # 'Invalid resource response. Expected resource response to result in Fulfilled or Stale snapshot'
+            # (with no errors about the type, even on empty {} value). Using type: any gets past it for now.
+            type: any # TODO Hand-rolled W-8863405
+            #type: VariableDefinitionRepresentation
+  TemplateCustomAttributesRepresentation:
+    description: Representation for template extra metadata.
+    type: object
+    properties:
+      label:
+        description: The label for the extra metadata
+        type: string | nil
+      values:
+        description: The values for the extra metadata
+        type: array
+        items:
+          type: string
+  TemplateIconsRepresentation:
+    description: Representation for describing the icons configured for a wave template.
+    type: object
+    properties:
+      appBadge:
+        description: The badge icon used on any app created from this template.
+        type: TemplateAssetReferenceRepresentation | nil # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+      templateBadge:
+        description: The badge icon used to represent this template in the template
+          configuration wizard.
+        type: TemplateAssetReferenceRepresentation | nil # TODO Hand-rolled BaseAssetReferenceRepresentation required id issue
+      templatePreviews:
+        description: The images used to display in the carousel on the template detail
+          page when the template is selected in the wizard.
+        type: array
+        items:
+          type: ImageAssetReferenceRepresentation
   TemplateOptionsRepresentation:
     description: Representation for the options used on the last action performed
       on a templated Wave Application.
@@ -2549,6 +3717,107 @@ types:
         description: The user that performed the last action.
         type: WaveUserRepresentation
         required: false # TODO Hand-rolled W-8253396
+  TemplateReleaseNotesRepresentation:
+    description: Representation for a wave template's release notes
+    type: object
+    properties:
+      id:
+        description: The ID or fully qualified API name of this template.
+        type: string
+      name:
+        description: The local API name of the template.
+        type: string
+      namespace:
+        description: The namespace of the template provider.
+        type: string | nil
+      notes:
+        description: The release note's markdown.
+        type: string | nil
+  TemplateReleaseRepresentation:
+    description: Representation for a wave templates release information.
+    type: object
+    properties:
+      notesUrl:
+        description: The URL to the release notes for this template
+        type: string | nil
+      templateVersion:
+        description: The version of this template.
+        type: string | nil
+  TemplateRepresentation:
+    description: Representation for a single Wave analytics template.
+    type: object
+    properties:
+      assetVersion:
+        description: Asset version (api version) of all the dashboards and lenses.
+        format: double
+        type: number
+      configurationUrl:
+        description: The URL to the configuration of the template.
+        type: string
+      createdBy:
+        description: The user that created the template.
+        type: WaveUserRepresentation | nil
+      createdDate:
+        description: Time the template was created.
+        type: string | nil
+      customAttributes:
+        description: Custom Attribute definitions for this template
+        type: array
+        items:
+          type: TemplateCustomAttributesRepresentation
+      description:
+        description: The description of the application template.
+        type: string | nil
+      folderSource:
+        description: The folder source of this template
+        type: AssetReferenceRepresentation | nil
+      icons:
+        description: The icons configured for this wave template.
+        type: TemplateIconsRepresentation
+      id:
+        description: The ID or fully qualified API name of this template.
+        type: string
+      label:
+        description: The localized name of the application template.
+        type: string
+      lastModifiedBy:
+        description: The user that last updated the template.
+        type: WaveUserRepresentation | nil
+      lastModifiedDate:
+        description: Last time the template was modified.
+        type: string | nil
+      name:
+        description: The local API name of the application template.
+        type: string
+      namespace:
+        description: The namespace of the application template provider.
+        type: string | nil
+      releaseInfo:
+        description: The release information for this template
+        type: TemplateReleaseRepresentation
+      tags:
+        description: Tag definitions for this template
+        type: array
+        items:
+          type: string
+      templateType:
+        description: The template type app or dashboard, if empty or null then template
+          type is app.
+        type: string
+        enum:
+          - App
+          - Dashboard
+          - Data
+          - EmbeddedApp
+          - Lens
+      url:
+        description: The URL to the detail of the template.
+        type: string
+      videos:
+        description: Videos associated with this template
+        type: array
+        items:
+          type: VideoInfoRepresentation
   TimeRepresentation:
     description: Time at which something should happen
     type: object
@@ -2607,6 +3876,128 @@ types:
           - Story
           - Widget
           - Workflow
+  UnsupportedRecordCollectionRepresentation:
+    description: Output representation of objects not supported by sharing inheritance
+      based on insights limits
+    type: object
+    properties:
+      count:
+        description: Count of objects not covered by sharing inheritance, may not
+          match the length of values array
+        type: integer
+      values:
+        description: Objects not covered due to sharing limit, list may be shorter
+          that count due to limiting for the API
+        type: array
+        items:
+          type: UnsupportedRecordRepresentation
+  UnsupportedRecordRepresentation:
+    description: Output representation of sharing usage of instances of objects based
+      on insights limits
+    type: object
+    properties:
+      descriptorCount:
+        description: Number of descriptors for the record id
+        type: integer
+      id:
+        description: Record id
+        type: string
+  UiDefinitionRepresentation:
+    description: Representation for UI definition of Wave templates.
+    type: object
+    properties:
+      displayMessages:
+        description: The display messages for this template configuration.
+        type: array
+        items:
+          type: DisplayMessageRepresentation
+      pages:
+        description: The page collection for this template configuration.
+        type: array
+        items:
+          type: PageRepresentation
+  VariableDefinitionRepresentation:
+    description: Representation for Wave template variable definitions.
+    type: object
+    properties:
+      computedValue:
+        description: The computed value of the variable. This value is set by integrated
+          apex implementations.
+        type: any # TODO Hand-rolled W-8252808
+      defaultValue:
+        description: The default value of the variable.
+        type: any # TODO Hand-rolled W-8252808
+      description:
+        description: The description of the variable.
+        type: string | nil
+      excludeSelected:
+        description: True if this variable has excludeSelected in the template.
+        type: boolean
+      excludes:
+        description: Values to exclude from the variable selection list
+        type: array
+        items:
+          type: string
+      label:
+        description: The label for the expected variable.
+        type: string | nil
+      mostRecentValue:
+        description: The value specified in the most recent app creation process.
+        type: any # TODO Hand-rolled W-8252808
+      required:
+        description: True if this variable is required by the template.
+        type: boolean
+      variableType:
+        description: The expected type of the variable.
+        type: VariableTypeRepresentation
+  VariableTypeRepresentation:
+    description: Abstractly describes the type of variable definition.
+    discriminator: type
+    type: object
+    properties:
+      type:
+        description: The type of the variable.
+        type: string
+        enum:
+          - ArrayType
+          - BooleanType
+          - ConnectorType
+          - DatasetAnyFieldType
+          - DatasetDateType
+          - DatasetDimensionType
+          - DatasetMeasureType
+          - DatasetType
+          - DateTimeType
+          - NumberType
+          - ObjectType
+          - SobjectFieldType
+          - SobjectType
+          - StringType
+  VideoInfoRepresentation:
+    description: Representation for describing a particular video.
+    type: object
+    properties:
+      id:
+        description: The platform-specific ID of the video content.
+        type: string
+      label:
+        description: The video display title.
+        type: string
+      linkType:
+        description: The video platform.
+        type: string
+        enum:
+          - Vidyard
+          - YouTube
+      purpose:
+        description: The video type/purpose.
+        type: string
+        enum:
+          - Onboarding
+          - Walkthrough
+      showPlaylist:
+        description: Whether a playlist should be shown by the video platform.
+        type: boolean
   WaveAnalyticsLimitCollectionRepresentation:
     description: A collection of analytics limits
     type: object
@@ -2663,6 +4054,42 @@ types:
           - MaxDailySizeLowOutputCon
           - MaxDailySizeMedOutputCon
           - OutputLocalConnectorVolume
+  WaveFileMetadataRepresentation:
+    description: Information about a file.
+    type: object
+    properties:
+      createdBy:
+        description: created by user
+        type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      createdDate:
+        description: created date
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      id:
+        description: The 18 character lens file ID.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastAccessedDate:
+        description: last accessed date
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedDate:
+        description: last modified date
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      length:
+        description: size of the lens file
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: name of lens file
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: url of file.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   WaveFolderCollectionRepresentation:
     description: Representation for a collection of Wave analytics folders or applications.
     type: object
@@ -2826,6 +4253,232 @@ types:
             - Thursday
             - Tuesday
             - Wednesday
+  XmdBaseDimensionActionInputRepresentation:
+    description: Base class for XMD Dimension and Derived Dimension Action.
+    discriminator: name # TODO Hand rolled W-8988532
+    type: object
+    properties:
+      enabled:
+        description: Whether the Action is enabled.
+        type: boolean
+      name:
+        description: Name of the action.
+        type: string
+  XmdBaseDimensionCustomActionInputRepresentation:
+    description: Base class for Wave XMD Dimension and Dervied Dimension Custom Action
+      input representation
+    type: XmdBaseDimensionActionInputRepresentation
+    properties:
+      icon:
+        description: icon for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      method:
+        description: method for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      target:
+        description: target for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      tooltip:
+        description: tooltip for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: Url for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  XmdBaseDimensionInputRepresentation:
+    description: Base class for Wave XMD Dimension and Derived Dimension input representation
+    discriminator: fullyQualifiedName # TODO Hand rolled W-8988532
+    type: object
+    properties:
+      conditionalFormatting:
+        description: Conditional formatting for a Dimension.
+        type: object
+        properties:
+          //:
+            type: ConditionalFormattingPropertyInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      customActionsEnabled:
+        description: Whether the Dimension has custom actions enabled.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      dateFormat:
+        description: Date format to be used for a Date that is a dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      defaultAction:
+        description: Default action for the dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Description of the Dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      field:
+        description: Field name of the Dimension (used in queries).
+        type: string
+      fullyQualifiedName:
+        description: Fully qualified name of the dimension.
+        type: string
+      imageTemplate:
+        description: Image template.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Label for the Dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      linkTemplate:
+        description: Template for formatting a Link.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      linkTemplateEnabled:
+        description: Whether the Dimension has link templates enabled.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      linkTooltip:
+        description: Tooltip to be displayed for links.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      origin:
+        description: Origin of this dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      recordDisplayFields:
+        description: Ordered list of Dimensions and Measures. Represents the default
+          order to show them in the UI.
+        type: array
+        items:
+          type: string
+        required: false # TODO Hand-rolled W-8253396
+      recordIdField:
+        description: Record Id for this dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      recordOrganizationIdField:
+        description: Record Organization Id for this dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      salesforceActionsEnabled:
+        description: Whether the Dimension has salesforce actions enabled.
+        type: boolean
+      showInExplorer:
+        description: Whether the Dimension should be shown in the Explorer.
+        type: boolean
+  XmdBaseDimensionMemberInputRepresentation:
+    description: Base class for Wave XMD Dimension and Derived Dimension Member input
+      representation
+    discriminator: member # TODO Hand rolled W-8988532
+    type: object
+    properties:
+      color:
+        description: Color for the member.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Label for the member.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      member:
+        description: Member value.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  XmdBaseMeasureFormatInputRepresentation:
+    description: Base class for Wave XMD Measure and Derived Measure Format input
+      representation
+    type: object
+    properties:
+      customFormat:
+        description: displays the original xmd 1.1 format array as a String.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      decimalDigits:
+        description: Number of digits to be displayed after the decimal place.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      delimiters:
+        description: Thousands and decimal numeric separators for number formatting
+        type: NumericSeparatorsInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      negativeParentheses:
+        description: displays negative numbers with parenthesis or not minus sign
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      prefix:
+        description: Prefix to be placed before the field value.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      suffix:
+        description: Suffix to be placed after the field value.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      unit:
+        description: Unit string for the measure. (eg. 'cm')
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      unitMultiplier:
+        description: Multiplier for the unit.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+  XmdBaseMeasureInputRepresentation:
+    description: Base class for Wave XMD Measure and Derived Measure input representation
+    discriminator: fullyQualifiedName # TODO Hand rolled W-8988532
+    type: object
+    properties:
+      conditionalFormatting:
+        description: Conditional formatting for a Measure.
+        type: object
+        properties:
+          //:
+            type: ConditionalFormattingPropertyInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      dateFormat:
+        description: Date format to be used for a Date that is a measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Description of the Measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      field:
+        description: Field name of the Measure (used in queries).
+        type: string
+      fullyQualifiedName:
+        description: Fully qualified name of the Measure.
+        type: string
+      label:
+        description: Label for the Measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      origin:
+        description: Origin of the Measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      showInExplorer:
+        description: Whether the Measure should be shown in the Explorer.
+        type: boolean
+  XmdDatasetInputRepresentation:
+    description: Wave XMD Dataset input representation
+    type: object
+    properties:
+      connector:
+        description: Connector source for the dataset.
+        type: string
+      description:
+        description: Description of the dataset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fullyQualifiedName:
+        description: Fully qualified name of the dataset version.
+        type: string
+      origin:
+        description: Origin representing where this dataset version comes from.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   XmdDatasetRepresentation:
     description: Extended metadata for the dataset
     type: object
@@ -2846,6 +4499,65 @@ types:
         description: Origin representing where this dataset version comes from.
         type: string
         required: false # TODO Hand-rolled W-8253396
+  XmdDateFieldsInputRepresentation:
+    description: Wave XMD Date Fields input representation
+    type: object
+    properties:
+      day:
+        description: day field.
+        type: string
+      epochDay:
+        description: epochDay field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      epochSecond:
+        description: epochSecond field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalMonth:
+        description: fiscalMonth field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalQuarter:
+        description: fiscalQuarter field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalWeek:
+        description: fiscalWeek field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalYear:
+        description: fiscalYear field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fullField:
+        description: fullField field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      hour:
+        description: hour field.
+        type: string
+      minute:
+        description: minute field.
+        type: string
+      month:
+        description: month field.
+        type: string
+      quarter:
+        description: quarter field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      second:
+        description: second field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      week:
+        description: week field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      year:
+        description: year field.
+        type: string
   XmdDateFieldRepresentation:
     description: Extended metadata for the formatting of a Date Field in a Dataset.
     type: object
@@ -2910,6 +4622,48 @@ types:
         description: year field.
         type: string
         required: false # TODO Hand-rolled W-8253396
+  XmdDateInputRepresentation:
+    description: Wave XMD Date input representation
+    type: object
+    properties:
+      alias:
+        description: Alias of the Date column.
+        type: string
+      compact:
+        description: Whether the Date should be displayed as compact.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Description of the Date column.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fields:
+        description: Formatting information for the date fields.
+        type: XmdDateFieldsInputRepresentation # TODO Hand-rolled W-8988482
+      firstDayOfWeek:
+        description: What the first day of the week is.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      fiscalMonthOffset:
+        description: Offset number of months for the fiscal year in relation to the
+          calendar year.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      fullyQualifiedName:
+        description: Fully qualified name of the date.
+        type: string
+      isYearEndFiscalYear:
+        description: Whether the Year End is the Fiscal year.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Label of the Date column.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      showInExplorer:
+        description: Whether the Date should be show in the explorer.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
   XmdDateRepresentation:
     description: Extended metadata for a date
     type: object
@@ -2970,6 +4724,48 @@ types:
           - DateOnly
           - DateTime
         required: false # TODO Hand-rolled W-8253396
+  XmdDerivedDimensionInputRepresentation:
+    description: Wave XMD Derived Dimension input representation
+    type: XmdBaseDimensionInputRepresentation
+    properties:
+      customActions:
+        description: Custom Actions linked to this Derived Dimension.
+        type: array
+        items:
+          type: XmdBaseDimensionCustomActionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      isMultiValue:
+        description: Whether the Derived Dimension is multi-value.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      members:
+        description: Member overrides for a Derived Dimension.
+        type: array
+        items:
+          type: XmdDerivedDimensionMemberInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      salesforceActions:
+        description: Salesfoce Actions linked to this Derived Dimension.
+        type: array
+        items:
+          type: XmdDerivedDimensionSalesforceActionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+  XmdDerivedDimensionMemberInputRepresentation:
+    description: Wave XMD Derived Dimension Member input representation
+    type: XmdBaseDimensionMemberInputRepresentation
+    properties: {}
+  XmdDerivedDimensionSalesforceActionInputRepresentation:
+    description: Wave XMD Derived Dimension Salesforce Action input representation
+    type: XmdBaseDimensionActionInputRepresentation
+    properties: {}
+  XmdDerivedMeasureInputRepresentation:
+    description: Wave XMD Derived Measure input representation
+    type: XmdBaseMeasureInputRepresentation
+    properties:
+      format:
+        description: Format details for the Derived Measure.
+        type: XmdBaseMeasureFormatInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
   XmdDimensionBaseActionRepresentation:
     description: Base Action Representation for a Dimension in an Xmd.
     discriminator: name
@@ -3004,6 +4800,32 @@ types:
       url:
         description: Url for the action.
         type: string
+  XmdDimensionInputRepresentation:
+    description: Wave XMD Dimension input representation
+    type: XmdBaseDimensionInputRepresentation
+    properties:
+      customActions:
+        description: Custom Actions linked to this Dimension.
+        type: array
+        items:
+          type: XmdBaseDimensionCustomActionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      members:
+        description: Member overrides for a Dimension.
+        type: array
+        items:
+          type: XmdDimensionMemberInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      salesforceActions:
+        description: Salesfoce Actions linked to this Dimension.
+        type: array
+        items:
+          type: XmdDimensionSalesforceActionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+  XmdDimensionMemberInputRepresentation:
+    description: Wave XMD Dimension Member input representation
+    type: XmdBaseDimensionMemberInputRepresentation
+    properties: {}
   XmdDimensionMemberRepresentation:
     description: Extended metadata a Member linked to a Dimension in a Dataset.
     type: object
@@ -3121,10 +4943,22 @@ types:
         description: Whether the Dimension should be shown in the Explorer.
         type: boolean
         required: false # TODO Hand-rolled W-8253396
+  XmdDimensionSalesforceActionInputRepresentation:
+    description: Wave XMD Dimension Salesforce Action input representation
+    type: XmdBaseDimensionActionInputRepresentation
+    properties: {}
   XmdDimensionSalesforceActionRepresentation:
     description: Salesforce Action Representation for a Dimension in an Xmd.
     type: XmdDimensionBaseActionRepresentation
     properties: {}
+  XmdMeasureInputRepresentation:
+    description: Wave XMD Measure input representation
+    type: XmdBaseMeasureInputRepresentation
+    properties:
+      format:
+        description: Format details for the Measure.
+        type: XmdBaseMeasureFormatInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
   XmdMeasureFormatRepresentation:
     description: Format for a Measure in a Dataset.
     type: object
@@ -3207,6 +5041,20 @@ types:
         description: Whether the Measure should be shown in the Explorer.
         type: boolean
         required: false # TODO Hand-rolled W-8253396
+  XmdOrganizationInputRepresentation:
+    description: Wave XMD Organization input representation
+    type: object
+    properties:
+      id:
+        description: ID of the organization.
+        type: string
+      instanceUrl:
+        description: Instance Url for the organization.
+        type: string
+      label:
+        description: Label for the organization.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   XmdOrganizationRepresentation:
     description: Extended metadata for an organization
     type: object
@@ -3220,6 +5068,58 @@ types:
       label:
         description: Label for an organization.
         type: string
+  XmdInputRepresentation:
+    description: Wave XMD input representation
+    type: object
+    properties:
+      dataset:
+        description: Locale specific information about the Dataset represented by
+          this xmd.
+        type: XmdDatasetInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      dates:
+        description: List of dates with formatting information.
+        type: array
+        items:
+          type: XmdDateInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      derivedDimensions:
+        description: List of derived dimensions with formatting information.
+        type: array
+        items:
+          type: XmdDerivedDimensionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      derivedMeasures:
+        description: List of derived measures with formatting information.
+        type: array
+        items:
+          type: XmdDerivedMeasureInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      dimensions:
+        description: List of dimensions with formatting information.
+        type: array
+        items:
+          type: XmdDimensionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      measures:
+        description: List of measures with formatting information.
+        type: array
+        items:
+          type: XmdMeasureInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      organizations:
+        description: List of organizations for multi organization support.
+        type: array
+        items:
+          type: XmdOrganizationInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      showDetailsDefaultFields:
+        description: Ordered list of Dimensions and Measures. Represents the default
+          order to show them in the UI.
+        type: array
+        items:
+          type: string
+        required: false # TODO Hand-rolled W-8253396
   XmdRepresentation:
     description: Extended Metadata (Xmd) for a Dataset Version
     type: object
@@ -3332,6 +5232,19 @@ types:
         required: false # TODO Hand-rolled W-8253396
 
 /wave:
+  /actions/{entityId}:
+    get:
+      description: Get a Actions resource representation.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ActionCollectionRepresentation
+    uriParameters:
+      entityId:
+        type: string
+        required: true
   /asset/{assetId}/schedule:
     get:
       description: Retrieves the schedule for an asset.
@@ -3505,6 +5418,11 @@ types:
         application/json:
           type: DataConnectorInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DataConnectorInputRepresentation
           (oas-body-name): dataConnector
+    delete:
+      description: Delete a data connector resource.
+      responses:
+        '200':
+          description: Success
     uriParameters:
       connectorIdOrApiName:
         type: string
@@ -3520,6 +5438,9 @@ types:
               application/json:
                 type: SourceObjectCollectionRepresentation
         queryParameters:
+          q:
+            type: string
+            required: false
           page:
             type: string
             required: false
@@ -3545,6 +5466,27 @@ types:
         sourceObjectName:
           type: string
           required: true
+      /dataPreview:
+        post:
+          description: Get a single Source Object Data by name, list of fields,
+            and advanced properties if applicable.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: SourceObjectDataRepresentation
+          body:
+            application/json:
+              type: SourceObjectDataInputRepresentation
+              (oas-body-name): sourceObjectParam
+        uriParameters:
+          connectorIdOrApiName:
+            type: string
+            required: true
+          sourceObjectName:
+            type: string
+            required: true
       /fields:
         get:
           description: Get a list of all the Source Fields of a particular Source Object.
@@ -3642,6 +5584,7 @@ types:
           required: false
           enum:
             - EinsteinAnalytics
+            - MulesoftDataPath
             - Sonic
         page:
           type: string
@@ -3752,6 +5695,7 @@ types:
             enum:
               - Default
               - Live
+              - StagedData
               - Trended
             (oas-collectionFormat): csv
         folderId:
@@ -3768,6 +5712,7 @@ types:
           required: false
           enum:
             - EinsteinAnalytics
+            - MulesoftDataPath
             - Sonic
         order:
           type: string
@@ -3797,6 +5742,7 @@ types:
           type: string
           required: false
           enum:
+            - ConnectionName
             - CreatedBy
             - CreatedDate
             - LastModified
@@ -3819,35 +5765,113 @@ types:
           body:
             application/json:
               type: DatasetRepresentation
+    patch:
+      description: Patch a dataset resource.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DatasetRepresentation
+      body:
+        application/json:
+          type: DatasetInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DatasetInputRepresentation
+          (oas-body-name): dataset
     uriParameters:
       datasetIdOrApiName:
         type: string
         required: true
-    /versions/{versionId}/xmds/{xmdType}:
+    /versions:
       get:
-        description: Get the extended metadata of the given type for the given
-          dataset version.
+        description: Get the dataset versions for a particular dataset.
         responses:
           '200':
             description: Success
             body:
               application/json:
-                type: XmdRepresentation
+                type: DatasetVersionCollectionRepresentation
+      post:
+        description: Post a dataset version as the current version.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RestoreDatasetVersionRepresentation
+        body:
+          application/json:
+            type: RestoreDatasetVersionInputRepresentation
+            (oas-body-name): sourceVersion
+      /{versionId}:
+        get:
+          description: Get a dataset version resource representation.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: DatasetVersionRepresentation
+        patch:
+          description: Patch a dataset version resource representation.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: DatasetVersionRepresentation
+          body:
+            application/json:
+              type: DatasetVersionInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DatasetVersionInputRepresentation
+              (oas-body-name): datasetVersion
+        uriParameters:
+          datasetIdOrApiName:
+            type: string
+            required: true
+          versionId:
+            type: string
+            required: true
+        /xmds/{xmdType}:
+          get:
+            description: Get the extended metadata of the given type for the given
+              dataset version.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: XmdRepresentation
+          uriParameters:
+            datasetIdOrApiName:
+              type: string
+              required: true
+            versionId:
+              type: string
+              required: true
+            xmdType:
+              type: string
+              required: true
+              enum:
+                - Asset
+                - Main
+                - System
+                - User
       uriParameters:
         datasetIdOrApiName:
           type: string
           required: true
-        versionId:
-          type: string
-          required: true
-        xmdType:
-          type: string
-          required: true
-          enum:
-            - Asset
-            - Main
-            - System
-            - User
+  /dependencies/{assetId}:
+    get:
+      description: Get a Dependencies resource representation.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DependencyRepresentation
+    uriParameters:
+      assetId:
+        type: string
+        required: true
   /folders:
     get:
       description: Get a collection of Wave analytics folders.
@@ -3908,6 +5932,7 @@ types:
           required: false
           enum:
             - EinsteinAnalytics
+            - MulesoftDataPath
             - Sonic
         types:
           type: array
@@ -3963,12 +5988,25 @@ types:
           enum:
             - R2
             - R3
+        lastModifiedAfter:
+          type: string
+          required: false
+        lastModifiedBefore:
+          type: string
+          required: false
         licenseType:
           type: string
           required: false
           enum:
             - EinsteinAnalytics
+            - MulesoftDataPath
             - Sonic
+        nextScheduledAfter:
+          type: string
+          required: false
+        nextScheduledBefore:
+          type: string
+          required: false
         page:
           type: string
           required: false
@@ -3986,6 +6024,19 @@ types:
             - LastModifiedBy
             - Mru
             - Name
+        status:
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - Failure
+              - New
+              - Queued
+              - Running
+              - Success
+              - Warning
+            (oas-collectionFormat): csv
   /recipes/{id}:
     get:
       description: Get a recipe by ID.
@@ -4040,6 +6091,19 @@ types:
             body:
               application/json:
                 type: RecipeNotificationRepresentation
+      put:
+        description: Create or update notification condition on a recipe for the
+          current user.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecipeNotificationRepresentation
+        body:
+          application/json:
+            type: RecipeNotificationInputWrapperRepresentation
+            (oas-body-name): recipeNotification
       uriParameters:
         id:
           type: string
@@ -4139,3 +6203,101 @@ types:
       id:
         type: string
         required: true
+  /security/coverage:
+    /datasets/{datasetIdOrApiName}/versions/{versionId}:
+      get:
+        description: The security coverage for a particular dataset version.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DatasetCoverageRepresentation
+      uriParameters:
+        datasetIdOrApiName:
+          type: string
+          required: true
+        versionId:
+          type: string
+          required: true
+  /templates:
+    get:
+      description: Returns collection of Wave analytics templates within the current
+        organization.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TemplateCollectionRepresentation
+      queryParameters:
+        options:
+          type: string
+          required: false
+          enum:
+            - CreateApp
+            - ManageableOnly
+            - ViewOnly
+        type:
+          type: string
+          required: false
+          enum:
+            - App
+            - Dashboard
+            - Data
+            - EmbeddedApp
+            - Lens
+  /templates/{templateIdOrApiName}:
+    get:
+      description: Returns the details for a specific template.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: TemplateRepresentation
+      queryParameters:
+        options:
+          type: string
+          required: false
+          enum:
+            - CreateApp
+            - ManageableOnly
+            - ViewOnly
+    /configuration:
+      get:
+        description: Returns the configuration for a specific template.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TemplateConfigurationRepresentation
+        queryParameters:
+          disableApex:
+            type: boolean
+            required: false
+          options:
+            type: string
+            required: false
+            enum:
+              - CreateApp
+              - ManageableOnly
+              - ViewOnly
+      uriParameters:
+        templateIdOrApiName:
+          type: string
+          required: true
+    /releasenotes:
+      get:
+        description: Returns the release notes for the template.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: TemplateReleaseNotesRepresentation
+      uriParameters:
+        templateIdOrApiName:
+          type: string
+          required: true

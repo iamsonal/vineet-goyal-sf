@@ -1,19 +1,12 @@
 import { transform } from '../ast-parser';
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import infoJson from './mockData/objectInfos.json';
-import { unwrappedError, unwrappedValue } from '../Result';
+import { Failure, unwrappedError, unwrappedValue } from '../Result';
 import { ObjectInfoMap } from '../info-types';
-import {
-    FieldType,
-    ComparisonOperator,
-    PredicateType,
-    RootQuery,
-    CompoundOperator,
-    ValueType,
-} from '../Predicate';
+import { RootQuery } from '../Predicate';
+import { message, PredicateError, MessageError } from '../Error';
 
 const objectInfoMap = infoJson as unknown as ObjectInfoMap;
-const Extract = ValueType.Extract;
 
 describe('ast-parser', () => {
     describe('MINE scope', () => {
@@ -36,66 +29,8 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const expected: RootQuery = {
-                type: 'root',
-                connections: [
-                    {
-                        alias: 'TimeSheet',
-                        apiName: 'TimeSheet',
-                        type: 'connection',
-                        first: undefined,
-                        orderBy: undefined,
-                        joinNames: [],
-
-                        fields: [
-                            {
-                                type: FieldType.Scalar,
-                                path: 'node.TimeSheetNumber.value',
-                                extract: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.fields.TimeSheetNumber.value',
-                                },
-                            },
-                        ],
-                        predicate: {
-                            type: PredicateType.compound,
-                            operator: CompoundOperator.and,
-                            children: [
-                                {
-                                    type: PredicateType.comparison,
-                                    left: {
-                                        type: Extract,
-                                        jsonAlias: 'TimeSheet',
-                                        path: 'data.fields.OwnerId.value',
-                                    },
-                                    operator: ComparisonOperator.eq,
-                                    right: {
-                                        type: ValueType.StringLiteral,
-                                        value: 'MyId',
-                                    },
-                                },
-                                {
-                                    type: PredicateType.comparison,
-                                    operator: ComparisonOperator.eq,
-                                    left: {
-                                        type: Extract,
-                                        jsonAlias: 'TimeSheet',
-                                        path: 'data.apiName',
-                                    },
-                                    right: {
-                                        type: ValueType.StringLiteral,
-                                        value: 'TimeSheet',
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                ],
-            };
-
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedValue(result)).toEqual(expected);
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedValue(result)).toMatchSnapshot();
         });
 
         it('results in an error if Record type does not have an OwnerId field', () => {
@@ -117,9 +52,9 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([
-                'Scope MINE requires the entity type to have an OwnerId field.',
+                message('Scope MINE requires the entity type to have an OwnerId field.'),
             ]);
         });
     });
@@ -144,8 +79,10 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedError(result)).toEqual(['Scope type should be an EnumValueNode.']);
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedError(result)).toEqual([
+                message('Scope type should be an EnumValueNode.'),
+            ]);
         });
 
         it('unknown scope results in an error', () => {
@@ -167,8 +104,8 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedError(result)).toEqual(["Scope 'UNKNOWN is not supported."]);
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedError(result)).toEqual([message("Scope 'UNKNOWN is not supported.")]);
         });
     });
 
@@ -190,47 +127,8 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const expected: RootQuery = {
-                type: 'root',
-                connections: [
-                    {
-                        alias: 'TimeSheet',
-                        apiName: 'TimeSheet',
-                        type: 'connection',
-                        first: undefined,
-                        orderBy: undefined,
-                        joinNames: [],
-
-                        fields: [
-                            {
-                                type: FieldType.Scalar,
-                                path: 'node.Id',
-                                extract: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.id',
-                                },
-                            },
-                        ],
-                        predicate: {
-                            type: PredicateType.comparison,
-                            operator: ComparisonOperator.eq,
-                            left: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.apiName',
-                            },
-                            right: {
-                                type: ValueType.StringLiteral,
-                                value: 'TimeSheet',
-                            },
-                        },
-                    },
-                ],
-            };
-
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedValue(result)).toEqual(expected);
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedValue(result)).toMatchSnapshot();
         });
     });
 
@@ -254,56 +152,8 @@ describe('ast-parser', () => {
             }
         `;
 
-        const expected: RootQuery = {
-            type: 'root',
-            connections: [
-                {
-                    alias: 'TimeSheet',
-                    apiName: 'TimeSheet',
-                    type: 'connection',
-                    first: undefined,
-                    orderBy: undefined,
-                    joinNames: [],
-
-                    fields: [
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.TimeSheetNumber.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.TimeSheetNumber.value',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.TimeSheetNumber.displayValue',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.TimeSheetNumber.displayValue',
-                            },
-                        },
-                    ],
-                    predicate: {
-                        type: PredicateType.comparison,
-                        operator: ComparisonOperator.eq,
-                        left: {
-                            type: Extract,
-                            jsonAlias: 'TimeSheet',
-                            path: 'data.apiName',
-                        },
-                        right: {
-                            type: ValueType.StringLiteral,
-                            value: 'TimeSheet',
-                        },
-                    },
-                },
-            ],
-        };
-
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-        expect(unwrappedValue(result)).toEqual(expected);
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toMatchSnapshot();
     });
 
     it('transforms GraphQL query with multiple fields', () => {
@@ -335,83 +185,8 @@ describe('ast-parser', () => {
             }
         `;
 
-        const expected: RootQuery = {
-            type: 'root',
-            connections: [
-                {
-                    alias: 'TimeSheet',
-                    apiName: 'TimeSheet',
-                    type: 'connection',
-                    first: undefined,
-                    orderBy: undefined,
-                    joinNames: [],
-
-                    fields: [
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.TimeSheetNumber.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.TimeSheetNumber.value',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.TimeSheetNumber.displayValue',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.TimeSheetNumber.displayValue',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.OwnerId.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.OwnerId.value',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.OwnerId.displayValue',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.OwnerId.displayValue',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.IsDeleted.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.IsDeleted.value',
-                            },
-                        },
-                    ],
-                    predicate: {
-                        type: PredicateType.comparison,
-                        operator: ComparisonOperator.eq,
-                        left: {
-                            type: Extract,
-                            jsonAlias: 'TimeSheet',
-                            path: 'data.apiName',
-                        },
-                        right: {
-                            type: ValueType.StringLiteral,
-                            value: 'TimeSheet',
-                        },
-                    },
-                },
-            ],
-        };
-
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-        expect(unwrappedValue(result)).toEqual(expected);
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toMatchSnapshot();
     });
 
     it('transforms spanning record GraphQL operation', () => {
@@ -436,89 +211,8 @@ describe('ast-parser', () => {
             }
         `;
 
-        const expected: RootQuery = {
-            type: 'root',
-            connections: [
-                {
-                    alias: 'TimeSheet',
-                    apiName: 'TimeSheet',
-                    type: 'connection',
-                    first: undefined,
-                    orderBy: undefined,
-                    joinNames: ['TimeSheet.CreatedBy'],
-
-                    fields: [
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.CreatedBy.Email.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'data.fields.Email.value',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.CreatedBy.Email.displayValue',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'data.fields.Email.displayValue',
-                            },
-                        },
-                    ],
-                    predicate: {
-                        type: PredicateType.compound,
-                        operator: CompoundOperator.and,
-                        children: [
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'User',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.fields.CreatedById.value',
-                                },
-                                right: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'data.id',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'TimeSheet',
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-        };
-
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-        expect(unwrappedValue(result)).toEqual(expected);
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toMatchSnapshot();
     });
 
     it('transforms GraphQL query with multiple root record types each having spanning fields', () => {
@@ -556,166 +250,32 @@ describe('ast-parser', () => {
             }
         `;
 
-        const expected: RootQuery = {
-            type: 'root',
-            connections: [
-                {
-                    alias: 'TimeSheet',
-                    apiName: 'TimeSheet',
-                    type: 'connection',
-                    first: undefined,
-                    orderBy: undefined,
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toMatchSnapshot();
+    });
 
-                    joinNames: ['TimeSheet.CreatedBy'],
+    it('transforms GraphQL operation with draft', () => {
+        const source = /* GraphQL */ `
+            query {
+                uiapi {
+                    query {
+                        TimeSheet @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    TimeSheetNumber {
+                                        value
+                                        displayValue
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
 
-                    fields: [
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.CreatedBy.Email.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'data.fields.Email.value',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.CreatedBy.Email.displayValue',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'data.fields.Email.displayValue',
-                            },
-                        },
-                    ],
-                    predicate: {
-                        type: PredicateType.compound,
-                        operator: CompoundOperator.and,
-                        children: [
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'User',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.fields.CreatedById.value',
-                                },
-                                right: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'data.id',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'TimeSheet',
-                                },
-                            },
-                        ],
-                    },
-                },
-                {
-                    alias: 'User',
-                    apiName: 'User',
-                    type: 'connection',
-                    first: undefined,
-                    orderBy: undefined,
-
-                    joinNames: ['User.CreatedBy'],
-
-                    fields: [
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.CreatedBy.Email.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'User.CreatedBy',
-                                path: 'data.fields.Email.value',
-                            },
-                        },
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.CreatedBy.Email.displayValue',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'User.CreatedBy',
-                                path: 'data.fields.Email.displayValue',
-                            },
-                        },
-                    ],
-                    predicate: {
-                        type: PredicateType.compound,
-                        operator: CompoundOperator.and,
-                        children: [
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'User.CreatedBy',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'User',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'User',
-                                    path: 'data.fields.CreatedById.value',
-                                },
-                                right: {
-                                    type: Extract,
-                                    jsonAlias: 'User.CreatedBy',
-                                    path: 'data.id',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'User',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'User',
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-        };
-
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-        expect(unwrappedValue(result)).toEqual(expected);
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toMatchSnapshot();
     });
 
     it('transforms child record GraphQL operation', () => {
@@ -741,95 +301,41 @@ describe('ast-parser', () => {
             }
         `;
 
-        const expected: RootQuery = {
-            type: 'root',
-            connections: [
-                {
-                    alias: 'TimeSheet',
-                    apiName: 'TimeSheet',
-                    type: 'connection',
-                    first: undefined,
-                    orderBy: undefined,
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toMatchSnapshot();
+    });
 
-                    joinNames: [],
-                    fields: [
-                        {
-                            type: FieldType.Child,
-                            path: 'node.TimeSheetEntries.edges',
-                            connection: {
-                                alias: 'TimeSheet.TimeSheetEntries',
-                                apiName: 'TimeSheetEntry',
-                                type: 'connection',
-                                first: undefined,
-                                orderBy: undefined,
+    it('errors for unsupported datatypes', () => {
+        const source = /* GraphQL */ `
+            query {
+                uiapi {
+                    query {
+                        ServiceResource(where: { ResourceType: { eq: "T" } }) @connection {
+                            edges {
+                                node @resource(type: "Record") {
+                                    ResourceType {
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
 
-                                joinNames: [],
-                                fields: [
-                                    {
-                                        type: FieldType.Scalar,
-                                        path: 'node.Id',
-                                        extract: {
-                                            type: Extract,
-                                            jsonAlias: 'TimeSheet.TimeSheetEntries',
-                                            path: 'data.id',
-                                        },
-                                    },
-                                ],
-                                predicate: {
-                                    type: PredicateType.compound,
-                                    operator: CompoundOperator.and,
-                                    children: [
-                                        {
-                                            type: PredicateType.comparison,
-                                            operator: ComparisonOperator.eq,
-                                            left: {
-                                                jsonAlias: 'TimeSheet.TimeSheetEntries',
-                                                path: 'data.apiName',
-                                                type: Extract,
-                                            },
-                                            right: {
-                                                type: ValueType.StringLiteral,
-                                                value: 'TimeSheetEntry',
-                                            },
-                                        },
-                                        {
-                                            type: PredicateType.comparison,
-                                            operator: ComparisonOperator.eq,
-                                            left: {
-                                                type: Extract,
-                                                path: 'data.fields.TimeSheetId.value',
-                                                jsonAlias: 'TimeSheet.TimeSheetEntries',
-                                            },
-                                            right: {
-                                                type: Extract,
-                                                path: 'data.id',
-                                                jsonAlias: 'TimeSheet',
-                                            },
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                    ],
-                    predicate: {
-                        type: PredicateType.comparison,
-                        operator: ComparisonOperator.eq,
-                        left: {
-                            jsonAlias: 'TimeSheet',
-                            path: 'data.apiName',
-                            type: Extract,
-                        },
-                        right: {
-                            type: ValueType.StringLiteral,
-                            value: 'TimeSheet',
-                        },
-                    },
-                },
-            ],
-        };
+        const fakeObjectInfo = Object.assign({}, objectInfoMap) as any;
+        fakeObjectInfo.ServiceResource.fields.ResourceType.dataType = 'SomeUnsupportedType';
 
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-        expect(unwrappedValue(result)).toEqual(expected);
+        const result = transform(parseAndVisit(source), {
+            userId: 'MyId',
+            objectInfoMap: fakeObjectInfo,
+        }) as Failure<RootQuery, PredicateError[]>;
+        expect(result.isSuccess).toEqual(false);
+        const { message } = result.error[0] as MessageError;
+        expect(message).toEqual(
+            'Comparison operator eq is not supported for type SomeUnsupportedType.'
+        );
     });
 
     it('where argument join information is reflected in connection', () => {
@@ -852,122 +358,8 @@ describe('ast-parser', () => {
             }
         `;
 
-        const expected: RootQuery = {
-            type: 'root',
-            connections: [
-                {
-                    alias: 'TimeSheet',
-                    apiName: 'TimeSheet',
-                    type: 'connection',
-                    first: undefined,
-                    orderBy: undefined,
-
-                    joinNames: ['TimeSheet.CreatedBy.CreatedBy', 'TimeSheet.CreatedBy'],
-
-                    fields: [
-                        {
-                            type: FieldType.Scalar,
-                            path: 'node.TimeSheetNumber.value',
-                            extract: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.fields.TimeSheetNumber.value',
-                            },
-                        },
-                    ],
-                    predicate: {
-                        type: PredicateType.compound,
-                        operator: CompoundOperator.and,
-                        children: [
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy.CreatedBy',
-                                    path: 'data.fields.Email.value',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'xyz',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'data.fields.CreatedById.value',
-                                },
-                                right: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy.CreatedBy',
-                                    path: 'data.id',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy.CreatedBy',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'User',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.fields.CreatedById.value',
-                                },
-                                right: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'data.id',
-                                },
-                            },
-
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'User',
-                                },
-                            },
-                            {
-                                type: PredicateType.comparison,
-                                operator: ComparisonOperator.eq,
-                                left: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.apiName',
-                                },
-                                right: {
-                                    type: ValueType.StringLiteral,
-                                    value: 'TimeSheet',
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
-        };
-
-        const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-        expect(unwrappedValue(result)).toEqual(expected);
+        const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+        expect(unwrappedValue(result)).toMatchSnapshot();
     });
 
     describe('first arg', () => {
@@ -988,8 +380,8 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const expected = ['first type should be an IntValue.'];
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const expected = [message('first type should be an IntValue.')];
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual(expected);
         });
 
@@ -1010,47 +402,8 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const expected: RootQuery = {
-                type: 'root',
-                connections: [
-                    {
-                        alias: 'TimeSheet',
-                        apiName: 'TimeSheet',
-                        type: 'connection',
-                        first: 43,
-                        orderBy: undefined,
-                        joinNames: [],
-
-                        fields: [
-                            {
-                                type: FieldType.Scalar,
-                                path: 'node.Id',
-                                extract: {
-                                    type: Extract,
-                                    jsonAlias: 'TimeSheet',
-                                    path: 'data.id',
-                                },
-                            },
-                        ],
-                        predicate: {
-                            type: PredicateType.comparison,
-                            operator: ComparisonOperator.eq,
-                            left: {
-                                type: Extract,
-                                jsonAlias: 'TimeSheet',
-                                path: 'data.apiName',
-                            },
-                            right: {
-                                type: ValueType.StringLiteral,
-                                value: 'TimeSheet',
-                            },
-                        },
-                    },
-                ],
-            };
-
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedValue(result)).toEqual(expected);
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedValue(result)).toMatchSnapshot();
         });
     });
 
@@ -1072,131 +425,8 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const expected: RootQuery = {
-                type: 'root',
-                connections: [
-                    {
-                        alias: 'ServiceAppointment',
-                        apiName: 'ServiceAppointment',
-                        type: 'connection',
-                        first: undefined,
-                        orderBy: undefined,
-                        joinNames: [],
-
-                        fields: [
-                            {
-                                type: FieldType.Scalar,
-                                path: 'node.Id',
-                                extract: {
-                                    type: Extract,
-                                    jsonAlias: 'ServiceAppointment',
-                                    path: 'data.id',
-                                },
-                            },
-                        ],
-                        predicate: {
-                            type: PredicateType.compound,
-                            operator: CompoundOperator.and,
-                            children: [
-                                {
-                                    type: PredicateType.exists,
-                                    alias: 'AssignedResource',
-                                    joinNames: ['ServiceResource'],
-                                    predicate: {
-                                        children: [
-                                            {
-                                                left: {
-                                                    jsonAlias: 'AssignedResource',
-                                                    path: 'data.fields.ServiceResourceId.value',
-                                                    type: ValueType.Extract,
-                                                },
-                                                operator: ComparisonOperator.eq,
-                                                right: {
-                                                    jsonAlias: 'ServiceResource',
-                                                    path: 'data.id',
-                                                    type: ValueType.Extract,
-                                                },
-                                                type: PredicateType.comparison,
-                                            },
-                                            {
-                                                left: {
-                                                    jsonAlias: 'AssignedResource',
-                                                    path: 'data.fields.ServiceAppointmentId.value',
-                                                    type: ValueType.Extract,
-                                                },
-                                                operator: ComparisonOperator.eq,
-                                                right: {
-                                                    jsonAlias: 'ServiceAppointment',
-                                                    path: 'data.id',
-                                                    type: ValueType.Extract,
-                                                },
-                                                type: PredicateType.comparison,
-                                            },
-                                            {
-                                                left: {
-                                                    jsonAlias: 'ServiceResource',
-                                                    path: 'data.fields.RelatedRecordId.value',
-                                                    type: ValueType.Extract,
-                                                },
-                                                operator: ComparisonOperator.eq,
-                                                right: {
-                                                    type: ValueType.StringLiteral,
-                                                    value: 'MyId',
-                                                },
-                                                type: PredicateType.comparison,
-                                            },
-                                            {
-                                                left: {
-                                                    jsonAlias: 'AssignedResource',
-                                                    path: 'data.apiName',
-                                                    type: ValueType.Extract,
-                                                },
-                                                operator: ComparisonOperator.eq,
-                                                right: {
-                                                    type: ValueType.StringLiteral,
-                                                    value: 'AssignedResource',
-                                                },
-                                                type: PredicateType.comparison,
-                                            },
-                                            {
-                                                left: {
-                                                    jsonAlias: 'ServiceResource',
-                                                    path: 'data.apiName',
-                                                    type: ValueType.Extract,
-                                                },
-                                                operator: ComparisonOperator.eq,
-                                                right: {
-                                                    type: ValueType.StringLiteral,
-                                                    value: 'ServiceResource',
-                                                },
-                                                type: PredicateType.comparison,
-                                            },
-                                        ],
-                                        operator: CompoundOperator.and,
-                                        type: PredicateType.compound,
-                                    },
-                                },
-                                {
-                                    type: PredicateType.comparison,
-                                    operator: ComparisonOperator.eq,
-                                    left: {
-                                        type: Extract,
-                                        jsonAlias: 'ServiceAppointment',
-                                        path: 'data.apiName',
-                                    },
-                                    right: {
-                                        type: ValueType.StringLiteral,
-                                        value: 'ServiceAppointment',
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                ],
-            };
-
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
-            expect(unwrappedValue(result)).toEqual(expected);
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedValue(result)).toMatchSnapshot();
         });
 
         it('results in an error if Record type is not ServiceAppointment', () => {
@@ -1218,9 +448,9 @@ describe('ast-parser', () => {
                 }
             `;
 
-            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            const result = transform(parseAndVisit(source), { userId: 'MyId', objectInfoMap });
             expect(unwrappedError(result)).toEqual([
-                'ASSIGNEDTOME can only be used with ServiceAppointment',
+                message('ASSIGNEDTOME can only be used with ServiceAppointment'),
             ]);
         });
     });

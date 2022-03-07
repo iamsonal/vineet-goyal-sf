@@ -1,18 +1,18 @@
 {
     "layout": {
-        "eTag": "4acf5e38ac880625f02c5458b8106f16",
-        "id": "00hxx0000019caSAAQ",
+        "eTag": "c9ede682d2b01f29769476984a0f76ae",
+        "id": "00hT1000000H716IAC",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "TestEntity__c",
-        "recordTypeId": "012xx0000005tQiAAI",
+        "recordTypeId": "012T10000004iLoIAI",
         "saveOptions": [],
         "sections": [
             {
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Information",
-                "id": "01Bxx000002CDliEAG",
+                "id": "01BT1000000cZcnMAE",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -87,7 +87,7 @@
             "defaultRecordTypeId": null,
             "deletable": true,
             "dependentFields": {},
-            "eTag": "2d1f74fc46b6abf36dc0f24e3286f47c",
+            "eTag": "55a19e001143dc0843199c271c26a015",
             "feedEnabled": false,
             "fields": {
                 "CreatedById": {
@@ -588,7 +588,7 @@
             "keyPrefix": "00G",
             "label": "Group",
             "labelPlural": "Group",
-            "layoutable": true,
+            "layoutable": false,
             "mruEnabled": false,
             "nameFields": ["Name"],
             "queryable": true,
@@ -596,7 +596,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "769ED9",
-                "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/orders_120.png"
+                "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/standard/orders_120.png"
             },
             "updateable": true
         },
@@ -795,20 +795,6 @@
                     "relationshipName": "ReceivedByProductTransfers"
                 },
                 {
-                    "childObjectApiName": "ProfileSkillEndorsement",
-                    "fieldName": "UserId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "UserProfileSkillUserEndorsements"
-                },
-                {
-                    "childObjectApiName": "ProfileSkillUser",
-                    "fieldName": "UserId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "UserProfileSkillChildren"
-                },
-                {
                     "childObjectApiName": "RecordAction",
                     "fieldName": "RecordId",
                     "junctionIdListNames": [],
@@ -933,7 +919,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "1f98958e0b40b0648a4e8d172c090750",
+            "eTag": "1e8db7bd0ac295ec79bcef599b2ca7c6",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -4394,39 +4380,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "UserPreferencesDisableFeedbackEmail": {
-                    "apiName": "UserPreferencesDisableFeedbackEmail",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "DisableFeedbackEmail",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
                 "UserPreferencesDisableFileShareNotificationsForApi": {
                     "apiName": "UserPreferencesDisableFileShareNotificationsForApi",
                     "calculated": false,
@@ -4676,39 +4629,6 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "DisableSharePostEmail",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
-                "UserPreferencesDisableWorkEmail": {
-                    "apiName": "UserPreferencesDisableWorkEmail",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "DisableWorkEmail",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -5021,6 +4941,72 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesHasSentWarningEmail": {
+                    "apiName": "UserPreferencesHasSentWarningEmail",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HasSentWarningEmail",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHeavyPagePromptEnabled": {
+                    "apiName": "UserPreferencesHeavyPagePromptEnabled",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HeavyPagePromptEnabled",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesHideBiggerPhotoCallout": {
                     "apiName": "UserPreferencesHideBiggerPhotoCallout",
                     "calculated": false,
@@ -5204,39 +5190,6 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideEventCalendar",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
-                "UserPreferencesHideLearningPathModal": {
-                    "apiName": "UserPreferencesHideLearningPathModal",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "HideLearningPathModal",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -6572,6 +6525,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesShowForecastingChangeSignals": {
+                    "apiName": "UserPreferencesShowForecastingChangeSignals",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "ShowForecastingChangeSignals",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesShowManagerToExternalUsers": {
                     "apiName": "UserPreferencesShowManagerToExternalUsers",
                     "calculated": false,
@@ -7447,7 +7433,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://flow-app-2364-dev-ed.stmfa.my.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
@@ -7461,7 +7447,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "c097d3e1fde110b18f54c917dbe803c8",
+            "eTag": "920189a1bc067f4ac1501a431d46f92c",
             "feedEnabled": false,
             "fields": {
                 "BusinessProcessId": {
@@ -8097,10 +8083,10 @@
             ],
             "createable": true,
             "custom": true,
-            "defaultRecordTypeId": "012xx0000005tQiAAI",
+            "defaultRecordTypeId": "012T10000004iLoIAI",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "b33b711fbb3bef116d64ad1fa39bb545",
+            "eTag": "96aeb8edb4c00e8208627ba823089f7a",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -8491,7 +8477,7 @@
                     "updateable": false
                 }
             },
-            "keyPrefix": "a00",
+            "keyPrefix": "a02",
             "label": "Test Entity",
             "labelPlural": "Test Entity",
             "layoutable": true,
@@ -8506,19 +8492,19 @@
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012xx0000005tQiAAI": {
+                "012T10000004iLoIAI": {
                     "available": true,
                     "defaultRecordTypeMapping": true,
                     "master": false,
                     "name": "Test Entity Type 1",
-                    "recordTypeId": "012xx0000005tQiAAI"
+                    "recordTypeId": "012T10000004iLoIAI"
                 },
-                "012xx0000005tQjAAI": {
+                "012T10000004iLpIAI": {
                     "available": true,
                     "defaultRecordTypeMapping": false,
                     "master": false,
                     "name": "Test Entity Type 2",
-                    "recordTypeId": "012xx0000005tQjAAI"
+                    "recordTypeId": "012T10000004iLpIAI"
                 }
             },
             "searchable": false,
@@ -8538,7 +8524,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "e2b4a53fe59d50d8cacee6990276025f",
+            "eTag": "8b559e0a27423382fc6440019e33034b",
             "feedEnabled": false,
             "fields": {
                 "Alias": {
@@ -9167,7 +9153,7 @@
     "record": {
         "apiName": "TestEntity__c",
         "childRelationships": {},
-        "eTag": "5273123ad0d5dbda6c5020224650bfc3",
+        "eTag": "368849fbdf057c2d66a14093589e08cf",
         "fields": {
             "Name": {
                 "displayValue": null,
@@ -9178,18 +9164,18 @@
                 "value": {
                     "apiName": "Name",
                     "childRelationships": {},
-                    "eTag": "7b0231fcdcd69231b0b135eeeeea8d1e",
+                    "eTag": "ec4c4416d018c8c444447866537b287a",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005xx000001XFXZAA4"
+                            "value": "005T1000000IJQGIA4"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005xx000001XFXZAA4",
+                    "id": "005T1000000IJQGIA4",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9200,25 +9186,25 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005xx000001XFXZAA4"
+                "value": "005T1000000IJQGIA4"
             },
             "RecordType": {
                 "displayValue": "Test Entity Type 1",
                 "value": {
                     "apiName": "RecordType",
                     "childRelationships": {},
-                    "eTag": "50643b9f83d0180afe5ac1bf73b8c40e",
+                    "eTag": "0e687e17b68a9eabf45dd8f98c40eef0",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "012xx0000005tQiAAI"
+                            "value": "012T10000004iLoIAI"
                         },
                         "Name": {
                             "displayValue": "Test Entity Type 1",
                             "value": "Test Entity Type 1"
                         }
                     },
-                    "id": "012xx0000005tQiAAI",
+                    "id": "012T10000004iLoIAI",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9229,19 +9215,19 @@
             },
             "RecordTypeId": {
                 "displayValue": null,
-                "value": "012xx0000005tQiAAI"
+                "value": "012T10000004iLoIAI"
             }
         },
         "id": null,
         "lastModifiedById": null,
         "lastModifiedDate": null,
-        "recordTypeId": "012xx0000005tQiAAI",
+        "recordTypeId": "012T10000004iLoIAI",
         "recordTypeInfo": {
             "available": true,
             "defaultRecordTypeMapping": true,
             "master": false,
             "name": "Test Entity Type 1",
-            "recordTypeId": "012xx0000005tQiAAI"
+            "recordTypeId": "012T10000004iLoIAI"
         },
         "systemModstamp": null,
         "weakEtag": 0

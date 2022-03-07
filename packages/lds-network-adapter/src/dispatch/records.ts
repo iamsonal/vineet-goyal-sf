@@ -1,13 +1,15 @@
-import { FetchResponse, HttpStatusCode, ResourceRequest } from '@luvio/engine';
+import type { FetchResponse, ResourceRequest } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
 import { ArrayIsArray } from '../language';
 import { UI_API_BASE_URI } from '../uiapi-base';
+import type { GetRecordCompositeRequestParams } from './execute-aggregate-ui';
 import {
     buildGetRecordByFieldsCompositeRequest,
     dispatchSplitRecordAggregateUiAction,
-    GetRecordCompositeRequestParams,
     shouldUseAggregateUiForGetRecord,
 } from './execute-aggregate-ui';
-import { Dispatcher, defaultDispatcher, SalesforceResourceRequest } from './main';
+import type { Dispatcher, SalesforceResourceRequest } from './main';
+import { defaultDispatcher } from './main';
 
 const UIAPI_RECORDS_PATH = `${UI_API_BASE_URI}/records`;
 const UIAPI_RECORDS_BATCH_PATH = `${UI_API_BASE_URI}/records/batch/`;
@@ -48,6 +50,7 @@ function buildAndDispatchGetRecordAggregateUi(
         baseUri: UI_API_BASE_URI,
         basePath: '/aggregate-ui',
         method: 'post',
+        priority: resourceRequest.priority,
         urlParams: {},
         body: aggregateUiParams,
         queryParams: {},

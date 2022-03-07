@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@luvio/engine';
+import type { ResourceRequest } from '@luvio/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
 import { buildUiApiParams, dispatchAction } from './utils';
 import appRouter from '../router';
@@ -9,12 +9,14 @@ enum UiApiListsController {
     GetListRecordsById = 'ListUiController.getListRecordsById',
     GetListUiByName = 'ListUiController.getListUiByName',
     GetListInfoByName = 'ListUiController.getListInfoByName',
+    GetListInfosByName = 'ListUiController.getListInfosByName',
     GetListRecordsByName = 'ListUiController.getListRecordsByName',
 }
 
 const UIAPI_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/list-records/`;
 const UIAPI_LIST_UI_PATH = `${UI_API_BASE_URI}/list-ui/`;
 const UIAPI_LIST_INFO_PATH = `${UI_API_BASE_URI}/list-info/`;
+const UIAPI_LIST_INFO_BATCH_PATH = `${UIAPI_LIST_INFO_PATH}batch`;
 
 function getListRecordsByName(resourceRequest: ResourceRequest): Promise<any> {
     const {
@@ -118,6 +120,21 @@ function getListInfoByName(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiListsController.GetListInfoByName, params);
 }
 
+function getListInfosByName(resourceRequest: ResourceRequest): Promise<any> {
+    const {
+        queryParams: { names },
+    } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            names,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiListsController.GetListInfosByName, params);
+}
+
 function getListsByObjectName(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
@@ -166,6 +183,12 @@ appRouter.get(
         /list-ui\/.*\//.test(path) === false &&
         /00B[a-zA-Z\d]{15}$/.test(path) === false,
     getListsByObjectName
+);
+
+// .../list-info/batch
+appRouter.get(
+    (path: string) => path.startsWith(`${UIAPI_LIST_INFO_BATCH_PATH}`),
+    getListInfosByName
 );
 
 // .../list-info/${objectApiName}/${listViewApiName}

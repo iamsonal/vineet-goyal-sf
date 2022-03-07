@@ -1,0 +1,56 @@
+{
+    "nextPageUrl": null,
+    "recipes": [
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-26T19:46:43.000Z",
+            "dataflowLastUpdate": "2021-01-22T21:44:15.000Z",
+            "dataset": {
+                "id": "0FbRM00000027q30AA",
+                "name": "r2y_extract1",
+                "url": "/services/data/v55.0/wave/datasets/0FbRM00000027q30AA"
+            },
+            "fileUrl": "/services/data/v55.0/wave/recipes/05vRM00000003OwYAI/file",
+            "historiesUrl": "/services/data/v55.0/wave/recipes/05vRM00000003OwYAI/histories",
+            "id": "05vRM00000003OwYAI",
+            "label": "r2y_extract",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-26T19:46:43.000Z",
+            "name": "r2y_extract1",
+            "nextScheduledDate": "2021-01-25T08:00:00.000Z",
+            "publishingTarget": "Dataset",
+            "schedule": "0 0 0 ? * 2,5",
+            "scheduleAttributes": {
+                "assetId": "05vRM00000003OwYAI",
+                "daysOfWeek": ["monday"],
+                "frequency": "weekly",
+                "nextScheduledDate": "2021-09-27T07:00:00.000Z",
+                "time": {
+                    "hour": 0,
+                    "minute": 0,
+                    "timeZone": {
+                        "gmtOffset": -7.0,
+                        "name": "Pacific Daylight Time",
+                        "zoneId": "America/Los_Angeles"
+                    }
+                }
+            },
+            "scheduleType": "timedriven",
+            "targetDataflowId": "02KRM0000002XSl2AM",
+            "type": "recipe",
+            "url": "/services/data/v55.0/wave/recipes/05vRM00000003OwYAI",
+            "validationDetails": []
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v55.0/wave/recipes?nextScheduledAfter=1611476903&nextScheduledBefore=1643012903"
+}

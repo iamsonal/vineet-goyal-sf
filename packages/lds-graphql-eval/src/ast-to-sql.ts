@@ -1,30 +1,43 @@
-import {
+import type { DataType } from './info-types';
+import type {
     Expression,
     Predicate,
     CompoundPredicate,
-    ComparisonOperator,
     ComparisonPredicate,
-    isCompoundPredicate,
     RecordQuery,
     RootQuery,
     RecordQueryField,
+    NullComparisonPredicate,
+    NotPredicate,
+    OrderBy,
+    ExistsPredicate,
+    DateFunctionPredicate,
+    BetweenPredicate,
+    RelativeDate,
+    StringLiteral,
+    MultiPicklistSet,
+} from './Predicate';
+import {
+    ComparisonOperator,
+    isCompoundPredicate,
     FieldType,
     ValueType,
     DateEnumType,
     CompoundOperator,
     isComparisonPredicate,
-    NullComparisonPredicate,
     NullComparisonOperator,
     isNullComparisonPredicate,
-    NotPredicate,
-    OrderBy,
     isExistsPredicate,
-    ExistsPredicate,
+    isDateFunctionPredicate,
+    DateFunction,
     isBetweenPredicate,
-    BetweenPredicate,
-    RelativeDate,
 } from './Predicate';
+import { flatten } from './util/flatten';
 
+interface SqlAndBindings {
+    sql: string;
+    bindings: string[];
+}
 export interface SqlMappingInput {
     jsonColumn: string;
     keyColumn: string;
@@ -39,72 +52,113 @@ const recordsCTE = 'recordsCTE';
 function cteSql(mappingInput: SqlMappingInput): string {
     return (
         `WITH ${recordsCTE} AS ` +
-        `(select ${mappingInput.jsonColumn} from ${mappingInput.jsonTable} where ${mappingInput.keyColumn} like 'UiApi\\%3A\\%3ARecordRepresentation%' ESCAPE '\\')`
+        `(select ${mappingInput.jsonColumn} from "${mappingInput.jsonTable}" where ${mappingInput.keyColumn} like 'UiApi::RecordRepresentation%')`
     );
 }
 
-export function sql(rootQuery: RootQuery, mappingInput: SqlMappingInput): string {
-    const fields = rootQuery.connections
-        .map(
-            (conn) =>
-                `'${recordPrefix}.${conn.alias}.${recordSuffix}', (${recordQueryToSql(
-                    conn,
-                    mappingInput
-                )})`
-        )
-        .join(', ');
+export function sql(rootQuery: RootQuery, mappingInput: SqlMappingInput): SqlAndBindings {
+    const fields = rootQuery.connections.map((connection) => {
+        const { sql: recordQuerySql, bindings } = recordQueryToSql(connection, mappingInput);
+        return {
+            sql: `'${recordPrefix}.${connection.alias}.${recordSuffix}', (${recordQuerySql})`,
+            bindings,
+        };
+    });
 
-    return `${cteSql(mappingInput)} SELECT json_set('{}', ${fields} ) as json`;
+    const fieldSql = fields.map((v) => v.sql).join(`, `);
+    const bindings = fields.map((v) => v.bindings).reduce(flatten);
+
+    return { sql: `${cteSql(mappingInput)} SELECT json_set('{}', ${fieldSql} ) as json`, bindings };
 }
 
-function fieldToSql(field: RecordQueryField, mappingInput: SqlMappingInput): string {
+function fieldToSql(field: RecordQueryField, mappingInput: SqlMappingInput): SqlAndBindings {
     const { path } = field;
 
     if (field.type === FieldType.Child) {
-        return `'${pathPrefix}.${path}', (${recordQueryToSql(field.connection, mappingInput)})`;
+        const { sql, bindings } = recordQueryToSql(field.connection, mappingInput);
+        return { sql: `'${pathPrefix}.${path}', (${sql})`, bindings };
     }
 
-    return `'${pathPrefix}.${path}', (${expressionToSql(field.extract)})`;
+    const { sql, bindings } = expressionToSql(field.extract, field.targetDataType);
+    return { sql: `'${pathPrefix}.${path}', (${sql})`, bindings };
 }
 
-function recordQueryToSql(recordQuery: RecordQuery, input: SqlMappingInput): string {
+function recordQueryToSql(recordQuery: RecordQuery, input: SqlMappingInput): SqlAndBindings {
     const { predicate, first, orderBy, fields: recordFields, joinNames, alias: name } = recordQuery;
 
-    const fieldsSql = recordFields.map((f) => fieldToSql(f, input)).join(', ');
-    const select = selectSql(predicate, name, first, orderBy, joinNames, input);
+    // const fieldsSql = recordFields.map((f) => fieldToSql(f, input)).join(', ');
+    const fields = recordFields.map((f) => fieldToSql(f, input));
+    const fieldsSql = fields.map((v) => v.sql).join(`, `);
+    const fieldBindings = fields.map((v) => v.bindings).reduce(flatten);
 
-    return `SELECT json_group_array(json_set('{}', ${fieldsSql} )) ` + `FROM ${select}`;
+    const { sql: select, bindings: selectBindings } = selectSql(
+        predicate,
+        name,
+        first,
+        orderBy,
+        joinNames,
+        input
+    );
+
+    const bindings = fieldBindings.concat(selectBindings);
+    return {
+        sql: `SELECT json_group_array(json_set('{}', ${fieldsSql} )) ` + `FROM ${select}`,
+        bindings,
+    };
 }
 
 function selectSql(
     predicate: Predicate | undefined,
     name: string,
     first: number | undefined,
-    orderBy: OrderBy | undefined,
+    orderBy: OrderBy[] | undefined,
     joinNames: string[],
     mappingInput: SqlMappingInput
-) {
+): SqlAndBindings {
     const joinString = joinNamesToSql(joinNames);
     const columns = columnsSql(joinNames.concat(name), mappingInput);
-    const predicateString =
-        predicate !== undefined ? `WHERE ${predicateToSql(predicate, mappingInput)}` : '';
-    const limitString = first !== undefined ? `LIMIT ${first}` : '';
-    const orderByString = orderBy !== undefined ? orderbyToSql(orderBy) : '';
+    let predicateString: string = '';
+    let predicateBindings: string[] = [];
 
-    return (
+    if (predicate !== undefined) {
+        const { sql: predicateSql, bindings } = predicateToSql(predicate, mappingInput);
+        predicateBindings = bindings;
+        predicateString = `WHERE ${predicateSql}`;
+    }
+
+    const limitString = first !== undefined ? `LIMIT ${first}` : '';
+    const { sql: orderBySql, bindings: orderByBindings } = orderbyToSql(orderBy);
+
+    const sql =
         `(SELECT ${columns} FROM ${recordsCTE} as '${name}' ` +
-        `${joinString} ${predicateString} ${orderByString}${limitString})`
-    );
+        `${joinString} ${predicateString} ${orderBySql}${limitString})`;
+
+    const bindings = predicateBindings.concat(orderByBindings);
+    return { sql, bindings };
 }
 
-function orderbyToSql(orderBy: OrderBy): string {
-    const extract = expressionToSql(orderBy.extract);
-    const order = orderBy.asc ? 'ASC' : 'DESC';
-    const nullsOrder = orderBy.nullsFirst ? 'DESC' : 'ASC';
+function orderbyToSql(orderBy: OrderBy[] = []): SqlAndBindings {
+    if (orderBy.length === 0) {
+        return { sql: '', bindings: [] };
+    }
+    const clauses = orderBy.map((clause) => {
+        const { sql: extractSql, bindings } = expressionToSql(clause.extract);
+        const order = clause.asc ? 'ASC' : 'DESC';
+        const nullsOrder = clause.nullsFirst ? 'DESC' : 'ASC';
 
-    //As of fall 2021 most devices don't have NULLS FIRST|LAST support which was added to sqlite in 2019,
-    //so we use a CASE expression and sort by an "is null" column and then by the actual column order.
-    return `ORDER BY CASE WHEN ${extract} IS NULL THEN 1 ELSE 0 END ${nullsOrder}, ${extract} ${order} `;
+        //As of fall 2021 most devices don't have NULLS FIRST|LAST support which was added to sqlite in 2019,
+        //so we use a CASE expression and sort by an "is null" column and then by the actual column order.
+        return {
+            sql: `CASE WHEN ${extractSql} IS NULL THEN 1 ELSE 0 END ${nullsOrder}, ${extractSql} ${order} `,
+            bindings,
+        };
+    });
+    // .join(', ');
+
+    const clausesSql = clauses.map((v) => v.sql).join(`, `);
+    const bindings = clauses.map((v) => v.bindings).reduce(flatten);
+
+    return { sql: `ORDER BY ${clausesSql}`, bindings };
 }
 
 function columnsSql(names: string[], mappingInput: SqlMappingInput) {
@@ -119,7 +173,7 @@ function joinToSql(name: string) {
     return `join ${recordsCTE} as '${name}'`;
 }
 
-function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): string {
+function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): SqlAndBindings {
     if (isCompoundPredicate(predicate)) {
         return compoundPredicateToSql(predicate, mappingInput);
     }
@@ -136,6 +190,10 @@ function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): st
         return existsPredicateToSql(predicate, mappingInput);
     }
 
+    if (isDateFunctionPredicate(predicate)) {
+        return dateFunctionPredicateToSql(predicate);
+    }
+
     if (isBetweenPredicate(predicate)) {
         return betweenPredicateToSql(predicate);
     }
@@ -146,98 +204,202 @@ function predicateToSql(predicate: Predicate, mappingInput: SqlMappingInput): st
 function compoundPredicateToSql(
     predicate: CompoundPredicate,
     mappingInput: SqlMappingInput
-): string {
+): SqlAndBindings {
     const operatorString = compoundOperatorToSql(predicate.operator);
-    const compoundStatement = predicate.children
-        .map((child) => predicateToSql(child, mappingInput))
-        .join(` ${operatorString} `);
+    const results = predicate.children.map((child) => predicateToSql(child, mappingInput));
 
-    return `( ${compoundStatement} )`;
+    const statementSql = results.map((v) => v.sql).join(` ${operatorString} `);
+    const bindings = results.map((v) => v.bindings).reduce(flatten);
+
+    return { sql: `( ${statementSql} )`, bindings };
 }
 
-function existsPredicateToSql(exists: ExistsPredicate, mappingInput: SqlMappingInput): string {
-    const { predicate, joinNames, alias } = exists;
-    const select = selectSql(predicate, alias, undefined, undefined, joinNames, mappingInput);
-    return `EXISTS ${select}`;
-}
-
-function comparisonPredicateToSql(predicate: ComparisonPredicate): string {
+function dateFunctionPredicateToSql(predicate: DateFunctionPredicate): SqlAndBindings {
     const operator = comparisonOperatorToSql(predicate.operator);
-    const left = expressionToSql(predicate.left);
-    const right = expressionToSql(predicate.right);
+    const { sql: extract, bindings: extractBindings } = expressionToSql(predicate.extract);
 
-    return `${left} ${operator} ${right}`;
+    switch (predicate.function) {
+        case DateFunction.dayOfMonth: {
+            const day = String(predicate.value).padStart(2, '0');
+            const bindings = extractBindings.concat(`'${day}'`);
+            return { sql: `strftime('%d', ${extract}) ${operator} ?`, bindings };
+        }
+    }
 }
 
-function betweenPredicateToSql(predicate: BetweenPredicate): string {
-    const start = expressionToSql(predicate.start);
-    const end = expressionToSql(predicate.end);
-    const compareDate = expressionToSql(predicate.compareDate);
+function existsPredicateToSql(
+    exists: ExistsPredicate,
+    mappingInput: SqlMappingInput
+): SqlAndBindings {
+    const { predicate, joinNames, alias } = exists;
+    const { sql: select, bindings } = selectSql(
+        predicate,
+        alias,
+        undefined,
+        undefined,
+        joinNames,
+        mappingInput
+    );
 
-    return `${compareDate} BETWEEN ${start} AND ${end}`;
+    return { sql: `EXISTS ${select}`, bindings };
 }
 
-function notPredicateToSql(predicate: NotPredicate, mappingInput: SqlMappingInput): string {
-    const innerSql = predicateToSql(predicate.child, mappingInput);
+function comparisonPredicateToSql(predicate: ComparisonPredicate): SqlAndBindings {
+    const operator = comparisonOperatorToSql(predicate.operator);
+    const { sql: left, bindings: leftBindings } = expressionToSql(predicate.left);
+    const { sql: right, bindings: rightBindings } = expressionToSql(predicate.right);
 
-    return `NOT (${innerSql})`;
+    let bindings = leftBindings.concat(rightBindings);
+    if (
+        predicate.operator === ComparisonOperator.eq &&
+        predicate.right.type === ValueType.StringLiteral &&
+        predicate.right.isCaseSensitive === false
+    ) {
+        return { sql: `${left} ${operator} ${right} COLLATE NOCASE`, bindings };
+    }
+
+    return { sql: `${left} ${operator} ${right}`, bindings };
 }
 
-function nullComparisonPredicateToSql(predicate: NullComparisonPredicate): string {
-    const operator = predicate.operator === NullComparisonOperator.is ? 'IS' : 'IS NOT';
-    const left = expressionToSql(predicate.left);
+function betweenPredicateToSql(predicate: BetweenPredicate): SqlAndBindings {
+    const { sql: compareDateSql, bindings: compareBindings } = expressionToSql(
+        predicate.compareDate
+    );
+    const { sql: startSql, bindings: startBindings } = expressionToSql(predicate.start);
+    const { sql: endSql, bindings: endBindings } = expressionToSql(predicate.end);
 
-    return `${left} ${operator} NULL`;
+    const bindings = compareBindings.concat(startBindings).concat(endBindings);
+    return { sql: `${compareDateSql} BETWEEN ${startSql} AND ${endSql}`, bindings };
 }
 
-function expressionToSql(expression: Expression): string {
+function notPredicateToSql(predicate: NotPredicate, mappingInput: SqlMappingInput): SqlAndBindings {
+    const { sql, bindings } = predicateToSql(predicate.child, mappingInput);
+
+    return { sql: `NOT (${sql})`, bindings };
+}
+
+function nullComparisonPredicateToSql(predicate: NullComparisonPredicate): SqlAndBindings {
+    const operator: string = predicate.operator === NullComparisonOperator.is ? 'IS' : 'IS NOT';
+    const { sql: leftSql, bindings } = expressionToSql(predicate.left);
+
+    return { sql: `${leftSql} ${operator} NULL`, bindings };
+}
+
+function coerceToTargetDataType(initialSql: string, targetDataType: DataType): string {
+    if (targetDataType === 'Boolean') {
+        return `case when ${initialSql} = 1 then json('true') else json('false') end`;
+    } else {
+        return initialSql;
+    }
+}
+
+function expressionToSql(expression: Expression, targetDataType?: DataType): SqlAndBindings {
     switch (expression.type) {
-        case ValueType.Extract:
-            return `json_extract("${expression.jsonAlias}.JSON", '${pathPrefix}.${expression.path}')`;
+        case ValueType.Extract: {
+            let sql = `json_extract("${expression.jsonAlias}.JSON", '${pathPrefix}.${expression.path}')`;
+
+            if (targetDataType !== undefined) {
+                sql = coerceToTargetDataType(sql, targetDataType);
+            }
+            return {
+                sql,
+                bindings: [],
+            };
+        }
         case ValueType.BooleanLiteral:
         case ValueType.DoubleLiteral:
         case ValueType.IntLiteral:
-            return String(expression.value);
+            //bind
+            return { sql: '?', bindings: [String(expression.value)] };
         case ValueType.StringArray:
-            return `(${expression.value.map((e) => `'${e}'`).join(', ')})`;
+            //bind
+            return expressionArrayToSql(expression.value, (e) => ({
+                sql: '?',
+                bindings: [`'${e}'`],
+            }));
         case ValueType.NumberArray:
-            return `(${expression.value.map((e) => e).join(', ')})`;
+            //bind
+            return expressionArrayToSql(expression.value, (e) => ({
+                sql: '?',
+                bindings: [`${e}`],
+            }));
         case ValueType.NullValue:
-            return 'null';
+            return { sql: 'null', bindings: [] };
 
         case ValueType.DateEnum:
-            return dateEnumToSql(expression.value);
+            return { sql: dateEnumToSql(expression.value), bindings: [] };
         case ValueType.DateTimeEnum:
-            return dateTimeEnumToSql(expression.value);
+            return { sql: dateTimeEnumToSql(expression.value), bindings: [] };
 
         case ValueType.DateTimeArray:
-            return `(${expression.value.map((e) => expressionToSql(e)).join(', ')})`;
+            return expressionArrayToSql(expression.value, expressionToSql);
         case ValueType.DateArray:
-            return `(${expression.value.map((e) => expressionToSql(e)).join(', ')})`;
+            return expressionArrayToSql(expression.value, expressionToSql);
+
         case ValueType.DateRange:
         case ValueType.DateTimeRange:
-            return ``;
+            //not used
+            return { sql: '', bindings: [] };
         case ValueType.RelativeDate:
             return relativeDateToSql(expression);
         case ValueType.DateValue:
         case ValueType.DateTimeValue:
+            return { sql: '?', bindings: [`'${expression.value}'`] };
         case ValueType.StringLiteral:
-            return `'${expression.value}'`;
+            return stringLiteralToSql(expression);
+        case ValueType.MultiPicklistSet:
+            return multiPicklistToSql(expression);
     }
 }
 
-function relativeDateToSql(expression: RelativeDate): string {
+function stringLiteralToSql(string: StringLiteral): SqlAndBindings {
+    const { safe, value } = string;
+    if (safe === true) {
+        return { sql: `'${value}'`, bindings: [] };
+    }
+
+    return { sql: '?', bindings: [`'${value}'`] };
+}
+
+function expressionArrayToSql<T>(
+    expressions: T[],
+    toSql: (t: T) => SqlAndBindings
+): SqlAndBindings {
+    const results: SqlAndBindings[] = expressions.map(toSql);
+    const sql = `(${results.map((v) => v.sql).join(', ')})`;
+    const bindings = results.map((v) => v.bindings).reduce(flatten);
+
+    return { sql, bindings };
+}
+
+function multiPicklistToSql({ value }: MultiPicklistSet): SqlAndBindings {
+    // Individual multipicklist terms that delimited by semicolon are stored server-side
+    // as lexically sorted strings and treated like logical ANDs. We can approximate this
+    // behavior in SQL with wildcarded `LIKE` SQL operators.  Terms with no delimiter can
+    // be treated as string literals.  Multiple terms are logically OR'd together to
+    // match the behavior described in SOQL documentation (https://sfdc.co/c9j0r)
+    const sql = '?';
+    const binding = value.includes(';') ? `'%${value.split(';').join('%')}%'` : `'%${value}%'`;
+
+    return { sql, bindings: [binding] };
+}
+
+function relativeDateToSql(expression: RelativeDate): SqlAndBindings {
     const funcName = expression.hasTime ? 'datetime' : 'date';
     switch (expression.unit) {
         case 'month':
             if (expression.offset === 'end') {
-                return `${funcName}('now', 'start of month', '${
-                    expression.amount + 1
-                } months', '-1 day')`;
+                return {
+                    sql: `${funcName}('now', 'start of month', ?, '-1 day')`,
+                    bindings: [`'${expression.amount + 1} months'`],
+                };
             }
-            return `${funcName}('now', 'start of month', '${expression.amount} months')`;
+            return {
+                sql: `${funcName}('now', 'start of month', ?)`,
+                bindings: [`'${expression.amount} months'`],
+            };
         case 'day':
-            return `${funcName}('now', '${expression.amount} days')`;
+            return { sql: `${funcName}('now', ?)`, bindings: [`'${expression.amount} days'`] };
     }
 }
 
@@ -288,5 +450,41 @@ function comparisonOperatorToSql(operator: ComparisonOperator): string {
             return 'IN';
         case ComparisonOperator.nin:
             return 'NOT IN';
+        case ComparisonOperator.includes:
+            return 'LIKE';
+        case ComparisonOperator.excludes:
+            return 'NOT LIKE';
     }
 }
+
+export function objectInfoSql(mappingInput: SqlMappingInput): string {
+    return `WITH objectInfoCTE AS (select ${mappingInput.jsonColumn} as valueColumn from "${mappingInput.jsonTable}" where ${mappingInput.keyColumn} like 'UiApi::ObjectInfo%' ESCAPE '\\')
+    select json_group_object( json_extract(valueColumn, '$.data.apiName'), 
+        json_object(
+            'fields',
+            (select json_group_object( groupObjectKey,  groupObjectValue )
+            from (
+                select json_extract(each.value, '$.apiName') as groupObjectKey, json_object('dataType', json_extract(each.value, '$.dataType'), 'apiName', json_extract(each.value, '$.apiName'), 'referenceToInfos', json_extract(each.value, '$.referenceToInfos'),  'relationshipName', json_extract(each.value, '$.relationshipName')) as groupObjectValue
+                from  json_each(json_extract(valueColumn, '$.data.fields')) as each
+            )),
+            'childRelationships',
+            (select json_group_array( groupArrayValue )
+            from (
+                select json_object('fieldName', json_extract(each.value, '$.fieldName'), 'childObjectApiName', json_extract(each.value, '$.childObjectApiName'),  'relationshipName', json_extract(each.value, '$.relationshipName')) as groupArrayValue
+                from  json_each(json_extract(valueColumn, '$.data.childRelationships')) as each
+            ))
+        )
+    )  from (select valueColumn FROM objectInfoCTE) as json`;
+}
+
+export function indicesSql(mappingInput: SqlMappingInput): string[] {
+    return [
+        `create index if not exists service_appointment_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.fields.ServiceAppointmentId.value')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') = 'AssignedResource'`,
+        `create index if not exists apiname on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.apiName')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') is not null`,
+        `create index if not exists record_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.id')) where json_extract(${mappingInput.jsonColumn}, '$.data.id') is not null`,
+        `create index if not exists service_resource_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.fields.ServiceResourceId.value')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') = 'AssignedResource'`,
+        `create index if not exists related_record_id on ${mappingInput.jsonTable}(json_extract(${mappingInput.jsonColumn}, '$.data.fields.RelatedRecordId.value')) where json_extract(${mappingInput.jsonColumn}, '$.data.apiName') = 'ServiceResource'`,
+    ];
+}
+
+export const tableAttrsSql = `select json_group_object(key, value) from  (select path as key, columnName as value from soup_index_map  where soupName = 'DEFAULT'  union select 'LdsSoupTable' as key, 'TABLE_' || id as value from soup_attrs where soupName = 'DEFAULT')`;

@@ -1,276 +1,276 @@
 {
-    "nextPageUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects?page=eyJwYWdlU2l6ZSI6MjUsInNvcnRPcmRlciI6Ik5BTUUiLCJsYXN0SWQiOiIwMDAwMDAwMDAwMDAwMDAiLCJsYXN0TmFtZSI6IkFjY291bnRTaGFyZSJ9",
+    "nextPageUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects?page=eyJwYWdlU2l6ZSI6MjUsInNvcnRPcmRlciI6Ik5BTUUiLCJsYXN0SWQiOiIwMDAwMDAwMDAwMDAwMDAiLCJsYXN0TmFtZSI6IkFjY291bnRTaGFyZSJ9",
     "sourceObjects": [
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent/fields",
             "name": "ADMINCustomEntity__ChangeEvent",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__ChangeEvent",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule/fields",
             "name": "ADMINCustomEntity__OwnerSharingRule",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__OwnerSharingRule",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__Share/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__Share/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__Share/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__Share/fields",
             "name": "ADMINCustomEntity__Share",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__Share",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__Share",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__c/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__c/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__c/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__c/fields",
             "name": "ADMINCustomEntity__c",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__c",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/ADMINCustomEntity__c",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplication/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplication/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplication/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplication/fields",
             "name": "AIApplication",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplication",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplication",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/fields",
             "name": "AIApplicationConfig",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/fields",
             "name": "AIInsightAction",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/fields",
             "name": "AIInsightFeedback",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/fields",
             "name": "AIInsightReason",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/fields",
             "name": "AIInsightValue",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIPredictionEvent/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIPredictionEvent/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIPredictionEvent/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIPredictionEvent/fields",
             "name": "AIPredictionEvent",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIPredictionEvent",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIPredictionEvent",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIRecordInsight/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIRecordInsight/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIRecordInsight/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIRecordInsight/fields",
             "name": "AIRecordInsight",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIRecordInsight",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIRecordInsight",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AcceptedEventRelation/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AcceptedEventRelation/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AcceptedEventRelation/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AcceptedEventRelation/fields",
             "name": "AcceptedEventRelation",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AcceptedEventRelation",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AcceptedEventRelation",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/Account/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/Account/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/Account/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/Account/fields",
             "name": "Account",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/Account",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/Account",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrand/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrand/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrand/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrand/fields",
             "name": "AccountBrand",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrand",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrand",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandOwnerSharingRule/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandOwnerSharingRule/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandOwnerSharingRule/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandOwnerSharingRule/fields",
             "name": "AccountBrandOwnerSharingRule",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandOwnerSharingRule",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandOwnerSharingRule",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandShare/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandShare/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandShare/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandShare/fields",
             "name": "AccountBrandShare",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandShare",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountBrandShare",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountChangeEvent/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountChangeEvent/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountChangeEvent/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountChangeEvent/fields",
             "name": "AccountChangeEvent",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountChangeEvent",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountChangeEvent",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRole/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRole/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRole/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRole/fields",
             "name": "AccountContactRole",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRole",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRole",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRoleChangeEvent/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRoleChangeEvent/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRoleChangeEvent/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRoleChangeEvent/fields",
             "name": "AccountContactRoleChangeEvent",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRoleChangeEvent",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountContactRoleChangeEvent",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountFeed/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountFeed/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountFeed/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountFeed/fields",
             "name": "AccountFeed",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountFeed",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountFeed",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountHistory/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountHistory/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountHistory/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountHistory/fields",
             "name": "AccountHistory",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountHistory",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountHistory",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountOwnerSharingRule/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountOwnerSharingRule/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountOwnerSharingRule/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountOwnerSharingRule/fields",
             "name": "AccountOwnerSharingRule",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountOwnerSharingRule",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountOwnerSharingRule",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountPartner/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountPartner/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountPartner/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountPartner/fields",
             "name": "AccountPartner",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountPartner",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountPartner",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountShare/dataPreview",
-            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountShare/fields",
+            "dataPreviewUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountShare/dataPreview",
+            "fieldsUrl": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountShare/fields",
             "name": "AccountShare",
             "replicated": false,
-            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountShare",
+            "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AccountShare",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
@@ -278,5 +278,5 @@
         }
     ],
     "totalSize": 719,
-    "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects"
+    "url": "/services/data/v55.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects"
 }

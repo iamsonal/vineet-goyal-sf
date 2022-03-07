@@ -1,4 +1,4 @@
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 import replace from 'rollup-plugin-replace';
 
@@ -14,6 +14,7 @@ const networkAdapter = {
 
     external: [
         'aura',
+        'instrumentation/service',
         '@salesforce/lds-aura-storage',
         '@salesforce/lds-instrumentation',
         '@salesforce/lds-environment-settings',
@@ -37,7 +38,10 @@ const networkAdapter = {
             clean: true,
         }),
         replace({
-            'process.env.VERSION': JSON.stringify(hash),
+            preventAssignment: true,
+            values: {
+                'process.env.VERSION': JSON.stringify(hash),
+            },
         }),
     ],
 };

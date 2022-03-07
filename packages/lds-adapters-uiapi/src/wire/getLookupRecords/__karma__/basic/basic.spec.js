@@ -1,9 +1,12 @@
+import { getLookupRecords_imperative } from 'lds-adapters-uiapi';
 import GetLookupRecords from '../lwc/get-lookup-records';
 import { karmaNetworkAdapter } from 'lds-engine';
 import {
     getMock as globalGetMock,
+    flushPromises,
     mockNetworkOnce,
     setupElement,
+    stripEtags,
     mockNetworkSequence,
     mockNetworkErrorOnce,
 } from 'test-util';
@@ -40,17 +43,17 @@ function mockNetworkBehaviour(entryToMock, data, behaviour = ONCE) {
     mockingNetworkBehaviourMap[behaviour](getSinonParamsMatch(entryToMock), data);
 }
 
+let endpointEntries;
+
+beforeAll(() => {
+    endpointEntries = getMock('endpointEntries');
+});
+
+function getEndpointEntry(reference) {
+    return endpointEntries.find((entryToMock) => entryToMock.filename === reference);
+}
+
 describe('getLookupRecords', () => {
-    let endpointEntries;
-
-    beforeAll(() => {
-        endpointEntries = getMock('endpointEntries');
-    });
-
-    function getEndpointEntry(reference) {
-        return endpointEntries.find((entryToMock) => entryToMock.filename === reference);
-    }
-
     it('handles empty record response', async () => {
         const reference = 'lookup-records-Account-No-Records';
         const mock = getMock(reference);
@@ -416,5 +419,49 @@ describe('getLookupRecords', () => {
             expect(elm.pushCount()).toBe(1);
             expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
         });
+    });
+});
+
+describe('getLookupRecords_imperative', () => {
+    it('uses caller-supplied cache policy', async () => {
+        const reference = 'lookup-records-Opportunity-AccountId-Account-pageSize-1-q-bu';
+        const mock1 = getMock('lookup-records-Opportunity-AccountId-Account-pageSize-1-q-bu');
+        const mock2 = getMock('lookup-records-Opportunity-AccountId-Account-pageSize-1-q-bu');
+
+        mock2.records[0].fields.Name.value = 'updated';
+
+        const config = {
+            fieldApiName: 'Opportunity.AccountId',
+            targetApiName: mock1.records[0].apiName,
+            requestParams: {
+                q: 'Bur',
+                searchType: 'TypeAhead',
+                page: 1,
+                pageSize: 10,
+                sourceRecordId: '',
+            },
+        };
+
+        mockNetworkBehaviour(getEndpointEntry(reference), [mock1, mock2], SEQUENCE);
+
+        const callback = jasmine.createSpy();
+
+        // populate cache with mock1
+        getLookupRecords_imperative.invoke(config, undefined, callback);
+        await flushPromises();
+
+        callback.calls.reset();
+
+        // should emit mock1 from cache, then make network call & emit mock2
+        getLookupRecords_imperative.subscribe(
+            config,
+            { cachePolicy: { type: 'cache-and-network' } },
+            callback
+        );
+        await flushPromises();
+
+        // getLookupRecords ignores cached data, so only mock2 shoud be sent to the callback
+        expect(callback).toHaveBeenCalledTimes(1);
+        expect(callback.calls.argsFor(0)).toEqual([{ data: stripEtags(mock2), error: undefined }]);
     });
 });

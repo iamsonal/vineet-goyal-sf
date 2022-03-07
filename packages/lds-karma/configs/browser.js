@@ -2,7 +2,7 @@ const base = require('./base');
 
 const lwcDistribution = require('lwc');
 
-const LWC_ENGINE = lwcDistribution.getModulePath('engine', 'umd', 'es2017', 'prod_debug');
+const LWC_ENGINE = lwcDistribution.getModulePath('engine-dom', 'umd', 'es2017', 'prod_debug');
 
 const LDS_ENGINE = require.resolve('../dist/lds-runtime-browser.js');
 const LDS_BINDINGS = require.resolve('../dist/lds-bindings.js');

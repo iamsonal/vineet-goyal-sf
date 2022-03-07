@@ -1,4 +1,5 @@
-import { PredicateContainer } from './Predicate';
+import type { PredicateError } from './Error';
+import type { PredicateContainer } from './Predicate';
 
 export type PredicateResult = Result<PredicateContainer, PredicateError[]>;
 
@@ -6,6 +7,7 @@ export type Result<T, E> = Success<T, E> | Failure<T, E>;
 interface BaseResult<T, E> {
     isSuccess: boolean;
     map: <S>(fn: (v: T) => S) => Result<S, E>;
+    flatMap: <S>(fn: (v: T) => Result<S, E>) => Result<S, E>;
     mapError: <U>(fn: (e: E) => U) => Result<T, U>;
 }
 
@@ -24,6 +26,7 @@ export function success<T, E>(value: T): Success<T, E> {
         value,
         isSuccess: true,
         map: (f) => success(f(value)),
+        flatMap: (f) => f(value),
         mapError: (_) => success(value),
     };
 }
@@ -33,6 +36,7 @@ export function failure<T, E>(error: E): Failure<T, E> {
         error,
         isSuccess: false,
         map: (_) => failure(error),
+        flatMap: (_) => failure(error),
         mapError: (f) => failure(f(error)),
     };
 }
@@ -78,5 +82,3 @@ export function unwrappedError<V, T>(r: Result<V, T>): T | undefined {
 
     return undefined;
 }
-
-export type PredicateError = string;

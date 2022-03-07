@@ -3,22 +3,19 @@ import { saveQuestionnaire, getQuestionnaire } from 'lds-adapters-platform-admin
 
 export default class SaveQuestionnaire extends LightningElement {
     @track questionnaireData;
-    @track questionnaireId;
-    @track assistantGroup;
+    @track questionnaireName;
     @track error;
 
     @wire(getQuestionnaire, {
-        assistantGroup: '$assistantGroup',
-        questionnaireId: '$questionnaireId',
+        questionnaireName: '$questionnaireName',
     })
     questionnaireWireResult;
 
     @api
-    invokeSaveQuestionnaire({ assistantGroup, questionnaireData, questionnaireId }) {
-        saveQuestionnaire({ assistantGroup, questionnaireId, questionnaireData })
+    invokeSaveQuestionnaire({ questionnaireData, questionnaireName }) {
+        saveQuestionnaire({ questionnaireName, questionnaireData })
             .then((data) => {
-                this.questionnaireId = questionnaireId;
-                this.assistantGroup = assistantGroup;
+                this.questionnaireName = questionnaireName;
                 this.questionnaireData = data;
             })
             .catch((error) => {

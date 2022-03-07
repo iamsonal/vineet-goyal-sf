@@ -1,0 +1,37 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "User": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Id": "005T1000000Huh7IBD",
+                                "WeakEtag": 1617755448000,
+                                "City": {
+                                    "value": "Montreal",
+                                    "displayValue": null
+                                },
+                                "__typename": "User",
+                                "ApiName": "User",
+                                "SystemModstamp": {
+                                    "value": "2021-03-11T20:15:39.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005RM000002492xYAA"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-04-07T00:30:48.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012000000000000BBB"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

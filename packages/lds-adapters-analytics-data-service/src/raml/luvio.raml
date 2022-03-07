@@ -20,7 +20,87 @@ types:
     (luvio.ttl): 300
     (luvio.key):
       id: id
+  SourceObjectRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      SourceObjectName: name
+  SourceObjectCollectionRepresentation:
+    (luvio.ttl): 5000
+  FieldCollectionRepresentation:
+    (luvio.ttl): 5000
+  TargetCollectionRepresentation:
+    (luvio.ttl): 5000
+  TargetRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      id: id
 
+  SchemaCollectionRepresentation:
+    (luvio.ttl): 5000
+  SchemaRepresentation:
+    (luvio.ttl): 5000
+  TableCollectionRepresentation:
+    (luvio.ttl): 5000
+  TableRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      qualifiedName: qualifiedName
+  DatabaseCollectionRepresentation:
+    (luvio.ttl): 5000
+  DatabaseRepresentation:
+    (luvio.ttl): 5000
+
+  GrantCollectionRepresentation:
+    (luvio.ttl): 5000
+  GrantRepresentation:
+    (luvio.ttl): 5000
+  GrantInputCollectionRepresentation:
+    (luvio.ttl): 300
+  GrantUpdateCollectionRepresentation:
+    (luvio.ttl): 300
+    (luvio.key):
+      requestId: requestId
+
+/analytics/data-service:
+  /catalog:
+    /databases:
+      get:
+        (luvio.adapter):
+          name: getCatalogDatabases
+    /databases/{database}:
+      get:
+        (luvio.adapter):
+          name: getCatalogDatabase
+    /schemas:
+      get:
+        (luvio.adapter):
+          name: getCatalogSchemas
+    /schemas/{qualifiedName}:
+      get:
+        (luvio.adapter):
+          name: getCatalogSchema
+    /tables:
+      get:
+        (luvio.adapter):
+          name: getCatalogTables
+    /tables/{qualifiedName}:
+      get:
+        (luvio.adapter):
+          name: getCatalogTable
+        (luvio.key):
+          qualifiedName: urlParams.qualifiedName
+      delete:
+        (luvio.adapter):
+          name: deleteCatalogTable
+        (luvio.key):
+          qualifiedName: urlParams.qualifiedName
+    /grants:
+      get:
+        (luvio.adapter):
+          name: getCatalogGrants
+      post:
+        (luvio.adapter):
+          name: createCatalogGrants
 /analytics/data-service/sync:
   /connectors:
     get:
@@ -36,9 +116,50 @@ types:
     get:
       (luvio.adapter):
         name: getConnections
+    post:
+      (luvio.adapter):
+        name: createConnection
   /connections/{id}:
     get:
       (luvio.adapter):
         name: getConnection
       (luvio.key):
         id: urlParams.id
+    /source-objects:
+      get:
+        (luvio.adapter):
+          name: getConnectionSourceObjects
+    /source-objects/{sourceObjectName}:
+      get:
+        (luvio.adapter):
+          name: getConnectionSourceObject
+        (luvio.key):
+          SourceObjectName: urlParams.sourceObjectName
+  /connections/{id}/source-objects/{sourceObjectName}/fields:
+    get:
+      (luvio.adapter):
+        name: getFields
+    (luvio.key):
+      id: urlParams.id
+      sourceObjectName: urlParams.sourceObjectName
+  /targets:
+    get:
+      (luvio.adapter):
+        name: getTargets
+    post:
+      (luvio.adapter):
+        name: createTarget
+  /targets/{id}:
+    delete:
+      (luvio.adapter):
+        name: deleteTarget
+      (luvio.key):
+        id: urlParams.id
+    get:
+      (luvio.adapter):
+        name: getTarget
+      (luvio.key):
+        id: urlParams.id
+    patch:
+      (luvio.adapter):
+        name: updateTarget

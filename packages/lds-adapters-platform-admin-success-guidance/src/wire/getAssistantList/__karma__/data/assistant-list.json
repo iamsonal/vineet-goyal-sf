@@ -1,0 +1,93 @@
+{
+    "assistantList": [
+        {
+            "assistantTarget": "test_assistant_target",
+            "category": "test_category",
+            "completionDate": "3921-07-01T00:00:00.000Z",
+            "contentVersion": "0.0.1",
+            "debugModeEnabled": false,
+            "description": "This is a test assistant fetched with getAssistant(...)",
+            "developerName": "test_assistant_id",
+            "estimatedMinutesToComplete": 100,
+            "icon": "/projRes/ui-admin-success-components/img/tempicon.png",
+            "isArchived": false,
+            "isPreview": false,
+            "layout": {
+                "children": [
+                    {
+                        "children": [],
+                        "description": "Follow our recommendations for rolling out Salesforce to customers.",
+                        "status": "NotStarted",
+                        "step": {
+                            "action": {
+                                "iconName": "linkIcon",
+                                "label": "ModuleAdvancedConfig.linkText",
+                                "actionType": "Link",
+                                "url": "http://help.salesforce.com"
+                            },
+                            "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
+                            "id": "learn_about_salesforce",
+                            "isManaged": false,
+                            "status": "NotStarted",
+                            "tags": [],
+                            "title": "Explore Salesforce Setup",
+                            "updateStrategy": "None"
+                        },
+                        "tags": ["premier"],
+                        "title": "Learn about Our Rollout Recommendations",
+                        "type": ""
+                    },
+                    {
+                        "children": [],
+                        "description": "Follow our recommendations for rolling out Salesforce to customers.",
+                        "status": "NotStarted",
+                        "step": {
+                            "action": {
+                                "iconName": "linkIcon",
+                                "label": "ModuleAdvancedConfig.linkText",
+                                "actionType": "Link",
+                                "url": "http://help.salesforce.com"
+                            },
+                            "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
+                            "id": "learn_about_salesforce",
+                            "isManaged": false,
+                            "status": "NotStarted",
+                            "tags": [],
+                            "title": "Explore Salesforce Setup",
+                            "updateStrategy": "None"
+                        },
+                        "tags": ["premier"],
+                        "title": "Learn about Our Rollout Recommendations",
+                        "type": ""
+                    }
+                ],
+                "description": "Follow our recommendations for rolling out Salesforce to customers.",
+                "status": "NotStarted",
+                "step": {
+                    "action": {
+                        "iconName": "linkIcon",
+                        "label": "ModuleAdvancedConfig.linkText",
+                        "actionType": "Link",
+                        "url": "http://help.salesforce.com"
+                    },
+                    "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience.",
+                    "id": "learn_about_salesforce",
+                    "isManaged": false,
+                    "status": "NotStarted",
+                    "tags": [],
+                    "title": "Explore Salesforce Setup",
+                    "updateStrategy": "None"
+                },
+                "tags": ["premier"],
+                "title": "Learn about Our Rollout Recommendations",
+                "type": ""
+            },
+            "numberOfSteps": 12,
+            "progress": 50.5,
+            "questionnaireIds": ["test_csg_questions"],
+            "status": "NotStarted",
+            "title": "Assistant 1 (LDS Wire) "
+        }
+    ],
+    "assistantTarget": "test_assistant_target"
+}

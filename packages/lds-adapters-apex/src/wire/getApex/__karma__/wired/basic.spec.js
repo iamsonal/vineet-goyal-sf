@@ -8,7 +8,7 @@ import WiredCustomProp from '../lwc/wiredCustomProp';
 
 const MOCK_PREFIX = 'wire/getApex/__karma__/data/';
 
-const BASE_URI = '/lwr/apex/v54.0';
+const BASE_URI = '/lwr/apex/v55.0';
 const BASE_PATH = '/ContactController/getContactList';
 
 function getMock(filename) {

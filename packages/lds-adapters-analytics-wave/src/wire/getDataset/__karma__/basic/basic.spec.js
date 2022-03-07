@@ -13,7 +13,7 @@ function getMock(filename) {
 }
 
 describe('basic', () => {
-    ['dataset', 'dataset_with_xmd'].forEach((filename) => {
+    ['dataset', 'dataset_with_xmd', 'dataset_staged'].forEach((filename) => {
         it(`gets ${filename} by id`, async () => {
             const mock = getMock(filename);
             mockGetDatasetNetworkOnce({ datasetIdOrApiName: mock.id }, mock);

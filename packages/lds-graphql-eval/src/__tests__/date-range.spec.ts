@@ -1,11 +1,12 @@
 import { recordFilter } from '../filter-parser';
 import { unwrappedValue } from '../Result';
 import infoJson from './mockData/objectInfos.json';
+// eslint-disable-next-line no-undef
 const infoMap = infoJson as ObjectInfoMap;
 
-import * as parser from '@salesforce/lds-graphql-parser';
+import { parseAndVisit } from '@luvio/graphql-parser';
 import { findRecordSelections } from '../ast-parser';
-import { LuvioArgumentNode, LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { LuvioArgumentNode, LuvioDocumentNode } from '@luvio/graphql-parser';
 import {
     BetweenPredicate,
     ComparisonOperator,
@@ -60,7 +61,7 @@ function testOperatorResult(
     expectedValue: any //DateInput | DateTimeInput | DateArray | DateTimeArray
 ) {
     const graphqlSource = makeGraphQL(source);
-    const where = findWhereArg(parser.default(graphqlSource));
+    const where = findWhereArg(parseAndVisit(graphqlSource));
     const filter = recordFilter(where, 'TimeSheet', 'TimeSheet', infoMap);
 
     expect(filter.isSuccess).toEqual(true);

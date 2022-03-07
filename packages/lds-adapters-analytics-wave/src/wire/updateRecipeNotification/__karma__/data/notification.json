@@ -1,0 +1,4 @@
+{
+    "longRunningAlertInMins": 60,
+    "notificationLevel": "always"
+}

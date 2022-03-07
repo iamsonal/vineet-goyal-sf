@@ -1,4 +1,4 @@
-import { Activity, Schema, SchematizedData } from 'o11y/client';
+import type { Activity, Schema, SchematizedData } from 'o11y/client';
 
 function stop(_userSchemaOrText?: Schema | string, _userData?: SchematizedData) {}
 function error(_error: Error, _userSchemaOrText?: Schema | string, _userData?: SchematizedData) {}

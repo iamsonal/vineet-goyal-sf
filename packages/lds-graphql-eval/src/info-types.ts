@@ -1,4 +1,21 @@
-export type DataType = 'Boolean' | 'String' | 'Double' | 'Date' | 'DateTime' | 'Int' | 'Reference';
+export type DataType =
+    | 'Boolean'
+    | 'String'
+    | 'Double'
+    | 'Date'
+    | 'DateTime'
+    | 'Int'
+    | 'WeakEtag'
+    | 'Reference'
+    | 'Picklist'
+    | 'Currency'
+    | 'MultiPicklist'
+    | 'Time'
+    | 'Phone'
+    | 'Url'
+    | 'TextArea'
+    | 'Email'
+    | 'Percent';
 
 export type FieldInfo = ScalarFieldInfo | ReferenceFieldInfo;
 
@@ -8,7 +25,23 @@ interface BaseFieldInfo {
 }
 
 export interface ScalarFieldInfo extends BaseFieldInfo {
-    dataType: 'Boolean' | 'String' | 'Double' | 'Date' | 'DateTime' | 'Int';
+    dataType:
+        | 'Boolean'
+        | 'String'
+        | 'Double'
+        | 'Date'
+        | 'DateTime'
+        | 'Int'
+        | 'WeakEtag'
+        | 'Picklist'
+        | 'Currency'
+        | 'MultiPicklist'
+        | 'Time'
+        | 'Phone'
+        | 'Url'
+        | 'TextArea'
+        | 'Email'
+        | 'Percent';
 }
 
 export interface ReferenceToInfo {

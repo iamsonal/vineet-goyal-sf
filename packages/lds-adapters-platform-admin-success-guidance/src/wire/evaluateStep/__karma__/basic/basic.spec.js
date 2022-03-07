@@ -16,8 +16,7 @@ describe('basic', () => {
     it('basic evaluate step', async () => {
         const mock = getMock('evaluate-step');
         const config = {
-            assistantTarget: 'test_assistant_target_id',
-            stepId: 'test_step_id',
+            stepName: mock.id,
         };
         mockEvaluateStepNetworkOnce(config, mock);
 
@@ -29,8 +28,7 @@ describe('basic', () => {
     });
     it('displays error when network request 404s', async () => {
         const config = {
-            assistantTarget: 'test_assistant_target_id',
-            stepId: 'test_step_id',
+            stepName: getMock('evaluate-step').id,
         };
         const mock = {
             ok: false,

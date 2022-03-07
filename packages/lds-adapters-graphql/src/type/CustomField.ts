@@ -1,12 +1,12 @@
-import { ResourceIngest } from '@luvio/engine';
-import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
+import type { ResourceIngest } from '@luvio/engine';
+import type { LuvioSelectionCustomFieldNode } from '@luvio/graphql-parser';
 import { createIngest as recordCreateIngest, CUSTOM_FIELD_NODE_TYPE } from '../custom/record';
 import {
     keyBuilder as connectionKeyBuilder,
     createIngest as connectionCreateIngest,
     CUSTOM_FIELD_NODE_TYPE as CUSTOM_FIELD_NODE_TYPE_CONNECTION,
 } from '../custom/connection';
-import { GraphQLVariables } from './Variable';
+import type { GraphQLVariables } from './Variable';
 
 export const createIngest: (
     ast: LuvioSelectionCustomFieldNode,

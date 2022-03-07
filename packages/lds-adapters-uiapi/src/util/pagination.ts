@@ -1,4 +1,4 @@
-import { CustomSelection, PathSelection, Reader } from '@luvio/engine';
+import type { CustomSelection, PathSelection, Reader } from '@luvio/engine';
 
 function paginatedDataCustomReader(
     key: string,
@@ -52,8 +52,6 @@ function paginatedDataCustomReader(
     if (previousPageToken !== undefined) {
         variables.previousPageToken = previousPageToken;
     }
-
-    // current/next/previousPageUrls cannot be generated until we have a template url
 }
 
 function variablesCustomReader(
@@ -70,8 +68,7 @@ function variablesCustomReader(
 /**
  * Constructs a PathSelection[] to have Reader correctly populate paginated data
  * and metadata in a Snapshot. The metadata is assumed to follow the standard
- * UI API naming conventions: count, currentPageToken, currentPageUrl,
- * nextPageToken, nextPageUrl, previousPageToken, and previousPageUrl.
+ * UI API naming conventions: count, currentPageToken, nextPageToken, previousPageToken.
  *
  * @param config.name name of the field containing the paginated data
  * @param config.pageSize number of items to be included

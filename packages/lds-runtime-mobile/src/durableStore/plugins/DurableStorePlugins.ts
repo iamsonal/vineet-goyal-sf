@@ -1,4 +1,4 @@
-import { DurableStore, DurableStoreEntry } from '@luvio/environments';
+import type { DurableStore, DurableStoreEntry } from '@luvio/environments';
 
 /**
  * Plugin interface to execute code during Durable Store setEntities.

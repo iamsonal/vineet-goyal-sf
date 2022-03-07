@@ -1,11 +1,11 @@
+import type { AdapterValidationConfig } from '../../../generated/adapters/adapter-utils';
 import {
-    AdapterValidationConfig,
     areRequiredParametersPresent,
     untrustedIsObject,
     validateConfig,
 } from '../../../generated/adapters/adapter-utils';
 import { splitQualifiedFieldApiName } from '../../../primitives/FieldId';
-import { GetRecordsConfig, GetRecordsEntityConfiguration } from './GetRecordsConfig';
+import type { GetRecordsConfig, GetRecordsEntityConfiguration } from './GetRecordsConfig';
 import { typeCheckConfig } from './typeCheckConfig';
 
 export function checkFieldsObjectApiName(fields: string[], apiName: string): boolean {

@@ -1,0 +1,179 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  HpiActionsOutputRepresentationElement:
+    description: Hpi Actionable item
+    type: object
+    properties:
+      apiName:
+        description: apiName
+        type: string
+      description:
+        description: description
+        type: string
+      iconUrl:
+        description: icon url
+        type: string
+  HpiActionsOutputRepresentationList:
+    description: Hpi Actionable list of items
+    type: object
+    properties:
+      hpiActionsOutputRepresentationElements:
+        description: list of actions
+        type: array
+        items:
+          type: HpiActionsOutputRepresentationElement
+  PatientScoreDetail:
+    description: Representation an Element in the Patient Score List
+    type: object
+    properties:
+      currentScoreDateCalculated:
+        description: Patient Score Detail's date of current score calculation
+        type: string
+      percentageChange:
+        description: Patient Score Detail's percentage change
+        type: string
+      previousScore:
+        description: Patient Score Detail's previous score
+        type: string
+      previousScoreDateCalculated:
+        description: Patient Score Detail's date of previous score calculation
+        type: string
+      score:
+        description: Patient Score Detail's latest score
+        type: string
+      subjectId:
+        description: Patient Score Detail's subjectId
+        type: string
+      subjectName:
+        description: Patient Score Detail's subject name
+        type: string
+      subjectType:
+        description: Patient Score Detail's subject type
+        type: string
+  PatientScoreListOutputRepresentation:
+    description: Output representation UHS Patient Score List
+    type: object
+    properties:
+      limitBy:
+        description: Current number of items that are sent
+        type: string
+      recordType:
+        description: record type of account, lead or contact
+        type: string
+      scoreDetails:
+        description: List of score detail of patients
+        type: array
+        items:
+          type: PatientScoreDetail
+      scoreId:
+        description: Score Id filter
+        type: string
+      searchTerm:
+        description: Search on the name
+        type: string
+      startIndex:
+        description: the start index
+        type: string
+      range:
+        description: the range filter
+        type: string
+  HPIApexInterfaceStatus:
+    description: Representation of the API Apex interface status
+    type: object
+    properties:
+      isPresent:
+        description: Set when the Apex interface implementation is present
+        type: boolean
+/connect:
+  /health:
+    /uhs:
+      /actions:
+        get:
+          description: API to get Actions Details
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: HpiActionsOutputRepresentationList
+          queryParameters:
+            actions:
+              type: array
+              required: false
+              items:
+                type: string
+                (oas-collectionFormat): csv
+            formFactor:
+              type: string
+              required: false
+            recordId:
+              type: string
+              required: false
+    /uhslist/{scoreId}:
+      get:
+        description: GET verb to fetch the Patient Score list this has offset and limit
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: PatientScoreListOutputRepresentation
+        queryParameters:
+          range:
+            type: string
+            required: false
+          limitBy:
+            type: string
+            required: false
+          recordType:
+            type: string
+            required: false
+          searchTerm:
+            type: string
+            required: false
+          startIndex:
+            type: string
+            required: false
+      uriParameters:
+        scoreId:
+          description: Score Id
+          type: string
+          required: true
+    /uhsscore/apexinterface:
+      get:
+        description: API to check if the implementation of Apex interface exists in the org
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: HPIApexInterfaceStatus
+        queryParameters:
+          apexInterfaceName:
+            type: string
+            required: false

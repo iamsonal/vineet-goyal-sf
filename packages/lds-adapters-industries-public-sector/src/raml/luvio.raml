@@ -1,0 +1,71 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'public-sector'
+(luvio.ttl): 360000
+
+types:
+  GoalDefinitionListRepresentation:
+    (luvio.ttl): 1000
+    (luvio.opaque): true
+
+  BenefitListRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 1000
+
+  GenericOutputRepresentation:
+    (luvio.opaque): true
+    (luvio.key):
+      id: id
+  CaseServicePlanRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 1000
+    (luvio.key):
+      id: id
+
+/connect/socialcare:
+  /benefits:
+    get:
+      (luvio.adapter):
+        name: searchActiveBenefitsByName
+        tests:
+          validConfigs:
+            - |
+              {
+                "searchKey": "benefit"
+              }
+      queryParameters:
+        searchKey:
+  /case-service-plans/{caseServicePlanId}:
+    get:
+      (luvio.adapter):
+        name: getCaseServicePlan
+      (luvio.key):
+        id: urlParams.caseServicePlanId
+  /goal-definitions:
+    get:
+      (luvio.adapter):
+        name: searchGoalDefinitionByName
+        tests:
+          validConfigs:
+            - |
+              {
+                "searchKey": "Goal1"
+              }
+      queryParameters:
+        searchKey:
+  /serviceplan-templates/{servicePlanTemplateId}:
+    get:
+      (luvio.adapter):
+        name: getSPTWithChildRecords
+  /serviceplan-templates/{servicePlanTemplateId}/actions/{actionType}:
+    post:
+      (luvio.adapter):
+        name: postServicePlanTemplateDetails
+  /case-service-plans:
+    post:
+      (luvio.adapter):
+        name: postCaseServicePlanDetails

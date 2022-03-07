@@ -2,6 +2,7 @@ const path = require('path');
 
 const { createImportsMap } = require('./create-import-context');
 const { parse } = require('./parse-fields');
+const { getSuffix } = require('./utils');
 
 // Adapter Generation
 const { generateFieldsAdapterFragment } = require('./adapter/generate-fields-fragment');
@@ -106,11 +107,6 @@ function generateAdapter(adapter, resource, def, outputDir, createGenerationCont
     ];
 
     adapterContext.write(code.join('\n\n'));
-}
-
-function getSuffix(id) {
-    const split = id.split('#');
-    return split[1].replace('/luvio', '');
 }
 
 function linkFieldImports(fieldsAst, addImportOverride) {

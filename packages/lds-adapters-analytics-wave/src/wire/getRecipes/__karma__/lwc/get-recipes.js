@@ -10,6 +10,11 @@ export default class GetRecipes extends LightningElement {
     @api pageSize;
     @api q;
     @api sort;
+    @api lastModifiedAfter;
+    @api lastModifiedBefore;
+    @api nextScheduledAfter;
+    @api nextScheduledBefore;
+    @api status;
 
     @wire(getRecipes, {
         format: '$format',
@@ -18,6 +23,11 @@ export default class GetRecipes extends LightningElement {
         pageSize: '$pageSize',
         q: '$q',
         sort: '$sort',
+        lastModifiedAfter: '$lastModifiedAfter',
+        lastModifiedBefore: '$lastModifiedBefore',
+        nextScheduledAfter: '$nextScheduledAfter',
+        nextScheduledBefore: '$nextScheduledBefore',
+        status: '$status',
     })
     onGetRecipes({ data, error }) {
         this.data = data;

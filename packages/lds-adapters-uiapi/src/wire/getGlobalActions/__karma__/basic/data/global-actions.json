@@ -4,7 +4,7 @@
             "actions": [
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/NewEvent/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/NewEvent/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewEvent",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKb",
@@ -24,7 +24,7 @@
                 },
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/NewTask/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/NewTask/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewTask",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKZ",
@@ -44,7 +44,7 @@
                 },
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/NewContact/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/NewContact/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewContact",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKQ",
@@ -64,7 +64,7 @@
                 },
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/LogACall/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/LogACall/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.LogACall",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKa",
@@ -84,7 +84,7 @@
                 },
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/NewOpportunity/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/NewOpportunity/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewOpportunity",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKS",
@@ -104,7 +104,7 @@
                 },
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/NewCase/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/NewCase/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewCase",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKT",
@@ -124,7 +124,7 @@
                 },
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/NewLead/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/NewLead/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewLead",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKR",
@@ -144,7 +144,7 @@
                 },
                 {
                     "actionListContext": "Dockable",
-                    "actionTarget": "/services/data/v54.0/quickActions/SendEmail/describe",
+                    "actionTarget": "/services/data/v55.0/quickActions/SendEmail/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.SendEmail",
                     "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKc",
@@ -164,9 +164,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v54.0/ui-api/actions/global"
+            "url": "/services/data/v55.0/ui-api/actions/global"
         }
     },
     "eTag": "4c6e7e98e665e47f2fc11b16b6b5a43e",
-    "url": "/services/data/v54.0/ui-api/actions/global"
+    "url": "/services/data/v55.0/ui-api/actions/global"
 }

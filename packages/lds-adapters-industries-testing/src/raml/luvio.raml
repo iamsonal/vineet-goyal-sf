@@ -1,0 +1,14 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'loyalty-engine'
+(luvio.ttl): 360000
+
+/connect:
+  /realtime/loyalty/programs/{programName}:
+    post:
+      (luvio.adapter):
+        name: executeRealtimeLoyaltyEngine

@@ -1,0 +1,1280 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '55.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v55.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  ActionOutputRepresentation:
+    description: Action Output
+    type: object
+    properties:
+      actionType:
+        description: Action Type.
+        type: string
+        enum:
+          - AssignParameterValues
+          - CreditPoints
+          - DebitPoints
+          - GetMemberAttributeValues
+          - GetMemberPointBalance
+          - GetMemberTier
+          - GetOutputsFromDecisionTable
+          - IncreaseUsageForCumulativePromotion
+          - IssueVoucher
+          - RunFlow
+          - UpdateUsageForCumulativePromotion
+      promotionId:
+        description: Promotion Id.
+        type: string | nil
+      stepName:
+        description: Step Name.
+        type: string
+  CreditPointsActionOutputRepresentation:
+    description: Credit Points Action Output
+    type: ActionOutputRepresentation
+    properties:
+      changeInEscrowPointsBalance:
+        description: The change in the escrow points balance of the loyalty program
+          member associated with the transaction journal.
+        format: double
+        type: number | nil
+      changeInPointsBalance:
+        description: The change in the points balance of the loyalty program member
+          associated with the transaction journal.
+        format: double
+        type: number | nil
+      escrowPointsCreditDate:
+        description: Escrow Points Credit Date.
+        type: string | nil
+      loyaltyProgramCurrencyName:
+        description: The name of the loyalty program currency for which points have
+          been debited from or credited to the loyalty program member associated with
+          the transaction journal.
+        type: string
+  DebitPointsActionOutputRepresentation:
+    description: Debit Points Action Output
+    type: ActionOutputRepresentation
+    properties:
+      changeInPointsBalance:
+        description: The change in the points balance of the loyalty program member
+          associated with the transaction journal.
+        format: double
+        type: number | nil
+      loyaltyProgramCurrencyName:
+        description: The name of the loyalty program currency for which points have
+          been debited from or credited to the loyalty program member associated with
+          the transaction journal.
+        type: string
+  ExpressionRepresentation:
+    description: Wrapper for Expression.
+    type: object
+    properties:
+      dataType:
+        description: Data Type of Expression Value.
+        type: string
+        enum:
+          - Boolean
+          - Date
+          - DateTime
+          - Numeric
+          - Sobject
+          - Text
+      expression:
+        description: Expression.
+        type: string
+      expressionValue:
+        description: expression Value
+        type: object
+      parameterValues:
+        description: List of parameter values provided for an expression.
+        type: object
+        properties:
+          //:
+            type: object
+      resolvedExpression:
+        description: The resolved fields and values of an expression.
+        type: string
+  FormulaInputRepresentation:
+    description: Formula Input Representation
+    type: object
+    properties:
+      dataType:
+        description: required dataType of the expression
+        type: string
+      expression:
+        description: expression to validate
+        type: string
+  FormulaOutputRepresentation:
+    description: Formula Validation POST Response representation
+    type: object
+    properties:
+      errorMessage:
+        description: Represents the Error Message. Message stating the reason for
+          error, if any.
+        type: string | nil
+      isValid:
+        description: Returns TRUE or FALSE. Indicates whether the formula is valid
+          (true) or invalid (false).
+        type: boolean
+  FormulaSyntaxValidationInputRepresentation:
+    description: Formula Syntax Validation Input Representation
+    type: object
+    properties:
+      formulas:
+        description: List of expressions to validate
+        type: array
+        items:
+          type: object
+  FormulaSyntaxValidationOutputRepresentation:
+    description: Formula Syntax Validation POST Response representation
+    type: object
+    properties:
+      validationResponse:
+        description: Represents the validation response for the list of formulas.
+        type: array
+        items:
+          type: FormulaOutputRepresentation
+  IssueVoucherActionOutputRepresentation:
+    description: IssueVoucher Action Output
+    type: ActionOutputRepresentation
+    properties:
+      discountPercent:
+        description: Discount Percent
+        type: integer | nil
+      effectiveDate:
+        description: Effective Date.
+        type: string | nil
+      expiryDate:
+        description: Expiry Date.
+        type: string | nil
+      faceValue:
+        description: Face Value.
+        format: double
+        type: number | nil
+      productId:
+        description: Product Id.
+        type: string | nil
+      voucherCode:
+        description: Voucher Code.
+        type: string
+      voucherId:
+        description: Voucher Id.
+        type: string
+  LoyaltyEngineBatchOutputRepresentation:
+    description: Wrapper for the Payload map
+    type: object
+    properties:
+      message:
+        description: Represents the Error Message. Message stating the reason for
+          error, if any.
+        type: string
+      status:
+        description: Returns TRUE or FALSE. Indicates whether the request succeeded
+          (true) or failed (false).
+        type: boolean
+      transactionJournalIds:
+        description: The IDs of the transaction journals that were created.
+        type: array
+        items:
+          type: string
+  LoyaltyEngineInputMapRepresentation:
+    description: Details of new Transaction Journal records that must be created.
+    type: object
+    properties:
+      processInput:
+        description: Details of new Transaction Journal records that must be created.
+        type: object
+        properties:
+          //:
+            type: object
+  LoyaltyEngineInputRepresentation:
+    description: Loyalty Engine Input Representation
+    type: object
+    properties:
+      runSetting:
+        description: Setting to simulate or explain the way in which the transaction journals are processed by the loyalty program processes.
+        type: object
+      transactionJournals:
+        description: Details of new Transaction Journal records that must be created.
+        type: array
+        items:
+          # TODO: Hand Rolled
+          type: LoyaltyEngineInputMapRepresentation
+  LoyaltyEngineRealtimeOutputRepresentation:
+    description: Wrapper for the Payload map
+    type: object
+    properties:
+      message:
+        description: Represents the Error Message. Message stating the reason for
+          error, if any.
+        type: string | nil
+      processResult:
+        description: List of the records created and updated.
+        type: ProcessResultRepresentation | nil
+      simulationResults:
+        description: The results of the simulation.
+        type: TransactionJournalOutputRepresentation | nil
+      status:
+        description: Returns TRUE or FALSE. Indicates whether the request succeeded
+          (true) or failed (false).
+        type: boolean
+  LoyaltyEngineRunSettingsRepresentation:
+    description: LoyaltyEngine Run Settings Representation
+    type: object
+    properties:
+      isSimulation:
+        description: The mode of executing the transaction journals.
+        type: boolean
+  # TODO: Hand Rolled 'LoyaltyProcessInput' W-9311618
+  LoyaltyProcessInput:
+    description: A wrapper around the LoyaltyEngineInputRepresentation
+    type: object
+    properties:
+      loyaltyProcessInput:
+        description: The Oas Body Name for request body representation
+        type: LoyaltyEngineInputRepresentation
+  LoyaltyProgramProcessRuleActionParameterRepresentation:
+    description: Loyalty Program Process Rule Action Parameter Representation
+    type: object
+    properties:
+      name:
+        description: rule action parameter name
+        type: string
+      operator:
+        description: rule action operator
+        type: string | nil
+        enum:
+          - Equals
+      sequenceNumber:
+        description: rule action sequence number
+        type: integer | nil
+      value:
+        description: rule action parameter value
+        type: ExpressionRepresentation | nil
+  LoyaltyProgramProcessRuleActionRepresentation:
+    description: Loyalty Program Process Rule Action Representation
+    type: LoyaltyProgramProcessRuleStepRepresentation
+    properties:
+      actionParameters:
+        description: rule action parameters
+        type: array
+        items:
+          type: LoyaltyProgramProcessRuleActionParameterRepresentation
+      actionType:
+        description: rule action type
+        type: string
+        enum:
+          - AssignParameterValues
+          - CreditPoints
+          - DebitPoints
+          - GetMemberAttributeValues
+          - GetMemberPointBalance
+          - GetMemberTier
+          - GetOutputsFromDecisionTable
+          - IncreaseUsageForCumulativePromotion
+          - IssueVoucher
+          - RunFlow
+          - UpdateUsageForCumulativePromotion
+      decisionTableName:
+        description: rule action's associated decision table
+        type: string | nil
+      flowDefinitionName:
+        description: rule action's associated flow definition
+        type: string | nil
+  LoyaltyProgramProcessRuleConditionFilterCriteriaRepresentation:
+    description: Loyalty Program Process Rule Condition Filter Criteria Representation
+    type: object
+    properties:
+      filterCriteriaResult:
+        description: Result
+        type: boolean
+      operator:
+        description: rule condition filter criteria operator
+        type: string
+        enum:
+          - Contains
+          - DoesNotContain
+          - Equals
+          - GreaterThan
+          - GreaterThanOrEquals
+          - IsNotNull
+          - IsNull
+          - LessThan
+          - LessThanOrEquals
+          - NotEquals
+      sequence:
+        description: rule condition filter criteria sequence
+        type: integer
+      sourceFieldName:
+        description: rule condition filter criteria source field name
+        type: ExpressionRepresentation
+      value:
+        description: rule condition filter criteria value
+        type: ExpressionRepresentation | nil
+      valueType:
+        description: rule condition filter criteria value type
+        type: string
+        enum:
+          - FixedValue
+          - Formula
+          - Lookup
+          - Parameter
+  LoyaltyProgramProcessRuleConditionGroupRepresentation:
+    description: Loyalty Program Process Rule Condition Group Representation
+    type: LoyaltyProgramProcessRuleStepRepresentation
+    properties:
+      childSteps:
+        description: The child steps of a condition or a condition group.
+        type: array
+        items:
+          type: LoyaltyProgramProcessRuleStepRepresentation
+  LoyaltyProgramProcessRuleConditionRepresentation:
+    description: Loyalty Program Process Rule Condition Representation
+    type: LoyaltyProgramProcessRuleStepRepresentation
+    properties:
+      childSteps:
+        description: The child steps of a condition or a condition group.
+        type: array | nil
+        items:
+          type: LoyaltyProgramProcessRuleStepRepresentation
+      filterCondition:
+        description: rule condition's filter condition
+        type: string | nil
+      filterCriteria:
+        description: The filter criteria of a condition.
+        type: array
+        items:
+          type: LoyaltyProgramProcessRuleConditionFilterCriteriaRepresentation
+      isConditionMet:
+        description: Indicates whether the transaction journal meets this condition.
+        type: boolean
+  LoyaltyProgramProcessRuleRepresentation:
+    description: Wrapper for LoyaltyProgramProcessRule.
+    type: object
+    properties:
+      actionResultSummary:
+        description: The result provided by each action that has processed the transaction
+          journal.
+        type: array
+        items:
+          type: ActionOutputRepresentation
+      errorMessage:
+        description: Error Message
+        type: string | nil
+      executionStatus:
+        description: Execution Status
+        type: string
+        enum:
+          - CriteriaNotMet
+          - Failed
+          - Success
+      executionSummary:
+        description: LoyaltyProgramProcessRule Summary
+        type: LoyaltyProgramProcessRuleSummaryRepresentation
+      previousRuleName:
+        description: The name of the loyalty program process rule that has processed
+          the transaction journal before the current loyalty program process rule.
+        type: string | nil
+      processRuleName:
+        description: The name of loyalty program process rule that has processed the
+          transaction journal.
+        type: string
+      promotionName:
+        description: The Promotion rule Name.
+        type: string | nil
+      ruleSteps:
+        description: Rule Steps
+        type: array | nil
+        items:
+          type: LoyaltyProgramProcessRuleStepRepresentation
+  LoyaltyProgramProcessRuleStepRepresentation:
+    description: LoyaltyProgramProcessRule Step
+    type: object
+    properties:
+      errorMessage:
+        description: Error Message
+        type: string | nil
+      sequenceNumber:
+        description: Sequence
+        type: integer
+      status:
+        description: Execution Status
+        type: string
+        enum:
+          - CriteriaNotMet
+          - Failed
+          - Success
+      stepName:
+        description: rule condition name
+        type: string
+      stepType:
+        description: StepType
+        type: string
+        enum:
+          - Action
+          - Condition
+          - ConditionGroup
+          - DefaultPath
+  LoyaltyProgramProcessRuleSummaryRepresentation:
+    description: LoyaltyProgramProcessRule Summary
+    type: SummaryRepresentation
+    properties: {}
+  MemberCurrencyChangeOutputRepresentation:
+    description: Wrapper for changes in member currencies.
+    type: object
+    properties:
+      changeInPointsBasedOnPromotion:
+        description: Details of the points that have been credited to or debited from
+          the member's points balance and escrow points balance for a member currency
+          based on a promotion that's awarded to the member.
+        type: array
+        items:
+          type: MemberCurrencyChangeRepresentation
+      changeInPointsBasedOnTransaction:
+        description: Details of the points that have been credited to or debited from
+          the member's points balance and escrow points balance for a member currency
+          based on the Transaction Journal record.
+        type: array
+        items:
+          type: MemberCurrencyChangeRepresentation
+  MemberCurrencyChangeRepresentation:
+    description: Wrapper for the member currency change.
+    type: object
+    properties:
+      changeInEscrowPointsBalance:
+        description: Change in escrow points balance.
+        format: double
+        type: number
+      changeInPointsBalance:
+        description: Change in Points balance.
+        format: double
+        type: number
+      currencyName:
+        description: The name of the member currency.
+        type: string
+      currencyType:
+        description: The type of member currency.
+        type: string
+        enum:
+          - NonQualifying
+          - Qualifying
+      promotionId:
+        description: ID of the promotion for which the member has been credited points.
+        type: string
+  MemberCurrencyRepresentation:
+    description: Wrapper for the member currency.
+    type: object
+    properties:
+      currencyName:
+        description: The name of the member currency.
+        type: string
+      currencyType:
+        description: The type of member currency.
+        type: string
+        enum:
+          - NonQualifying
+          - Qualifying
+      escrowPointsBalance:
+        description: Number of points the member has in escrow for a currency.
+        format: double
+        type: number | nil
+      pointsBalance:
+        description: The member's points balance for a currency.
+        format: double
+        type: number | nil
+  MemberPointsBalanceChangeRepresentation:
+    description: Wrapper for member currencies change.
+    type: object
+    properties:
+      changeInMemberCurrencies:
+        description: List of points balance changes for the member's currencies based
+          on the transaction journal and promotions.
+        type: array
+        items:
+          type: MemberCurrencyChangeRepresentation
+      memberShipNumber:
+        description: The membership number of the loyalty program member who is associated
+          with the transaction journal that's created.
+        type: string
+  MemberPointsBalanceRepresentation:
+    description: Wrapper for member currencies.
+    type: object
+    properties:
+      memberCurrencies:
+        description: List of currencies associated with the loyalty program member.
+        type: array
+        items:
+          type: MemberCurrencyRepresentation
+      memberShipNumber:
+        description: The membership number of the loyalty program member who is associated
+          with the transaction journal that's created.
+        type: string
+  PointsSummaryRepresentation:
+    description: Points Summary
+    type: object
+    properties:
+      changeInEscrowPointsBalance:
+        description: The change in the escrow points balance of the loyalty program
+          member associated with the transaction journal.
+        format: double
+        type: number
+      changeInPointsBalance:
+        description: Point Balance.
+        format: double
+        type: number
+      loyaltyProgramCurrencyName:
+        description: The name of the loyalty program currency for which points have
+          been debited from or credited to the loyalty program member associated with
+          the transaction journal.
+        type: string
+      loyaltyProgramCurrencyType:
+        description: The type of member currency.
+        type: string
+        enum:
+          - NonQualifying
+          - Qualifying
+  ProcessResultRepresentation:
+    description: Wrapper for the Realtime execution Process Result
+    type: object
+    properties:
+      memberPointsBalance:
+        description: List of member currencies for which points balance have changed
+          based on the Transaction Journal records that are created.
+        type: array
+        items:
+          type: MemberPointsBalanceRepresentation
+      transactionJournalResult:
+        description: Details of the Transaction Journal records that have been created.
+        type: array
+        items:
+          type: TransactionJournalResultRepresentation
+  ProcessRuleActionInputRepresentation:
+    description: Loyalty Engine Rule Action Input Representation
+    type: object
+    properties:
+      actionParameters:
+        description: rule action parameters
+        type: array
+        items:
+          type: object
+      actionType:
+        description: rule action type
+        type: string
+        enum:
+          - AssignParameterValues
+          - CreditPoints
+          - DebitPoints
+          - GetMemberAttributeValues
+          - GetMemberPointBalance
+          - GetMemberTier
+          - GetOutputsFromDecisionTable
+          - IncreaseUsageForCumulativePromotion
+          - IssueVoucher
+          - RunFlow
+          - UpdateUsageForCumulativePromotion
+      decisionTable:
+        description: rule action's associated decision table
+        type: string
+      decisionTableDatasetLink:
+        description: rule action's associated decision table dataset link
+        type: string
+      flowDefinition:
+        description: rule action's associated flow definition
+        type: string
+      name:
+        description: rule condition name
+        type: string
+  ProcessRuleActionParameterInputRepresentation:
+    description: Loyalty Engine Rule Action Parameter Input Representation
+    type: object
+    properties:
+      name:
+        description: action parameter name
+        type: string
+      operator:
+        description: action parameter value
+        type: string
+        enum:
+          - Equals
+      sequenceNumber:
+        description: action parameter value
+        type: integer
+      value:
+        description: action parameter value
+        type: string
+  ProcessRuleActionParameterRepresentation:
+    description: Loyalty Engine Rule Action Parameter Representation
+    type: object
+    properties:
+      name:
+        description: rule action parameter name
+        type: string
+      operator:
+        description: rule action operator
+        type: string | nil
+        enum:
+          - Equals
+      sequenceNumber:
+        description: rule action sequence number
+        type: integer | nil
+      value:
+        description: rule action parameter value
+        type: string | nil
+  ProcessRuleActionRepresentation:
+    description: Loyalty Engine Rule Action Representation
+    type: object
+    properties:
+      actionParameters:
+        description: rule action parameters
+        type: array
+        items:
+          type: ProcessRuleActionParameterRepresentation
+      actionType:
+        description: rule action type
+        type: string
+        enum:
+          - AssignParameterValues
+          - CreditPoints
+          - DebitPoints
+          - GetMemberAttributeValues
+          - GetMemberPointBalance
+          - GetMemberTier
+          - GetOutputsFromDecisionTable
+          - IncreaseUsageForCumulativePromotion
+          - IssueVoucher
+          - RunFlow
+          - UpdateUsageForCumulativePromotion
+      decisionTable:
+        description: rule action's associated decision table
+        type: string | nil
+      decisionTableDatasetLink:
+        description: rule action's associated decision table dataset link
+        type: string | nil
+      flowDefinition:
+        description: rule action's associated flow definition
+        type: string | nil
+      name:
+        description: rule action name
+        type: string
+  ProcessRuleConditionFilterCriteriaInputRepresentation:
+    description: Loyalty Engine Rule Condition Filter Criteria Input Representation
+    type: object
+    properties:
+      operator:
+        description: rule condition filter criteria operator
+        type: string
+        enum:
+          - Contains
+          - DoesNotContain
+          - Equals
+          - GreaterThan
+          - GreaterThanOrEquals
+          - IsNotNull
+          - IsNull
+          - LessThan
+          - LessThanOrEquals
+          - NotEquals
+      sequence:
+        description: rule condition filter criteria sequence
+        type: integer
+      sourceFieldName:
+        description: rule condition filter criteria source field name
+        type: string
+      value:
+        description: rule condition filter criteria value
+        type: string
+      valueType:
+        description: rule condition filter criteria value type
+        type: string
+        enum:
+          - FixedValue
+          - Formula
+          - Lookup
+          - Parameter
+  ProcessRuleConditionFilterCriteriaRepresentation:
+    description: Loyalty Engine Rule Condition Filter Criteria Representation
+    type: object
+    properties:
+      operator:
+        description: rule condition filter criteria operator
+        type: string
+        enum:
+          - Contains
+          - DoesNotContain
+          - Equals
+          - GreaterThan
+          - GreaterThanOrEquals
+          - IsNotNull
+          - IsNull
+          - LessThan
+          - LessThanOrEquals
+          - NotEquals
+      sequence:
+        description: rule condition filter criteria sequence
+        type: integer
+      sourceFieldName:
+        description: rule condition filter criteria source field name
+        type: string
+      value:
+        description: rule condition filter criteria value
+        type: string | nil
+      valueType:
+        description: rule condition filter criteria value type
+        type: string
+        enum:
+          - FixedValue
+          - Formula
+          - Lookup
+          - Parameter
+  ProcessRuleConditionInputRepresentation:
+    description: Loyalty Engine Rule Condition Input Representation
+    type: object
+    properties:
+      conditionType:
+        description: condition type
+        type: string
+        enum:
+          - Condition
+          - ConditionGroup
+          - DefaultPath
+      criteria:
+        description: rule condition filter criteria
+        type: array
+        items:
+          #TODO : Hand Rolled
+          type: ProcessRuleConditionFilterCriteriaInputRepresentation
+      filterCondition:
+        description: rule condition filter condition
+        type: string
+      filterExpression:
+        description: rule condition filter expression
+        type: string
+      name:
+        description: rule condition name
+        type: string
+  ProcessRuleConditionRepresentation:
+    description: Loyalty Engine Rule Condition Representation
+    type: object
+    properties:
+      conditionType:
+        description: rule condition type
+        type: string
+        enum:
+          - Condition
+          - ConditionGroup
+          - DefaultPath
+      criteria:
+        description: rule condition filter criteria
+        type: array
+        items:
+          type: ProcessRuleConditionFilterCriteriaRepresentation
+      filterCondition:
+        description: rule condition's filter condition
+        type: string | nil
+      filterExpression:
+        description: rule condition's filter expression
+        type: string | nil
+      name:
+        description: rule condition name
+        type: string
+  ProcessRuleDetailRepresentation:
+    description: Loyalty Engine Rule GET Response Representation
+    type: object
+    properties:
+      actions:
+        description: rule actions
+        type: array | nil
+        items:
+          type: ProcessRuleActionRepresentation
+      conditions:
+        description: rule conditions
+        type: array | nil
+        items:
+          type: ProcessRuleConditionRepresentation
+      description:
+        description: Description
+        type: string | nil
+      endDate:
+        description: EndDate
+        type: string | nil
+      name:
+        description: Rule Name
+        type: string
+      nextRuleId:
+        description: Next Rule Id
+        type: string | nil
+      nextRuleName:
+        description: Next Rule Name
+        type: string | nil
+      previousRuleId:
+        description: Previous Rule Id
+        type: string | nil
+      previousRuleName:
+        description: Previous Rule Name
+        type: string | nil
+      processId:
+        description: Process Id
+        type: string | nil
+      processName:
+        description: Process Name
+        type: string | nil
+      promotionId:
+        description: Promotion Id
+        type: string | nil
+      promotionName:
+        description: Promotion Name
+        type: string | nil
+      startDate:
+        description: Start Date
+        type: string
+      status:
+        description: Status
+        type: string
+        enum:
+          - Active
+          - Draft
+          - Inactive
+      stepMappings:
+        description: rule step mappings
+        type: array
+        items:
+          type: ProcessRuleStepMappingRepresentation
+  ProcessRuleErrorRepresentation:
+    description: Loyalty Engine Rule POST Response Representation
+    type: object
+    properties:
+      criteriaSequence:
+        description: criteria sequence
+        type: integer
+      error:
+        description: error message
+        type: string
+      fieldName:
+        description: field name
+        type: string
+      resource:
+        description: rule resource type
+        type: string
+        enum:
+          - ProcessRule
+          - ProcessRuleAction
+          - ProcessRuleActionParameter
+          - ProcessRuleCondition
+          - ProcessRuleConditionFilterCriteria
+          - ProcessRuleStep
+          - ProcessRuleStepMapping
+      stepName:
+        description: associated step name
+        type: string | nil
+  ProcessRuleInputRepresentation:
+    description: Loyalty Engine Rule Input Representation
+    type: object
+    properties:
+      actions:
+        description: rule actions
+        type: array
+        items:
+          # TODO: Hand Rolled
+          type: ProcessRuleActionInputRepresentation
+      conditions:
+        description: rule conditions
+        type: array
+        items:
+          # TODO: Hand Rolled
+          type: ProcessRuleConditionInputRepresentation
+      description:
+        description: Description
+        type: string
+      endDate:
+        description: EndDate
+        type: string
+      name:
+        description: Rule Name
+        type: string
+      previousRuleId:
+        description: Previous Rule Id
+        type: string
+      promotionId:
+        description: Promotion Id
+        type: string
+      startDate:
+        description: Start Date
+        type: string
+      status:
+        description: Status
+        type: string
+        enum:
+          - Active
+          - Draft
+          - Inactive
+      stepMappings:
+        description: rule step mappings
+        type: array
+        items:
+          # TODO: Hand Rolled
+          type: ProcessRuleStepMappingInputRepresentation
+  ProcessRuleStatusRepresentation:
+    description: Loyalty Engine Rule POST Response Representation
+    type: object
+    properties:
+      errors:
+        description: validation errors if found
+        type: array | nil
+        items:
+          type: ProcessRuleErrorRepresentation
+      message:
+        description: general success/error message
+        type: string | nil
+      ruleId:
+        description: program process rule id
+        type: string | nil
+      status:
+        description: request response status
+        type: string | nil
+        enum:
+          - Failed
+          - Success
+  ProcessRuleStepMappingInputRepresentation:
+    description: Loyalty Engine Rule Step Mapping Input Representation
+    type: object
+    properties:
+      associatedStep:
+        description: associate step name
+        type: string
+      parentStep:
+        description: parent step name
+        type: string
+      sequence:
+        description: step sequence number
+        type: integer
+  ProcessRuleStepMappingRepresentation:
+    description: Loyalty Engine Rule Step Mapping Representation
+    type: object
+    properties:
+      associatedStep:
+        description: associated step name
+        type: string
+      parentStep:
+        description: parent step name
+        type: string | nil
+      sequence:
+        description: step sequence number
+        type: integer
+  # TODO Hand Rolled 'ProgramProcessRule' W-9311618
+  ProgramProcessRule:
+    description: A wrapper around the ProcessRuleInputRepresentation
+    type: object
+    properties:
+      programProcessRule:
+        description: The Oas Body Name for request body representation
+        type: ProcessRuleInputRepresentation
+  SummaryRepresentation:
+    description: Process or Rule Summary
+    type: object
+    properties:
+      pointsSummary:
+        description: Point Summary.
+        type: array | nil
+        items:
+          type: PointsSummaryRepresentation
+      vouchersIssuedCount:
+        description: The number of vouchers that have been issued to the loyalty program
+          member associated with the transaction journal..
+        type: integer | nil
+  TransactionJournalOutputRepresentation:
+    description: Wrapper for the Transaction Journal Simulation Result
+    type: object
+    properties:
+      transactionJournal:
+        description: Details of the Transaction Journal records that have been created.
+        type: array
+        items:
+          type: TransactionJournalRepresentation
+  TransactionJournalRepresentation:
+    description: Wrapper for the Transaction Journal
+    type: object
+    properties:
+      executionSummary:
+        description: The summary of how loyalty program process rules have processed
+          transaction journal.
+        type: TransactionJournalSummaryRepresentation
+      processId:
+        description: The ID of the loyalty program process that has processed the
+          transaction journal.
+        type: string
+      processName:
+        description: The name of the loyalty program process that has processed the
+          transaction journal.
+        type: string
+      processRules:
+        description: List of loyalty program process rules that have processed the
+          transaction journal.
+        type: array
+        items:
+          type: LoyaltyProgramProcessRuleRepresentation
+  TransactionJournalResultRepresentation:
+    description: Wrapper for the Transaction Journal Result
+    type: object
+    properties:
+      changeInMemberPoints:
+        description: Details of points that have been credited to or debited from
+          member's points balance and escrow points balance for all the currencies
+          associated with the member.
+        type: array
+        items:
+          type: MemberPointsBalanceChangeRepresentation
+      id:
+        description: Details of the Transaction Journal records that have been created.
+        type: string
+      voucherResult:
+        description: List of the vouchers that have been issued or redeemed.
+        type: VoucherResultRepresentation
+  TransactionJournalSummaryRepresentation:
+    description: TransactionJournal Summary
+    type: SummaryRepresentation
+    properties: {}
+  UpdateCumulativeUsageActionOutputRepresentation:
+    description: Update Cumulative Usage Action Output
+    type: ActionOutputRepresentation
+    properties:
+      promotion:
+        description: The name of promotion for which the member's cumulative usage
+          is updated or reset.
+        type: string
+      updatedCumulativePromotionUsage:
+        description: The updated value of the loyalty program member's usage towards
+          the cumulative promotion.
+        type: integer
+  VoucherOutputRepresentation:
+    description: Wrapper for the Vouchers
+    type: object
+    properties:
+      discountPercent:
+        description: Discount Percent.
+        type: integer | nil
+      effectiveDate:
+        description: Effective Date.
+        type: string | nil
+      expirationDate:
+        description: Expiration Date.
+        type: string | nil
+      faceValue:
+        description: Face Value.
+        format: double
+        type: number | nil
+      productId:
+        description: Id of the product in the Voucher issued.
+        type: string | nil
+      promotionId:
+        description: ID of the promotion for which the member has been issued Vouchers.
+        type: string
+      voucherCode:
+        description: Voucher Code.
+        type: string
+      voucherId:
+        description: ID of the Voucher issued.
+        type: string
+  VoucherResultRepresentation:
+    description: Wrapper for the Vouchers Result
+    type: object
+    properties:
+      vouchersIssued:
+        description: List of the vouchers that are issued to the associated loyalty
+          program member. This output is provided when the process contains an Issue
+          Voucher action.
+        type: array | nil
+        items:
+          type: VoucherOutputRepresentation
+/connect:
+  /batch/loyalty/programs/{programName}:
+    post:
+      description: Http post method that executes the process for the given program
+        and the process
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LoyaltyEngineBatchOutputRepresentation
+      body:
+        application/json:
+          type: LoyaltyEngineInputRepresentation
+          required: false
+          (oas-body-name): loyaltyProcessInput
+    uriParameters:
+      programName:
+        type: string
+        required: true
+  /formula/loyalty/process/{processId}:
+    post:
+      description: http post method for Formula Syntax validation for given processId
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FormulaSyntaxValidationOutputRepresentation
+      body:
+        application/json:
+          type: FormulaSyntaxValidationInputRepresentation
+          required: false
+          (oas-body-name): formulas
+    uriParameters:
+      processId:
+        type: string
+        required: true
+  /loyalty/programs/{programName}/processes/{processName}:
+    delete:
+      description: http post method that upsert Loyalty Engine Rule for given process
+        and program
+      responses:
+        '200':
+          description: Success
+    get:
+      description: http get method for Loyalty Engine Rule for given process and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleDetailRepresentation
+    patch:
+      description: http post method that upsert Loyalty Engine Rule for given process
+        and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleStatusRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: ProgramProcessRule
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): programProcessRule
+    put:
+      description: http post method that upsert Loyalty Engine Rule for given process
+        and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleStatusRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type:
+            ProgramProcessRule
+            # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+            #required: false
+          (oas-body-name): programProcessRule
+    uriParameters:
+      processName:
+        type: string
+        required: true
+      programName:
+        type: string
+        required: true
+  /loyalty/programs/{programName}/processes/{processName}/rule/{ruleName}:
+    delete:
+      description: http post method that upsert Loyalty Engine Rule for given process
+        and program
+      responses:
+        '200':
+          description: Success
+    get:
+      description: http get method for Loyalty Engine Rule for given process and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleDetailRepresentation
+    patch:
+      description: http post method that upsert Loyalty Engine Rule for given process
+        and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleStatusRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type:
+            ProgramProcessRule
+            # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+            #required: false
+          (oas-body-name): programProcessRule
+    put:
+      description: http post method that upsert Loyalty Engine Rule for given process
+        and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleStatusRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: ProgramProcessRule
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): programProcessRule
+    uriParameters:
+      processName:
+        type: string
+        required: true
+      programName:
+        type: string
+        required: true
+      ruleName:
+        type: string
+        required: true
+  /realtime/loyalty/programs/{programName}:
+    post:
+      description: Http post method that executes the process for the given program
+        and the process
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LoyaltyEngineRealtimeOutputRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name due to issue #28 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: LoyaltyProcessInput
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): loyaltyProcessInput
+    uriParameters:
+      programName:
+        type: string
+        required: true
